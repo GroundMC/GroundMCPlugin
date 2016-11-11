@@ -1,5 +1,6 @@
 package gtlp.groundmc.lobby.inventory
 
+import gtlp.groundmc.lobby.enums.GMCType
 import gtlp.groundmc.lobby.enums.NBTIdentifier
 import gtlp.groundmc.lobby.enums.VisibilityStates
 import gtlp.groundmc.lobby.util.I18n
@@ -20,6 +21,7 @@ object HidePlayerInventory {
         val inventory = Bukkit.createInventory(player, 9)
         val limeDye = NBTItemExt(ItemStack(Dye(DyeColor.LIME).toItemStack()))
         limeDye.setBoolean(NBTIdentifier.PREFIX, true)
+        limeDye.setInteger(NBTIdentifier.TYPE, GMCType.HIDE_PLAYERS.ordinal)
         limeDye.setInteger(NBTIdentifier.HIDE_STATE, VisibilityStates.ALL.ordinal)
         limeDye.item.amount = 1
         limeDye.setDisplayName(I18n.getString("visibility.all", player.spigot().locale))
@@ -29,6 +31,7 @@ object HidePlayerInventory {
 
         val purpleDye = NBTItemExt(ItemStack(Dye(DyeColor.PURPLE).toItemStack()))
         purpleDye.setBoolean(NBTIdentifier.PREFIX, true)
+        limeDye.setInteger(NBTIdentifier.TYPE, GMCType.HIDE_PLAYERS.ordinal)
         purpleDye.setInteger(NBTIdentifier.HIDE_STATE, VisibilityStates.FRIENDS.ordinal)
         purpleDye.item.amount = 1
         purpleDye.setDisplayName(I18n.getString("visibility.friends", player.spigot().locale))
@@ -37,6 +40,7 @@ object HidePlayerInventory {
 
         val grayDye = NBTItemExt(ItemStack(Dye(DyeColor.GRAY).toItemStack()))
         grayDye.setBoolean(NBTIdentifier.PREFIX, true)
+        limeDye.setInteger(NBTIdentifier.TYPE, GMCType.HIDE_PLAYERS.ordinal)
         grayDye.setInteger(NBTIdentifier.HIDE_STATE, VisibilityStates.NONE.ordinal)
         grayDye.item.amount = 1
         grayDye.setDisplayName(I18n.getString("visibility.none", player.spigot().locale))
