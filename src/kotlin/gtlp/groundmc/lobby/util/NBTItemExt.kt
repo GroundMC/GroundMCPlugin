@@ -1,6 +1,9 @@
 package gtlp.groundmc.lobby.util
 
 import de.tr7zw.itemnbtapi.NBTItem
+import gtlp.groundmc.lobby.enums.NBTIdentifier
+import org.bukkit.enchantments.Enchantment
+import org.bukkit.inventory.ItemFlag
 import org.bukkit.inventory.ItemStack
 
 /**
@@ -29,6 +32,10 @@ class NBTItemExt(item: ItemStack) : NBTItem(item) {
         return super.hasKey(identifier.toString())
     }
 
+    fun removeKey(identifier: NBTIdentifier) {
+        super.removeKey(identifier.toString())
+    }
+
     fun getInteger(identifier: NBTIdentifier): Int {
         return super.getInteger(identifier.toString())
     }
@@ -44,4 +51,39 @@ class NBTItemExt(item: ItemStack) : NBTItem(item) {
     fun getDouble(identifier: NBTIdentifier): Double {
         return super.getDouble(identifier.toString())
     }
+
+    fun setDisplayName(displayName: String) {
+        val meta = item.itemMeta
+        meta.displayName = displayName
+        item.itemMeta = meta
+    }
+
+    fun getDisplayName(): String {
+        return item.itemMeta.displayName
+    }
+
+    fun addEnchantment(enchantment: Enchantment, level: Int, ignoreLevelRestrictions: Boolean) {
+        val meta = item.itemMeta
+        meta.addEnchant(enchantment, level, ignoreLevelRestrictions)
+        item.itemMeta = meta
+    }
+
+    fun removeEnchantment(enchantment: Enchantment) {
+        val meta = item.itemMeta
+        meta.removeEnchant(enchantment)
+        item.itemMeta = meta
+    }
+
+    fun addItemFlags(vararg flags: ItemFlag) {
+        val meta = item.itemMeta
+        meta.addItemFlags(*flags)
+        item.itemMeta = meta
+    }
+
+    fun removeItemFlags(vararg flags: ItemFlag) {
+        val meta = item.itemMeta
+        meta.removeItemFlags(*flags)
+        item.itemMeta = meta
+    }
+
 }
