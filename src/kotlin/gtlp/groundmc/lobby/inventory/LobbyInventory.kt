@@ -5,12 +5,15 @@ import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.InventoryHolder
 
 /**
- * Created by Marv1 on 10.06.2016.
+ * Inventory for navigating the lobby
  */
-object LobbyInventory {
-    fun cloneInventory(inventory: Inventory, holder: InventoryHolder): Inventory {
-        val clone = Bukkit.createInventory(holder, inventory.size, inventory.title)
-        clone.contents = inventory.contents
+internal object LobbyInventory {
+
+    val TEMPLATE_INVENTORY: Inventory = Bukkit.createInventory(null, 6 * 9, "Lobby")
+
+    fun create(inventoryHolder: InventoryHolder): Inventory {
+        val clone = Bukkit.createInventory(inventoryHolder, TEMPLATE_INVENTORY.size, TEMPLATE_INVENTORY.title)
+        clone.contents = TEMPLATE_INVENTORY.contents
         return clone
     }
 }
