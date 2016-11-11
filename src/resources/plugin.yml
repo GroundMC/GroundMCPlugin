@@ -1,0 +1,10 @@
+name: GroundMC_Lobby_Plugin
+version: 1.1
+author: GiantTreeLP
+main: gtlp.groundmc.lobby.LobbyMain
+
+commands:
+   lobby:
+      description: Lobby commands
+      usage: "Usage: /<command> [command] [parameters]"
+      aliases: [lb]
