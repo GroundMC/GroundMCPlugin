@@ -16,9 +16,6 @@ import org.bukkit.plugin.java.JavaPlugin
 import org.bukkit.potion.PotionEffect
 import org.bukkit.potion.PotionEffectType
 
-
-//for vanish: http://codereview.stackexchange.com/q/145674/66955
-
 class LobbyMain : JavaPlugin() {
 
     override fun onEnable() {
@@ -87,7 +84,12 @@ class LobbyMain : JavaPlugin() {
     companion object {
         val lobbyInventoryMap = mutableMapOf<HumanEntity, LobbyInventoryHolder>()
         var hubWorld: World? = null
+
+        /**
+         * Set holding players that want their chat to be silent
+         */
         val SILENCED_PLAYERS = mutableSetOf<Player>()
+
         var instance: LobbyMain? = null
     }
 
