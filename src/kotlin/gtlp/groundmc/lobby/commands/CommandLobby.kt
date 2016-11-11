@@ -45,7 +45,7 @@ class CommandLobby : ILobbyCommand {
                     return true
                 }
                 "debug" -> {
-                    saveTemplate()
+                    //
                     return true
                 }
                 else -> {
