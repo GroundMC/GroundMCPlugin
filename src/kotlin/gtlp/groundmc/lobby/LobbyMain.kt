@@ -1,6 +1,8 @@
 package gtlp.groundmc.lobby
 
 import gtlp.groundmc.lobby.commands.CommandLobby
+import gtlp.groundmc.lobby.inventory.LobbyInventory
+import gtlp.groundmc.lobby.inventory.LobbyInventoryHolder
 import gtlp.groundmc.lobby.registry.LobbyCommandRegistry
 import org.bukkit.Bukkit
 import org.bukkit.Difficulty
@@ -9,7 +11,6 @@ import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.HumanEntity
 import org.bukkit.entity.Player
-import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
 import org.bukkit.plugin.java.JavaPlugin
 import org.bukkit.potion.PotionEffect
@@ -56,8 +57,7 @@ class LobbyMain : JavaPlugin() {
         saveDefaultConfig()
         if (config.contains("inventory.content") && config.get("inventory.content") is List<*>) {
             @Suppress("unchecked_cast")
-            val content = (config.get("inventory.content") as List<ItemStack>).toTypedArray<ItemStack>()
-            TEMPLATE_INVENTORY.contents = content
+            LobbyInventory.TEMPLATE_INVENTORY.contents = (config.get("inventory.content") as List<ItemStack>).toTypedArray<ItemStack>()
         }
         hubWorld = Bukkit.getWorlds().first { it.name == config.getString("hub.world") }
     }
@@ -85,10 +85,9 @@ class LobbyMain : JavaPlugin() {
     }
 
     companion object {
-        var inventoryMap = mutableMapOf<HumanEntity, Inventory>()
+        val lobbyInventoryMap = mutableMapOf<HumanEntity, LobbyInventoryHolder>()
         var hubWorld: World? = null
         val SILENCED_PLAYERS = mutableSetOf<Player>()
-        val TEMPLATE_INVENTORY = Bukkit.createInventory(null, 6 * 9, "Lobby")!!
         var instance: LobbyMain? = null
     }
 
