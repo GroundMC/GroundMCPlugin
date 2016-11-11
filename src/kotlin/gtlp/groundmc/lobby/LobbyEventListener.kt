@@ -194,6 +194,7 @@ internal class LobbyEventListener : Listener {
                 nbtItem.setBoolean(NBTIdentifier.PREFIX, true)
                 nbtItem.setInteger(NBTIdentifier.TYPE, GMCType.HIDE_PLAYERS.ordinal)
                 nbtItem.setInteger(NBTIdentifier.HIDE_STATE, VisibilityStates.ALL.ordinal)
+                nbtItem.addEnchantment(Enchantment.LUCK)
                 nbtItem.addItemFlags(ItemFlag.HIDE_ENCHANTS)
                 nbtItem.displayName = I18n.getString("visibility.all")
                 return nbtItem.item
