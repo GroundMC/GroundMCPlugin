@@ -15,6 +15,7 @@ import org.bukkit.event.block.BlockPlaceEvent
 import org.bukkit.event.entity.EntityDamageEvent
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.player.*
+import org.bukkit.inventory.ItemFlag
 import org.bukkit.inventory.ItemStack
 
 internal class LobbyEventListener : Listener {
@@ -36,6 +37,11 @@ internal class LobbyEventListener : Listener {
         }
         if (event.player.hasPermission(Permission.HIDE_PLAYERS.toString())) {
             inventory.setItem(2, HIDE_PLAYERS_ITEM.clone())
+        }
+        if (!event.player.hasPermission(Permission.ADMIN.toString())) {
+            event.player.gameMode = GameMode.ADVENTURE
+        } else {
+            event.player.gameMode = GameMode.CREATIVE
         }
     }
 
@@ -89,14 +95,14 @@ internal class LobbyEventListener : Listener {
                 if (nbtItem.getBoolean(NBTIdentifier.SILENT_STATE)) {
                     LobbyMain.SILENCED_PLAYERS.remove(event.player)
                     nbtItem.setBoolean(NBTIdentifier.SILENT_STATE, false)
-                    nbtItem.setDisplayName(I18n.getString("silentitem.off", event.player.spigot().locale))
-                    nbtItem.removeEnchantment(Enchantment.PROTECTION_ENVIRONMENTAL)
+                    nbtItem.displayName = I18n.getString("silentitem.off", event.player.spigot().locale)
+                    nbtItem.removeEnchantment(Enchantment.LUCK)
                     event.player.sendMessage(I18n.getString("silentmsg.off", event.player.spigot().locale))
                 } else {
                     LobbyMain.SILENCED_PLAYERS.add(event.player)
                     nbtItem.setBoolean(NBTIdentifier.SILENT_STATE, true)
-                    nbtItem.setDisplayName(I18n.getString("silentitem.on", event.player.spigot().locale))
-                    nbtItem.addEnchantment(Enchantment.PROTECTION_ENVIRONMENTAL, 10, true)
+                    nbtItem.displayName = I18n.getString("silentitem.on", event.player.spigot().locale)
+                    nbtItem.addEnchantment(Enchantment.LUCK)
                     event.player.sendMessage(I18n.getString("silentmsg.on", event.player.spigot().locale))
                 }
                 event.player.inventory.setItem(1, nbtItem.item)
@@ -110,6 +116,30 @@ internal class LobbyEventListener : Listener {
             val nbtItem = NBTItemExt(event.item)
             if (nbtItem.hasKey(NBTIdentifier.PREFIX) && nbtItem.getInteger(NBTIdentifier.TYPE) == GMCType.HIDE_PLAYERS.ordinal) {
                 val inventoryView = event.player.openInventory(LobbyMain.lobbyInventoryMap[event.player]?.hidePlayerInventory)
+            }
+        }
+    }
+
+    @EventHandler
+    fun selectHideState(event: InventoryClickEvent) {
+        if (event.clickedInventory == LobbyMain.lobbyInventoryMap[event.whoClicked]?.hidePlayerInventory) {
+            event.isCancelled = true
+            if (event.currentItem != null) {
+                val nbtItem = NBTItemExt(event.currentItem)
+                if (nbtItem.hasKey(NBTIdentifier.PREFIX)) {
+                    if (nbtItem.getInteger(NBTIdentifier.TYPE) == GMCType.HIDE_PLAYERS.ordinal) {
+                        event.clickedInventory.contents.filterNotNull().forEach { itemstack -> itemstack.removeEnchantment(Enchantment.LUCK) }
+                        nbtItem.addEnchantment(Enchantment.LUCK)
+                        event.currentItem = nbtItem.item
+                        event.whoClicked.inventory.setItem(2, event.whoClicked.inventory.getItem(2).apply {
+                            val blazeRod = NBTItemExt(this)
+                            blazeRod.displayName = nbtItem.displayName
+                            this.itemMeta = blazeRod.item.itemMeta
+                        })
+                        event.whoClicked.sendMessage(nbtItem.displayName)
+                        event.view.close()
+                    }
+                }
             }
         }
     }
@@ -144,9 +174,8 @@ internal class LobbyEventListener : Listener {
             get() {
                 val nbtItem = NBTItemExt(ItemStack(Material.COMPASS))
                 nbtItem.setBoolean(NBTIdentifier.PREFIX, true)
-                val meta = nbtItem.item.itemMeta
-                meta.displayName = ChatColor.RED.toString() + "Lobby"
-                nbtItem.item.itemMeta = meta
+                nbtItem.addItemFlags(ItemFlag.HIDE_ENCHANTS)
+                nbtItem.displayName = ChatColor.RED.toString() + "Lobby"
                 return nbtItem.item
             }
         private val SILENT_ITEM: ItemStack
@@ -155,9 +184,8 @@ internal class LobbyEventListener : Listener {
                 nbtItem.setBoolean(NBTIdentifier.PREFIX, true)
                 nbtItem.setInteger(NBTIdentifier.TYPE, GMCType.SILENT.ordinal)
                 nbtItem.setBoolean(NBTIdentifier.SILENT_STATE, false)
-                val meta = nbtItem.item.itemMeta
-                meta.displayName = I18n.getString("silentitem.off")
-                nbtItem.item.itemMeta = meta
+                nbtItem.addItemFlags(ItemFlag.HIDE_ENCHANTS)
+                nbtItem.displayName = I18n.getString("silentitem.off")
                 return nbtItem.item
             }
         private val HIDE_PLAYERS_ITEM: ItemStack
@@ -166,9 +194,8 @@ internal class LobbyEventListener : Listener {
                 nbtItem.setBoolean(NBTIdentifier.PREFIX, true)
                 nbtItem.setInteger(NBTIdentifier.TYPE, GMCType.HIDE_PLAYERS.ordinal)
                 nbtItem.setInteger(NBTIdentifier.HIDE_STATE, VisibilityStates.ALL.ordinal)
-                val meta = nbtItem.item.itemMeta
-                meta.displayName = I18n.getString("hideitem.off")
-                nbtItem.item.itemMeta = meta
+                nbtItem.addItemFlags(ItemFlag.HIDE_ENCHANTS)
+                nbtItem.displayName = I18n.getString("visibility.all")
                 return nbtItem.item
             }
 

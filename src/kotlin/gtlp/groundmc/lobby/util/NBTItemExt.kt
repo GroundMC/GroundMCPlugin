@@ -52,17 +52,17 @@ class NBTItemExt(item: ItemStack) : NBTItem(item) {
         return super.getDouble(identifier.toString())
     }
 
-    fun setDisplayName(displayName: String) {
+    var displayName: String?
+        set(displayName) {
         val meta = item.itemMeta
         meta.displayName = displayName
         item.itemMeta = meta
     }
-
-    fun getDisplayName(): String {
+        get(): String? {
         return item.itemMeta.displayName
     }
 
-    fun addEnchantment(enchantment: Enchantment, level: Int, ignoreLevelRestrictions: Boolean) {
+    fun addEnchantment(enchantment: Enchantment, level: Int = 1, ignoreLevelRestrictions: Boolean = true) {
         val meta = item.itemMeta
         meta.addEnchant(enchantment, level, ignoreLevelRestrictions)
         item.itemMeta = meta
