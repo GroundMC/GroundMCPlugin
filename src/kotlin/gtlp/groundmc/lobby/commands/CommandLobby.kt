@@ -88,7 +88,7 @@ class CommandLobby : ILobbyCommand {
 
     private fun makeTp(args: Array<String>, sender: CommandSender): Boolean {
         if (sender is Player) {
-            if (sender.hasPermission(Permission.ADMIN.toString()) && args.size == 2 && !args[1].isNullOrBlank()) {
+            if (sender.hasPermission(Permission.ADMIN.toString()) && args.size >= 2 && !args[1].isNullOrBlank()) {
                 val nbtItem = NBTItemExt(sender.inventory.itemInMainHand)
                 nbtItem.setBoolean(NBTIdentifier.PREFIX, true)
                 nbtItem.setInteger(NBTIdentifier.TYPE, GMCType.TP.ordinal)
@@ -96,11 +96,8 @@ class CommandLobby : ILobbyCommand {
                 nbtItem.setDouble(NBTIdentifier.LOC_Y, sender.location.y)
                 nbtItem.setDouble(NBTIdentifier.LOC_Z, sender.location.z)
                 nbtItem.setString(NBTIdentifier.LOC_WORLD, sender.location.world.name)
-                val meta = nbtItem.item.itemMeta
-                meta.displayName = args[1]
-                nbtItem.item.itemMeta = meta
+                nbtItem.displayName = args.sliceArray(IntRange(1, args.size - 1)).reduce { left, right -> left + " " + right }
                 sender.inventory.itemInMainHand = nbtItem.item
-                sender.inventory.itemInMainHand.itemMeta.displayName = args[1]
 
                 sender.sendMessage(I18n.getString("commandlobby.placeitem", sender.spigot().locale))
                 return true
