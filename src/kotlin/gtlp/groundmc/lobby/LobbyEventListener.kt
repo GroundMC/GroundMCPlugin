@@ -1,10 +1,7 @@
 package gtlp.groundmc.lobby
 
-import de.tr7zw.itemnbtapi.NBTItem
 import gtlp.groundmc.lobby.inventory.LobbyInventory
-import gtlp.groundmc.lobby.util.GMCType
-import gtlp.groundmc.lobby.util.I18n
-import gtlp.groundmc.lobby.util.Permission
+import gtlp.groundmc.lobby.util.*
 import org.bukkit.*
 import org.bukkit.enchantments.Enchantment
 import org.bukkit.event.EventHandler
@@ -59,10 +56,10 @@ internal class LobbyEventListener : Listener {
         if (event.clickedInventory == LobbyMain.inventoryMap[event.whoClicked]) {
             event.isCancelled = true
             if (event.currentItem != null) {
-                val nbtItem = NBTItem(event.currentItem)
-                if (nbtItem.hasKey(LobbyMain.NBT_PREFIX)) {
-                    if (nbtItem.getInteger(LobbyMain.NBT_TYPE) == GMCType.TP.ordinal) {
-                        if (event.whoClicked.teleport(Location(Bukkit.getWorld(nbtItem.getString(LobbyMain.NBT_LOC_WORLD)), nbtItem.getDouble(LobbyMain.NBT_LOC_X), nbtItem.getDouble(LobbyMain.NBT_LOC_Y), nbtItem.getDouble(LobbyMain.NBT_LOC_Z)), PlayerTeleportEvent.TeleportCause.PLUGIN)) {
+                val nbtItem = NBTItemExt(event.currentItem)
+                if (nbtItem.hasKey(NBTIdentifier.PREFIX)) {
+                    if (nbtItem.getInteger(NBTIdentifier.TYPE) == GMCType.TP.ordinal) {
+                        if (event.whoClicked.teleport(Location(Bukkit.getWorld(nbtItem.getString(NBTIdentifier.LOC_WORLD)), nbtItem.getDouble(NBTIdentifier.LOC_X), nbtItem.getDouble(NBTIdentifier.LOC_Y), nbtItem.getDouble(NBTIdentifier.LOC_Z)), PlayerTeleportEvent.TeleportCause.PLUGIN)) {
                             event.whoClicked.world.spigot().playEffect(event.whoClicked.location, Effect.PORTAL_TRAVEL)
                             event.whoClicked.world.spigot().playEffect(event.whoClicked.location, Effect.LARGE_SMOKE, 0, 0, 1f, 1f, 1f, 0.1f, 100, 1)
                         }
@@ -82,19 +79,19 @@ internal class LobbyEventListener : Listener {
     @EventHandler
     fun silentChat(event: PlayerInteractEvent) {
         if (event.item != null) {
-            val nbtItem = NBTItem(event.item)
-            if (nbtItem.hasKey(LobbyMain.NBT_PREFIX) && nbtItem.getInteger(LobbyMain.NBT_TYPE) == GMCType.SILENT.ordinal) {
+            val nbtItem = NBTItemExt(event.item)
+            if (nbtItem.hasKey(NBTIdentifier.PREFIX) && nbtItem.getInteger(NBTIdentifier.TYPE) == GMCType.SILENT.ordinal) {
                 val meta: ItemMeta
-                if (nbtItem.getBoolean(LobbyMain.NBT_SILENT_STATE)) {
+                if (nbtItem.getBoolean(NBTIdentifier.SILENT_STATE)) {
                     LobbyMain.SILENCED_PLAYERS.remove(event.player)
-                    nbtItem.setBoolean(LobbyMain.NBT_SILENT_STATE, false)
+                    nbtItem.setBoolean(NBTIdentifier.SILENT_STATE, false)
                     meta = nbtItem.item.itemMeta
                     meta.displayName = I18n.getString("silentitem.off", event.player.spigot().locale)
                     meta.removeEnchant(Enchantment.PROTECTION_ENVIRONMENTAL)
                     event.player.sendMessage(I18n.getString("silentmsg.off", event.player.spigot().locale))
                 } else {
                     LobbyMain.SILENCED_PLAYERS.add(event.player)
-                    nbtItem.setBoolean(LobbyMain.NBT_SILENT_STATE, true)
+                    nbtItem.setBoolean(NBTIdentifier.SILENT_STATE, true)
                     meta = nbtItem.item.itemMeta
                     meta.displayName = I18n.getString("silentitem.on", event.player.spigot().locale)
                     meta.addEnchant(Enchantment.PROTECTION_ENVIRONMENTAL, 10, true)
@@ -109,17 +106,17 @@ internal class LobbyEventListener : Listener {
     @EventHandler
     fun hidePlayers(event: PlayerInteractEvent) {
         if (event.item != null) {
-            val nbtItem = NBTItem(event.item)
-            if (nbtItem.hasKey(LobbyMain.NBT_PREFIX) && nbtItem.getInteger(LobbyMain.NBT_TYPE) == GMCType.HIDE_PLAYERS.ordinal) {
+            val nbtItem = NBTItemExt(event.item)
+            if (nbtItem.hasKey(NBTIdentifier.PREFIX) && nbtItem.getInteger(NBTIdentifier.TYPE) == GMCType.HIDE_PLAYERS.ordinal) {
                 val meta: ItemMeta
-                if (nbtItem.getBoolean(LobbyMain.NBT_HIDE_STATE)) {
-                    nbtItem.setBoolean(LobbyMain.NBT_HIDE_STATE, false)
+                if (nbtItem.getBoolean(NBTIdentifier.HIDE_STATE)) {
+                    nbtItem.setBoolean(NBTIdentifier.HIDE_STATE, false)
                     meta = nbtItem.item.itemMeta
                     meta.displayName = I18n.getString("hideitem.off", event.player.spigot().locale)
                     meta.removeEnchant(Enchantment.PROTECTION_ENVIRONMENTAL)
                     event.player.sendMessage(I18n.getString("hidemsg.off", event.player.spigot().locale))
                 } else {
-                    nbtItem.setBoolean(LobbyMain.NBT_HIDE_STATE, true)
+                    nbtItem.setBoolean(NBTIdentifier.HIDE_STATE, true)
                     meta = nbtItem.item.itemMeta
                     meta.displayName = I18n.getString("hideitem.on", event.player.spigot().locale)
                     meta.addEnchant(Enchantment.PROTECTION_ENVIRONMENTAL, 10, true)
@@ -142,16 +139,16 @@ internal class LobbyEventListener : Listener {
 
     @EventHandler
     fun cancelItemDrop(event: PlayerDropItemEvent) {
-        val nbtItem = NBTItem(event.itemDrop.itemStack)
-        if (nbtItem.hasKey(LobbyMain.NBT_PREFIX)) {
+        val nbtItem = NBTItemExt(event.itemDrop.itemStack)
+        if (nbtItem.hasKey(NBTIdentifier.PREFIX)) {
             event.isCancelled = true
         }
     }
 
     @EventHandler
     fun cancelBlockPlace(event: BlockPlaceEvent) {
-        val nbtItem = NBTItem(event.itemInHand)
-        if (nbtItem.hasKey(LobbyMain.NBT_PREFIX)) {
+        val nbtItem = NBTItemExt(event.itemInHand)
+        if (nbtItem.hasKey(NBTIdentifier.PREFIX)) {
             event.isCancelled = true
         }
     }
@@ -159,8 +156,8 @@ internal class LobbyEventListener : Listener {
     companion object {
         private val COMPASS_ITEM: ItemStack
             get() {
-                val nbtItem = NBTItem(ItemStack(Material.COMPASS))
-                nbtItem.setBoolean(LobbyMain.NBT_PREFIX, true)
+                val nbtItem = NBTItemExt(ItemStack(Material.COMPASS))
+                nbtItem.setBoolean(NBTIdentifier.PREFIX, true)
                 val meta = nbtItem.item.itemMeta
                 meta.displayName = ChatColor.RED.toString() + "Lobby"
                 nbtItem.item.itemMeta = meta
@@ -168,10 +165,10 @@ internal class LobbyEventListener : Listener {
             }
         private val SILENT_ITEM: ItemStack
             get() {
-                val nbtItem = NBTItem(ItemStack(Material.TNT))
-                nbtItem.setBoolean(LobbyMain.NBT_PREFIX, true)
-                nbtItem.setInteger(LobbyMain.NBT_TYPE, GMCType.SILENT.ordinal)
-                nbtItem.setBoolean(LobbyMain.NBT_SILENT_STATE, false)
+                val nbtItem = NBTItemExt(ItemStack(Material.TNT))
+                nbtItem.setBoolean(NBTIdentifier.PREFIX, true)
+                nbtItem.setInteger(NBTIdentifier.TYPE, GMCType.SILENT.ordinal)
+                nbtItem.setBoolean(NBTIdentifier.SILENT_STATE, false)
                 val meta = nbtItem.item.itemMeta
                 meta.displayName = I18n.getString("silentitem.off")
                 nbtItem.item.itemMeta = meta
@@ -179,10 +176,10 @@ internal class LobbyEventListener : Listener {
             }
         private val HIDE_PLAYERS_ITEM: ItemStack
             get() {
-                val nbtItem = NBTItem(ItemStack(Material.TNT))
-                nbtItem.setBoolean(LobbyMain.NBT_PREFIX, true)
-                nbtItem.setInteger(LobbyMain.NBT_TYPE, GMCType.HIDE_PLAYERS.ordinal)
-                nbtItem.setBoolean(LobbyMain.NBT_HIDE_STATE, false)
+                val nbtItem = NBTItemExt(ItemStack(Material.BLAZE_ROD))
+                nbtItem.setBoolean(NBTIdentifier.PREFIX, true)
+                nbtItem.setInteger(NBTIdentifier.TYPE, GMCType.HIDE_PLAYERS.ordinal)
+                nbtItem.setBoolean(NBTIdentifier.HIDE_STATE, false)
                 val meta = nbtItem.item.itemMeta
                 meta.displayName = I18n.getString("hideitem.off")
                 nbtItem.item.itemMeta = meta

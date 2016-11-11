@@ -2,6 +2,7 @@ package gtlp.groundmc.lobby.commands
 
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
+import java.util.*
 
 /**
  * Interface for commands compatible with the {@link LobbyCommandRegistry}
@@ -16,7 +17,7 @@ interface ILobbyCommand {
     /**
      * Message(s) that list help content for this command
      */
-    val commandHelp: Array<String>
+    fun getCommandHelp(locale: Locale): Array<String?>
 
     /**
      * Generates and returns a list of possible autocompletion entries

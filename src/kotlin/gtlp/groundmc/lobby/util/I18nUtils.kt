@@ -19,7 +19,9 @@ package gtlp.groundmc.lobby.util
  */
 
 
-import java.util.Locale
+import org.bukkit.command.CommandSender
+import org.bukkit.entity.Player
+import java.util.*
 
 /**
  * Utility class for internationalization. This class provides a
@@ -69,6 +71,14 @@ object I18nUtils {
             country = localeString.substring(languageIndex + 1, countryIndex)
             val variant = localeString.substring(countryIndex + 1)
             return Locale(language, country, variant)
+        }
+    }
+
+    fun getLocaleFromCommandSender(sender: CommandSender): Locale {
+        if (sender is Player) {
+            return getLocaleFromString(sender.spigot().locale)
+        } else {
+            return Locale.getDefault()
         }
     }
 }

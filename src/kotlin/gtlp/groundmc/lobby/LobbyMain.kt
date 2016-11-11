@@ -89,14 +89,6 @@ class LobbyMain : JavaPlugin() {
         var hubWorld: World? = null
         val SILENCED_PLAYERS = mutableSetOf<Player>()
         val TEMPLATE_INVENTORY = Bukkit.createInventory(null, 6 * 9, "Lobby")!!
-        val NBT_PREFIX = "GMC"
-        val NBT_TYPE = NBT_PREFIX + "t"
-        val NBT_LOC_X = NBT_PREFIX + "x"
-        val NBT_LOC_Y = NBT_PREFIX + "y"
-        val NBT_LOC_Z = NBT_PREFIX + "z"
-        val NBT_LOC_WORLD = NBT_PREFIX + "w"
-        val NBT_SILENT_STATE = NBT_PREFIX + "silent"
-        val NBT_HIDE_STATE = NBT_PREFIX + "hide"
         var instance: LobbyMain? = null
     }
 

@@ -1,7 +1,8 @@
 package gtlp.groundmc.lobby.util
 
 /**
- * Created by Marv1 on 24.10.2016.
+ * Enum to store permissions as strings
+ * Consolidates all permissions into one enum.
  */
 enum class Permission constructor(identifier: String) {
     ADMIN("groundmc.lobby.admin"),
@@ -10,5 +11,5 @@ enum class Permission constructor(identifier: String) {
 
     override fun toString(): String = id
 
-    private var id: String = identifier
+    private val id: String = identifier
 }

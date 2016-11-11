@@ -1,13 +1,8 @@
 package gtlp.groundmc.lobby.commands
 
-import de.tr7zw.itemnbtapi.NBTItem
 import gtlp.groundmc.lobby.LobbyMain
 import gtlp.groundmc.lobby.inventory.LobbyInventory
-import gtlp.groundmc.lobby.util.GMCType
-import gtlp.groundmc.lobby.util.I18n
-import gtlp.groundmc.lobby.util.Permission
-import org.bukkit.Bukkit
-import org.bukkit.ChatColor
+import gtlp.groundmc.lobby.util.*
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 import org.bukkit.command.ConsoleCommandSender
@@ -17,13 +12,12 @@ import org.bukkit.inventory.Inventory
 import java.util.*
 import kotlin.concurrent.thread
 
-
 class CommandLobby : ILobbyCommand {
     override val name: String = "lobby"
 
-    override val commandHelp = arrayOf(ChatColor.YELLOW.toString() + "additem" + ChatColor.RESET.toString() + ": Add items to the template inventory",
-            ChatColor.YELLOW.toString() + "maketp" + ChatColor.RESET.toString() + ": Make an item ready to be used for teleporting",
-            ChatColor.YELLOW.toString() + "help" + ChatColor.RESET.toString() + ": This help")
+    override fun getCommandHelp(locale: Locale) = arrayOf(I18n.getString("commandlobby.help.1", locale),
+            I18n.getString("commandlobby.help.2", locale),
+            I18n.getString("commandlobby.help.3", locale))
 
     override fun getTabCompletion(sender: CommandSender, command: Command, alias: String?, args: Array<out String>?): List<String>? {
         if (args != null) {
@@ -47,7 +41,7 @@ class CommandLobby : ILobbyCommand {
                     return addItem(sender)
                 }
                 "help" -> {
-                    sender.sendMessage(commandHelp)
+                    sender.sendMessage(getCommandHelp(I18nUtils.getLocaleFromCommandSender(sender)))
                     return true
                 }
                 "debug" -> {
@@ -55,7 +49,7 @@ class CommandLobby : ILobbyCommand {
                     return true
                 }
                 else -> {
-                    sender.sendMessage(commandHelp)
+                    sender.sendMessage(getCommandHelp(I18nUtils.getLocaleFromCommandSender(sender)))
                     return false
                 }
             }
@@ -95,13 +89,13 @@ class CommandLobby : ILobbyCommand {
     private fun makeTp(args: Array<String>, sender: CommandSender): Boolean {
         if (sender is Player) {
             if (sender.hasPermission(Permission.ADMIN.toString()) && args.size == 2 && !args[1].isNullOrBlank()) {
-                val nbtItem = NBTItem(sender.inventory.itemInMainHand)
-                nbtItem.setBoolean(LobbyMain.NBT_PREFIX, true)
-                nbtItem.setInteger(LobbyMain.NBT_TYPE, GMCType.TP.ordinal)
-                nbtItem.setDouble(LobbyMain.NBT_LOC_X, sender.location.x)
-                nbtItem.setDouble(LobbyMain.NBT_LOC_Y, sender.location.y)
-                nbtItem.setDouble(LobbyMain.NBT_LOC_Z, sender.location.z)
-                nbtItem.setString(LobbyMain.NBT_LOC_WORLD, sender.location.world.name)
+                val nbtItem = NBTItemExt(sender.inventory.itemInMainHand)
+                nbtItem.setBoolean(NBTIdentifier.PREFIX, true)
+                nbtItem.setInteger(NBTIdentifier.TYPE, GMCType.TP.ordinal)
+                nbtItem.setDouble(NBTIdentifier.LOC_X, sender.location.x)
+                nbtItem.setDouble(NBTIdentifier.LOC_Y, sender.location.y)
+                nbtItem.setDouble(NBTIdentifier.LOC_Z, sender.location.z)
+                nbtItem.setString(NBTIdentifier.LOC_WORLD, sender.location.world.name)
                 val meta = nbtItem.item.itemMeta
                 meta.displayName = args[1]
                 nbtItem.item.itemMeta = meta
@@ -119,6 +113,9 @@ class CommandLobby : ILobbyCommand {
         return false
     }
 
+    /**
+     * Saves the template in the plugin-wide configuration
+     */
     private fun saveTemplate() {
         LobbyMain.instance?.config?.set("inventory.content", LobbyMain.TEMPLATE_INVENTORY.contents)
         LobbyMain.instance?.saveConfig()
