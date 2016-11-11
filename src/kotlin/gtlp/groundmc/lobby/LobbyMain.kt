@@ -1,6 +1,7 @@
 package gtlp.groundmc.lobby
 
 import gtlp.groundmc.lobby.commands.CommandLobby
+import gtlp.groundmc.lobby.database.table.Friends
 import gtlp.groundmc.lobby.inventory.LobbyInventory
 import gtlp.groundmc.lobby.inventory.LobbyInventoryHolder
 import gtlp.groundmc.lobby.registry.LobbyCommandRegistry
@@ -15,12 +16,19 @@ import org.bukkit.inventory.ItemStack
 import org.bukkit.plugin.java.JavaPlugin
 import org.bukkit.potion.PotionEffect
 import org.bukkit.potion.PotionEffectType
+import org.jetbrains.exposed.sql.Database
+import org.jetbrains.exposed.sql.SchemaUtils.create
+import org.jetbrains.exposed.sql.transactions.transaction
 
 class LobbyMain : JavaPlugin() {
 
     override fun onEnable() {
         instance = this
         loadConfig()
+        Database.connect("jdbc:h2:database", driver = "org.h2.Driver")
+        transaction {
+            create(Friends)
+        }
         Bukkit.getServer().pluginManager.registerEvents(LobbyEventListener(), this)
         registerCommands()
         Bukkit.getServer().scheduler.scheduleSyncDelayedTask(this, {

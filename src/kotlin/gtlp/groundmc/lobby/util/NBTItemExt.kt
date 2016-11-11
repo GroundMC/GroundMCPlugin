@@ -1,7 +1,7 @@
 package gtlp.groundmc.lobby.util
 
 import de.tr7zw.itemnbtapi.NBTItem
-import gtlp.groundmc.lobby.enums.NBTIdentifier
+import gtlp.groundmc.lobby.enum.NBTIdentifier
 import org.bukkit.enchantments.Enchantment
 import org.bukkit.inventory.ItemFlag
 import org.bukkit.inventory.ItemStack

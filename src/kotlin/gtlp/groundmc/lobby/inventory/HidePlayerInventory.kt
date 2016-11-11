@@ -1,8 +1,8 @@
 package gtlp.groundmc.lobby.inventory
 
-import gtlp.groundmc.lobby.enums.GMCType
-import gtlp.groundmc.lobby.enums.NBTIdentifier
-import gtlp.groundmc.lobby.enums.VisibilityStates
+import gtlp.groundmc.lobby.enum.GMCType
+import gtlp.groundmc.lobby.enum.NBTIdentifier
+import gtlp.groundmc.lobby.enum.VisibilityStates
 import gtlp.groundmc.lobby.util.I18n
 import gtlp.groundmc.lobby.util.NBTItemExt
 import org.bukkit.Bukkit

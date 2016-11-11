@@ -1,9 +1,10 @@
 package gtlp.groundmc.lobby
 
-import gtlp.groundmc.lobby.enums.GMCType
-import gtlp.groundmc.lobby.enums.NBTIdentifier
-import gtlp.groundmc.lobby.enums.Permission
-import gtlp.groundmc.lobby.enums.VisibilityStates
+import gtlp.groundmc.lobby.database.table.Friends
+import gtlp.groundmc.lobby.enum.GMCType
+import gtlp.groundmc.lobby.enum.NBTIdentifier
+import gtlp.groundmc.lobby.enum.Permission
+import gtlp.groundmc.lobby.enum.VisibilityStates
 import gtlp.groundmc.lobby.inventory.LobbyInventoryHolder
 import gtlp.groundmc.lobby.util.I18n
 import gtlp.groundmc.lobby.util.NBTItemExt
@@ -17,6 +18,7 @@ import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.player.*
 import org.bukkit.inventory.ItemFlag
 import org.bukkit.inventory.ItemStack
+import org.jetbrains.exposed.sql.update
 
 internal class LobbyEventListener : Listener {
 
@@ -98,12 +100,18 @@ internal class LobbyEventListener : Listener {
                     nbtItem.displayName = I18n.getString("silentitem.off", event.player.spigot().locale)
                     nbtItem.removeEnchantment(Enchantment.LUCK)
                     event.player.sendMessage(I18n.getString("silentmsg.off", event.player.spigot().locale))
+                    Friends.update({ Friends.id eq event.player.uniqueId }) {
+                        it[Friends.silentStatus] = false
+                    }
                 } else {
                     LobbyMain.SILENCED_PLAYERS.add(event.player)
                     nbtItem.setBoolean(NBTIdentifier.SILENT_STATE, true)
                     nbtItem.displayName = I18n.getString("silentitem.on", event.player.spigot().locale)
                     nbtItem.addEnchantment(Enchantment.LUCK)
                     event.player.sendMessage(I18n.getString("silentmsg.on", event.player.spigot().locale))
+                    Friends.update({ Friends.id eq event.player.uniqueId }) {
+                        it[Friends.silentStatus] = true
+                    }
                 }
                 event.player.inventory.setItem(1, nbtItem.item)
             }
