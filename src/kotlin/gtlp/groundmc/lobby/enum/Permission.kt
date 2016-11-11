@@ -1,4 +1,4 @@
-package gtlp.groundmc.lobby.enums
+package gtlp.groundmc.lobby.enum
 
 /**
  * Enum to store permissions as strings
