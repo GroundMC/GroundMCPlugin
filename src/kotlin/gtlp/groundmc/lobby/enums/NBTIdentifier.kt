@@ -1,4 +1,4 @@
-package gtlp.groundmc.lobby.util
+package gtlp.groundmc.lobby.enums
 
 /**
  * Enum to store NBTIdentifiers for use with NBTItemExt
@@ -17,8 +17,8 @@ enum class NBTIdentifier(identifier: String) {
 
     override fun toString(): String {
         if (this == PREFIX) {
-            return PREFIX.id
+            return id
         }
-        return "$PREFIX$id"
+        return "${PREFIX}$id"
     }
 }
