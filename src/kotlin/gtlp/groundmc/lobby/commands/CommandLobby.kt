@@ -1,14 +1,17 @@
 package gtlp.groundmc.lobby.commands
 
 import gtlp.groundmc.lobby.LobbyMain
+import gtlp.groundmc.lobby.enums.GMCType
+import gtlp.groundmc.lobby.enums.NBTIdentifier
+import gtlp.groundmc.lobby.enums.Permission
 import gtlp.groundmc.lobby.inventory.LobbyInventory
-import gtlp.groundmc.lobby.util.*
+import gtlp.groundmc.lobby.util.I18n
+import gtlp.groundmc.lobby.util.I18nUtils
+import gtlp.groundmc.lobby.util.NBTItemExt
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 import org.bukkit.command.ConsoleCommandSender
-import org.bukkit.entity.HumanEntity
 import org.bukkit.entity.Player
-import org.bukkit.inventory.Inventory
 import java.util.*
 import kotlin.concurrent.thread
 
@@ -61,7 +64,7 @@ class CommandLobby : ILobbyCommand {
         if (sender is Player) {
             if (sender.hasPermission(Permission.ADMIN.toString())) {
                 thread {
-                    val view = sender.openInventory(LobbyMain.TEMPLATE_INVENTORY)
+                    val view = sender.openInventory(LobbyInventory.TEMPLATE_INVENTORY)
                     sender.sendMessage(I18n.getString("commandlobby.30seconds", sender.spigot().locale))
                     Thread.sleep(30000)
                     saveTemplate()
@@ -69,12 +72,9 @@ class CommandLobby : ILobbyCommand {
                     if (sender.openInventory == view) {
                         view.close()
                     }
-                    val tempMap = mutableMapOf<HumanEntity, Inventory>()
-                    for ((player, inventory) in LobbyMain.inventoryMap) {
-                        tempMap[player] = LobbyInventory.cloneInventory(LobbyMain.TEMPLATE_INVENTORY, player)
+                    for ((player, inventories) in LobbyMain.lobbyInventoryMap) {
+                        inventories.lobbyInventory = LobbyInventory.create(player)
                     }
-                    LobbyMain.inventoryMap.clear()
-                    LobbyMain.inventoryMap.putAll(tempMap)
                 }
                 return true
             } else {
@@ -117,7 +117,7 @@ class CommandLobby : ILobbyCommand {
      * Saves the template in the plugin-wide configuration
      */
     private fun saveTemplate() {
-        LobbyMain.instance?.config?.set("inventory.content", LobbyMain.TEMPLATE_INVENTORY.contents)
+        LobbyMain.instance?.config?.set("inventory.content", LobbyInventory.TEMPLATE_INVENTORY.contents)
         LobbyMain.instance?.saveConfig()
     }
 
