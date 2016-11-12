@@ -21,8 +21,6 @@ import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils.create
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction
-import org.json.simple.JSONArray
-import org.json.simple.parser.JSONParser
 
 class LobbyMain : JavaPlugin() {
 
@@ -71,7 +69,7 @@ class LobbyMain : JavaPlugin() {
                 }
                 for (player in Bukkit.getServer().onlinePlayers.filter { Friends.select { Friends.id.eq(it.uniqueId) }.first()[Friends.hiddenStatus] == VisibilityStates.FRIENDS }) {
                     Bukkit.getServer().onlinePlayers.forEach {
-                        if (player.isFriendOf(it)) {
+                        if (Friends.areFriends(player, it)) {
                             player.showPlayer(it)
                         } else {
                             player.hidePlayer(it)
@@ -102,7 +100,6 @@ class LobbyMain : JavaPlugin() {
         saveConfig()
         transaction {
             commit()
-            close()
         }
     }
 
@@ -132,13 +129,4 @@ class LobbyMain : JavaPlugin() {
         var instance: LobbyMain? = null
     }
 
-}
-
-private fun Player.isFriendOf(player: Player): Boolean {
-    var isFriend: Boolean = false
-    transaction {
-        val friendList = JSONParser().parse(Friends.select { Friends.id.eq(this@isFriendOf.uniqueId) }.first()[Friends.friends]) as JSONArray
-        isFriend = friendList.contains("'" + player.uniqueId.toString() + "'")
-    }
-    return isFriend
 }

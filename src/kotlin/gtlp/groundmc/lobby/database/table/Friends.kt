@@ -6,8 +6,11 @@ import org.jetbrains.exposed.sql.Table
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.jetbrains.exposed.sql.update
-import org.json.simple.JSONArray
-import org.json.simple.parser.JSONParser
+import java.io.ByteArrayInputStream
+import java.io.ByteArrayOutputStream
+import java.io.ObjectInputStream
+import java.io.ObjectOutputStream
+import java.util.*
 
 /**
  * Created by Marvin on 11.11.2016.
@@ -16,27 +19,56 @@ object Friends : Table() {
     val id = uuid("playerId").primaryKey().uniqueIndex()
     val silentStatus = bool("silent_status").default(false)
     val hiddenStatus = enumeration("hidden_status", VisibilityStates::class.java).default(VisibilityStates.ALL)
-    val friends = text("friends").default(JSONArray.toJSONString(listOf<String>()))
+    val friends = text("friends")
 
     fun addFriend(player: Player, friend: Player) {
         transaction {
             Friends.update({ id.eq(player.uniqueId) }) {
-                val friendList = (JSONParser().parse(select { id.eq(player.uniqueId) }.first()[friends]) as JSONArray)
-                if (!friendList.contains("'" + friend.uniqueId.toString() + "'")) {
-                    friendList.add("'" + friend.uniqueId.toString() + "'")
+                var friendList = readFriendList(player)
+
+                if (!friendList.contains(friend.uniqueId)) {
+                    friendList = friendList.plus(friend.uniqueId)
                 }
-                it[friends] = JSONArray.toJSONString(friendList)
+                it[friends] = prepareFriendList(friendList)
             }
             commit()
             Friends.update({ id.eq(friend.uniqueId) }) {
-                val friendList = (JSONParser().parse(select { id.eq(friend.uniqueId) }.first()[friends]) as JSONArray)
-                if (!friendList.contains("'" + player.uniqueId.toString() + "'")) {
-                    friendList.add("'" + player.uniqueId.toString() + "'")
+                var friendList = readFriendList(friend)
+                if (!friendList.contains(player.uniqueId)) {
+                    friendList = friendList.plus(player.uniqueId)
                 }
-                it[friends] = JSONArray.toJSONString(friendList)
+                it[friends] = prepareFriendList(friendList)
             }
             commit()
             flushCache()
         }
+    }
+
+    private fun readFriendList(player: Player): Array<UUID> {
+        val friendListText = select { id.eq(player.uniqueId) }.first()[friends]
+
+        val bais = ByteArrayInputStream(Base64.getDecoder().decode(friendListText.toByteArray(Charsets.UTF_8)))
+        val ois = ObjectInputStream(bais)
+
+        val friendList = ois.readObject() as Array<UUID>
+        return friendList
+    }
+
+    private fun prepareFriendList(friendList: Array<UUID>): String {
+        val baos = ByteArrayOutputStream()
+        val oos = ObjectOutputStream(baos)
+        oos.writeObject(friendList)
+
+        return Base64.getEncoder().encodeToString(baos.toByteArray())
+    }
+
+    fun areFriends(player: Player, friend: Player): Boolean {
+        var isFriend: Boolean = false
+        transaction {
+            val friendList = readFriendList(player)
+
+            isFriend = friendList.contains(friend.uniqueId)
+        }
+        return isFriend
     }
 }
