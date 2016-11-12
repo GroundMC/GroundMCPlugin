@@ -1,6 +1,7 @@
 package gtlp.groundmc.lobby.commands
 
 import gtlp.groundmc.lobby.LobbyMain
+import gtlp.groundmc.lobby.database.table.Friends
 import gtlp.groundmc.lobby.enum.GMCType
 import gtlp.groundmc.lobby.enum.NBTIdentifier
 import gtlp.groundmc.lobby.enum.Permission
@@ -8,6 +9,7 @@ import gtlp.groundmc.lobby.inventory.LobbyInventory
 import gtlp.groundmc.lobby.util.I18n
 import gtlp.groundmc.lobby.util.I18nUtils
 import gtlp.groundmc.lobby.util.NBTItemExt
+import org.bukkit.Bukkit
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 import org.bukkit.command.ConsoleCommandSender
@@ -48,7 +50,9 @@ class CommandLobby : ILobbyCommand {
                     return true
                 }
                 "debug" -> {
-                    //
+                    if (sender is Player) {
+                        Friends.addFriend(sender, Bukkit.getServer().getPlayer(args[1]))
+                    }
                     return true
                 }
                 else -> {

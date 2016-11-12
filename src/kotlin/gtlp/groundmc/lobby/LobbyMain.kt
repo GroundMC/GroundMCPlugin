@@ -21,6 +21,8 @@ import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils.create
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction
+import org.json.simple.JSONArray
+import org.json.simple.parser.JSONParser
 
 class LobbyMain : JavaPlugin() {
 
@@ -54,17 +56,30 @@ class LobbyMain : JavaPlugin() {
                 it.addPotionEffect(PotionEffect(PotionEffectType.SATURATION, 200, 1, false, false), true)
             }
         }, 20L, 20L)
-        Bukkit.getServer().scheduler.scheduleSyncRepeatingTask(this, {
+        Bukkit.getServer().scheduler.scheduleSyncRepeatingTask(this, hidePlayersTask(), 20L, 2 * 20L)
+        hubWorld?.difficulty = Difficulty.PEACEFUL
+    }
+
+    private fun hidePlayersTask(): () -> Unit {
+        return {
             transaction {
-                for (player in Bukkit.getServer().onlinePlayers.filter { Friends.select { Friends.id.eq(it.uniqueId) }.first()[Friends.hiddenStatus] == VisibilityStates.NONE }) {
-                    Bukkit.getServer().onlinePlayers.forEach { player.hidePlayer(it) }
-                }
                 for (player in Bukkit.getServer().onlinePlayers.filter { Friends.select { Friends.id.eq(it.uniqueId) }.first()[Friends.hiddenStatus] == VisibilityStates.ALL }) {
                     Bukkit.getServer().onlinePlayers.forEach { player.showPlayer(it) }
                 }
+                for (player in Bukkit.getServer().onlinePlayers.filter { Friends.select { Friends.id.eq(it.uniqueId) }.first()[Friends.hiddenStatus] in setOf(VisibilityStates.NONE) }) {
+                    Bukkit.getServer().onlinePlayers.forEach { player.hidePlayer(it) }
+                }
+                for (player in Bukkit.getServer().onlinePlayers.filter { Friends.select { Friends.id.eq(it.uniqueId) }.first()[Friends.hiddenStatus] == VisibilityStates.FRIENDS }) {
+                    Bukkit.getServer().onlinePlayers.forEach {
+                        if (player.isFriendOf(it)) {
+                            player.showPlayer(it)
+                        } else {
+                            player.hidePlayer(it)
+                        }
+                    }
+                }
             }
-        }, 20L, 2 * 20L)
-        hubWorld?.difficulty = Difficulty.PEACEFUL
+        }
     }
 
     private fun loadConfig() {
@@ -85,6 +100,10 @@ class LobbyMain : JavaPlugin() {
 
     override fun onDisable() {
         saveConfig()
+        transaction {
+            commit()
+            close()
+        }
     }
 
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<String>?): Boolean {
@@ -113,4 +132,13 @@ class LobbyMain : JavaPlugin() {
         var instance: LobbyMain? = null
     }
 
+}
+
+private fun Player.isFriendOf(player: Player): Boolean {
+    var isFriend: Boolean = false
+    transaction {
+        val friendList = JSONParser().parse(Friends.select { Friends.id.eq(this@isFriendOf.uniqueId) }.first()[Friends.friends]) as JSONArray
+        isFriend = friendList.contains("'" + player.uniqueId.toString() + "'")
+    }
+    return isFriend
 }
