@@ -42,21 +42,27 @@ internal class LobbyEventListener : Listener {
                 }
             }
             val inventory = event.player.inventory
-            inventory.setItem(0, COMPASS_ITEM.clone())
+            inventory.setItem(0, COMPASS_ITEM.item.clone())
             if (event.player.hasPermission(Permission.SILENT.toString())) {
-
-                val silentItem = NBTItemExt(SILENT_ITEM.clone())
+                val silentItem = NBTItemExt(SILENT_ITEM.item.clone())
                 val silent = Friends.select { Friends.id.eq(event.player.uniqueId) }.first()[Friends.silentStatus]
                 silentItem.displayName = I18n.getString(if (silent) "silentitem.on" else "silentitem.off")
                 silentItem.setBoolean(NBTIdentifier.SILENT_STATE, silent)
                 if (silent) {
                     silentItem.addEnchantment(Enchantment.LUCK)
-
                 }
                 inventory.setItem(1, silentItem.item)
             }
             if (event.player.hasPermission(Permission.HIDE_PLAYERS.toString())) {
-                inventory.setItem(2, HIDE_PLAYERS_ITEM.clone())
+                val nbtItem = HIDE_PLAYERS_ITEM.clone()
+                val hideState = Friends.select { Friends.id.eq(event.player.uniqueId) }.first()[Friends.hiddenStatus]
+                LobbyMain.lobbyInventoryMap[event.player]!!.hidePlayerInventory.contents.filterNotNull().first { NBTItemExt(it).getInteger(NBTIdentifier.HIDE_STATE) == hideState.ordinal }.apply {
+                    this.itemMeta = NBTItemExt(this).addEnchantment(Enchantment.LUCK).item.itemMeta
+                    nbtItem.displayName = itemMeta.displayName
+                    nbtItem.addEnchantment(Enchantment.LUCK)
+
+                }
+                inventory.setItem(2, nbtItem.item)
             }
             if (!event.player.hasPermission(Permission.ADMIN.toString())) {
                 event.player.gameMode = GameMode.ADVENTURE
@@ -74,7 +80,7 @@ internal class LobbyEventListener : Listener {
     @EventHandler
     fun cancelInventoryClick(event: InventoryClickEvent) {
         if (event.whoClicked.world == LobbyMain.hubWorld) {
-            if (event.currentItem == COMPASS_ITEM) {
+            if (event.currentItem == COMPASS_ITEM.item) {
                 event.isCancelled = true
                 event.whoClicked.openInventory(LobbyMain.lobbyInventoryMap[event.whoClicked]?.lobbyInventory)
                 return
@@ -103,8 +109,8 @@ internal class LobbyEventListener : Listener {
     @EventHandler
     fun openInventory(event: PlayerInteractEvent) {
         when (event.item) {
-            COMPASS_ITEM -> event.player.openInventory(LobbyMain.lobbyInventoryMap[event.player]?.lobbyInventory)
-            HIDE_PLAYERS_ITEM -> event.player.openInventory(LobbyMain.lobbyInventoryMap[event.player]?.hidePlayerInventory)
+            COMPASS_ITEM.item -> event.player.openInventory(LobbyMain.lobbyInventoryMap[event.player]?.lobbyInventory)
+            HIDE_PLAYERS_ITEM.item -> event.player.openInventory(LobbyMain.lobbyInventoryMap[event.player]?.hidePlayerInventory)
         }
     }
 
@@ -167,6 +173,11 @@ internal class LobbyEventListener : Listener {
                             blazeRod.displayName = nbtItem.displayName
                             this.itemMeta = blazeRod.item.itemMeta
                         })
+                        transaction {
+                            Friends.update({ Friends.id.eq(event.whoClicked.uniqueId) }) {
+                                it[hiddenStatus] = VisibilityStates.values()[nbtItem.getInteger(NBTIdentifier.HIDE_STATE)]
+                            }
+                        }
                         event.whoClicked.sendMessage(nbtItem.displayName)
                         event.view.close()
                     }
@@ -201,15 +212,15 @@ internal class LobbyEventListener : Listener {
     }
 
     companion object {
-        private val COMPASS_ITEM: ItemStack
+        private val COMPASS_ITEM: NBTItemExt
             get() {
                 val nbtItem = NBTItemExt(ItemStack(Material.COMPASS))
                 nbtItem.setBoolean(NBTIdentifier.PREFIX, true)
                 nbtItem.addItemFlags(ItemFlag.HIDE_ENCHANTS)
                 nbtItem.displayName = ChatColor.RED.toString() + "Lobby"
-                return nbtItem.item
+                return nbtItem
             }
-        private val SILENT_ITEM: ItemStack
+        private val SILENT_ITEM: NBTItemExt
             get() {
                 val nbtItem = NBTItemExt(ItemStack(Material.TNT))
                 nbtItem.setBoolean(NBTIdentifier.PREFIX, true)
@@ -217,9 +228,9 @@ internal class LobbyEventListener : Listener {
                 nbtItem.setBoolean(NBTIdentifier.SILENT_STATE, false)
                 nbtItem.addItemFlags(ItemFlag.HIDE_ENCHANTS)
                 nbtItem.displayName = I18n.getString("silentitem.off")
-                return nbtItem.item
+                return nbtItem
             }
-        private val HIDE_PLAYERS_ITEM: ItemStack
+        private val HIDE_PLAYERS_ITEM: NBTItemExt
             get() {
                 val nbtItem = NBTItemExt(ItemStack(Material.BLAZE_ROD))
                 nbtItem.setBoolean(NBTIdentifier.PREFIX, true)
@@ -228,7 +239,7 @@ internal class LobbyEventListener : Listener {
                 nbtItem.addEnchantment(Enchantment.LUCK)
                 nbtItem.addItemFlags(ItemFlag.HIDE_ENCHANTS)
                 nbtItem.displayName = I18n.getString("visibility.all")
-                return nbtItem.item
+                return nbtItem
             }
 
     }

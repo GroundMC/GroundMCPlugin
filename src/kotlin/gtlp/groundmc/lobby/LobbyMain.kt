@@ -2,6 +2,7 @@ package gtlp.groundmc.lobby
 
 import gtlp.groundmc.lobby.commands.CommandLobby
 import gtlp.groundmc.lobby.database.table.Friends
+import gtlp.groundmc.lobby.enum.VisibilityStates
 import gtlp.groundmc.lobby.inventory.LobbyInventory
 import gtlp.groundmc.lobby.inventory.LobbyInventoryHolder
 import gtlp.groundmc.lobby.registry.LobbyCommandRegistry
@@ -18,6 +19,7 @@ import org.bukkit.potion.PotionEffect
 import org.bukkit.potion.PotionEffectType
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils.create
+import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction
 
 class LobbyMain : JavaPlugin() {
@@ -52,6 +54,16 @@ class LobbyMain : JavaPlugin() {
                 it.addPotionEffect(PotionEffect(PotionEffectType.SATURATION, 200, 1, false, false), true)
             }
         }, 20L, 20L)
+        Bukkit.getServer().scheduler.scheduleSyncRepeatingTask(this, {
+            transaction {
+                for (player in Bukkit.getServer().onlinePlayers.filter { Friends.select { Friends.id.eq(it.uniqueId) }.first()[Friends.hiddenStatus] == VisibilityStates.NONE }) {
+                    Bukkit.getServer().onlinePlayers.forEach { player.hidePlayer(it) }
+                }
+                for (player in Bukkit.getServer().onlinePlayers.filter { Friends.select { Friends.id.eq(it.uniqueId) }.first()[Friends.hiddenStatus] == VisibilityStates.ALL }) {
+                    Bukkit.getServer().onlinePlayers.forEach { player.showPlayer(it) }
+                }
+            }
+        }, 20L, 2 * 20L)
         hubWorld?.difficulty = Difficulty.PEACEFUL
     }
 

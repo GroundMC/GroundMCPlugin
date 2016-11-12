@@ -7,7 +7,6 @@ import gtlp.groundmc.lobby.util.I18n
 import gtlp.groundmc.lobby.util.NBTItemExt
 import org.bukkit.Bukkit
 import org.bukkit.DyeColor
-import org.bukkit.enchantments.Enchantment
 import org.bukkit.entity.Player
 import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemFlag
@@ -27,7 +26,6 @@ object HidePlayerInventory {
         limeDye.addItemFlags(ItemFlag.HIDE_ENCHANTS)
         limeDye.item.amount = 1
         limeDye.displayName = I18n.getString("visibility.all", player.spigot().locale)
-        limeDye.addEnchantment(Enchantment.LUCK)
 
         inventory.setItem(0, limeDye.item)
 

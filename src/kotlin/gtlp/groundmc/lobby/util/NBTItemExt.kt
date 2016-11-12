@@ -12,20 +12,24 @@ import org.bukkit.inventory.ItemStack
  */
 class NBTItemExt(item: ItemStack) : NBTItem(item) {
 
-    fun setInteger(identifier: NBTIdentifier, value: Int) {
+    fun setInteger(identifier: NBTIdentifier, value: Int): NBTItemExt {
         super.setInteger(identifier.toString(), value)
+        return this
     }
 
-    fun setBoolean(identifier: NBTIdentifier, value: Boolean) {
+    fun setBoolean(identifier: NBTIdentifier, value: Boolean): NBTItemExt {
         super.setBoolean(identifier.toString(), value)
+        return this
     }
 
-    fun setString(identifier: NBTIdentifier, value: String) {
+    fun setString(identifier: NBTIdentifier, value: String): NBTItemExt {
         super.setString(identifier.toString(), value)
+        return this
     }
 
-    fun setDouble(identifier: NBTIdentifier, value: Double) {
+    fun setDouble(identifier: NBTIdentifier, value: Double): NBTItemExt {
         super.setDouble(identifier.toString(), value)
+        return this
     }
 
     fun hasKey(identifier: NBTIdentifier): Boolean {
@@ -62,28 +66,32 @@ class NBTItemExt(item: ItemStack) : NBTItem(item) {
             return item.itemMeta.displayName
         }
 
-    fun addEnchantment(enchantment: Enchantment, level: Int = 1, ignoreLevelRestrictions: Boolean = true) {
+    fun addEnchantment(enchantment: Enchantment, level: Int = 1, ignoreLevelRestrictions: Boolean = true): NBTItemExt {
         val meta = item.itemMeta
         meta.addEnchant(enchantment, level, ignoreLevelRestrictions)
         item.itemMeta = meta
+        return this
     }
 
-    fun removeEnchantment(enchantment: Enchantment) {
+    fun removeEnchantment(enchantment: Enchantment): NBTItemExt {
         val meta = item.itemMeta
         meta.removeEnchant(enchantment)
         item.itemMeta = meta
+        return this
     }
 
-    fun addItemFlags(vararg flags: ItemFlag) {
+    fun addItemFlags(vararg flags: ItemFlag): NBTItemExt {
         val meta = item.itemMeta
         meta.addItemFlags(*flags)
         item.itemMeta = meta
+        return this
     }
 
-    fun removeItemFlags(vararg flags: ItemFlag) {
+    fun removeItemFlags(vararg flags: ItemFlag): NBTItemExt {
         val meta = item.itemMeta
         meta.removeItemFlags(*flags)
         item.itemMeta = meta
+        return this
     }
 
     fun clone(): NBTItemExt {
