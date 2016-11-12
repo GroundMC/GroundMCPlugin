@@ -44,7 +44,7 @@ object Friends : Table() {
         }
     }
 
-    private fun readFriendList(player: Player): Array<UUID> {
+    fun readFriendList(player: Player): Array<UUID> {
         val friendListText = select { id.eq(player.uniqueId) }.first()[friends]
 
         val bais = ByteArrayInputStream(Base64.getDecoder().decode(friendListText.toByteArray(Charsets.UTF_8)))
@@ -54,7 +54,7 @@ object Friends : Table() {
         return friendList
     }
 
-    private fun prepareFriendList(friendList: Array<UUID>): String {
+    fun prepareFriendList(friendList: Array<UUID>): String {
         val baos = ByteArrayOutputStream()
         val oos = ObjectOutputStream(baos)
         oos.writeObject(friendList)

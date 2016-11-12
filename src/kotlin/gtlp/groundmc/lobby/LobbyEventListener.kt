@@ -22,9 +22,6 @@ import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.jetbrains.exposed.sql.update
-import java.io.ByteArrayOutputStream
-import java.io.ObjectOutputStream
-import java.util.*
 
 internal class LobbyEventListener : Listener {
 
@@ -41,13 +38,8 @@ internal class LobbyEventListener : Listener {
             LobbyMain.lobbyInventoryMap[event.player] = LobbyInventoryHolder.forPlayer(event.player)
             if (Friends.select { Friends.id.eq(event.player.uniqueId) }.count() == 0) {
                 Friends.insert {
-
-                    val baos = ByteArrayOutputStream()
-                    val oos = ObjectOutputStream(baos)
-                    oos.writeObject(arrayOf(event.player.uniqueId))
-
                     it[Friends.id] = event.player.uniqueId
-                    it[Friends.friends] = Base64.getEncoder().encodeToString(baos.toByteArray())
+                    it[Friends.friends] = Friends.prepareFriendList(arrayOf(event.player.uniqueId))
                 }
             }
             val inventory = event.player.inventory
