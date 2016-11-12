@@ -54,13 +54,13 @@ class NBTItemExt(item: ItemStack) : NBTItem(item) {
 
     var displayName: String?
         set(displayName) {
-        val meta = item.itemMeta
-        meta.displayName = displayName
-        item.itemMeta = meta
-    }
+            val meta = item.itemMeta
+            meta.displayName = displayName
+            item.itemMeta = meta
+        }
         get(): String? {
-        return item.itemMeta.displayName
-    }
+            return item.itemMeta.displayName
+        }
 
     fun addEnchantment(enchantment: Enchantment, level: Int = 1, ignoreLevelRestrictions: Boolean = true) {
         val meta = item.itemMeta
@@ -86,4 +86,7 @@ class NBTItemExt(item: ItemStack) : NBTItem(item) {
         item.itemMeta = meta
     }
 
+    fun clone(): NBTItemExt {
+        return NBTItemExt(item)
+    }
 }
