@@ -25,7 +25,7 @@ class LobbyMain : JavaPlugin() {
     override fun onEnable() {
         instance = this
         loadConfig()
-        Database.connect("jdbc:h2:database", driver = "org.h2.Driver")
+        Database.connect("jdbc:h2:" + dataFolder.absolutePath + "/database", driver = "org.h2.Driver")
         transaction {
             create(Friends)
         }
