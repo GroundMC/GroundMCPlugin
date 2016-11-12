@@ -50,7 +50,7 @@ class LobbyMain : JavaPlugin() {
         })
         Bukkit.getServer().scheduler.scheduleSyncRepeatingTask(this, {
             Bukkit.getServer().onlinePlayers.filter { it.world == hubWorld }.forEach {
-                it.addPotionEffect(PotionEffect(PotionEffectType.HEAL, 200, 1, false, false), true)
+                it.addPotionEffect(PotionEffect(PotionEffectType.REGENERATION, 200, 1, false, false), true)
                 it.addPotionEffect(PotionEffect(PotionEffectType.SATURATION, 200, 1, false, false), true)
             }
         }, 20L, 20L)
