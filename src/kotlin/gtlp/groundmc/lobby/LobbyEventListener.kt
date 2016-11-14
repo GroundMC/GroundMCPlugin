@@ -10,10 +10,12 @@ import gtlp.groundmc.lobby.util.I18n
 import gtlp.groundmc.lobby.util.NBTItemExt
 import org.bukkit.*
 import org.bukkit.enchantments.Enchantment
+import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.block.BlockPlaceEvent
 import org.bukkit.event.entity.EntityDamageEvent
+import org.bukkit.event.entity.PotionSplashEvent
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.player.*
 import org.bukkit.inventory.ItemFlag
@@ -29,6 +31,14 @@ internal class LobbyEventListener : Listener {
     fun preventDamage(event: EntityDamageEvent) {
         if (event.entity.world == LobbyMain.hubWorld) {
             event.isCancelled = true
+        }
+    }
+
+    @EventHandler
+    fun removePotionEffects(event: PotionSplashEvent) {
+        if (event.entity.world == LobbyMain.hubWorld) {
+            // Remove players from affectedEntities
+            event.affectedEntities.filter { it is Player }.forEach { event.setIntensity(it, -1.0) }
         }
     }
 
