@@ -6,9 +6,9 @@ main: gtlp.groundmc.lobby.LobbyMain
 commands:
    lobby:
       description: Lobby commands
-      usage: "Usage: /<command> [command] [parameters]"
+      usage: "Usage: /<command> <command> [parameters]"
       aliases: [lb]
    friend:
       description: Friendship commands
-      usage: "Usage: /<command> [add|remove|status|online] [username]"
+      usage: "Usage: /<command> <add|remove|status|online> <username> [relation]"
       aliases: [fr]
