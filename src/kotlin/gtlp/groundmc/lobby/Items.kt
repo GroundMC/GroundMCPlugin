@@ -12,7 +12,8 @@ import org.bukkit.inventory.ItemFlag
 import org.bukkit.inventory.ItemStack
 
 /**
- * Created by Marv1 on 14.11.2016.
+ * Object holding all items with special properties that are used in
+ * this plugin.
  */
 object Items {
     val COMPASS_ITEM: NBTItemExt

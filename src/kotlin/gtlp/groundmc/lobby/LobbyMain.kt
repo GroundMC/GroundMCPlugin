@@ -104,6 +104,9 @@ class LobbyMain : JavaPlugin() {
          */
         val SILENCED_PLAYERS = mutableSetOf<Player>()
 
+        /**
+         * Common instance of this [LobbyMain] plugin.
+         */
         var instance: LobbyMain? = null
     }
 
