@@ -27,7 +27,7 @@ object I18n {
      *
      * @return The localized and parsed string or null, if the key has no translation
      */
-    fun getString(key: String, locale: Locale = Locale.US): String? {
+    fun getString(key: String, locale: Locale = Locale.US): String {
         return ChatColor.translateAlternateColorCodes(colorChar, bundleCache.get(key, locale))
     }
 
