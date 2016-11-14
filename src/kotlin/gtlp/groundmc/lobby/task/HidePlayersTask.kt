@@ -1,6 +1,7 @@
 package gtlp.groundmc.lobby.task
 
 import gtlp.groundmc.lobby.database.table.Friends
+import gtlp.groundmc.lobby.database.table.Relationships
 import gtlp.groundmc.lobby.enum.VisibilityStates
 import org.bukkit.Bukkit
 import org.jetbrains.exposed.sql.select
@@ -20,7 +21,7 @@ object HidePlayersTask : ITask {
             }
             for (player in Bukkit.getServer().onlinePlayers.filter { gtlp.groundmc.lobby.database.table.Friends.select { Friends.id.eq(it.uniqueId) }.first()[Friends.hiddenStatus] == VisibilityStates.FRIENDS }) {
                 Bukkit.getServer().onlinePlayers.forEach {
-                    if (Friends.areFriends(player, it)) {
+                    if (Relationships.areRelated(player, it)) {
                         player.showPlayer(it)
                     } else {
                         player.hidePlayer(it)

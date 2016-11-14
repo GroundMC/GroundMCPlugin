@@ -37,7 +37,7 @@ object I18n {
      * Automatically parses color codes using the {@link I18n#colorChar}
      *
      * @param key A string representing the common name for a localized string, used in resources
-     * @param locale The locale to translate to as a string. If not given, English (US)
+     * @param locale The locale to translate to as a string. If not given, [Locale.US]
      *
      * @return The localized and parsed string or null, if the key has no translation
      */

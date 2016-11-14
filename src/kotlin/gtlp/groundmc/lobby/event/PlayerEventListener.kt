@@ -30,7 +30,6 @@ class PlayerEventListener : Listener {
             if (gtlp.groundmc.lobby.database.table.Friends.select { Friends.id.eq(event.player.uniqueId) }.count() == 0) {
                 gtlp.groundmc.lobby.database.table.Friends.insert {
                     it[id] = event.player.uniqueId
-                    it[friends] = prepareFriendList(arrayOf(event.player.uniqueId))
                 }
             }
             val inventory = event.player.inventory

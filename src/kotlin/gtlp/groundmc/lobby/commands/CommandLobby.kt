@@ -1,7 +1,7 @@
 package gtlp.groundmc.lobby.commands
 
 import gtlp.groundmc.lobby.LobbyMain
-import gtlp.groundmc.lobby.database.table.Friends
+import gtlp.groundmc.lobby.database.table.Relationships
 import gtlp.groundmc.lobby.enum.GMCType
 import gtlp.groundmc.lobby.enum.NBTIdentifier
 import gtlp.groundmc.lobby.enum.Permission
@@ -51,7 +51,7 @@ class CommandLobby : ILobbyCommand {
                 }
                 "debug" -> {
                     if (sender is Player) {
-                        Friends.addFriend(sender, Bukkit.getServer().getPlayer(args[1]))
+                        Relationships.addRelationship(sender, Bukkit.getServer().getPlayer(args[1]))
                     }
                     return true
                 }

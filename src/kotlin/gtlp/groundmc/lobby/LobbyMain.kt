@@ -2,6 +2,7 @@ package gtlp.groundmc.lobby
 
 import gtlp.groundmc.lobby.commands.CommandLobby
 import gtlp.groundmc.lobby.database.table.Friends
+import gtlp.groundmc.lobby.database.table.Relationships
 import gtlp.groundmc.lobby.event.EntityEventListener
 import gtlp.groundmc.lobby.event.InventoryClickEventListener
 import gtlp.groundmc.lobby.event.MiscEventListener
@@ -32,6 +33,7 @@ class LobbyMain : JavaPlugin() {
         Database.connect("jdbc:h2:" + dataFolder.absolutePath + "/database", driver = "org.h2.Driver")
         transaction {
             create(Friends)
+            create(Relationships)
         }
         Bukkit.getServer().pluginManager.registerEvents(EntityEventListener(), this)
         Bukkit.getServer().pluginManager.registerEvents(InventoryClickEventListener(), this)
