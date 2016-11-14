@@ -2,7 +2,6 @@ package gtlp.groundmc.lobby
 
 import gtlp.groundmc.lobby.commands.CommandLobby
 import gtlp.groundmc.lobby.database.table.Friends
-import gtlp.groundmc.lobby.enum.VisibilityStates
 import gtlp.groundmc.lobby.event.EntityEventListener
 import gtlp.groundmc.lobby.event.InventoryClickEventListener
 import gtlp.groundmc.lobby.event.MiscEventListener
@@ -10,6 +9,8 @@ import gtlp.groundmc.lobby.event.PlayerEventListener
 import gtlp.groundmc.lobby.inventory.LobbyInventory
 import gtlp.groundmc.lobby.inventory.LobbyInventoryHolder
 import gtlp.groundmc.lobby.registry.LobbyCommandRegistry
+import gtlp.groundmc.lobby.task.ApplyPlayerEffectsTask
+import gtlp.groundmc.lobby.task.HidePlayersTask
 import org.bukkit.Bukkit
 import org.bukkit.Difficulty
 import org.bukkit.World
@@ -19,11 +20,8 @@ import org.bukkit.entity.HumanEntity
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import org.bukkit.plugin.java.JavaPlugin
-import org.bukkit.potion.PotionEffect
-import org.bukkit.potion.PotionEffectType
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils.create
-import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction
 
 class LobbyMain : JavaPlugin() {
@@ -55,36 +53,9 @@ class LobbyMain : JavaPlugin() {
                 setGameRuleValue("reducedDebugInfo", "true")
             }
         })
-        Bukkit.getServer().scheduler.scheduleSyncRepeatingTask(this, {
-            Bukkit.getServer().onlinePlayers.filter { it.world == hubWorld }.forEach {
-                it.addPotionEffect(PotionEffect(PotionEffectType.REGENERATION, 200, 1, false, false), true)
-                it.addPotionEffect(PotionEffect(PotionEffectType.SATURATION, 200, 1, false, false), true)
-            }
-        }, 20L, 20L)
-        Bukkit.getServer().scheduler.scheduleSyncRepeatingTask(this, hidePlayersTask(), 20L, 2 * 20L)
+        Bukkit.getServer().scheduler.scheduleSyncRepeatingTask(this, ApplyPlayerEffectsTask, 20L, 20L)
+        Bukkit.getServer().scheduler.scheduleSyncRepeatingTask(this, HidePlayersTask, 20L, 2 * 20L)
         hubWorld?.difficulty = Difficulty.PEACEFUL
-    }
-
-    private fun hidePlayersTask(): () -> Unit {
-        return {
-            transaction {
-                for (player in Bukkit.getServer().onlinePlayers.filter { Friends.select { Friends.id.eq(it.uniqueId) }.first()[Friends.hiddenStatus] == VisibilityStates.ALL }) {
-                    Bukkit.getServer().onlinePlayers.forEach { player.showPlayer(it) }
-                }
-                for (player in Bukkit.getServer().onlinePlayers.filter { Friends.select { Friends.id.eq(it.uniqueId) }.first()[Friends.hiddenStatus] in setOf(VisibilityStates.NONE) }) {
-                    Bukkit.getServer().onlinePlayers.forEach { player.hidePlayer(it) }
-                }
-                for (player in Bukkit.getServer().onlinePlayers.filter { Friends.select { Friends.id.eq(it.uniqueId) }.first()[Friends.hiddenStatus] == VisibilityStates.FRIENDS }) {
-                    Bukkit.getServer().onlinePlayers.forEach {
-                        if (Friends.areFriends(player, it)) {
-                            player.showPlayer(it)
-                        } else {
-                            player.hidePlayer(it)
-                        }
-                    }
-                }
-            }
-        }
     }
 
     private fun loadConfig() {
