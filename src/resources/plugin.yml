@@ -8,3 +8,7 @@ commands:
       description: Lobby commands
       usage: "Usage: /<command> [command] [parameters]"
       aliases: [lb]
+   friend:
+      description: Friendship commands
+      usage: "Usage: /<command> [add|remove|status|online] [username]"
+      aliases: [fr]
