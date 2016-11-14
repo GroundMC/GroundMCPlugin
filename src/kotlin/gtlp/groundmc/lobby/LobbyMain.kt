@@ -65,7 +65,7 @@ class LobbyMain : JavaPlugin() {
         saveDefaultConfig()
         if (config.contains("inventory.content") && config.get("inventory.content") is List<*>) {
             @Suppress("unchecked_cast")
-            LobbyInventory.TEMPLATE_INVENTORY.contents = (config.get("inventory.content") as List<ItemStack>).toTypedArray<ItemStack>()
+            LobbyInventory.TEMPLATE_INVENTORY.contents = (config.get("inventory.content") as List<ItemStack>).toTypedArray()
         }
         hubWorld = Bukkit.getWorlds().first { it.name == config.getString("hub.world") }
     }
