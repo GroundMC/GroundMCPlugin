@@ -3,6 +3,10 @@ package gtlp.groundmc.lobby
 import gtlp.groundmc.lobby.commands.CommandLobby
 import gtlp.groundmc.lobby.database.table.Friends
 import gtlp.groundmc.lobby.enum.VisibilityStates
+import gtlp.groundmc.lobby.event.EntityEventListener
+import gtlp.groundmc.lobby.event.InventoryClickEventListener
+import gtlp.groundmc.lobby.event.MiscEventListener
+import gtlp.groundmc.lobby.event.PlayerEventListener
 import gtlp.groundmc.lobby.inventory.LobbyInventory
 import gtlp.groundmc.lobby.inventory.LobbyInventoryHolder
 import gtlp.groundmc.lobby.registry.LobbyCommandRegistry
@@ -31,7 +35,10 @@ class LobbyMain : JavaPlugin() {
         transaction {
             create(Friends)
         }
-        Bukkit.getServer().pluginManager.registerEvents(LobbyEventListener(), this)
+        Bukkit.getServer().pluginManager.registerEvents(EntityEventListener(), this)
+        Bukkit.getServer().pluginManager.registerEvents(InventoryClickEventListener(), this)
+        Bukkit.getServer().pluginManager.registerEvents(MiscEventListener(), this)
+        Bukkit.getServer().pluginManager.registerEvents(PlayerEventListener(), this)
         registerCommands()
         Bukkit.getServer().scheduler.scheduleSyncDelayedTask(this, {
             hubWorld?.apply {
