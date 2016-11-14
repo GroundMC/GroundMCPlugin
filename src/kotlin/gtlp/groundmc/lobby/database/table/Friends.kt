@@ -13,7 +13,7 @@ import java.io.ObjectOutputStream
 import java.util.*
 
 /**
- * Created by Marvin on 11.11.2016.
+ * Table to hold players' settings and friends
  */
 object Friends : Table() {
     val id = uuid("playerId").primaryKey().uniqueIndex()
@@ -50,6 +50,7 @@ object Friends : Table() {
         val bais = ByteArrayInputStream(Base64.getDecoder().decode(friendListText.toByteArray(Charsets.UTF_8)))
         val ois = ObjectInputStream(bais)
 
+        @Suppress("unchecked_cast")
         val friendList = ois.readObject() as Array<UUID>
         return friendList
     }
