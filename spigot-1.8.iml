@@ -15,5 +15,6 @@
     <orderEntry type="library" name="h2-1.4.193" level="project" />
     <orderEntry type="library" name="slf4j-api-1.7.21" level="project" />
     <orderEntry type="library" name="com.googlecode.json-simple:json-simple:1.1.1" level="project" />
+    <orderEntry type="library" name="joda-time-2.5" level="project" />
   </component>
 </module>
