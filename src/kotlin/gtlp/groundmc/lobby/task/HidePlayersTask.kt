@@ -6,7 +6,10 @@ import org.bukkit.Bukkit
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction
 
-object HidePlayersTask : Runnable {
+object HidePlayersTask : ITask {
+    override val delay: Long = 20L
+    override val period: Long = 40L
+
     override fun run() {
         transaction {
             for (player in Bukkit.getServer().onlinePlayers.filter { gtlp.groundmc.lobby.database.table.Friends.select { Friends.id.eq(it.uniqueId) }.first()[Friends.hiddenStatus] == VisibilityStates.ALL }) {
