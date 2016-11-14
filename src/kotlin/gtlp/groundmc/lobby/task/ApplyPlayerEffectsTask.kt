@@ -5,9 +5,6 @@ import org.bukkit.Bukkit
 import org.bukkit.potion.PotionEffect
 import org.bukkit.potion.PotionEffectType
 
-/**
- * Created by Marv1 on 14.11.2016.
- */
 object ApplyPlayerEffectsTask : Runnable {
     override fun run() {
         Bukkit.getServer().onlinePlayers.filter { it.world == LobbyMain.hubWorld }.forEach {

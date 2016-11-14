@@ -6,9 +6,6 @@ import org.bukkit.Bukkit
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction
 
-/**
- * Created by Marv1 on 14.11.2016.
- */
 object HidePlayersTask : Runnable {
     override fun run() {
         transaction {
