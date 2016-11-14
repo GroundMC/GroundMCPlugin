@@ -17,7 +17,7 @@ interface ILobbyCommand {
     /**
      * Message(s) that list help content for this command
      */
-    fun getCommandHelp(locale: Locale): Array<String?>
+    fun getCommandHelp(locale: Locale): Array<String>
 
     /**
      * Generates and returns a list of possible autocompletion entries
