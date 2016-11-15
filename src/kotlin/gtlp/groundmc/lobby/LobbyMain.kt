@@ -38,6 +38,7 @@ class LobbyMain : JavaPlugin() {
             create(Meta)
             create(Friends)
             create(Relationships)
+            Meta.upgradeDatabase()
         }
         Bukkit.getServer().pluginManager.registerEvents(EntityEventListener(), this)
         Bukkit.getServer().pluginManager.registerEvents(InventoryClickEventListener(), this)
