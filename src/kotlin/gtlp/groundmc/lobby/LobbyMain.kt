@@ -1,7 +1,9 @@
 package gtlp.groundmc.lobby
 
 import gtlp.groundmc.lobby.commands.CommandLobby
+import gtlp.groundmc.lobby.commands.CommandVanish
 import gtlp.groundmc.lobby.database.table.Friends
+import gtlp.groundmc.lobby.database.table.Meta
 import gtlp.groundmc.lobby.database.table.Relationships
 import gtlp.groundmc.lobby.event.EntityEventListener
 import gtlp.groundmc.lobby.event.InventoryClickEventListener
@@ -12,6 +14,7 @@ import gtlp.groundmc.lobby.inventory.LobbyInventoryHolder
 import gtlp.groundmc.lobby.registry.LobbyCommandRegistry
 import gtlp.groundmc.lobby.task.ApplyPlayerEffectsTask
 import gtlp.groundmc.lobby.task.HidePlayersTask
+import gtlp.groundmc.lobby.task.SetRulesTask
 import org.bukkit.Bukkit
 import org.bukkit.Difficulty
 import org.bukkit.World
@@ -32,6 +35,7 @@ class LobbyMain : JavaPlugin() {
         loadConfig()
         Database.connect("jdbc:h2:" + dataFolder.absolutePath + "/database", driver = "org.h2.Driver")
         transaction {
+            create(Meta)
             create(Friends)
             create(Relationships)
         }
@@ -40,23 +44,9 @@ class LobbyMain : JavaPlugin() {
         Bukkit.getServer().pluginManager.registerEvents(MiscEventListener(), this)
         Bukkit.getServer().pluginManager.registerEvents(PlayerEventListener(), this)
         registerCommands()
-        Bukkit.getServer().scheduler.scheduleSyncDelayedTask(this, {
-            hubWorld?.apply {
-                setGameRuleValue("doDaylightCycle", "false")
-                setGameRuleValue("doEntityDrops", "false")
-                setGameRuleValue("doFireTick", "false")
-                setGameRuleValue("doMobLoot", "false")
-                setGameRuleValue("doMobSpawning", "false")
-                setGameRuleValue("doTileDrops", "false")
-                setGameRuleValue("doWeatherCycle", "false")
-                setGameRuleValue("mobGriefing", "false")
-                setGameRuleValue("randomTickSpeed", "0")
-                setGameRuleValue("showDeathMessages", "false")
-                setGameRuleValue("reducedDebugInfo", "true")
-            }
-        })
-        Bukkit.getServer().scheduler.scheduleSyncRepeatingTask(this, ApplyPlayerEffectsTask, 20L, 20L)
-        Bukkit.getServer().scheduler.scheduleSyncRepeatingTask(this, HidePlayersTask, 20L, 2 * 20L)
+        Bukkit.getServer().scheduler.scheduleSyncDelayedTask(this, SetRulesTask, SetRulesTask.delay)
+        Bukkit.getServer().scheduler.scheduleSyncRepeatingTask(this, ApplyPlayerEffectsTask, ApplyPlayerEffectsTask.delay, ApplyPlayerEffectsTask.period)
+        Bukkit.getServer().scheduler.scheduleSyncRepeatingTask(this, HidePlayersTask, HidePlayersTask.delay, HidePlayersTask.period)
         hubWorld?.difficulty = Difficulty.PEACEFUL
     }
 
@@ -74,6 +64,7 @@ class LobbyMain : JavaPlugin() {
 
     private fun registerCommands() {
         LobbyCommandRegistry.registerCommand(CommandLobby())
+        LobbyCommandRegistry.registerCommand(CommandVanish())
     }
 
     override fun onDisable() {

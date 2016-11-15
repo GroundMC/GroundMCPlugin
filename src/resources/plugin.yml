@@ -12,3 +12,7 @@ commands:
       description: Friendship commands
       usage: "Usage: /<command> <add|remove|status|online> <username> [relation]"
       aliases: [fr]
+   vanish:
+      description: Vanish yourself
+      usage: "Usage: /<command>"
+      aliases: /v

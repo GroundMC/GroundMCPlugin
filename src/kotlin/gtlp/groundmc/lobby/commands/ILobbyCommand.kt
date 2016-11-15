@@ -10,7 +10,7 @@ import java.util.*
 interface ILobbyCommand {
 
     /**
-     * Name of the command (used as identifier)
+     * Name of the command (used as id)
      */
     val name: String
 

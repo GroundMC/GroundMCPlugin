@@ -28,6 +28,11 @@ object HidePlayersTask : ITask {
                     }
                 }
             }
+            Bukkit.getServer().onlinePlayers.forEach {
+                for (resultRow in Friends.select { Friends.vanishStatus eq true }) {
+                    it.hidePlayer(Bukkit.getPlayer(resultRow[Friends.id]))
+                }
+            }
         }
     }
 }

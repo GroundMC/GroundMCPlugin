@@ -10,4 +10,5 @@ object Friends : Table() {
     val id = uuid("playerId").primaryKey().uniqueIndex()
     val silentStatus = bool("silent_status").default(false)
     val hiddenStatus = enumeration("hidden_status", VisibilityStates::class.java).default(VisibilityStates.ALL)
+    val vanishStatus = bool("vanish_status").default(false)
 }
