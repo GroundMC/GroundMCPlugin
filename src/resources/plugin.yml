@@ -6,7 +6,7 @@ main: gtlp.groundmc.lobby.LobbyMain
 commands:
    lobby:
       description: Lobby commands
-      usage: "Usage: /<command> <command> [parameters]"
+      usage: "Usage: /<command> <additem|help|maketp> [parameters]"
       aliases: [lb]
    friend:
       description: Friendship commands
