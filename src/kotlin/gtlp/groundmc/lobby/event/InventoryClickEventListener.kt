@@ -10,6 +10,7 @@ import gtlp.groundmc.lobby.util.NBTItemExt
 import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.Particle
+import org.bukkit.Sound
 import org.bukkit.enchantments.Enchantment
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
@@ -32,6 +33,7 @@ class InventoryClickEventListener : Listener {
                     if (nbtItem.getInteger(NBTIdentifier.TYPE) == GMCType.TP.ordinal) {
                         if (event.whoClicked.teleport(Location(Bukkit.getWorld(nbtItem.getString(NBTIdentifier.LOC_WORLD)), nbtItem.getDouble(NBTIdentifier.LOC_X), nbtItem.getDouble(NBTIdentifier.LOC_Y), nbtItem.getDouble(NBTIdentifier.LOC_Z)), PlayerTeleportEvent.TeleportCause.PLUGIN)) {
                             val location = event.whoClicked.location
+                            event.whoClicked.world.playSound(location, Sound.BLOCK_PORTAL_TRAVEL, 1.0f, 1.0f)
                             event.whoClicked.world.spawnParticle(Particle.PORTAL, location, 100)
                             event.whoClicked.world.spawnParticle(Particle.SMOKE_LARGE, location, 100)
                         }
