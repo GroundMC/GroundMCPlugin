@@ -8,8 +8,8 @@ import gtlp.groundmc.lobby.enum.NBTIdentifier
 import gtlp.groundmc.lobby.enum.VisibilityStates
 import gtlp.groundmc.lobby.util.NBTItemExt
 import org.bukkit.Bukkit
-import org.bukkit.Effect
 import org.bukkit.Location
+import org.bukkit.Particle
 import org.bukkit.enchantments.Enchantment
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
@@ -31,8 +31,9 @@ class InventoryClickEventListener : Listener {
                 if (nbtItem.hasKey(NBTIdentifier.PREFIX)) {
                     if (nbtItem.getInteger(NBTIdentifier.TYPE) == GMCType.TP.ordinal) {
                         if (event.whoClicked.teleport(Location(Bukkit.getWorld(nbtItem.getString(NBTIdentifier.LOC_WORLD)), nbtItem.getDouble(NBTIdentifier.LOC_X), nbtItem.getDouble(NBTIdentifier.LOC_Y), nbtItem.getDouble(NBTIdentifier.LOC_Z)), PlayerTeleportEvent.TeleportCause.PLUGIN)) {
-                            event.whoClicked.world.spigot().playEffect(event.whoClicked.location, Effect.PORTAL_TRAVEL)
-                            event.whoClicked.world.spigot().playEffect(event.whoClicked.location, Effect.LARGE_SMOKE, 0, 0, 1f, 1f, 1f, 0.1f, 100, 1)
+                            val location = event.whoClicked.location
+                            event.whoClicked.world.spawnParticle(Particle.PORTAL, location, 100)
+                            event.whoClicked.world.spawnParticle(Particle.SMOKE_LARGE, location, 100)
                         }
                     }
                 }
