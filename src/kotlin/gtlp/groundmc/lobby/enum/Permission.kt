@@ -9,6 +9,4 @@ enum class Permission constructor(val id: String) {
     HIDE_PLAYERS("groundmc.lobby.hide_players"),
     SILENT("groundmc.lobby.silent"),
     VANISH("groundmc.lobby.vanish");
-
-    override fun toString(): String = id
 }

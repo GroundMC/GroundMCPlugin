@@ -34,7 +34,7 @@ class PlayerEventListener : Listener {
             }
             val inventory = event.player.inventory
             inventory.setItem(0, Items.COMPASS_ITEM.item.clone())
-            if (event.player.hasPermission(Permission.SILENT.toString())) {
+            if (event.player.hasPermission(Permission.SILENT.id) || event.player.hasPermission(Permission.ADMIN.id)) {
                 val silentItem = NBTItemExt(Items.SILENT_ITEM.item.clone())
                 val silent = gtlp.groundmc.lobby.database.table.Friends.select { Friends.id.eq(event.player.uniqueId) }.first()[Friends.silentStatus]
                 silentItem.displayName = I18n.getString(if (silent) "silentitem.on" else "silentitem.off")
@@ -44,7 +44,7 @@ class PlayerEventListener : Listener {
                 }
                 inventory.setItem(1, silentItem.item)
             }
-            if (event.player.hasPermission(Permission.HIDE_PLAYERS.toString())) {
+            if (event.player.hasPermission(Permission.HIDE_PLAYERS.id) || event.player.hasPermission(Permission.ADMIN.id)) {
                 val nbtItem = Items.HIDE_PLAYERS_ITEM.clone()
                 val hideState = gtlp.groundmc.lobby.database.table.Friends.select { Friends.id.eq(event.player.uniqueId) }.first()[Friends.hiddenStatus]
                 LobbyMain.lobbyInventoryMap[event.player]!!.hidePlayerInventory.contents.filterNotNull().first { NBTItemExt(it).getInteger(NBTIdentifier.HIDE_STATE) == hideState.ordinal }.apply {
@@ -55,7 +55,7 @@ class PlayerEventListener : Listener {
                 }
                 inventory.setItem(2, nbtItem.item)
             }
-            if (!event.player.hasPermission(Permission.ADMIN.toString())) {
+            if (!event.player.hasPermission(Permission.ADMIN.id)) {
                 event.player.gameMode = GameMode.ADVENTURE
             } else {
                 event.player.gameMode = GameMode.CREATIVE

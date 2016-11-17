@@ -25,7 +25,7 @@ class CommandVanish : ILobbyCommand {
 
     override fun execute(sender: CommandSender, command: Command, label: String, args: Array<String>?): Boolean {
         if (sender is Player) {
-            if (sender.hasPermission(Permission.VANISH.id)) {
+            if (sender.hasPermission(Permission.VANISH.id) || sender.hasPermission(Permission.ADMIN.id)) {
                 transaction {
                     val isVanished = Friends.select { Friends.id eq sender.uniqueId }.first()[Friends.vanishStatus]
                     Friends.update({ Friends.id eq sender.uniqueId }) {

@@ -66,7 +66,7 @@ class CommandLobby : ILobbyCommand {
 
     private fun addItem(sender: CommandSender): Boolean {
         if (sender is Player) {
-            if (sender.hasPermission(Permission.ADMIN.toString())) {
+            if (sender.hasPermission(Permission.ADMIN.id)) {
                 thread {
                     val view = sender.openInventory(LobbyInventory.TEMPLATE_INVENTORY)
                     sender.sendMessage(I18n.getString("commandlobby.30seconds", sender.spigot().locale))
@@ -92,7 +92,7 @@ class CommandLobby : ILobbyCommand {
 
     private fun makeTp(args: Array<String>, sender: CommandSender): Boolean {
         if (sender is Player) {
-            if (sender.hasPermission(Permission.ADMIN.toString()) && args.size >= 2 && !args[1].isNullOrBlank()) {
+            if (sender.hasPermission(Permission.ADMIN.id) && args.size >= 2 && !args[1].isNullOrBlank()) {
                 val nbtItem = NBTItemExt(sender.inventory.itemInMainHand)
                 nbtItem.setBoolean(NBTIdentifier.PREFIX, true)
                 nbtItem.setInteger(NBTIdentifier.TYPE, GMCType.TP.ordinal)
