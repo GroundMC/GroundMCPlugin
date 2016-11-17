@@ -11,6 +11,7 @@ import gtlp.groundmc.lobby.util.I18n
 import gtlp.groundmc.lobby.util.NBTItemExt
 import org.bukkit.GameMode
 import org.bukkit.enchantments.Enchantment
+import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.player.*
@@ -23,20 +24,38 @@ import org.jetbrains.exposed.sql.update
  * Created by Marv1 on 14.11.2016.
  */
 class PlayerEventListener : Listener {
+
+    @EventHandler
+    fun onPlayerChangeWorld(event: PlayerChangedWorldEvent) {
+        if (event.from == LobbyMain.hubWorld) {
+            event.player.inventory.apply {
+                setItem(0, null)
+                setItem(1, null)
+                setItem(2, null)
+            }
+        } else if (event.player.world == LobbyMain.hubWorld) {
+            addItemsToInventory(event.player)
+        }
+    }
+
     @EventHandler
     fun onPlayerLogin(event: PlayerJoinEvent) {
+        addItemsToInventory(event.player)
+    }
+
+    private fun addItemsToInventory(player: Player) {
         transaction {
-            LobbyMain.lobbyInventoryMap[event.player] = LobbyInventoryHolder.forPlayer(event.player)
-            if (gtlp.groundmc.lobby.database.table.Friends.select { Friends.id.eq(event.player.uniqueId) }.count() == 0) {
-                gtlp.groundmc.lobby.database.table.Friends.insert {
-                    it[id] = event.player.uniqueId
+            LobbyMain.lobbyInventoryMap[player] = LobbyInventoryHolder.forPlayer(player)
+            if (Friends.select { Friends.id.eq(player.uniqueId) }.count() == 0) {
+                Friends.insert {
+                    it[id] = player.uniqueId
                 }
             }
-            val inventory = event.player.inventory
+            val inventory = player.inventory
             inventory.setItem(0, Items.COMPASS_ITEM.item.clone())
-            if (event.player.hasPermission(Permission.SILENT.id) || event.player.hasPermission(Permission.ADMIN.id)) {
+            if (player.hasPermission(Permission.SILENT.id) || player.hasPermission(Permission.ADMIN.id)) {
                 val silentItem = NBTItemExt(Items.SILENT_ITEM.item.clone())
-                val silent = gtlp.groundmc.lobby.database.table.Friends.select { Friends.id.eq(event.player.uniqueId) }.first()[Friends.silentStatus]
+                val silent = Friends.select { Friends.id.eq(player.uniqueId) }.first()[Friends.silentStatus]
                 silentItem.displayName = I18n.getString(if (silent) "silentitem.on" else "silentitem.off")
                 silentItem.setBoolean(NBTIdentifier.SILENT_STATE, silent)
                 if (silent) {
@@ -44,10 +63,10 @@ class PlayerEventListener : Listener {
                 }
                 inventory.setItem(1, silentItem.item)
             }
-            if (event.player.hasPermission(Permission.HIDE_PLAYERS.id) || event.player.hasPermission(Permission.ADMIN.id)) {
+            if (player.hasPermission(Permission.HIDE_PLAYERS.id) || player.hasPermission(Permission.ADMIN.id)) {
                 val nbtItem = Items.HIDE_PLAYERS_ITEM.clone()
-                val hideState = gtlp.groundmc.lobby.database.table.Friends.select { Friends.id.eq(event.player.uniqueId) }.first()[Friends.hiddenStatus]
-                LobbyMain.lobbyInventoryMap[event.player]!!.hidePlayerInventory.contents.filterNotNull().first { NBTItemExt(it).getInteger(NBTIdentifier.HIDE_STATE) == hideState.ordinal }.apply {
+                val hideState = Friends.select { Friends.id.eq(player.uniqueId) }.first()[Friends.hiddenStatus]
+                LobbyMain.lobbyInventoryMap[player]!!.hidePlayerInventory.contents.filterNotNull().first { NBTItemExt(it).getInteger(NBTIdentifier.HIDE_STATE) == hideState.ordinal }.apply {
                     this.itemMeta = NBTItemExt(this).addEnchantment(Enchantment.LUCK).item.itemMeta
                     nbtItem.displayName = itemMeta.displayName
                     nbtItem.addEnchantment(Enchantment.LUCK)
@@ -55,10 +74,10 @@ class PlayerEventListener : Listener {
                 }
                 inventory.setItem(2, nbtItem.item)
             }
-            if (!event.player.hasPermission(Permission.ADMIN.id)) {
-                event.player.gameMode = GameMode.ADVENTURE
+            if (!player.hasPermission(Permission.ADMIN.id)) {
+                player.gameMode = GameMode.ADVENTURE
             } else {
-                event.player.gameMode = GameMode.CREATIVE
+                player.gameMode = GameMode.CREATIVE
             }
         }
     }
