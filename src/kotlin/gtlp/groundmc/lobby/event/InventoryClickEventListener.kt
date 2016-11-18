@@ -35,7 +35,7 @@ class InventoryClickEventListener : Listener {
                             val location = event.whoClicked.location
                             event.whoClicked.world.playSound(location, Sound.BLOCK_PORTAL_TRAVEL, 1.0f, 1.0f)
                             event.whoClicked.world.spawnParticle(Particle.PORTAL, location, 100)
-                            event.whoClicked.world.spawnParticle(Particle.SMOKE_LARGE, location, 100)
+                            event.whoClicked.world.spawnParticle(Particle.SMOKE_LARGE, location, 1000, 0.1, 0.1, 0.1)
                         }
                     }
                 }
