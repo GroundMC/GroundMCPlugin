@@ -25,7 +25,7 @@ import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import org.bukkit.plugin.java.JavaPlugin
 import org.jetbrains.exposed.sql.Database
-import org.jetbrains.exposed.sql.SchemaUtils.create
+import org.jetbrains.exposed.sql.SchemaUtils.createMissingTablesAndColumns
 import org.jetbrains.exposed.sql.transactions.transaction
 
 class LobbyMain : JavaPlugin() {
@@ -35,9 +35,7 @@ class LobbyMain : JavaPlugin() {
         loadConfig()
         Database.connect("jdbc:h2:" + dataFolder.absolutePath + "/database", driver = "org.h2.Driver")
         transaction {
-            create(Meta)
-            create(Friends)
-            create(Relationships)
+            createMissingTablesAndColumns(Meta, Friends, Relationships)
             Meta.upgradeDatabase()
         }
         Bukkit.getServer().pluginManager.registerEvents(EntityEventListener(), this)
@@ -70,9 +68,6 @@ class LobbyMain : JavaPlugin() {
 
     override fun onDisable() {
         saveConfig()
-        transaction {
-            commit()
-        }
     }
 
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<String>?): Boolean {
