@@ -70,7 +70,12 @@ class CommandLobby : ILobbyCommand {
                 thread {
                     val view = sender.openInventory(LobbyInventory.TEMPLATE_INVENTORY)
                     sender.sendMessage(I18n.getString("commandlobby.30seconds", sender.spigot().locale))
-                    Thread.sleep(30000)
+                    for (i in 0..30) {
+                        if (sender.openInventory != view) {
+                            break
+                        }
+                        Thread.sleep(1000)
+                    }
                     saveTemplate()
                     sender.sendMessage(I18n.getString("commandlobby.inventorydone", sender.spigot().locale))
                     if (sender.openInventory == view) {
