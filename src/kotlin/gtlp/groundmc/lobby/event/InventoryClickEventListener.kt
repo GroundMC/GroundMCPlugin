@@ -31,7 +31,7 @@ class InventoryClickEventListener : Listener {
                 val nbtItem = NBTItemExt(event.currentItem)
                 if (nbtItem.hasKey(NBTIdentifier.PREFIX)) {
                     if (nbtItem.getInteger(NBTIdentifier.TYPE) == GMCType.TP.ordinal) {
-                        if (event.whoClicked.teleport(Location(Bukkit.getWorld(nbtItem.getString(NBTIdentifier.LOC_WORLD)), nbtItem.getDouble(NBTIdentifier.LOC_X), nbtItem.getDouble(NBTIdentifier.LOC_Y), nbtItem.getDouble(NBTIdentifier.LOC_Z)), PlayerTeleportEvent.TeleportCause.PLUGIN)) {
+                        if (event.whoClicked.teleport(Location(Bukkit.getWorld(nbtItem.getString(NBTIdentifier.LOC_WORLD)), nbtItem.getDouble(NBTIdentifier.LOC_X), nbtItem.getDouble(NBTIdentifier.LOC_Y), nbtItem.getDouble(NBTIdentifier.LOC_Z), nbtItem.getDouble(NBTIdentifier.ROT_X).toFloat(), nbtItem.getDouble(NBTIdentifier.ROT_Y).toFloat()), PlayerTeleportEvent.TeleportCause.PLUGIN)) {
                             val location = event.whoClicked.location
                             event.whoClicked.world.playSound(location, Sound.BLOCK_PORTAL_TRAVEL, 1.0f, 1.0f)
                             event.whoClicked.world.spawnParticle(Particle.PORTAL, location, 100)

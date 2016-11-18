@@ -99,6 +99,8 @@ class CommandLobby : ILobbyCommand {
                 nbtItem.setDouble(NBTIdentifier.LOC_X, sender.location.x)
                 nbtItem.setDouble(NBTIdentifier.LOC_Y, sender.location.y)
                 nbtItem.setDouble(NBTIdentifier.LOC_Z, sender.location.z)
+                nbtItem.setDouble(NBTIdentifier.ROT_X, sender.location.yaw.toDouble())
+                nbtItem.setDouble(NBTIdentifier.ROT_Y, sender.location.pitch.toDouble())
                 nbtItem.setString(NBTIdentifier.LOC_WORLD, sender.location.world.name)
                 nbtItem.displayName = args.sliceArray(IntRange(1, args.size - 1)).reduce { left, right -> left + " " + right }
                 sender.inventory.itemInMainHand = nbtItem.item

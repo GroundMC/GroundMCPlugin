@@ -9,6 +9,8 @@ enum class NBTIdentifier(identifier: String) {
     LOC_X("x"),
     LOC_Y("y"),
     LOC_Z("z"),
+    ROT_X("rx"),
+    ROT_Y("ry"),
     LOC_WORLD("w"),
     SILENT_STATE("silent"),
     HIDE_STATE("hide");
