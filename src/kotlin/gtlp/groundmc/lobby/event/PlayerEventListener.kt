@@ -10,10 +10,12 @@ import gtlp.groundmc.lobby.inventory.LobbyInventoryHolder
 import gtlp.groundmc.lobby.util.I18n
 import gtlp.groundmc.lobby.util.NBTItemExt
 import org.bukkit.GameMode
+import org.bukkit.Material
 import org.bukkit.enchantments.Enchantment
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
+import org.bukkit.event.block.Action
 import org.bukkit.event.player.*
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.select
@@ -152,6 +154,14 @@ class PlayerEventListener : Listener {
         when (event.item) {
             Items.COMPASS_ITEM.item -> event.player.openInventory(LobbyMain.lobbyInventoryMap[event.player]?.lobbyInventory)
             Items.HIDE_PLAYERS_ITEM.item -> event.player.openInventory(LobbyMain.lobbyInventoryMap[event.player]?.hidePlayerInventory)
+        }
+    }
+
+    @EventHandler
+    fun launchPlayerForward(event: PlayerInteractEvent) {
+        if (event.clickedBlock.type == Material.GOLD_PLATE && event.player.world == LobbyMain.hubWorld && event.action == Action.PHYSICAL) {
+            event.player.velocity = event.player.location.direction.setY(0.5).multiply(3)
+            event.isCancelled = true
         }
     }
 }
