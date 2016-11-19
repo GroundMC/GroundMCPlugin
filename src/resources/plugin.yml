@@ -15,4 +15,4 @@ commands:
    vanish:
       description: Vanish yourself
       usage: "Usage: /<command>"
-      aliases: /v
+      aliases: [v]
