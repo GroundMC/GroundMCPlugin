@@ -9,6 +9,8 @@ import gtlp.groundmc.lobby.inventory.LobbyInventory
 import gtlp.groundmc.lobby.util.I18n
 import gtlp.groundmc.lobby.util.I18nUtils
 import gtlp.groundmc.lobby.util.NBTItemExt
+import net.md_5.bungee.api.chat.ClickEvent
+import net.md_5.bungee.api.chat.TextComponent
 import org.bukkit.Bukkit
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
@@ -110,7 +112,9 @@ class CommandLobby : ILobbyCommand {
                 nbtItem.displayName = args.sliceArray(IntRange(1, args.size - 1)).reduce { left, right -> left + " " + right }
                 sender.inventory.itemInMainHand = nbtItem.item
 
-                sender.sendMessage(I18n.getString("commandlobby.placeitem", sender.spigot().locale))
+                val msg = TextComponent(I18n.getString("commandlobby.placeitem", sender.spigot().locale))
+                msg.clickEvent = ClickEvent(ClickEvent.Action.RUN_COMMAND, "/lobby additem")
+                sender.spigot().sendMessage(msg)
                 return true
             } else if (!sender.hasPermission("groundmc.lobby.admin")) {
                 sender.sendMessage(I18n.getString("nopermission", sender.spigot().locale))
