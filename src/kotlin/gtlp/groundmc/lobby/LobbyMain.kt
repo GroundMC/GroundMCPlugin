@@ -27,6 +27,9 @@ import org.bukkit.plugin.java.JavaPlugin
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils.createMissingTablesAndColumns
 import org.jetbrains.exposed.sql.transactions.transaction
+import org.mcstats.Metrics
+import java.io.IOException
+
 
 class LobbyMain : JavaPlugin() {
 
@@ -47,6 +50,14 @@ class LobbyMain : JavaPlugin() {
         Bukkit.getServer().scheduler.scheduleSyncRepeatingTask(this, ApplyPlayerEffectsTask, ApplyPlayerEffectsTask.delay, ApplyPlayerEffectsTask.period)
         Bukkit.getServer().scheduler.scheduleSyncRepeatingTask(this, HidePlayersTask, HidePlayersTask.delay, HidePlayersTask.period)
         hubWorld?.difficulty = Difficulty.PEACEFUL
+
+        try {
+            val metrics = Metrics(this)
+            metrics.start()
+        } catch (e: IOException) {
+            // Failed to submit the stats :-(
+        }
+
     }
 
     private fun loadConfig() {
