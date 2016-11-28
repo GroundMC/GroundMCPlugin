@@ -35,7 +35,6 @@ object Relationships : Table() {
                         it[since] = relationship.since
                         it[relationshipLevel] = relationship.level
                     }
-                    commit()
                     return@transaction I18n.getString("relationship.success", relationship.user1.spigot().locale)
                 }
             } else {
@@ -50,9 +49,12 @@ object Relationships : Table() {
     }
 
     fun areRelated(player: Player, friend: Player): Boolean {
-        return Relationships.select {
-            userId1.eq(player.uniqueId).and(userId2.eq(friend.uniqueId))
-                    .or(userId1.eq(friend.uniqueId).and(userId2.eq(player.uniqueId)))
-        }.count() > 0
+        transaction {
+            return@transaction Relationships.select {
+                userId1.eq(player.uniqueId).and(userId2.eq(friend.uniqueId))
+                        .or(userId1.eq(friend.uniqueId).and(userId2.eq(player.uniqueId)))
+            }.count() > 0
+        }
+        return false
     }
 }
