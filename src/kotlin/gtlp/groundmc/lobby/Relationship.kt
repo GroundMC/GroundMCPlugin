@@ -14,8 +14,8 @@ class Relationship(val user1: Player, val user2: Player, val since: DateTime = D
 
         other as Relationship
 
-        if (user1 != other.user1 && user1 != other.user2) return false
-        if (user2 != other.user2 && user2 != other.user1) return false
+        if (user1 != other.user1) return false
+        if (user2 != other.user2) return false
         if (since != other.since) return false
         if (level != other.level) return false
 

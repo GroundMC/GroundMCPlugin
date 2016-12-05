@@ -12,8 +12,7 @@ import org.jetbrains.exposed.sql.transactions.transaction
  */
 object Relationships : Table() {
     private val userId1 = uuid("user1").references(Friends.id).index()
-    private val userId2 = uuid("user2").references(Friends.id).index()
-    private val initiatorId = uuid("initUser").references(Friends.id)
+    private val userId2 = uuid("user2").references(Friends.id)
     private val since = datetime("since")
     private val relationshipLevel = enumeration("level", RelationshipLevel::class.java).default(RelationshipLevel.FRIEND)
 
@@ -31,7 +30,12 @@ object Relationships : Table() {
                     Relationships.insert {
                         it[userId1] = relationship.user1.uniqueId
                         it[userId2] = relationship.user2.uniqueId
-                        it[initiatorId] = relationship.user1.uniqueId
+                        it[since] = relationship.since
+                        it[relationshipLevel] = relationship.level
+                    }
+                    Relationships.insert {
+                        it[userId1] = relationship.user2.uniqueId
+                        it[userId2] = relationship.user1.uniqueId
                         it[since] = relationship.since
                         it[relationshipLevel] = relationship.level
                     }
@@ -52,7 +56,6 @@ object Relationships : Table() {
         transaction {
             return@transaction Relationships.select {
                 userId1.eq(player.uniqueId).and(userId2.eq(friend.uniqueId))
-                        .or(userId1.eq(friend.uniqueId).and(userId2.eq(player.uniqueId)))
             }.count() > 0
         }
         return false
