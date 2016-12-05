@@ -5,6 +5,7 @@ import gtlp.groundmc.lobby.enum.RelationshipLevel
 import gtlp.groundmc.lobby.util.I18n
 import org.bukkit.entity.Player
 import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.transactions.transaction
 
 /**
@@ -21,7 +22,7 @@ object Relationships : Table() {
     }
 
     fun addRelationship(relationship: Relationship): String {
-        transaction {
+        return transaction {
             val reachedRelationLimit = Relationships.select { userId1.eq(relationship.user1.uniqueId).or(userId2.eq(relationship.user1.uniqueId)) }.having { relationshipLevel.eq(relationship.level) }.count() >= relationship.level.limit
             if (!areRelated(relationship.user1, relationship.user2)) {
                 if (reachedRelationLimit) {
@@ -45,19 +46,27 @@ object Relationships : Table() {
                 return@transaction I18n.getString("relationship.exists", relationship.user1.spigot().locale)
             }
         }
-        return I18n.getString("unknown_error", relationship.user1.spigot().locale)
     }
 
-    fun updateRelationship() {
-        //TODO
+    fun updateRelationshipLevel(player: Player, friend: Player, newLevel: RelationshipLevel) {
+        if (areRelated(player, friend)) {
+            transaction {
+                val oldLevel = Relationships.select((Relationships.userId1 eq player.uniqueId) and (Relationships.userId2 eq friend.uniqueId)).first()[Relationships.relationshipLevel]
+                Relationships.update({ (Relationships.userId1 eq player.uniqueId) and (Relationships.userId2 eq friend.uniqueId) }) {
+                    it[relationshipLevel] = newLevel
+                }
+                player.sendMessage("Updated relationship from ${oldLevel.name} to ${newLevel.name}")
+            }
+        } else {
+            player.sendMessage("You are not related to ${friend.name}")
+        }
     }
 
     fun areRelated(player: Player, friend: Player): Boolean {
-        transaction {
+        return transaction {
             return@transaction Relationships.select {
                 userId1.eq(player.uniqueId).and(userId2.eq(friend.uniqueId))
             }.any()
         }
-        return false
     }
 }

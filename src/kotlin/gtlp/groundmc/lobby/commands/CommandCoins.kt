@@ -21,10 +21,10 @@ class CommandCoins : ILobbyCommand {
 
     override fun execute(sender: CommandSender, command: Command, label: String, args: Array<String>?): Boolean {
         if (sender is Player) {
-            transaction {
+            return transaction {
                 sender.sendMessage("Money: " + Users.select(Users.id eq sender.uniqueId).first()[Users.coins])
+                return@transaction true
             }
-            return true
         }
         return false
     }
