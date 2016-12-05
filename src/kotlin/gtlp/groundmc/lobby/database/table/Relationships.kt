@@ -56,7 +56,7 @@ object Relationships : Table() {
         transaction {
             return@transaction Relationships.select {
                 userId1.eq(player.uniqueId).and(userId2.eq(friend.uniqueId))
-            }.count() > 0
+            }.any()
         }
         return false
     }
