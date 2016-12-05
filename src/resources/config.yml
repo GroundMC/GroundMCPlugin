@@ -1,0 +1,4 @@
+# Hubworld
+# The world this plugin should work in.
+hub:
+  world: world
