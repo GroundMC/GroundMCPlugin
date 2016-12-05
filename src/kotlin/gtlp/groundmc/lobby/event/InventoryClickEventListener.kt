@@ -2,7 +2,7 @@ package gtlp.groundmc.lobby.event
 
 import gtlp.groundmc.lobby.Items
 import gtlp.groundmc.lobby.LobbyMain
-import gtlp.groundmc.lobby.database.table.Friends
+import gtlp.groundmc.lobby.database.table.Users
 import gtlp.groundmc.lobby.enum.GMCType
 import gtlp.groundmc.lobby.enum.NBTIdentifier
 import gtlp.groundmc.lobby.enum.VisibilityStates
@@ -71,7 +71,7 @@ class InventoryClickEventListener : Listener {
                             this.itemMeta = blazeRod.item.itemMeta
                         })
                         transaction {
-                            gtlp.groundmc.lobby.database.table.Friends.update({ Friends.id.eq(event.whoClicked.uniqueId) }) {
+                            gtlp.groundmc.lobby.database.table.Users.update({ Users.id.eq(event.whoClicked.uniqueId) }) {
                                 it[hiddenStatus] = VisibilityStates.values()[nbtItem.getInteger(NBTIdentifier.HIDE_STATE)]
                             }
                         }

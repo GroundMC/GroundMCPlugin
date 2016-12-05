@@ -1,6 +1,6 @@
 package gtlp.groundmc.lobby.commands
 
-import gtlp.groundmc.lobby.database.table.Friends
+import gtlp.groundmc.lobby.database.table.Users
 import gtlp.groundmc.lobby.enum.Permission
 import gtlp.groundmc.lobby.util.I18n
 import org.bukkit.command.Command
@@ -27,9 +27,9 @@ class CommandVanish : ILobbyCommand {
         if (sender is Player) {
             if (sender.hasPermission(Permission.VANISH.id) || sender.hasPermission(Permission.ADMIN.id)) {
                 transaction {
-                    val isVanished = Friends.select { Friends.id eq sender.uniqueId }.first()[Friends.vanishStatus]
-                    Friends.update({ Friends.id eq sender.uniqueId }) {
-                        it[Friends.vanishStatus] = !isVanished
+                    val isVanished = Users.select { Users.id eq sender.uniqueId }.first()[Users.vanishStatus]
+                    Users.update({ Users.id eq sender.uniqueId }) {
+                        it[Users.vanishStatus] = !isVanished
                     }
                     commit()
                     when (isVanished) {

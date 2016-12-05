@@ -2,7 +2,7 @@ package gtlp.groundmc.lobby.event
 
 import gtlp.groundmc.lobby.Items
 import gtlp.groundmc.lobby.LobbyMain
-import gtlp.groundmc.lobby.database.table.Friends
+import gtlp.groundmc.lobby.database.table.Users
 import gtlp.groundmc.lobby.enum.GMCType
 import gtlp.groundmc.lobby.enum.NBTIdentifier
 import gtlp.groundmc.lobby.enum.Permission
@@ -48,8 +48,8 @@ class PlayerEventListener : Listener {
     private fun addItemsToInventory(player: Player) {
         transaction {
             LobbyMain.lobbyInventoryMap[player] = LobbyInventoryHolder.forPlayer(player)
-            if (Friends.select { Friends.id.eq(player.uniqueId) }.count() == 0) {
-                Friends.insert {
+            if (Users.select { Users.id.eq(player.uniqueId) }.count() == 0) {
+                Users.insert {
                     it[id] = player.uniqueId
                 }
             }
@@ -57,7 +57,7 @@ class PlayerEventListener : Listener {
             inventory.setItem(0, Items.COMPASS_ITEM.item.clone())
             if (player.hasPermission(Permission.SILENT.id) || player.hasPermission(Permission.ADMIN.id)) {
                 val silentItem = NBTItemExt(Items.SILENT_ITEM.item.clone())
-                val silent = Friends.select { Friends.id.eq(player.uniqueId) }.first()[Friends.silentStatus]
+                val silent = Users.select { Users.id.eq(player.uniqueId) }.first()[Users.silentStatus]
                 silentItem.displayName = I18n.getString(if (silent) "silentitem.on" else "silentitem.off")
                 silentItem.setBoolean(NBTIdentifier.SILENT_STATE, silent)
                 if (silent) {
@@ -67,7 +67,7 @@ class PlayerEventListener : Listener {
             }
             if (player.hasPermission(Permission.HIDE_PLAYERS.id) || player.hasPermission(Permission.ADMIN.id)) {
                 val nbtItem = Items.HIDE_PLAYERS_ITEM.clone()
-                val hideState = Friends.select { Friends.id.eq(player.uniqueId) }.first()[Friends.hiddenStatus]
+                val hideState = Users.select { Users.id.eq(player.uniqueId) }.first()[Users.hiddenStatus]
                 LobbyMain.lobbyInventoryMap[player]!!.hidePlayerInventory.contents.filterNotNull().first { NBTItemExt(it).getInteger(NBTIdentifier.HIDE_STATE) == hideState.ordinal }.apply {
                     this.itemMeta = NBTItemExt(this).addEnchantment(Enchantment.LUCK).item.itemMeta
                     nbtItem.displayName = itemMeta.displayName
@@ -128,8 +128,8 @@ class PlayerEventListener : Listener {
                     nbtItem.removeEnchantment(Enchantment.LUCK)
                     event.player.sendMessage(I18n.getString("silentmsg.off", event.player.spigot().locale))
                     transaction {
-                        Friends.update({ Friends.id eq event.player.uniqueId }) {
-                            it[Friends.silentStatus] = false
+                        Users.update({ Users.id eq event.player.uniqueId }) {
+                            it[Users.silentStatus] = false
                         }
                     }
                 } else {
@@ -139,8 +139,8 @@ class PlayerEventListener : Listener {
                     nbtItem.addEnchantment(Enchantment.LUCK)
                     event.player.sendMessage(I18n.getString("silentmsg.on", event.player.spigot().locale))
                     transaction {
-                        Friends.update({ Friends.id eq event.player.uniqueId }) {
-                            it[Friends.silentStatus] = true
+                        Users.update({ Users.id eq event.player.uniqueId }) {
+                            it[Users.silentStatus] = true
                         }
                     }
                 }

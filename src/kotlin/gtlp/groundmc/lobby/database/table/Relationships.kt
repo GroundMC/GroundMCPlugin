@@ -11,8 +11,8 @@ import org.jetbrains.exposed.sql.transactions.transaction
  * Table holding relationships between players, including more information
  */
 object Relationships : Table() {
-    private val userId1 = uuid("user1").references(Friends.id).index()
-    private val userId2 = uuid("user2").references(Friends.id)
+    private val userId1 = uuid("user1").references(Users.id).index()
+    private val userId2 = uuid("user2").references(Users.id)
     private val since = datetime("since")
     private val relationshipLevel = enumeration("level", RelationshipLevel::class.java).default(RelationshipLevel.FRIEND)
 

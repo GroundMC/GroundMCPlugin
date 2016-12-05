@@ -1,6 +1,6 @@
 package gtlp.groundmc.lobby.task
 
-import gtlp.groundmc.lobby.database.table.Friends
+import gtlp.groundmc.lobby.database.table.Users
 import gtlp.groundmc.lobby.database.table.Relationships
 import gtlp.groundmc.lobby.enum.VisibilityStates
 import org.bukkit.Bukkit
@@ -13,13 +13,13 @@ object HidePlayersTask : ITask {
 
     override fun run() {
         transaction {
-            for (player in Bukkit.getServer().onlinePlayers.filter { gtlp.groundmc.lobby.database.table.Friends.select { Friends.id.eq(it.uniqueId) }.first()[Friends.hiddenStatus] == VisibilityStates.ALL }) {
+            for (player in Bukkit.getServer().onlinePlayers.filter { gtlp.groundmc.lobby.database.table.Users.select { Users.id.eq(it.uniqueId) }.first()[Users.hiddenStatus] == VisibilityStates.ALL }) {
                 Bukkit.getServer().onlinePlayers.forEach { player.showPlayer(it) }
             }
-            for (player in Bukkit.getServer().onlinePlayers.filter { gtlp.groundmc.lobby.database.table.Friends.select { Friends.id.eq(it.uniqueId) }.first()[Friends.hiddenStatus] in setOf(VisibilityStates.NONE) }) {
+            for (player in Bukkit.getServer().onlinePlayers.filter { gtlp.groundmc.lobby.database.table.Users.select { Users.id.eq(it.uniqueId) }.first()[Users.hiddenStatus] in setOf(VisibilityStates.NONE) }) {
                 Bukkit.getServer().onlinePlayers.forEach { player.hidePlayer(it) }
             }
-            for (player in Bukkit.getServer().onlinePlayers.filter { gtlp.groundmc.lobby.database.table.Friends.select { Friends.id.eq(it.uniqueId) }.first()[Friends.hiddenStatus] == VisibilityStates.FRIENDS }) {
+            for (player in Bukkit.getServer().onlinePlayers.filter { gtlp.groundmc.lobby.database.table.Users.select { Users.id.eq(it.uniqueId) }.first()[Users.hiddenStatus] == VisibilityStates.FRIENDS }) {
                 Bukkit.getServer().onlinePlayers.forEach {
                     if (Relationships.areRelated(player, it)) {
                         player.showPlayer(it)
@@ -29,8 +29,8 @@ object HidePlayersTask : ITask {
                 }
             }
             Bukkit.getServer().onlinePlayers.forEach {
-                for (resultRow in Friends.select { Friends.vanishStatus eq true }) {
-                    it.hidePlayer(Bukkit.getPlayer(resultRow[Friends.id]))
+                for (resultRow in Users.select { Users.vanishStatus eq true }) {
+                    it.hidePlayer(Bukkit.getPlayer(resultRow[Users.id]))
                 }
             }
         }

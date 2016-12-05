@@ -2,7 +2,7 @@ package gtlp.groundmc.lobby
 
 import gtlp.groundmc.lobby.commands.CommandLobby
 import gtlp.groundmc.lobby.commands.CommandVanish
-import gtlp.groundmc.lobby.database.table.Friends
+import gtlp.groundmc.lobby.database.table.Users
 import gtlp.groundmc.lobby.database.table.Meta
 import gtlp.groundmc.lobby.database.table.Relationships
 import gtlp.groundmc.lobby.event.EntityEventListener
@@ -38,7 +38,7 @@ class LobbyMain : JavaPlugin() {
         loadConfig()
         Database.connect("jdbc:h2:" + dataFolder.absolutePath + "/database", driver = "org.h2.Driver")
         transaction {
-            createMissingTablesAndColumns(Meta, Friends, Relationships)
+            createMissingTablesAndColumns(Meta, Users, Relationships)
             Meta.upgradeDatabase()
         }
         Bukkit.getServer().pluginManager.registerEvents(EntityEventListener(), this)
