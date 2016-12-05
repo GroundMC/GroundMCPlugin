@@ -16,3 +16,7 @@ commands:
       description: Vanish yourself
       usage: "Usage: /<command>"
       aliases: [v]
+   coins:
+      description: Information about your coins
+      usage: "Usage: /<command>"
+      aliases: [money]
