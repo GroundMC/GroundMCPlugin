@@ -112,8 +112,13 @@ class CommandLobby : ILobbyCommand {
                 nbtItem.displayName = args.sliceArray(IntRange(1, args.size - 1)).reduce { left, right -> left + " " + right }
                 sender.inventory.itemInMainHand = nbtItem.item
 
-                val msg = TextComponent(I18n.getString("commandlobby.placeitem", sender.spigot().locale))
-                msg.clickEvent = ClickEvent(ClickEvent.Action.RUN_COMMAND, "/lobby additem")
+                val string = I18n.getString("commandlobby.placeitem", sender.spigot().locale)
+                val strList = string.split("|")
+                val msg = TextComponent(strList[0])
+                val clickComponent = TextComponent(strList[1])
+                clickComponent.clickEvent = ClickEvent(ClickEvent.Action.RUN_COMMAND, "/lobby additem")
+                msg.addExtra(clickComponent)
+                msg.addExtra(strList[2])
                 sender.spigot().sendMessage(msg)
                 return true
             } else if (!sender.hasPermission("groundmc.lobby.admin")) {
