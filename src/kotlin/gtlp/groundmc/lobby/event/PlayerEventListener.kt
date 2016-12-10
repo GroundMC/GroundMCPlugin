@@ -165,7 +165,6 @@ class PlayerEventListener : Listener {
     fun launchPlayerForward(event: PlayerInteractEvent) {
         if (event.clickedBlock != null) {
             if (event.clickedBlock.type == Material.GOLD_PLATE && event.player.world == LobbyMain.hubWorld && event.action == Action.PHYSICAL) {
-                println(event.player.location.direction)
                 event.player.velocity = event.player.location.getDirectionXZ().setY(0.5).multiply(3)
                 event.isCancelled = true
             }
