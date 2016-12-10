@@ -10,6 +10,7 @@ import gtlp.groundmc.lobby.inventory.LobbyInventoryHolder
 import gtlp.groundmc.lobby.util.I18n
 import gtlp.groundmc.lobby.util.NBTItemExt
 import org.bukkit.GameMode
+import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.attribute.Attribute
 import org.bukkit.enchantments.Enchantment
@@ -18,6 +19,7 @@ import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.block.Action
 import org.bukkit.event.player.*
+import org.bukkit.util.Vector
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction
@@ -163,9 +165,23 @@ class PlayerEventListener : Listener {
     fun launchPlayerForward(event: PlayerInteractEvent) {
         if (event.clickedBlock != null) {
             if (event.clickedBlock.type == Material.GOLD_PLATE && event.player.world == LobbyMain.hubWorld && event.action == Action.PHYSICAL) {
-                event.player.velocity = event.player.location.direction.setY(0.5).multiply(3)
+                println(event.player.location.direction)
+                event.player.velocity = event.player.location.getDirectionXZ().setY(0.5).multiply(3)
                 event.isCancelled = true
             }
         }
     }
+}
+
+fun Location.getDirectionXZ(): Vector {
+    val vector = Vector()
+
+    val rotX = this.yaw.toDouble()
+
+    vector.y = 0.0
+
+    vector.x = -Math.sin(Math.toRadians(rotX))
+    vector.z = Math.cos(Math.toRadians(rotX))
+
+    return vector.normalize()
 }
