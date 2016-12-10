@@ -170,17 +170,17 @@ class PlayerEventListener : Listener {
             }
         }
     }
-}
 
-fun Location.getDirectionXZ(): Vector {
-    val vector = Vector()
+    fun Location.getDirectionXZ(): Vector {
+        val vector = Vector()
 
-    val rotX = this.yaw.toDouble()
+        val rotX = this.yaw.toDouble()
 
-    vector.y = 0.0
+        vector.y = 0.0
 
-    vector.x = -Math.sin(Math.toRadians(rotX))
-    vector.z = Math.cos(Math.toRadians(rotX))
+        vector.x = -Math.sin(Math.toRadians(rotX))
+        vector.z = Math.cos(Math.toRadians(rotX))
 
-    return vector.normalize()
+        return vector.normalize()
+    }
 }
