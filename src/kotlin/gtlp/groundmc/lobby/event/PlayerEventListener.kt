@@ -11,6 +11,7 @@ import gtlp.groundmc.lobby.util.I18n
 import gtlp.groundmc.lobby.util.NBTItemExt
 import org.bukkit.GameMode
 import org.bukkit.Material
+import org.bukkit.attribute.Attribute
 import org.bukkit.enchantments.Enchantment
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
@@ -43,6 +44,7 @@ class PlayerEventListener : Listener {
     @EventHandler
     fun onPlayerLogin(event: PlayerJoinEvent) {
         addItemsToInventory(event.player)
+        event.player.getAttribute(Attribute.GENERIC_ATTACK_SPEED).baseValue = 16.0
     }
 
     private fun addItemsToInventory(player: Player) {
