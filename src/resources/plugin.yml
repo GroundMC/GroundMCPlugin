@@ -2,6 +2,8 @@ name: GroundMC_Lobby_Plugin
 version: 1.3
 author: GiantTreeLP
 main: gtlp.groundmc.lobby.LobbyMain
+depend: [ItemNBTAPI]
+softdepend: [Multiverse-Core]
 
 commands:
    lobby:
