@@ -3,9 +3,9 @@ package gtlp.groundmc.lobby
 import gtlp.groundmc.lobby.commands.CommandCoins
 import gtlp.groundmc.lobby.commands.CommandLobby
 import gtlp.groundmc.lobby.commands.CommandVanish
-import gtlp.groundmc.lobby.database.table.Users
 import gtlp.groundmc.lobby.database.table.Meta
 import gtlp.groundmc.lobby.database.table.Relationships
+import gtlp.groundmc.lobby.database.table.Users
 import gtlp.groundmc.lobby.event.EntityEventListener
 import gtlp.groundmc.lobby.event.InventoryClickEventListener
 import gtlp.groundmc.lobby.event.MiscEventListener
@@ -70,7 +70,10 @@ class LobbyMain : JavaPlugin() {
             @Suppress("unchecked_cast")
             LobbyInventory.TEMPLATE_INVENTORY.contents = (config.get("inventory.content") as List<ItemStack>).toTypedArray()
         }
-        hubWorld = Bukkit.getWorlds().first { it.name == config.getString("hub.world") }
+        hubWorld = Bukkit.getWorlds().firstOrNull { it.name == config.getString("hub.world") }
+        if (hubWorld == null) {
+            hubWorld = Bukkit.getWorlds().first()
+        }
     }
 
     private fun registerCommands() {
