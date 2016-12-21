@@ -15,6 +15,7 @@ import gtlp.groundmc.lobby.inventory.LobbyInventoryHolder
 import gtlp.groundmc.lobby.registry.LobbyCommandRegistry
 import gtlp.groundmc.lobby.task.ApplyPlayerEffectsTask
 import gtlp.groundmc.lobby.task.HidePlayersTask
+import gtlp.groundmc.lobby.task.ITask
 import gtlp.groundmc.lobby.task.SetRulesTask
 import org.bukkit.Bukkit
 import org.bukkit.Difficulty
@@ -25,6 +26,7 @@ import org.bukkit.entity.HumanEntity
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import org.bukkit.plugin.java.JavaPlugin
+import org.bukkit.scheduler.BukkitScheduler
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils.createMissingTablesAndColumns
 import org.jetbrains.exposed.sql.transactions.transaction
@@ -47,9 +49,9 @@ class LobbyMain : JavaPlugin() {
         Bukkit.getServer().pluginManager.registerEvents(MiscEventListener(), this)
         Bukkit.getServer().pluginManager.registerEvents(PlayerEventListener(), this)
         registerCommands()
-        Bukkit.getServer().scheduler.scheduleSyncDelayedTask(this, SetRulesTask, SetRulesTask.delay)
-        Bukkit.getServer().scheduler.scheduleSyncRepeatingTask(this, ApplyPlayerEffectsTask, ApplyPlayerEffectsTask.delay, ApplyPlayerEffectsTask.period)
-        Bukkit.getServer().scheduler.scheduleSyncRepeatingTask(this, HidePlayersTask, HidePlayersTask.delay, HidePlayersTask.period)
+        Bukkit.getServer().scheduler.scheduleSyncDelayedTask(SetRulesTask)
+        Bukkit.getServer().scheduler.scheduleSyncRepeatingTask(ApplyPlayerEffectsTask)
+        Bukkit.getServer().scheduler.scheduleSyncRepeatingTask(HidePlayersTask)
         hubWorld?.difficulty = Difficulty.PEACEFUL
 
         try {
@@ -98,6 +100,14 @@ class LobbyMain : JavaPlugin() {
             return LobbyCommandRegistry.getCommand(command.name)?.getTabCompletion(sender, command, alias, args)
         }
         return null
+    }
+
+    fun BukkitScheduler.scheduleSyncRepeatingTask(task: ITask): Int {
+        return scheduleSyncRepeatingTask(this@LobbyMain, task, task.delay, task.period)
+    }
+
+    fun BukkitScheduler.scheduleSyncDelayedTask(task: ITask): Int {
+        return scheduleSyncDelayedTask(this@LobbyMain, task, task.delay)
     }
 
     companion object {
