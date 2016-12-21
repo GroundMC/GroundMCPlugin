@@ -91,6 +91,7 @@ class PlayerEventListener : Listener {
     @EventHandler
     fun onPlayerLogout(event: PlayerQuitEvent) {
         LobbyMain.lobbyInventoryMap.remove(event.player)
+        LobbyMain.SILENCED_PLAYERS.remove(event.player)
     }
 
     @EventHandler
