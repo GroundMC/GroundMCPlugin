@@ -1,4 +1,4 @@
 Manifest-Version: 1.0
-Class-Path: ./lib/exposed-0.7.6-SNAPSHOT.jar ./lib/h2-1.4.193.jar ./li
+Class-Path: ./lib/exposed-0.7.5-SNAPSHOT.jar ./lib/h2-1.4.193.jar ./li
  b/kotlin-runtime.jar ./lib/slf4j-api-1.7.21.jar
 
