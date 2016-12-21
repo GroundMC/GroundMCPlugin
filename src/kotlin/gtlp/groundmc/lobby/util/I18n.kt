@@ -2,6 +2,7 @@ package gtlp.groundmc.lobby.util
 
 import org.bukkit.ChatColor
 import java.util.*
+import java.util.concurrent.ConcurrentHashMap
 
 /**
  * Kotlin object to aid with internationalization (I18n)
@@ -20,10 +21,10 @@ object I18n {
 
     /**
      * Returns the localized string (if available) for a given key.
-     * Automatically parses color codes using the {@link I18n#colorChar}
+     * Automatically parses color codes using the [colorChar]
      *
      * @param key A string representing the common name for a localized string, used in resources
-     * @param locale The locale to translate to. If not given, English (US)
+     * @param locale The locale to translate to. If not given, [Locale.US]
      *
      * @return The localized and parsed string or null, if the key has no translation
      */
@@ -33,8 +34,8 @@ object I18n {
 
     /**
      * Returns the localized string (if available) for a given key.
-     * The locale is parsed using {@link I18nUtils#getLocaleFromString}
-     * Automatically parses color codes using the {@link I18n#colorChar}
+     * The locale is parsed using [I18nUtils.getLocaleFromString]
+     * Automatically parses color codes using the [colorChar]
      *
      * @param key A string representing the common name for a localized string, used in resources
      * @param locale The locale to translate to as a string. If not given, [Locale.US]
@@ -49,16 +50,11 @@ object I18n {
      * A cache for dynamically loading and storing used resource bundles.
      * Does not implement removing items from the cache because of low memory impact
      */
-    class ResourceBundleCache(name: String) {
+    class ResourceBundleCache(val name: String) {
         /**
          * A map holding resource bundles for locales
          */
-        val backingMap = mutableMapOf<Locale, ResourceBundle>()
-
-        /**
-         * The name of the bundle to load
-         */
-        var bundleName: String = name
+        internal val backingMap = ConcurrentHashMap<Locale, ResourceBundle>()
 
         /**
          * Returns the localized string (if available) for a given key
@@ -71,9 +67,9 @@ object I18n {
          */
         fun get(key: String, locale: Locale): String? {
             if (!backingMap.containsKey(locale)) {
-                backingMap[locale] = ResourceBundle.getBundle(bundleName, locale)
+                backingMap[locale] = ResourceBundle.getBundle(name, locale)
             }
-            return backingMap[locale]?.getString(key)
+            return backingMap.getOrPut(locale, { ResourceBundle.getBundle(name, locale) }).getString(key)
         }
     }
 }
