@@ -1,7 +1,6 @@
 package gtlp.groundmc.lobby.commands
 
 import gtlp.groundmc.lobby.LobbyMain
-import gtlp.groundmc.lobby.database.table.Relationships
 import gtlp.groundmc.lobby.enum.GMCType
 import gtlp.groundmc.lobby.enum.NBTIdentifier
 import gtlp.groundmc.lobby.enum.Permission
@@ -11,7 +10,6 @@ import gtlp.groundmc.lobby.util.I18nUtils
 import gtlp.groundmc.lobby.util.NBTItemExt
 import net.md_5.bungee.api.chat.ClickEvent
 import net.md_5.bungee.api.chat.TextComponent
-import org.bukkit.Bukkit
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 import org.bukkit.command.ConsoleCommandSender
@@ -49,12 +47,6 @@ class CommandLobby : ILobbyCommand {
                 }
                 "help" -> {
                     sender.sendMessage(getCommandHelp(I18nUtils.getLocaleFromCommandSender(sender)))
-                    return true
-                }
-                "debug" -> {
-                    if (sender is Player) {
-                        Relationships.addRelationship(sender, Bukkit.getServer().getPlayer(args[1]))
-                    }
                     return true
                 }
                 else -> {
