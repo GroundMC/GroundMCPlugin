@@ -21,6 +21,6 @@ enum class NBTIdentifier(identifier: String) {
         if (this == PREFIX) {
             return id
         }
-        return "${PREFIX}$id"
+        return "$PREFIX$id"
     }
 }

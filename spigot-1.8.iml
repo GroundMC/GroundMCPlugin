@@ -6,7 +6,7 @@
       <sourceFolder url="file://$MODULE_DIR$/src/kotlin" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/resources" type="java-resource" />
     </content>
-    <orderEntry type="inheritedJdk" />
+    <orderEntry type="jdk" jdkName="1.8" jdkType="JavaSDK" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="NBT-API" level="project" />
     <orderEntry type="library" exported="" name="KotlinJavaRuntime" level="project" />
@@ -14,6 +14,6 @@
     <orderEntry type="library" name="h2-1.4.193" level="project" />
     <orderEntry type="library" name="slf4j-api-1.7.21" level="project" />
     <orderEntry type="library" name="joda-time-2.5" level="project" />
-    <orderEntry type="library" name="spigot-api-1.10.2-R0.1-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="spigot-api" level="project" />
   </component>
 </module>
