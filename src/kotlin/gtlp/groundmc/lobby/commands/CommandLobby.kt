@@ -93,17 +93,18 @@ class CommandLobby : ILobbyCommand {
         if (sender is Player) {
             if (sender.hasPermission(Permission.ADMIN.id) && args.size >= 2 && !args[1].isNullOrBlank()) {
                 val nbtItem = NBTItemExt(sender.inventory.itemInMainHand)
-                nbtItem.setBoolean(NBTIdentifier.PREFIX, true)
-                nbtItem.setInteger(NBTIdentifier.TYPE, GMCType.TP.ordinal)
-                nbtItem.setDouble(NBTIdentifier.LOC_X, sender.location.x)
-                nbtItem.setDouble(NBTIdentifier.LOC_Y, sender.location.y)
-                nbtItem.setDouble(NBTIdentifier.LOC_Z, sender.location.z)
-                nbtItem.setDouble(NBTIdentifier.ROT_X, sender.location.yaw.toDouble())
-                nbtItem.setDouble(NBTIdentifier.ROT_Y, sender.location.pitch.toDouble())
-                nbtItem.setString(NBTIdentifier.LOC_WORLD, sender.location.world.name)
-                nbtItem.displayName = args.sliceArray(IntRange(1, args.size - 1)).reduce { left, right -> left + " " + right }
-                sender.inventory.itemInMainHand = nbtItem.item
-
+                nbtItem.apply {
+                    setBoolean(NBTIdentifier.PREFIX, true)
+                    setInteger(NBTIdentifier.TYPE, GMCType.TP.ordinal)
+                    setDouble(NBTIdentifier.LOC_X, sender.location.x)
+                    setDouble(NBTIdentifier.LOC_Y, sender.location.y)
+                    setDouble(NBTIdentifier.LOC_Z, sender.location.z)
+                    setDouble(NBTIdentifier.ROT_X, sender.location.yaw.toDouble())
+                    setDouble(NBTIdentifier.ROT_Y, sender.location.pitch.toDouble())
+                    setString(NBTIdentifier.LOC_WORLD, sender.location.world.name)
+                    displayName = args.sliceArray(IntRange(1, args.size - 1)).reduce { left, right -> left + " " + right }
+                    sender.inventory.itemInMainHand = item
+                }
                 val string = I18n.getString("commandlobby.placeitem", sender.spigot().locale)
                 val strList = string.split("|")
                 val msg = TextComponent(strList[0])

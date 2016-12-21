@@ -7,8 +7,8 @@ import org.bukkit.inventory.ItemFlag
 import org.bukkit.inventory.ItemStack
 
 /**
- * Extension to {@link de.tr7zw.itemnbtapi.NBTItem}
- * Allows the use of {@link NBTIdentifier} as key.
+ * Extension of [de.tr7zw.itemnbtapi.NBTItem]
+ * Allows the use of [NBTIdentifier] as a key.
  */
 class NBTItemExt(item: ItemStack) : NBTItem(item) {
 
