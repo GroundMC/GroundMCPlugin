@@ -1,8 +1,10 @@
 package gtlp.groundmc.lobby.commands
 
 import gtlp.groundmc.lobby.database.table.Users
+import gtlp.groundmc.lobby.util.I18n
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
+import org.bukkit.command.ConsoleCommandSender
 import org.bukkit.entity.Player
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.select
@@ -25,6 +27,9 @@ class CommandCoins : ILobbyCommand {
                 sender.sendMessage("Coins: " + Users.select(Users.id eq sender.uniqueId).first()[Users.coins])
                 return@transaction true
             }
+        } else if (sender is ConsoleCommandSender) {
+            sender.sendMessage(I18n.getString("command.playeronly"))
+            return true
         }
         return false
     }
