@@ -49,7 +49,7 @@ class CommandFriend : ILobbyCommand {
     private fun friendsStartWith(sender: CommandSender, args: Array<out String>): List<String>? {
         if (sender is Player) {
             val friendsList = Relationships.getRelationships(sender)
-            return friendsList.map { it -> it.value.user2.name }.filter { it.startsWith(args.last()) }
+            return friendsList.map { it -> it.user2.name }.filter { it.startsWith(args.last()) }
         }
         return null
     }
@@ -116,14 +116,14 @@ class CommandFriend : ILobbyCommand {
     private fun sendOnlineFriends(sender: Player): Boolean {
         val friendsList = Relationships.getRelationships(sender)
         val onlinePlayers = Bukkit.getOnlinePlayers()
-        val onlineFriends = friendsList.filter { it.value.user2 in onlinePlayers }
+        val onlineFriends = friendsList.filter { it.user2 in onlinePlayers }
         if (onlineFriends.isEmpty()) {
             sender.sendMessage(I18n.getString("commandfriend.no_friends_online", sender.spigot().locale))
             return true
         }
         for (level in RelationshipLevel.values()) {
-            onlineFriends.filter { it.key == level }.let {
-                sender.sendMessage(it.values.joinToString(prefix = I18n.getString(level.i18nKey, sender.spigot().locale) + ": "))
+            onlineFriends.filter { it.level == level }.let {
+                sender.sendMessage(it.joinToString(prefix = I18n.getString(level.i18nKey, sender.spigot().locale) + ": "))
             }
         }
         return true

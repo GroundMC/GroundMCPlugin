@@ -131,12 +131,12 @@ object Relationships : Table() {
      *
      * @return a list of relationships of [player]
      */
-    fun getRelationships(player: Player): Map<RelationshipLevel, Relationship> {
+    fun getRelationships(player: Player): List<Relationship> {
         return transaction {
             val friendsField = select(userId1 eq player.uniqueId)
-            return@transaction mutableMapOf<RelationshipLevel, Relationship>().apply {
+            return@transaction mutableListOf<Relationship>().apply {
                 for (relationship in friendsField) {
-                    put(relationship[relationshipLevel], Relationship(Bukkit.getPlayer(relationship[userId1]), Bukkit.getPlayer(relationship[userId2]), relationship[since], relationship[relationshipLevel]))
+                    add(Relationship(Bukkit.getPlayer(relationship[userId1]), Bukkit.getPlayer(relationship[userId2]), relationship[since], relationship[relationshipLevel]))
                 }
             }
         }
