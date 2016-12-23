@@ -58,10 +58,12 @@ object Relationships : Table() {
                 update({ (userId1 eq player.uniqueId) and (userId2 eq friend.uniqueId) }) {
                     it[relationshipLevel] = newLevel
                 }
-                player.sendMessage("Updated relationship from ${oldLevel.name} to ${newLevel.name}")
+                player.sendMessage(I18n.getString("relationship.updated", player.spigot().locale)!!.format(
+                        I18n.getString(oldLevel.i18nKey, player.spigot().locale),
+                        I18n.getString(newLevel.i18nKey, player.spigot().locale)))
             }
         } else {
-            player.sendMessage("You are not related to ${friend.name}")
+            player.sendMessage(I18n.getString("commandfriend.no_friends", player.spigot().locale))
         }
     }
 
