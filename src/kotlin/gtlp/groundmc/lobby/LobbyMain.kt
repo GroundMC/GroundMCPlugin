@@ -64,16 +64,18 @@ class LobbyMain : JavaPlugin() {
     private fun loadConfig() {
         config.addDefault("inventory.content", listOf<ItemStack>())
         config.addDefault("hub.world", Bukkit.getWorlds()[0].name)
+        config.addDefault("coins.dailyAmount", 100)
         config.options().copyDefaults(true)
         saveDefaultConfig()
-        if (config.contains("inventory.content") && config.get("inventory.content") is List<*>) {
+        if (config.contains("inventory.content") && config["inventory.content"] is List<*>) {
             @Suppress("unchecked_cast")
-            LobbyInventory.TEMPLATE_INVENTORY.contents = (config.get("inventory.content") as List<ItemStack>).toTypedArray()
+            LobbyInventory.TEMPLATE_INVENTORY.contents = (config["inventory.content"] as List<ItemStack>).toTypedArray()
         }
         hubWorld = Bukkit.getWorlds().firstOrNull { it.name == config.getString("hub.world") }
         if (hubWorld == null) {
             hubWorld = Bukkit.getWorlds().first()
         }
+        dailyCoins = config.getInt("coins.dailyAmount", 100)
     }
 
     private fun registerCommands() {
@@ -123,6 +125,8 @@ class LobbyMain : JavaPlugin() {
          * Common instance of this [LobbyMain] plugin.
          */
         var instance: LobbyMain? = null
+
+        var dailyCoins = 100
     }
 
 }
