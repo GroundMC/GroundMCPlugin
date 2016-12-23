@@ -10,7 +10,7 @@ import org.bukkit.entity.Player
 import java.util.*
 
 /**
- * Created by Marvin on 21.12.2016.
+ * Command to list friends
  */
 class CommandFriends : ILobbyCommand {
     override val name: String = "friends"

@@ -38,6 +38,14 @@ class CommandFriend : ILobbyCommand {
         return null
     }
 
+    /**
+     * Returns a list of friends that start with a certain [CharSequence]
+     *
+     * @param sender the sender to find the friends of
+     * @param args the arguments given to this command, uses [kotlin.collections.last] to determine the beginning of the names
+     *
+     * @return a list of all friends that begin with [kotlin.collections.last]
+     */
     private fun friendsStartWith(sender: CommandSender, args: Array<out String>): List<String>? {
         if (sender is Player) {
             val friendsList = Relationships.getRelationships(sender)
@@ -57,13 +65,21 @@ class CommandFriend : ILobbyCommand {
                 "update" -> return updateRelationship(sender, args)
                 "remove" -> return removeFriend(sender, args)
                 "status" -> return sendStatusMessage(sender, args)
-                "online" -> return sendOnlineFriends(sender, args)
+                "online" -> return sendOnlineFriends(sender)
             }
 
         }
         return false
     }
 
+    /**
+     * Updates a relationship between two players.
+     *
+     * @param sender the initiator of the relationship update
+     * @param args the arguments passed to this command, requires 3 to be successful ("update", the name of the friend and the new relationship level).
+     *
+     * @return whether the command executed successfully.
+     */
     private fun updateRelationship(sender: Player, args: Array<String>): Boolean {
         if (args.size < 2) {
             sender.sendMessage(I18n.getString("commandfriend.specify_player_update", sender.spigot().locale))
@@ -90,7 +106,14 @@ class CommandFriend : ILobbyCommand {
         return true
     }
 
-    private fun sendOnlineFriends(sender: Player, args: Array<String>): Boolean {
+    /**
+     * Send a list of online friends to the [sender].
+     *
+     * @param sender the initiator of the command
+     *
+     * @return whether the command executed successfully (always true).
+     */
+    private fun sendOnlineFriends(sender: Player): Boolean {
         val friendsList = Relationships.getRelationships(sender)
         val onlinePlayers = Bukkit.getOnlinePlayers()
         val onlineFriends = friendsList.filter { it.value.user2 in onlinePlayers }
@@ -106,6 +129,14 @@ class CommandFriend : ILobbyCommand {
         return true
     }
 
+    /**
+     * Sends the status of a relationship between [sender] and [args] [1] to [sender].
+     *
+     * @param sender the requester of the status message
+     * @param args the arguments passed to this command, requires 2 to be successful ("status" and the name of the friend).
+     *
+     * @return whether the command executed successfully.
+     */
     private fun sendStatusMessage(sender: Player, args: Array<String>): Boolean {
         if (args.size < 2) {
             sender.sendMessage(I18n.getString("commandfriend.specify_player_status"))
@@ -123,8 +154,16 @@ class CommandFriend : ILobbyCommand {
         }
     }
 
+    /**
+     * Removes a relationship between two players.
+     *
+     * @param sender the initiator of the relationship removal
+     * @param args the arguments passed to this command, requires 2 to be successful ("remove" and the name of the friend).
+     *
+     * @return whether the command executed successfully.
+     */
     private fun removeFriend(sender: Player, args: Array<String>): Boolean {
-        if (args.size == 1) {
+        if (args.size < 2) {
             sender.sendMessage(I18n.getString("commandfriend.specify_player", sender.spigot().locale))
             return false
         }
@@ -143,6 +182,14 @@ class CommandFriend : ILobbyCommand {
         }
     }
 
+    /**
+     * Adds a relationship between two players.
+     *
+     * @param sender the initiator of the relationship addition
+     * @param args the arguments passed to this command, requires 2 to be successful, a third one is optional ("add", the name of the friend and the relationship level).
+     *
+     * @return whether the command executed successfully.
+     */
     private fun addFriend(sender: Player, args: Array<String>): Boolean {
         if (args.size == 1) {
             sender.sendMessage(I18n.getString("commandfriend.specify_player", sender.spigot().locale))
