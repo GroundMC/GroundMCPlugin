@@ -1,13 +1,14 @@
 package gtlp.groundmc.lobby
 
 import gtlp.groundmc.lobby.enum.RelationshipLevel
+import org.bukkit.OfflinePlayer
 import org.bukkit.entity.Player
 import org.joda.time.DateTime
 
 /**
  * Class holding a relationship
  */
-class Relationship(val user1: Player, val user2: Player, val since: DateTime = DateTime.now(), val level: RelationshipLevel = RelationshipLevel.KNOWN) {
+class Relationship(val user1: Player, val user2: OfflinePlayer, val since: DateTime = DateTime.now(), val level: RelationshipLevel = RelationshipLevel.KNOWN) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other?.javaClass != javaClass) return false

@@ -4,6 +4,7 @@ import gtlp.groundmc.lobby.Relationship
 import gtlp.groundmc.lobby.enum.RelationshipLevel
 import gtlp.groundmc.lobby.util.I18n
 import org.bukkit.Bukkit
+import org.bukkit.OfflinePlayer
 import org.bukkit.entity.Player
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
@@ -19,16 +20,16 @@ object Relationships : Table() {
     private val since = datetime("since")
     private val relationshipLevel = enumeration("level", RelationshipLevel::class.java).default(RelationshipLevel.FRIEND)
 
-    fun addRelationship(player: Player, friend: Player, relationshipLevel: RelationshipLevel = RelationshipLevel.FRIEND): String {
-        return addRelationship(Relationship(player, friend, level = relationshipLevel))
+    fun addRelationship(player: Player, friend: Player, relationshipLevel: RelationshipLevel = RelationshipLevel.FRIEND) {
+        addRelationship(Relationship(player, friend, level = relationshipLevel))
     }
 
-    fun addRelationship(relationship: Relationship): String {
+    fun addRelationship(relationship: Relationship) {
         return transaction {
             val reachedRelationLimit = select { userId1.eq(relationship.user1.uniqueId).or(userId2.eq(relationship.user1.uniqueId)) }.having { relationshipLevel.eq(relationship.level) }.count() >= relationship.level.limit
             if (!areRelated(relationship.user1, relationship.user2)) {
                 if (reachedRelationLimit) {
-                    return@transaction I18n.getString("relationship.limit", relationship.user1.spigot().locale)
+                    relationship.user1.sendMessage(I18n.getString("relationship.limit", relationship.user1.spigot().locale))
                 } else {
                     insert {
                         it[userId1] = relationship.user1.uniqueId
@@ -42,10 +43,10 @@ object Relationships : Table() {
                         it[since] = relationship.since
                         it[relationshipLevel] = relationship.level
                     }
-                    return@transaction I18n.getString("relationship.success", relationship.user1.spigot().locale)
+                    relationship.user1.sendMessage(I18n.getString("relationship.success", relationship.user1.spigot().locale))
                 }
             } else {
-                return@transaction I18n.getString("relationship.exists", relationship.user1.spigot().locale)
+                relationship.user1.sendMessage(I18n.getString("relationship.exists", relationship.user1.spigot().locale))
             }
         }
     }
@@ -64,7 +65,7 @@ object Relationships : Table() {
         }
     }
 
-    fun areRelated(player: Player, friend: Player): Boolean {
+    fun areRelated(player: Player, friend: OfflinePlayer): Boolean {
         return transaction {
             return@transaction select {
                 userId1.eq(player.uniqueId).and(userId2.eq(friend.uniqueId))
@@ -91,4 +92,22 @@ object Relationships : Table() {
         }
     }
 
+    fun getRelationship(player: Player, friend: Player): Relationship? {
+        return transaction {
+            val relationship = select((userId1 eq player.uniqueId) and (userId2 eq friend.uniqueId))
+            if (relationship.any()) {
+                return@transaction Relationship(player, friend, relationship.first()[since], relationship.first()[relationshipLevel])
+            }
+            return@transaction null
+        }
+    }
+
+    fun removeRelationship(player: Player, friend: OfflinePlayer) {
+        transaction {
+            val relationship = select((userId1 eq player.uniqueId) and (userId2 eq friend.uniqueId))
+            if (relationship.any()) {
+                deleteWhere { (userId1 eq player.uniqueId) and (userId2 eq friend.uniqueId) }
+            }
+        }
+    }
 }
