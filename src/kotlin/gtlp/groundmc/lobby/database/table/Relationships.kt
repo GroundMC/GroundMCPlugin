@@ -3,10 +3,12 @@ package gtlp.groundmc.lobby.database.table
 import gtlp.groundmc.lobby.Relationship
 import gtlp.groundmc.lobby.enum.RelationshipLevel
 import gtlp.groundmc.lobby.util.I18n
+import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.transactions.transaction
+import java.util.*
 
 /**
  * Table holding relationships between players, including more information
@@ -23,18 +25,18 @@ object Relationships : Table() {
 
     fun addRelationship(relationship: Relationship): String {
         return transaction {
-            val reachedRelationLimit = Relationships.select { userId1.eq(relationship.user1.uniqueId).or(userId2.eq(relationship.user1.uniqueId)) }.having { relationshipLevel.eq(relationship.level) }.count() >= relationship.level.limit
+            val reachedRelationLimit = select { userId1.eq(relationship.user1.uniqueId).or(userId2.eq(relationship.user1.uniqueId)) }.having { relationshipLevel.eq(relationship.level) }.count() >= relationship.level.limit
             if (!areRelated(relationship.user1, relationship.user2)) {
                 if (reachedRelationLimit) {
                     return@transaction I18n.getString("relationship.limit", relationship.user1.spigot().locale)
                 } else {
-                    Relationships.insert {
+                    insert {
                         it[userId1] = relationship.user1.uniqueId
                         it[userId2] = relationship.user2.uniqueId
                         it[since] = relationship.since
                         it[relationshipLevel] = relationship.level
                     }
-                    Relationships.insert {
+                    insert {
                         it[userId1] = relationship.user2.uniqueId
                         it[userId2] = relationship.user1.uniqueId
                         it[since] = relationship.since
@@ -51,8 +53,8 @@ object Relationships : Table() {
     fun updateRelationshipLevel(player: Player, friend: Player, newLevel: RelationshipLevel) {
         if (areRelated(player, friend)) {
             transaction {
-                val oldLevel = Relationships.select((Relationships.userId1 eq player.uniqueId) and (Relationships.userId2 eq friend.uniqueId)).first()[Relationships.relationshipLevel]
-                Relationships.update({ (Relationships.userId1 eq player.uniqueId) and (Relationships.userId2 eq friend.uniqueId) }) {
+                val oldLevel = select((userId1 eq player.uniqueId) and (userId2 eq friend.uniqueId)).first()[relationshipLevel]
+                update({ (userId1 eq player.uniqueId) and (userId2 eq friend.uniqueId) }) {
                     it[relationshipLevel] = newLevel
                 }
                 player.sendMessage("Updated relationship from ${oldLevel.name} to ${newLevel.name}")
@@ -64,9 +66,29 @@ object Relationships : Table() {
 
     fun areRelated(player: Player, friend: Player): Boolean {
         return transaction {
-            return@transaction Relationships.select {
+            return@transaction select {
                 userId1.eq(player.uniqueId).and(userId2.eq(friend.uniqueId))
             }.any()
         }
     }
+
+    fun areRelated(player: UUID, friend: UUID): Boolean {
+        return transaction {
+            return@transaction select {
+                userId1.eq(player).and(userId2.eq(friend))
+            }.any()
+        }
+    }
+
+    fun getRelationships(player: Player): Map<RelationshipLevel, Relationship> {
+        return transaction {
+            val friendsField = select(userId1 eq player.uniqueId)
+            return@transaction mutableMapOf<RelationshipLevel, Relationship>().apply {
+                for (relationship in friendsField) {
+                    put(relationship[relationshipLevel], Relationship(Bukkit.getPlayer(relationship[userId1]), Bukkit.getPlayer(relationship[userId2]), relationship[since], relationship[relationshipLevel]))
+                }
+            }
+        }
+    }
+
 }

@@ -54,7 +54,7 @@ class PlayerEventListener : Listener {
             LobbyMain.lobbyInventoryMap[player] = LobbyInventoryHolder.forPlayer(player)
             if (Users.select { Users.id.eq(player.uniqueId) }.count() == 0) {
                 Users.insert {
-                    it[id] = player.uniqueId
+                    it[Users.id] = player.uniqueId
                 }
             }
             val inventory = player.inventory
