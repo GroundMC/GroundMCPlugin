@@ -38,30 +38,30 @@ object I18n {
      * Returns a list of localized strings (if available) for the given keys.
      * Automatically parses color codes using the [colorChar]
      *
-     * @param keys A list of strings representing the common names for the localized strings, used in resources
+     * @param keys A collection of strings representing the common names for the localized strings, used in resources
      * @param locale The locale to translate to. If not given, [Locale.US]
      *
      * @return The localized and parsed strings with null where strings could not be localized
      *
      * @see getString
      */
-    fun getStrings(keys: List<String>, locale: Locale = Locale.US): List<String?> {
-        return keys.map { it -> getString(it, locale) }
+    fun getStrings(keys: Collection<String>, locale: Locale = Locale.US): Array<String?> {
+        return keys.map { it -> getString(it, locale) }.toTypedArray()
     }
 
     /**
      * Returns a list of localized strings (if available) for the given keys.
      * Automatically parses color codes using the [colorChar]
      *
-     * @param keys A list of strings representing the common names for the localized strings, used in resources
+     * @param keys A collection of strings representing the common names for the localized strings, used in resources
      * @param locale The locale to translate to.
      *
      * @return The localized and parsed strings with null where strings could not be localized
      *
      * @see getString
      */
-    fun getStrings(keys: List<String>, locale: String): List<String?> {
-        return keys.map { it -> getString(it, locale) }
+    fun getStrings(keys: Collection<String>, locale: String): Array<String?> {
+        return keys.map { it -> getString(it, locale) }.toTypedArray()
     }
 
     /**
