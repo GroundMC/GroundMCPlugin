@@ -12,7 +12,7 @@ commands:
       aliases: [lb]
    friend:
       description: Friendship commands
-      usage: "Usage: /<command> <add|remove|status|online> <username> [relation]"
+      usage: "Usage: /<command> <add|update|remove|status|online> <username> [relation]"
       aliases: [fr, relationship]
    friends:
       description: Lists friends
