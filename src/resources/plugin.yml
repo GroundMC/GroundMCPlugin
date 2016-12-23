@@ -13,7 +13,7 @@ commands:
    friend:
       description: Friendship commands
       usage: "Usage: /<command> <add|remove|status|online> <username> [relation]"
-      aliases: [fr]
+      aliases: [fr, relationship]
    friends:
       description: Lists friends
       usage: "Usage /<command>"
