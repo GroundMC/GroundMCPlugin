@@ -17,7 +17,7 @@ import java.util.*
 class CommandCoins : ILobbyCommand {
     override val name: String = "coins"
 
-    override fun getCommandHelp(locale: Locale): Array<String> = arrayOf("No help, yet.")
+    override fun getCommandHelp(locale: Locale): Array<String?> = arrayOf("No help, yet.")
 
     override fun getTabCompletion(sender: CommandSender, command: Command, alias: String?, args: Array<out String>?): List<String>? = null
 

@@ -19,7 +19,7 @@ import java.util.*
 class CommandVanish : ILobbyCommand {
     override val name = "vanish"
 
-    override fun getCommandHelp(locale: Locale) = arrayOf("Vanishes")
+    override fun getCommandHelp(locale: Locale): Array<String?> = arrayOf("Vanishes")
 
     override fun getTabCompletion(sender: CommandSender, command: Command, alias: String?, args: Array<out String>?): List<String>? = null
 

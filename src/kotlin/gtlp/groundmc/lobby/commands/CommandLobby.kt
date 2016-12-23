@@ -105,7 +105,7 @@ class CommandLobby : ILobbyCommand {
                     displayName = args.sliceArray(IntRange(1, args.size - 1)).reduce { left, right -> left + " " + right }
                     sender.inventory.itemInMainHand = item
                 }
-                val string = I18n.getString("commandlobby.placeitem", sender.spigot().locale)
+                val string = I18n.getString("commandlobby.placeitem", sender.spigot().locale)!!
                 val strList = string.split("|")
                 val msg = TextComponent(strList[0])
                 val clickComponent = TextComponent(strList[1])
