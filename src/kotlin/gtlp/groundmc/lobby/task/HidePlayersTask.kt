@@ -14,25 +14,25 @@ object HidePlayersTask : ITask {
 
     override fun run() {
         transaction {
-            val onlinePlayers = ImmutableList.copyOf(Bukkit.getServer().onlinePlayers)
-            for (player in onlinePlayers.filter { gtlp.groundmc.lobby.database.table.Users.select { Users.id.eq(it.uniqueId) }.first()[Users.hiddenStatus] == VisibilityStates.ALL }) {
-                onlinePlayers.forEach { player.showPlayer(it) }
+            val onlinePlayers = Users.select { Users.id inList ImmutableList.copyOf(Bukkit.getServer().onlinePlayers.map { it.uniqueId }) }.groupBy(Users.id)
+            for (player in onlinePlayers.filter { it[Users.hiddenStatus] == VisibilityStates.ALL }) {
+                onlinePlayers.forEach { Bukkit.getPlayer(player[Users.id]).showPlayer(Bukkit.getPlayer(it[Users.id])) }
             }
-            for (player in onlinePlayers.filter { gtlp.groundmc.lobby.database.table.Users.select { Users.id.eq(it.uniqueId) }.first()[Users.hiddenStatus] in setOf(VisibilityStates.NONE) }) {
-                onlinePlayers.forEach { player.hidePlayer(it) }
+            for (player in onlinePlayers.filter { it[Users.hiddenStatus] == VisibilityStates.NONE }) {
+                onlinePlayers.forEach { Bukkit.getPlayer(player[Users.id]).hidePlayer(Bukkit.getPlayer(it[Users.id])) }
             }
-            for (player in onlinePlayers.filter { gtlp.groundmc.lobby.database.table.Users.select { Users.id.eq(it.uniqueId) }.first()[Users.hiddenStatus] == VisibilityStates.FRIENDS }) {
+            for (player in onlinePlayers.filter { it[Users.hiddenStatus] == VisibilityStates.FRIENDS }) {
                 onlinePlayers.forEach {
-                    if (Relationships.areRelated(player, it)) {
-                        player.showPlayer(it)
+                    if (Relationships.areRelated(player[Users.id], it[Users.id])) {
+                        Bukkit.getPlayer(player[Users.id]).showPlayer(Bukkit.getPlayer(it[Users.id]))
                     } else {
-                        player.hidePlayer(it)
+                        Bukkit.getPlayer(player[Users.id]).hidePlayer(Bukkit.getPlayer(it[Users.id]))
                     }
                 }
             }
-            onlinePlayers.forEach {
-                for (resultRow in Users.select { Users.vanishStatus eq true }) {
-                    it.hidePlayer(Bukkit.getPlayer(resultRow[Users.id]))
+            for (player in Users.select { Users.vanishStatus eq true }) {
+                onlinePlayers.forEach {
+                    Bukkit.getPlayer(it[Users.id]).hidePlayer(Bukkit.getPlayer(player[Users.id]))
                 }
             }
         }
