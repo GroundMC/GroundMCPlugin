@@ -1,8 +1,6 @@
 package gtlp.groundmc.lobby
 
-import gtlp.groundmc.lobby.commands.CommandCoins
-import gtlp.groundmc.lobby.commands.CommandLobby
-import gtlp.groundmc.lobby.commands.CommandVanish
+import gtlp.groundmc.lobby.commands.*
 import gtlp.groundmc.lobby.database.table.Meta
 import gtlp.groundmc.lobby.database.table.Relationships
 import gtlp.groundmc.lobby.database.table.Users
@@ -82,6 +80,8 @@ class LobbyMain : JavaPlugin() {
         LobbyCommandRegistry.registerCommand(CommandLobby())
         LobbyCommandRegistry.registerCommand(CommandVanish())
         LobbyCommandRegistry.registerCommand(CommandCoins())
+        LobbyCommandRegistry.registerCommand(CommandFriend())
+        LobbyCommandRegistry.registerCommand(CommandFriends())
     }
 
     override fun onDisable() {
