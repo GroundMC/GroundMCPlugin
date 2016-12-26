@@ -12,12 +12,12 @@ import org.bukkit.entity.Player
 import java.util.*
 
 /**
- * Created by Marvin on 23.12.2016.
+ * Collection of commands related to friends management
  */
 class CommandFriend : ILobbyCommand {
     override val name = "friend"
 
-    override fun getCommandHelp(locale: Locale): Array<String?> = I18n.getStrings(listOf("commandfriend.help.1", "commandfriend.help.2", "commandfriend.help.3", "commandfriend.help.4", "commandfriend.help.5"), locale)
+    override fun getCommandHelp(locale: Locale): Array<String?> = I18n.getStrings(listOf("command.friend.help.1", "command.friend.help.2", "command.friend.help.3", "command.friend.help.4", "command.friend.help.5"), locale)
 
     override fun getTabCompletion(sender: CommandSender, command: Command, alias: String?, args: Array<out String>?): List<String>? {
         if (args != null) {
@@ -82,24 +82,24 @@ class CommandFriend : ILobbyCommand {
      */
     private fun updateRelationship(sender: Player, args: Array<String>): Boolean {
         if (args.size < 2) {
-            sender.sendMessage(I18n.getString("commandfriend.specify_player_update", sender.spigot().locale))
+            sender.sendMessage(I18n.getString("command.friend.specify_player_update", sender.spigot().locale))
             return false
         }
         if (args.size < 3) {
-            sender.sendMessage(I18n.getString("commandfriend.specify_level_update", sender.spigot().locale))
+            sender.sendMessage(I18n.getString("command.friend.specify_level_update", sender.spigot().locale))
             return false
         }
         val friend = Bukkit.getPlayer(args[2])
         if (friend == null) {
-            sender.sendMessage(I18n.getString("commandfriend.player_not_found", sender.spigot().locale))
+            sender.sendMessage(I18n.getString("command.friend.player_not_found", sender.spigot().locale))
             return true
         }
         val relationshipLevel: RelationshipLevel?
         try {
             relationshipLevel = RelationshipLevel.valueOf(args[2])
         } catch (exception: IllegalArgumentException) {
-            sender.sendMessage(I18n.getString("commandfriend.unkown_relationship_level", sender.spigot().locale)!!.format(args[2]))
-            sender.sendMessage(I18n.getString("commandfriend.valid_levels", sender.spigot().locale) + RelationshipLevel.values().map { it -> it.name })
+            sender.sendMessage(I18n.getString("command.friend.unkown_relationship_level", sender.spigot().locale)!!.format(args[2]))
+            sender.sendMessage(I18n.getString("command.friend.valid_levels", sender.spigot().locale) + RelationshipLevel.values().map { it -> it.name })
             return true
         }
         Relationships.updateRelationshipLevel(sender, friend, relationshipLevel)
@@ -118,7 +118,7 @@ class CommandFriend : ILobbyCommand {
         val onlinePlayers = Bukkit.getOnlinePlayers()
         val onlineFriends = friendsList.filter { it.user2 in onlinePlayers }
         if (onlineFriends.isEmpty()) {
-            sender.sendMessage(I18n.getString("commandfriend.no_friends_online", sender.spigot().locale))
+            sender.sendMessage(I18n.getString("command.friend.no_friends_online", sender.spigot().locale))
             return true
         }
         for (level in RelationshipLevel.values()) {
@@ -139,7 +139,7 @@ class CommandFriend : ILobbyCommand {
      */
     private fun sendStatusMessage(sender: Player, args: Array<String>): Boolean {
         if (args.size < 2) {
-            sender.sendMessage(I18n.getString("commandfriend.specify_player_status"))
+            sender.sendMessage(I18n.getString("command.friend.specify_player_status"))
             return false
         } else {
             val relationship = Relationships.getRelationship(sender, Bukkit.getPlayer(args[1]))
@@ -164,20 +164,20 @@ class CommandFriend : ILobbyCommand {
      */
     private fun removeFriend(sender: Player, args: Array<String>): Boolean {
         if (args.size < 2) {
-            sender.sendMessage(I18n.getString("commandfriend.specify_player", sender.spigot().locale))
+            sender.sendMessage(I18n.getString("command.friend.specify_player", sender.spigot().locale))
             return false
         }
         val friend = Bukkit.getPlayer(args[1])
         if (friend == null) {
-            sender.sendMessage(I18n.getString("commandfriend.player_not_found", sender.spigot().locale)!!.format(args[1]))
+            sender.sendMessage(I18n.getString("command.friend.player_not_found", sender.spigot().locale)!!.format(args[1]))
             return true
         }
         if (Relationships.areRelated(sender, friend)) {
             Relationships.removeRelationship(sender, friend)
-            sender.sendMessage(I18n.getString("commandfriend.no_longer_related")!!.format(friend.name))
+            sender.sendMessage(I18n.getString("command.friend.no_longer_related")!!.format(friend.name))
             return true
         } else {
-            sender.sendMessage(I18n.getString("commandfriend.no_friends")!!.format(friend.name))
+            sender.sendMessage(I18n.getString("command.friend.no_friends")!!.format(friend.name))
             return true
         }
     }
@@ -192,21 +192,21 @@ class CommandFriend : ILobbyCommand {
      */
     private fun addFriend(sender: Player, args: Array<String>): Boolean {
         if (args.size == 1) {
-            sender.sendMessage(I18n.getString("commandfriend.specify_player", sender.spigot().locale))
+            sender.sendMessage(I18n.getString("command.friend.specify_player", sender.spigot().locale))
             return false
         }
         val friend = Bukkit.getPlayer(args[1])
         if (friend == null) {
-            sender.sendMessage(I18n.getString("commandfriend.player_not_found", sender.spigot().locale)!!.format(args[1]))
+            sender.sendMessage(I18n.getString("command.friend.player_not_found", sender.spigot().locale)!!.format(args[1]))
             return true
         }
         if (friend.name == args[1]) {
-            sender.sendMessage(I18n.getString("commandfriend.cant_add_yourself", sender.spigot().locale))
+            sender.sendMessage(I18n.getString("command.friend.cant_add_yourself", sender.spigot().locale))
             return true
         }
         if (Relationships.areRelated(sender, friend)) {
-            sender.sendMessage(I18n.getString("commandfriend.already_friends", sender.spigot().locale)!!.format(args[1]))
-            val stringList = I18n.getString("commandfriend.update_relationship", sender.spigot().locale)!!.split('|')
+            sender.sendMessage(I18n.getString("command.friend.already_friends", sender.spigot().locale)!!.format(args[1]))
+            val stringList = I18n.getString("command.friend.update_relationship", sender.spigot().locale)!!.split('|')
             val msg = TextComponent(stringList[0])
             msg.addExtra(TextComponent(stringList[1]).apply { clickEvent = ClickEvent(ClickEvent.Action.RUN_COMMAND, "friend update") })
             msg.addExtra(stringList[2])
@@ -218,8 +218,8 @@ class CommandFriend : ILobbyCommand {
                 try {
                     relationshipLevel = RelationshipLevel.valueOf(args[2])
                 } catch (exception: IllegalArgumentException) {
-                    sender.sendMessage(I18n.getString("commandfriend.unkown_relationship_level", sender.spigot().locale)!!.format(args[2]))
-                    sender.sendMessage(I18n.getString("commandfriend.valid_levels", sender.spigot().locale) + RelationshipLevel.values().map { it -> it.name })
+                    sender.sendMessage(I18n.getString("command.friend.unkown_relationship_level", sender.spigot().locale)!!.format(args[2]))
+                    sender.sendMessage(I18n.getString("command.friend.valid_levels", sender.spigot().locale) + RelationshipLevel.values().map { it -> it.name })
                     return true
                 }
             }
@@ -227,7 +227,7 @@ class CommandFriend : ILobbyCommand {
                 relationshipLevel = RelationshipLevel.FRIEND
             }
             Relationships.addRelationship(sender, friend, relationshipLevel)
-            sender.sendMessage(I18n.getString("commandfriend.successfully_added", sender.spigot().locale)!!.format(args[1], I18n.getString(relationshipLevel.i18nKey, sender.spigot().locale)))
+            sender.sendMessage(I18n.getString("command.friend.successfully_added", sender.spigot().locale)!!.format(args[1], I18n.getString(relationshipLevel.i18nKey, sender.spigot().locale)))
             return true
         }
     }

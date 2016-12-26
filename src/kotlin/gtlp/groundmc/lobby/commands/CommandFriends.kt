@@ -15,7 +15,7 @@ import java.util.*
 class CommandFriends : ILobbyCommand {
     override val name: String = "friends"
 
-    override fun getCommandHelp(locale: Locale): Array<String?> = arrayOf(I18n.getString("commandfriends.help", locale))
+    override fun getCommandHelp(locale: Locale): Array<String?> = arrayOf(I18n.getString("command.friends.help", locale))
 
     override fun getTabCompletion(sender: CommandSender, command: Command, alias: String?, args: Array<out String>?): List<String>? = null
 
@@ -23,7 +23,7 @@ class CommandFriends : ILobbyCommand {
         if (sender is Player) {
             val friends = Relationships.getRelationships(sender)
             if (friends.isEmpty()) {
-                sender.sendMessage(I18n.getString("commandfriends.no_friends", sender.spigot().locale))
+                sender.sendMessage(I18n.getString("command.friends.no_friends", sender.spigot().locale))
                 return true
             }
             for (level in RelationshipLevel.values()) {

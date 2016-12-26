@@ -86,7 +86,7 @@ object Relationships : Table() {
                         I18n.getString(newLevel.i18nKey, player.spigot().locale)))
             }
         } else {
-            player.sendMessage(I18n.getString("commandfriend.no_friends", player.spigot().locale))
+            player.sendMessage(I18n.getString("command.friend.no_friends", player.spigot().locale))
         }
     }
 

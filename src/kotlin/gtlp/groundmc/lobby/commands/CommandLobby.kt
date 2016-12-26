@@ -20,7 +20,7 @@ import kotlin.concurrent.thread
 class CommandLobby : ILobbyCommand {
     override val name: String = "lobby"
 
-    override fun getCommandHelp(locale: Locale) = I18n.getStrings(listOf("commandlobby.help.1", "commandlobby.help.2", "commandlobby.help.3"), locale)
+    override fun getCommandHelp(locale: Locale) = I18n.getStrings(listOf("command.lobby.help.1", "command.lobby.help.2", "command.lobby.help.3"), locale)
 
     override fun getTabCompletion(sender: CommandSender, command: Command, alias: String?, args: Array<out String>?): List<String>? {
         if (args != null) {
@@ -61,7 +61,7 @@ class CommandLobby : ILobbyCommand {
             if (sender.hasPermission(Permission.ADMIN.id)) {
                 thread {
                     val view = sender.openInventory(LobbyInventory.TEMPLATE_INVENTORY)
-                    sender.sendMessage(I18n.getString("commandlobby.30seconds", sender.spigot().locale))
+                    sender.sendMessage(I18n.getString("command.lobby.30seconds", sender.spigot().locale))
                     for (i in 0..30) {
                         if (sender.openInventory != view) {
                             break
@@ -69,7 +69,7 @@ class CommandLobby : ILobbyCommand {
                         Thread.sleep(1000)
                     }
                     saveTemplate()
-                    sender.sendMessage(I18n.getString("commandlobby.inventorydone", sender.spigot().locale))
+                    sender.sendMessage(I18n.getString("command.lobby.inventorydone", sender.spigot().locale))
                     if (sender.openInventory == view) {
                         view.close()
                     }
@@ -103,7 +103,7 @@ class CommandLobby : ILobbyCommand {
                     displayName = args.sliceArray(IntRange(1, args.size - 1)).reduce { left, right -> left + " " + right }
                     sender.inventory.itemInMainHand = item
                 }
-                val string = I18n.getString("commandlobby.placeitem", sender.spigot().locale)!!
+                val string = I18n.getString("command.lobby.placeitem", sender.spigot().locale)!!
                 val strList = string.split("|")
                 val msg = TextComponent(strList[0])
                 val clickComponent = TextComponent(strList[1])
