@@ -12,6 +12,7 @@ import gtlp.groundmc.lobby.util.NBTItemExt
 import org.bukkit.GameMode
 import org.bukkit.Location
 import org.bukkit.Material
+import org.bukkit.Sound
 import org.bukkit.attribute.Attribute
 import org.bukkit.enchantments.Enchantment
 import org.bukkit.entity.Player
@@ -24,6 +25,7 @@ import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.jetbrains.exposed.sql.update
+import org.joda.time.DateTime
 
 /**
  * Created by Marv1 on 14.11.2016.
@@ -47,6 +49,19 @@ class PlayerEventListener : Listener {
     fun onPlayerLogin(event: PlayerJoinEvent) {
         addItemsToInventory(event.player)
         event.player.getAttribute(Attribute.GENERIC_ATTACK_SPEED).baseValue = 16.0
+
+        val playerRow = Users.getPlayer(event.player)
+        if (playerRow[Users.lastDailyCoinsDate].plusDays(1).isBeforeNow) {
+            event.player.sendMessage(I18n.getString("event.dailyCoins", event.player.spigot().locale)?.format(LobbyMain.dailyCoins))
+            event.player.playSound(event.player.location, Sound.ENTITY_PLAYER_LEVELUP, 1.0f, 1.0f)
+            transaction {
+                Users.update({ Users.id eq event.player.uniqueId }) {
+                    it[Users.coins] = playerRow[Users.coins] + LobbyMain.dailyCoins
+                    it[Users.lastDailyCoinsDate] = DateTime.now()
+                }
+                commit()
+            }
+        }
     }
 
     private fun addItemsToInventory(player: Player) {
