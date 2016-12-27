@@ -15,6 +15,7 @@ import gtlp.groundmc.lobby.task.ApplyPlayerEffectsTask
 import gtlp.groundmc.lobby.task.HidePlayersTask
 import gtlp.groundmc.lobby.task.ITask
 import gtlp.groundmc.lobby.task.SetRulesTask
+import gtlp.groundmc.lobby.util.Metrics
 import org.bukkit.Bukkit
 import org.bukkit.Difficulty
 import org.bukkit.World
@@ -28,7 +29,6 @@ import org.bukkit.scheduler.BukkitScheduler
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils.createMissingTablesAndColumns
 import org.jetbrains.exposed.sql.transactions.transaction
-import org.mcstats.Metrics
 import java.io.IOException
 
 
