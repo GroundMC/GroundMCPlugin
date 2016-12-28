@@ -45,7 +45,9 @@ object Relationships : Table() {
             val reachedRelationLimit = select { userId1.eq(relationship.user1.uniqueId).or(userId2.eq(relationship.user1.uniqueId)) }.having { relationshipLevel.eq(relationship.level) }.count() >= relationship.level.limit
             if (!areRelated(relationship.user1, relationship.user2)) {
                 if (reachedRelationLimit) {
-                    relationship.user1.sendMessage(I18n.getString("relationship.limit", relationship.user1.spigot().locale))
+                    if (relationship.user1 is Player) {
+                        relationship.user1.sendMessage(I18n.getString("relationship.limit", relationship.user1.spigot().locale))
+                    }
                 } else {
                     insert {
                         it[userId1] = relationship.user1.uniqueId
@@ -59,9 +61,11 @@ object Relationships : Table() {
                         it[since] = relationship.since
                         it[relationshipLevel] = relationship.level
                     }
-                    relationship.user1.sendMessage(I18n.getString("relationship.success", relationship.user1.spigot().locale))
+                    if (relationship.user1 is Player) {
+                        relationship.user1.sendMessage(I18n.getString("relationship.success", relationship.user1.spigot().locale))
+                    }
                 }
-            } else {
+            } else if (relationship.user1 is Player) {
                 relationship.user1.sendMessage(I18n.getString("relationship.exists", relationship.user1.spigot().locale))
             }
         }
@@ -98,7 +102,7 @@ object Relationships : Table() {
      *
      * @return whether there exists a relationship between [player] and [friend]
      */
-    fun areRelated(player: Player, friend: OfflinePlayer): Boolean {
+    fun areRelated(player: OfflinePlayer, friend: OfflinePlayer): Boolean {
         return transaction {
             return@transaction select {
                 userId1.eq(player.uniqueId).and(userId2.eq(friend.uniqueId))
@@ -151,9 +155,27 @@ object Relationships : Table() {
      *
      * @return a [Relationship] object holding the relationship between [player] and [friend], if any, otherwise null
      */
-    fun getRelationship(player: Player, friend: Player): Relationship? {
+    fun getRelationship(player: OfflinePlayer, friend: OfflinePlayer): Relationship? {
         return transaction {
             val relationship = select((userId1 eq player.uniqueId) and (userId2 eq friend.uniqueId))
+            if (relationship.any()) {
+                return@transaction Relationship(player, friend, relationship.first()[since], relationship.first()[relationshipLevel])
+            }
+            return@transaction null
+        }
+    }
+
+    /**
+     * Gets the relationship between [player]  and [friend]
+     *
+     * @param player the player to query the relationship for
+     * @param friend the friend to get the relationship for
+     *
+     * @return a [Relationship] object holding the relationship between [player] and [friend], if any, otherwise null
+     */
+    fun getRelationship(player: UUID, friend: UUID): Relationship? {
+        return transaction {
+            val relationship = select((userId1 eq player) and (userId2 eq friend))
             if (relationship.any()) {
                 return@transaction Relationship(player, friend, relationship.first()[since], relationship.first()[relationshipLevel])
             }

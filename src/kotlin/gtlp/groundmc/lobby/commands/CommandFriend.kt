@@ -2,6 +2,7 @@ package gtlp.groundmc.lobby.commands
 
 import gtlp.groundmc.lobby.database.table.Relationships
 import gtlp.groundmc.lobby.enum.RelationshipLevel
+import gtlp.groundmc.lobby.util.APIUtils
 import gtlp.groundmc.lobby.util.I18n
 import net.md_5.bungee.api.chat.ClickEvent
 import net.md_5.bungee.api.chat.TextComponent
@@ -123,7 +124,7 @@ class CommandFriend : ILobbyCommand {
         }
         for (level in RelationshipLevel.values()) {
             onlineFriends.filter { it.level == level }.let {
-                sender.sendMessage(it.joinToString(prefix = I18n.getString(level.i18nKey, sender.spigot().locale) + ": "))
+                sender.sendMessage(it.joinToString(prefix = I18n.getString(level.i18nKey, sender.spigot().locale) + ": ", transform = { it -> if (it.user1.uniqueId != sender.uniqueId) it.user1.name else it.user2.name }))
             }
         }
         return true
@@ -142,7 +143,12 @@ class CommandFriend : ILobbyCommand {
             sender.sendMessage(I18n.getString("command.friend.specify_player_status"))
             return false
         } else {
-            val relationship = Relationships.getRelationship(sender, Bukkit.getPlayer(args[1]))
+            val friend = APIUtils.getOfflinePlayer(args[1])
+            if (friend == null) {
+                sender.sendMessage(I18n.getString("command.friend.not_found"))
+                return true
+            }
+            val relationship = Relationships.getRelationship(sender, friend)
             if (relationship != null) {
                 sender.sendMessage(I18n.getString("relationship.status", sender.spigot().locale)!!.format(args[1],
                         I18n.getString(relationship.level.i18nKey, sender.spigot().locale)))
@@ -218,7 +224,7 @@ class CommandFriend : ILobbyCommand {
                 try {
                     relationshipLevel = RelationshipLevel.valueOf(args[2])
                 } catch (exception: IllegalArgumentException) {
-                    sender.sendMessage(I18n.getString("command.friend.unkown_relationship_level", sender.spigot().locale)!!.format(args[2]))
+                    sender.sendMessage(I18n.getString("command.friend.unknown_relationship_level", sender.spigot().locale)!!.format(args[2]))
                     sender.sendMessage(I18n.getString("command.friend.valid_levels", sender.spigot().locale) + RelationshipLevel.values().map { it -> it.name })
                     return true
                 }

@@ -35,7 +35,6 @@ import org.bukkit.entity.Player
 import org.bukkit.plugin.Plugin
 import org.bukkit.scheduler.BukkitTask
 import java.io.*
-import java.lang.Double
 import java.net.Proxy
 import java.net.URL
 import java.net.URLConnection
