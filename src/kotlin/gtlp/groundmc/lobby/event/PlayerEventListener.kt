@@ -56,6 +56,7 @@ class PlayerEventListener : Listener {
             event.player.playSound(event.player.location, Sound.ENTITY_PLAYER_LEVELUP, 1.0f, 1.0f)
             transaction {
                 Users.update({ Users.id eq event.player.uniqueId }) {
+                    it[Users.lastName] = event.player.name
                     it[Users.coins] = playerRow[Users.coins] + LobbyMain.dailyCoins
                     it[Users.lastDailyCoinsDate] = DateTime.now()
                 }

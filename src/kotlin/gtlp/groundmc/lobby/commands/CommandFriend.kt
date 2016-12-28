@@ -1,15 +1,17 @@
 package gtlp.groundmc.lobby.commands
 
 import gtlp.groundmc.lobby.database.table.Relationships
+import gtlp.groundmc.lobby.database.table.Users
 import gtlp.groundmc.lobby.enum.RelationshipLevel
-import gtlp.groundmc.lobby.util.APIUtils
 import gtlp.groundmc.lobby.util.I18n
+import gtlp.groundmc.lobby.util.I18nUtils
 import net.md_5.bungee.api.chat.ClickEvent
 import net.md_5.bungee.api.chat.TextComponent
 import org.bukkit.Bukkit
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
+import org.joda.time.format.DateTimeFormat
 import java.util.*
 
 /**
@@ -143,15 +145,16 @@ class CommandFriend : ILobbyCommand {
             sender.sendMessage(I18n.getString("command.friend.specify_player_status"))
             return false
         } else {
-            val friend = APIUtils.getOfflinePlayer(args[1])
+            val friend = Users.byName(name)
             if (friend == null) {
                 sender.sendMessage(I18n.getString("command.friend.not_found"))
                 return true
             }
-            val relationship = Relationships.getRelationship(sender, friend)
+            val relationship = Relationships.getRelationship(sender.uniqueId, friend[Users.id])
             if (relationship != null) {
                 sender.sendMessage(I18n.getString("relationship.status", sender.spigot().locale)!!.format(args[1],
-                        I18n.getString(relationship.level.i18nKey, sender.spigot().locale)))
+                        I18n.getString(relationship.level.i18nKey, sender.spigot().locale),
+                        relationship.since.toString(DateTimeFormat.mediumDate().withLocale(I18nUtils.getLocaleFromCommandSender(sender)))))
                 return true
             } else {
                 sender.sendMessage(I18n.getString("relationship.not_related", sender.spigot().locale)!!.format(args[1]))

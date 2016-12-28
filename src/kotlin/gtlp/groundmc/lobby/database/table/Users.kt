@@ -15,6 +15,7 @@ import java.util.*
  */
 object Users : Table() {
     val id = uuid("playerId").primaryKey().uniqueIndex()
+    val lastName = text("last_name").default("<no name>")
     val silentStatus = bool("silent_status").default(false)
     val hiddenStatus = enumeration("hidden_status", VisibilityStates::class.java).default(VisibilityStates.ALL)
     val vanishStatus = bool("vanish_status").default(false)
@@ -30,6 +31,16 @@ object Users : Table() {
     fun getPlayer(uuid: UUID): ResultRow {
         return transaction {
             return@transaction Users.select(Users.id eq uuid).first()
+        }
+    }
+
+    fun byName(name: String): ResultRow? {
+        try {
+            return transaction {
+                return@transaction select { lastName eq name }.first()
+            }
+        } catch (ex: NoSuchElementException) {
+            return null
         }
     }
 }
