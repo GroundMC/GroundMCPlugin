@@ -3,7 +3,6 @@ package gtlp.groundmc.lobby.database.table
 import gtlp.groundmc.lobby.Relationship
 import gtlp.groundmc.lobby.enum.RelationshipLevel
 import gtlp.groundmc.lobby.util.I18n
-import org.bukkit.Bukkit
 import org.bukkit.OfflinePlayer
 import org.bukkit.entity.Player
 import org.jetbrains.exposed.sql.*
@@ -140,7 +139,7 @@ object Relationships : Table() {
             val friendsField = select(userId1 eq player.uniqueId)
             return@transaction mutableListOf<Relationship>().apply {
                 for (relationship in friendsField) {
-                    add(Relationship(Bukkit.getPlayer(relationship[userId1]), Bukkit.getPlayer(relationship[userId2]), relationship[since], relationship[relationshipLevel]))
+                    add(Relationship(relationship[userId1], relationship[userId2], relationship[since], relationship[relationshipLevel]))
                 }
             }
         }
