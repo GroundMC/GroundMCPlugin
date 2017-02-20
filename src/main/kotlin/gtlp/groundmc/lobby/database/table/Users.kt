@@ -11,7 +11,7 @@ import org.joda.time.DateTime
 import java.util.*
 
 /**
- * Table to hold players' settings and friends
+ * Table to hold players' settings and more data
  */
 object Users : Table() {
     val id = uuid("playerId").primaryKey().uniqueIndex()

@@ -16,9 +16,7 @@ import gtlp.groundmc.lobby.task.HidePlayersTask
 import gtlp.groundmc.lobby.task.ITask
 import gtlp.groundmc.lobby.task.SetRulesTask
 import gtlp.groundmc.lobby.util.Metrics
-import org.bukkit.Bukkit
-import org.bukkit.Difficulty
-import org.bukkit.World
+import org.bukkit.*
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.HumanEntity
@@ -70,6 +68,11 @@ class LobbyMain : JavaPlugin() {
         if (config.contains("inventory.content") && config["inventory.content"] is List<*>) {
             @Suppress("unchecked_cast")
             LobbyInventory.TEMPLATE_INVENTORY.contents = (config["inventory.content"] as List<ItemStack>).toTypedArray()
+            (0..LobbyInventory.TEMPLATE_INVENTORY.contents.size - 1).forEach { i ->
+                if (LobbyInventory.TEMPLATE_INVENTORY.contents[i] == null) {
+                    LobbyInventory.TEMPLATE_INVENTORY.contents[i] = ItemStack(Material.STAINED_GLASS_PANE, 1, DyeColor.WHITE.dyeData.toShort())
+                }
+            }
         }
         hubWorld = Bukkit.getWorlds().firstOrNull { it.name == config.getString("hub.world") }
         if (hubWorld == null) {
