@@ -2,7 +2,6 @@ package gtlp.groundmc.lobby.commands
 
 import gtlp.groundmc.lobby.database.table.Relationships
 import gtlp.groundmc.lobby.database.table.Users
-import gtlp.groundmc.lobby.enum.RelationshipLevel
 import gtlp.groundmc.lobby.util.I18n
 import gtlp.groundmc.lobby.util.I18nUtils
 import net.md_5.bungee.api.chat.ClickEvent
@@ -31,10 +30,6 @@ class CommandFriend : ILobbyCommand {
                     "update" -> return friendsStartWith(sender, args)
                     "remove" -> return friendsStartWith(sender, args)
                     "status" -> return friendsStartWith(sender, args)
-                }
-                3 -> when (args[0]) {
-                    "add" -> return RelationshipLevel.values().map { it -> it.name }.filter { it.startsWith(args.last()) }
-                    "update" -> return RelationshipLevel.values().map { it -> it.name }.filter { it.startsWith(args.last()) }
                 }
             }
         }
@@ -97,15 +92,6 @@ class CommandFriend : ILobbyCommand {
             sender.sendMessage(I18n.getString("command.friend.player_not_found", sender.spigot().locale))
             return true
         }
-        val relationshipLevel: RelationshipLevel?
-        try {
-            relationshipLevel = RelationshipLevel.valueOf(args[2])
-        } catch (exception: IllegalArgumentException) {
-            sender.sendMessage(I18n.getString("command.friend.unkown_relationship_level", sender.spigot().locale)!!.format(args[2]))
-            sender.sendMessage(I18n.getString("command.friend.valid_levels", sender.spigot().locale) + RelationshipLevel.values().map { it -> it.name })
-            return true
-        }
-        Relationships.updateRelationshipLevel(sender, friend, relationshipLevel)
         return true
     }
 
@@ -124,10 +110,8 @@ class CommandFriend : ILobbyCommand {
             sender.sendMessage(I18n.getString("command.friend.no_friends_online", sender.spigot().locale))
             return true
         }
-        for (level in RelationshipLevel.values()) {
-            onlineFriends.filter { it.level == level }.let {
-                sender.sendMessage(it.joinToString(prefix = I18n.getString(level.i18nKey, sender.spigot().locale) + ": ", transform = { it -> if (it.user1.uniqueId != sender.uniqueId) it.user1.name else it.user2.name }))
-            }
+        onlineFriends.let {
+            sender.sendMessage(it.joinToString(prefix = I18n.getString("relationship.friend", sender.spigot().locale) + ": ", transform = { it -> if (it.user1.uniqueId != sender.uniqueId) it.user1.name else it.user2.name }))
         }
         return true
     }
@@ -153,7 +137,6 @@ class CommandFriend : ILobbyCommand {
             val relationship = Relationships.getRelationship(sender.uniqueId, friend[Users.id])
             if (relationship != null) {
                 sender.sendMessage(I18n.getString("relationship.status", sender.spigot().locale)!!.format(args[1],
-                        I18n.getString(relationship.level.i18nKey, sender.spigot().locale),
                         relationship.since.toString(DateTimeFormat.mediumDate().withLocale(I18nUtils.getLocaleFromCommandSender(sender)))))
                 return true
             } else {
@@ -195,7 +178,7 @@ class CommandFriend : ILobbyCommand {
      * Adds a relationship between two players.
      *
      * @param sender the initiator of the relationship addition
-     * @param args the arguments passed to this command, requires 2 to be successful, a third one is optional ("add", the name of the friend and the relationship level).
+     * @param args the arguments passed to this command, requires 2 to be successful ("add" and the name of the friend).
      *
      * @return whether the command executed successfully.
      */
@@ -222,21 +205,8 @@ class CommandFriend : ILobbyCommand {
             sender.spigot().sendMessage(msg)
             return true
         } else {
-            var relationshipLevel: RelationshipLevel? = null
-            if (args.size >= 3) {
-                try {
-                    relationshipLevel = RelationshipLevel.valueOf(args[2])
-                } catch (exception: IllegalArgumentException) {
-                    sender.sendMessage(I18n.getString("command.friend.unknown_relationship_level", sender.spigot().locale)!!.format(args[2]))
-                    sender.sendMessage(I18n.getString("command.friend.valid_levels", sender.spigot().locale) + RelationshipLevel.values().map { it -> it.name })
-                    return true
-                }
-            }
-            if (relationshipLevel == null) {
-                relationshipLevel = RelationshipLevel.FRIEND
-            }
-            Relationships.addRelationship(sender, friend, relationshipLevel)
-            sender.sendMessage(I18n.getString("command.friend.successfully_added", sender.spigot().locale)!!.format(args[1], I18n.getString(relationshipLevel.i18nKey, sender.spigot().locale)))
+            Relationships.addRelationship(sender, friend)
+            sender.sendMessage(I18n.getString("command.friend.successfully_added", sender.spigot().locale)!!.format(args[1]))
             return true
         }
     }

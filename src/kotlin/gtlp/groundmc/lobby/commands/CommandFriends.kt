@@ -1,7 +1,6 @@
 package gtlp.groundmc.lobby.commands
 
 import gtlp.groundmc.lobby.database.table.Relationships
-import gtlp.groundmc.lobby.enum.RelationshipLevel
 import gtlp.groundmc.lobby.util.I18n
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
@@ -26,12 +25,10 @@ class CommandFriends : ILobbyCommand {
                 sender.sendMessage(I18n.getString("command.friends.no_friends", sender.spigot().locale))
                 return true
             }
-            for (level in RelationshipLevel.values()) {
-                friends.filter { it.level == level }.let {
+            friends.let {
                     if (it.isNotEmpty()) {
-                        sender.sendMessage(String.format("%1\$s (%3\$d/%4\$d): %2\$s", I18n.getString(level.i18nKey, sender.spigot().locale), it.map { it -> it.user2.name }.joinToString(), it.size, level.limit))
+                        sender.sendMessage(String.format("%2\$s: %1\$s", it.map { it -> it.user2.name }.joinToString(), it.size))
                     }
-                }
             }
             return true
         } else if (sender is ConsoleCommandSender) {

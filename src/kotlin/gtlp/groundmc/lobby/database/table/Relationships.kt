@@ -1,7 +1,6 @@
 package gtlp.groundmc.lobby.database.table
 
 import gtlp.groundmc.lobby.Relationship
-import gtlp.groundmc.lobby.enum.RelationshipLevel
 import gtlp.groundmc.lobby.util.I18n
 import org.bukkit.OfflinePlayer
 import org.bukkit.entity.Player
@@ -17,19 +16,17 @@ object Relationships : Table() {
     private val userId1 = uuid("user1").references(Users.id).index()
     private val userId2 = uuid("user2").references(Users.id)
     private val since = datetime("since")
-    private val relationshipLevel = enumeration("level", RelationshipLevel::class.java).default(RelationshipLevel.FRIEND)
 
     /**
-     * Adds a relationship between [player] and [friend] of a level of [relationshipLevel]
+     * Adds a relationship between [player] and [friend]
      *
      * @param player the player that initiated the relationship
      * @param friend the friend to add the relationship to
-     * @param relationshipLevel the level the relationship
      *
      * @see addRelationship
      */
-    fun addRelationship(player: Player, friend: Player, relationshipLevel: RelationshipLevel = RelationshipLevel.FRIEND) {
-        addRelationship(Relationship(player, friend, level = relationshipLevel))
+    fun addRelationship(player: Player, friend: Player) {
+        addRelationship(Relationship(player, friend))
     }
 
     /**
@@ -41,55 +38,24 @@ object Relationships : Table() {
      */
     fun addRelationship(relationship: Relationship) {
         return transaction {
-            val reachedRelationLimit = select { userId1.eq(relationship.user1.uniqueId).or(userId2.eq(relationship.user1.uniqueId)) }.having { relationshipLevel.eq(relationship.level) }.count() >= relationship.level.limit
             if (!areRelated(relationship.user1, relationship.user2)) {
-                if (reachedRelationLimit) {
-                    if (relationship.user1 is Player) {
-                        relationship.user1.sendMessage(I18n.getString("relationship.limit", relationship.user1.spigot().locale))
-                    }
-                } else {
-                    insert {
-                        it[userId1] = relationship.user1.uniqueId
-                        it[userId2] = relationship.user2.uniqueId
-                        it[since] = relationship.since
-                        it[relationshipLevel] = relationship.level
-                    }
-                    insert {
-                        it[userId1] = relationship.user2.uniqueId
-                        it[userId2] = relationship.user1.uniqueId
-                        it[since] = relationship.since
-                        it[relationshipLevel] = relationship.level
-                    }
-                    if (relationship.user1 is Player) {
-                        relationship.user1.sendMessage(I18n.getString("relationship.success", relationship.user1.spigot().locale))
-                    }
+
+                insert {
+                    it[userId1] = relationship.user1.uniqueId
+                    it[userId2] = relationship.user2.uniqueId
+                    it[since] = relationship.since
+                }
+                insert {
+                    it[userId1] = relationship.user2.uniqueId
+                    it[userId2] = relationship.user1.uniqueId
+                    it[since] = relationship.since
+                }
+                if (relationship.user1 is Player) {
+                    relationship.user1.sendMessage(I18n.getString("relationship.success", relationship.user1.spigot().locale))
                 }
             } else if (relationship.user1 is Player) {
                 relationship.user1.sendMessage(I18n.getString("relationship.exists", relationship.user1.spigot().locale))
             }
-        }
-    }
-
-    /**
-     * Updates a relationship between [player] and [friend] of a level of [newLevel]
-     *
-     * @param player the player that initiated the relationship update
-     * @param friend the friend to update the relationship of
-     * @param newLevel the level the relationship
-     */
-    fun updateRelationshipLevel(player: Player, friend: Player, newLevel: RelationshipLevel) {
-        if (areRelated(player, friend)) {
-            transaction {
-                val oldLevel = select((userId1 eq player.uniqueId) and (userId2 eq friend.uniqueId)).first()[relationshipLevel]
-                update({ (userId1 eq player.uniqueId) and (userId2 eq friend.uniqueId) }) {
-                    it[relationshipLevel] = newLevel
-                }
-                player.sendMessage(I18n.getString("relationship.updated", player.spigot().locale)!!.format(
-                        I18n.getString(oldLevel.i18nKey, player.spigot().locale),
-                        I18n.getString(newLevel.i18nKey, player.spigot().locale)))
-            }
-        } else {
-            player.sendMessage(I18n.getString("command.friend.no_friends", player.spigot().locale))
         }
     }
 
@@ -139,7 +105,7 @@ object Relationships : Table() {
             val friendsField = select(userId1 eq player.uniqueId)
             return@transaction mutableListOf<Relationship>().apply {
                 for (relationship in friendsField) {
-                    add(Relationship(relationship[userId1], relationship[userId2], relationship[since], relationship[relationshipLevel]))
+                    add(Relationship(relationship[userId1], relationship[userId2], relationship[since]))
                 }
             }
         }
@@ -158,7 +124,7 @@ object Relationships : Table() {
         return transaction {
             val relationship = select((userId1 eq player.uniqueId) and (userId2 eq friend.uniqueId))
             if (relationship.any()) {
-                return@transaction Relationship(player, friend, relationship.first()[since], relationship.first()[relationshipLevel])
+                return@transaction Relationship(player, friend, relationship.first()[since])
             }
             return@transaction null
         }
@@ -176,7 +142,7 @@ object Relationships : Table() {
         return transaction {
             val relationship = select((userId1 eq player) and (userId2 eq friend))
             if (relationship.any()) {
-                return@transaction Relationship(player, friend, relationship.first()[since], relationship.first()[relationshipLevel])
+                return@transaction Relationship(player, friend, relationship.first()[since])
             }
             return@transaction null
         }
