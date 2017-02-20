@@ -15,13 +15,9 @@ object HidePlayersTask : ITask {
     override fun run() {
         transaction {
             val onlinePlayers = Users.select { Users.id inList ImmutableList.copyOf(Bukkit.getOnlinePlayers().map { it.uniqueId }) }.groupBy(Users.id)
-            for (player in onlinePlayers.filter { it[Users.hiddenStatus] == VisibilityStates.ALL }) {
-                onlinePlayers.forEach { Bukkit.getPlayer(player[Users.id]).showPlayer(Bukkit.getPlayer(it[Users.id])) }
-            }
-            for (player in onlinePlayers.filter { it[Users.hiddenStatus] == VisibilityStates.NONE }) {
-                onlinePlayers.forEach { Bukkit.getPlayer(player[Users.id]).hidePlayer(Bukkit.getPlayer(it[Users.id])) }
-            }
-            for (player in onlinePlayers.filter { it[Users.hiddenStatus] == VisibilityStates.FRIENDS }) {
+            onlinePlayers.filter { it[Users.hiddenStatus] == VisibilityStates.ALL }.forEach { player -> onlinePlayers.forEach { Bukkit.getPlayer(player[Users.id]).showPlayer(Bukkit.getPlayer(it[Users.id])) } }
+            onlinePlayers.filter { it[Users.hiddenStatus] == VisibilityStates.NONE }.forEach { player -> onlinePlayers.forEach { Bukkit.getPlayer(player[Users.id]).hidePlayer(Bukkit.getPlayer(it[Users.id])) } }
+            onlinePlayers.filter { it[Users.hiddenStatus] == VisibilityStates.FRIENDS }.forEach { player ->
                 onlinePlayers.forEach {
                     if (Relationships.areRelated(player[Users.id], it[Users.id])) {
                         Bukkit.getPlayer(player[Users.id]).showPlayer(Bukkit.getPlayer(it[Users.id]))

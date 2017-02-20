@@ -547,12 +547,12 @@ constructor(
             return name.hashCode()
         }
 
-        override fun equals(`object`: Any?): Boolean {
-            if (`object` !is Graph) {
+        override fun equals(other: Any?): Boolean {
+            if (other !is Graph) {
                 return false
             }
 
-            return `object`.name == name
+            return other.name == name
         }
 
         /**
@@ -575,11 +575,6 @@ constructor(
             /**
              * The plot's name
              */
-            /**
-             * Get the column name for the plotted point
-
-             * @return the plotted point's column name
-             */
             val columnName: String = "Default") {
 
         /**
@@ -601,12 +596,12 @@ constructor(
             return columnName.hashCode()
         }
 
-        override fun equals(`object`: Any?): Boolean {
-            if (`object` !is Plotter) {
+        override fun equals(other: Any?): Boolean {
+            if (other !is Plotter) {
                 return false
             }
 
-            return `object`.columnName == columnName && `object`.value == value
+            return other.columnName == columnName && other.value == value
         }
     }
 

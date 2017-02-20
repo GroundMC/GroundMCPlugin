@@ -19,7 +19,7 @@ class LobbyCommandRegistry {
         }
 
         fun hasCommand(name: String): Boolean {
-            return commands.containsKey(name);
+            return commands.containsKey(name)
         }
     }
 }

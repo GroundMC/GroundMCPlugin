@@ -71,7 +71,7 @@ class InventoryClickEventListener : Listener {
                             this.itemMeta = blazeRod.item.itemMeta
                         })
                         transaction {
-                            gtlp.groundmc.lobby.database.table.Users.update({ Users.id.eq(event.whoClicked.uniqueId) }) {
+                            Users.update({ Users.id.eq(event.whoClicked.uniqueId) }) {
                                 it[hiddenStatus] = VisibilityStates.values()[nbtItem.getInteger(NBTIdentifier.HIDE_STATE)]
                             }
                         }
