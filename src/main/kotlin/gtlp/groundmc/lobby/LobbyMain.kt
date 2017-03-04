@@ -15,8 +15,9 @@ import gtlp.groundmc.lobby.task.ApplyPlayerEffectsTask
 import gtlp.groundmc.lobby.task.HidePlayersTask
 import gtlp.groundmc.lobby.task.ITask
 import gtlp.groundmc.lobby.task.SetRulesTask
-import gtlp.groundmc.lobby.util.Metrics
-import org.bukkit.*
+import org.bukkit.Bukkit
+import org.bukkit.Difficulty
+import org.bukkit.World
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.HumanEntity
@@ -27,7 +28,6 @@ import org.bukkit.scheduler.BukkitScheduler
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils.createMissingTablesAndColumns
 import org.jetbrains.exposed.sql.transactions.transaction
-import java.io.IOException
 
 
 class LobbyMain : JavaPlugin() {
@@ -49,14 +49,6 @@ class LobbyMain : JavaPlugin() {
         Bukkit.getServer().scheduler.scheduleSyncRepeatingTask(ApplyPlayerEffectsTask)
         Bukkit.getServer().scheduler.scheduleSyncRepeatingTask(HidePlayersTask)
         hubWorld?.difficulty = Difficulty.PEACEFUL
-
-        try {
-            val metrics = Metrics(this)
-            metrics.start()
-        } catch (e: IOException) {
-            // Failed to submit the stats :-(
-        }
-
     }
 
     private fun loadConfig() {
@@ -65,12 +57,13 @@ class LobbyMain : JavaPlugin() {
         config.addDefault("coins.dailyAmount", 100)
         config.options().copyDefaults(true)
         saveDefaultConfig()
-        if (config.contains("inventory.content") && config["inventory.content"] is List<*>) {
+        if ("inventory.content" in config && config["inventory.content"] is List<*>) {
             @Suppress("unchecked_cast")
             LobbyInventory.TEMPLATE_INVENTORY.contents = (config["inventory.content"] as List<ItemStack>).toTypedArray()
+
             (0..LobbyInventory.TEMPLATE_INVENTORY.contents.size - 1).forEach { i ->
-                if (LobbyInventory.TEMPLATE_INVENTORY.contents[i] == null) {
-                    LobbyInventory.TEMPLATE_INVENTORY.contents[i] = ItemStack(Material.STAINED_GLASS_PANE, 1, DyeColor.WHITE.dyeData.toShort())
+                if (LobbyInventory.TEMPLATE_INVENTORY.getItem(i) == null) {
+                    LobbyInventory.TEMPLATE_INVENTORY.setItem(i, Items.FILLER.item)
                 }
             }
         }

@@ -6,6 +6,7 @@ import gtlp.groundmc.lobby.enum.VisibilityStates
 import gtlp.groundmc.lobby.util.I18n
 import gtlp.groundmc.lobby.util.NBTItemExt
 import org.bukkit.ChatColor
+import org.bukkit.DyeColor
 import org.bukkit.Material
 import org.bukkit.enchantments.Enchantment
 import org.bukkit.inventory.ItemFlag
@@ -45,4 +46,7 @@ object Items {
             nbtItem.displayName = I18n.getString("visibility.all")
             return nbtItem
         }
+    val FILLER: NBTItemExt = NBTItemExt(ItemStack(Material.STAINED_GLASS_PANE, 1, DyeColor.SILVER.woolData.toShort())).apply {
+        displayName = " "
+    }
 }
