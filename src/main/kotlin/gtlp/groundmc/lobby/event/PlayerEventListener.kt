@@ -17,6 +17,7 @@ import org.bukkit.attribute.Attribute
 import org.bukkit.enchantments.Enchantment
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
+import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
 import org.bukkit.event.block.Action
 import org.bukkit.event.player.*
@@ -110,7 +111,7 @@ class PlayerEventListener : Listener {
         LobbyMain.SILENCED_PLAYERS.remove(event.player)
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.LOWEST)
     fun cancelItemDrop(event: PlayerDropItemEvent) {
         val nbtItem = NBTItemExt(event.itemDrop.itemStack)
         if (nbtItem.hasKey(NBTIdentifier.PREFIX)) {
@@ -127,21 +128,23 @@ class PlayerEventListener : Listener {
         event.recipients.add(event.player)
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.LOWEST)
     fun hidePlayers(event: PlayerInteractEvent) {
         if (event.item != null) {
             val nbtItem = NBTItemExt(event.item)
             if (nbtItem.hasKey(NBTIdentifier.PREFIX) && nbtItem.getInteger(NBTIdentifier.TYPE) == GMCType.HIDE_PLAYERS.ordinal) {
+                event.isCancelled = true
                 val inventoryView = event.player.openInventory(LobbyMain.lobbyInventoryMap[event.player]?.hidePlayerInventory)
             }
         }
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.LOWEST)
     fun silentChat(event: PlayerInteractEvent) {
         if (event.item != null) {
             val nbtItem = NBTItemExt(event.item)
             if (nbtItem.hasKey(NBTIdentifier.PREFIX) && nbtItem.getInteger(NBTIdentifier.TYPE) == GMCType.SILENT.ordinal) {
+                event.isCancelled = true
                 if (nbtItem.getBoolean(NBTIdentifier.SILENT_STATE)) {
                     LobbyMain.SILENCED_PLAYERS.remove(event.player)
                     nbtItem.setBoolean(NBTIdentifier.SILENT_STATE, false)
@@ -170,11 +173,17 @@ class PlayerEventListener : Listener {
         }
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.LOWEST)
     fun openInventory(event: PlayerInteractEvent) {
         when (event.item) {
-            Items.COMPASS_ITEM.item -> event.player.openInventory(LobbyMain.lobbyInventoryMap[event.player]?.lobbyInventory)
-            Items.HIDE_PLAYERS_ITEM.item -> event.player.openInventory(LobbyMain.lobbyInventoryMap[event.player]?.hidePlayerInventory)
+            Items.COMPASS_ITEM.item -> {
+                event.player.openInventory(LobbyMain.lobbyInventoryMap[event.player]?.lobbyInventory)
+                event.isCancelled = true
+            }
+            Items.HIDE_PLAYERS_ITEM.item -> {
+                event.player.openInventory(LobbyMain.lobbyInventoryMap[event.player]?.hidePlayerInventory)
+                event.isCancelled = true
+            }
         }
     }
 
