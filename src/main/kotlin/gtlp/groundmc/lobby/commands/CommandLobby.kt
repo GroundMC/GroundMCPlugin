@@ -20,7 +20,7 @@ import kotlin.concurrent.thread
 class CommandLobby : ILobbyCommand {
     override val name: String = "lobby"
 
-    override fun getCommandHelp(locale: Locale) = I18n.getStrings(listOf("command.lobby.help.1", "command.lobby.help.2", "command.lobby.help.3"), locale)
+    override fun getCommandHelp(locale: Locale) = I18n.getStrings("command.lobby.help.1", "command.lobby.help.2", "command.lobby.help.3", locale = locale)
 
     override fun getTabCompletion(sender: CommandSender, command: Command, alias: String?, args: Array<out String>?): List<String>? {
         if (args != null) {

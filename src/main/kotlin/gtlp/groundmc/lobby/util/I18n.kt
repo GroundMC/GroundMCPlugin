@@ -45,7 +45,7 @@ object I18n {
      *
      * @see getString
      */
-    fun getStrings(keys: Collection<String>, locale: Locale = Locale.US): Array<String?> {
+    fun getStrings(vararg keys: String, locale: Locale = Locale.US): Array<String?> {
         return keys.map { it -> getString(it, locale) }.toTypedArray()
     }
 
@@ -60,7 +60,7 @@ object I18n {
      *
      * @see getString
      */
-    fun getStrings(keys: Collection<String>, locale: String): Array<String?> {
+    fun getStrings(vararg keys: String, locale: String): Array<String?> {
         return keys.map { it -> getString(it, locale) }.toTypedArray()
     }
 
