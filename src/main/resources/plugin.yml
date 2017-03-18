@@ -26,3 +26,6 @@ commands:
       description: Information about your coins
       usage: "Usage: /<command>"
       aliases: [money]
+   debug:
+      description: Uploads debug information
+      usage: "Usage: /<command>"
