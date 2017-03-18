@@ -11,11 +11,10 @@ import org.bukkit.DyeColor
 import org.bukkit.entity.Player
 import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemFlag
-import org.bukkit.inventory.ItemStack
 import org.bukkit.material.Dye
 
 /**
- * Created by Marvin on 11.11.2016.
+ * Inventory with clickable items to hide other players
  */
 object HidePlayerInventory {
     fun create(player: Player): Inventory {
@@ -25,7 +24,7 @@ object HidePlayerInventory {
             inventory.setItem(i, Items.FILLER.item)
         }
 
-        val limeDye = NBTItemExt(ItemStack(Dye(DyeColor.LIME).toItemStack())).apply {
+        val limeDye = NBTItemExt(Dye(DyeColor.LIME).toItemStack(1)).apply {
             setBoolean(NBTIdentifier.PREFIX, true)
             setInteger(NBTIdentifier.TYPE, GMCType.HIDE_PLAYERS.ordinal)
             setInteger(NBTIdentifier.HIDE_STATE, VisibilityStates.ALL.ordinal)
@@ -36,7 +35,7 @@ object HidePlayerInventory {
 
         inventory.setItem(0, limeDye.item)
 
-        val purpleDye = NBTItemExt(ItemStack(Dye(DyeColor.PURPLE).toItemStack())).apply {
+        val purpleDye = NBTItemExt(Dye(DyeColor.PURPLE).toItemStack(1)).apply {
             setBoolean(NBTIdentifier.PREFIX, true)
             setInteger(NBTIdentifier.TYPE, GMCType.HIDE_PLAYERS.ordinal)
             setInteger(NBTIdentifier.HIDE_STATE, VisibilityStates.FRIENDS.ordinal)
@@ -47,7 +46,7 @@ object HidePlayerInventory {
 
         inventory.setItem(4, purpleDye.item)
 
-        val grayDye = NBTItemExt(ItemStack(Dye(DyeColor.GRAY).toItemStack())).apply {
+        val grayDye = NBTItemExt(Dye(DyeColor.GRAY).toItemStack(1)).apply {
             setBoolean(NBTIdentifier.PREFIX, true)
             setInteger(NBTIdentifier.TYPE, GMCType.HIDE_PLAYERS.ordinal)
             setInteger(NBTIdentifier.HIDE_STATE, VisibilityStates.NONE.ordinal)
