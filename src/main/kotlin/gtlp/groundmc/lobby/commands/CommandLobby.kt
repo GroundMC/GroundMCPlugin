@@ -69,9 +69,9 @@ class CommandLobby : ILobbyCommand {
                 it is FileHandler
             } as FileHandler
             val clazz = handler.javaClass
-            clazz.getDeclaredMethod("rotate").invoke(handler)
+            clazz.getDeclaredMethod("rotate").apply { isAccessible = true }.invoke(handler)
 
-            val file = clazz.getField("files").apply { isAccessible = true }.get(handler) as Array<File>
+            val file = clazz.getDeclaredField("files").apply { isAccessible = true }.get(handler) as Array<File>
 
             sender.sendMessage("See the log file ${file[1].canonicalPath}")
             LobbyMain.LOGGER.info("Log finished.")
