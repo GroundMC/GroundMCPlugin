@@ -1,6 +1,13 @@
-# Hubworld
+# Hub world
 # The world this plugin should work in.
 hub:
   world: world
+
 coins:
   dailyAmount: 100
+
+# The verbosity of the log that is created by this plugin.
+# The lower the number, the more verbose.
+# For the numbers to put here, see this: https://docs.oracle.com/javase/7/docs/api/java/util/logging/Level.html
+log:
+  verbosity: 0
