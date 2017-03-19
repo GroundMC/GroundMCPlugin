@@ -14,7 +14,9 @@ import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 import org.bukkit.command.ConsoleCommandSender
 import org.bukkit.entity.Player
+import java.io.File
 import java.util.*
+import java.util.logging.FileHandler
 import kotlin.concurrent.thread
 
 class CommandLobby : ILobbyCommand {
@@ -25,7 +27,7 @@ class CommandLobby : ILobbyCommand {
     override fun getTabCompletion(sender: CommandSender, command: Command, alias: String?, args: Array<out String>?): List<String>? {
         if (args != null) {
             when (args.size) {
-                1 -> return mutableListOf("additem", "maketp", "help").filter { it.startsWith(args.last()) }
+                1 -> return mutableListOf("additem", "maketp", "help", "debug").filter { it.startsWith(args.last()) }.sorted()
                 2 -> if (args[0] == "maketp") {
                     return listOf("name")
                 }
@@ -47,6 +49,9 @@ class CommandLobby : ILobbyCommand {
                     sender.sendMessage(getCommandHelp(I18nUtils.getLocaleFromCommandSender(sender)))
                     return true
                 }
+                "debug" -> {
+                    return debug(sender)
+                }
                 else -> {
                     sender.sendMessage(getCommandHelp(I18nUtils.getLocaleFromCommandSender(sender)))
                     return false
@@ -54,6 +59,26 @@ class CommandLobby : ILobbyCommand {
             }
         }
         return false
+    }
+
+    private fun debug(sender: CommandSender): Boolean {
+        if (sender.hasPermission(Permission.ADMIN.id)) {
+            LobbyMain.LOGGER.info("Flushing log and forcing a rotate...")
+
+            val handler = LobbyMain.LOGGER.handlers.first {
+                it is FileHandler
+            } as FileHandler
+            val clazz = handler.javaClass
+            clazz.getDeclaredMethod("rotate").invoke(handler)
+
+            val file = clazz.getField("files").apply { isAccessible = true }.get(handler) as Array<File>
+
+            sender.sendMessage("See the log file ${file[1].canonicalPath}")
+            LobbyMain.LOGGER.info("Log finished.")
+        } else if (sender is Player) {
+            sender.sendMessage(I18n.getString("lobby.nopermission", sender.spigot().locale))
+        }
+        return true
     }
 
     private fun addItem(sender: CommandSender): Boolean {
