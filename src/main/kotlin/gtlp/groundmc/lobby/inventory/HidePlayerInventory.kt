@@ -1,11 +1,14 @@
 package gtlp.groundmc.lobby.inventory
 
 import gtlp.groundmc.lobby.Items
+import gtlp.groundmc.lobby.LobbyMain
 import gtlp.groundmc.lobby.enum.GMCType
 import gtlp.groundmc.lobby.enum.NBTIdentifier
 import gtlp.groundmc.lobby.enum.VisibilityStates
 import gtlp.groundmc.lobby.util.I18n
 import gtlp.groundmc.lobby.util.NBTItemExt
+import gtlp.groundmc.lobby.util.entering
+import gtlp.groundmc.lobby.util.exiting
 import org.bukkit.Bukkit
 import org.bukkit.DyeColor
 import org.bukkit.entity.Player
@@ -18,6 +21,7 @@ import org.bukkit.material.Dye
  */
 object HidePlayerInventory {
     fun create(player: Player): Inventory {
+        LobbyMain.logger.entering(HidePlayerInventory::class, "create")
         val inventory = Bukkit.createInventory(player, 9)
 
         (0..inventory.size - 1).forEach { i ->
@@ -57,7 +61,7 @@ object HidePlayerInventory {
 
         inventory.setItem(8, grayDye.item)
 
-
+        LobbyMain.logger.exiting(HidePlayerInventory::class, "create")
         return inventory
     }
 }

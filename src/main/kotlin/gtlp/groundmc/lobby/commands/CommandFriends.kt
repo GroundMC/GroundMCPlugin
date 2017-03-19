@@ -1,7 +1,9 @@
 package gtlp.groundmc.lobby.commands
 
+import gtlp.groundmc.lobby.LobbyMain
 import gtlp.groundmc.lobby.database.table.Relationships
 import gtlp.groundmc.lobby.util.I18n
+import gtlp.groundmc.lobby.util.entering
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 import org.bukkit.command.ConsoleCommandSender
@@ -19,6 +21,8 @@ class CommandFriends : ILobbyCommand {
     override fun getTabCompletion(sender: CommandSender, command: Command, alias: String?, args: Array<out String>?): List<String>? = null
 
     override fun execute(sender: CommandSender, command: Command, label: String, args: Array<String>?): Boolean {
+        LobbyMain.logger.entering(CommandFriends::class, "execute")
+        LobbyMain.logger.finest("Getting friends of ${sender.name}")
         if (sender is Player) {
             val friends = Relationships.getRelationships(sender)
             if (friends.isEmpty()) {

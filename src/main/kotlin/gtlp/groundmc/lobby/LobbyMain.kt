@@ -15,6 +15,9 @@ import gtlp.groundmc.lobby.task.ApplyPlayerEffectsTask
 import gtlp.groundmc.lobby.task.HidePlayersTask
 import gtlp.groundmc.lobby.task.ITask
 import gtlp.groundmc.lobby.task.SetRulesTask
+import gtlp.groundmc.lobby.util.entering
+import gtlp.groundmc.lobby.util.exiting
+import gtlp.groundmc.lobby.util.megabytes
 import org.bukkit.Bukkit
 import org.bukkit.Difficulty
 import org.bukkit.World
@@ -28,33 +31,63 @@ import org.bukkit.scheduler.BukkitScheduler
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils.createMissingTablesAndColumns
 import org.jetbrains.exposed.sql.transactions.transaction
+import java.io.File
+import java.util.*
+import java.util.logging.FileHandler
+import java.util.logging.Level
+import java.util.logging.Logger
+import java.util.logging.SimpleFormatter
 
 
 class LobbyMain : JavaPlugin() {
 
+    init {
+        logger.entering(LobbyMain::class, "init")
+        val logFileDirectory = File("${dataFolder.absolutePath}/logs")
+        if (!logFileDirectory.exists()) {
+            logFileDirectory.mkdir()
+        }
+        val logHandler = FileHandler("$logFileDirectory/groundmc.%g.log", 5.megabytes, 10).apply {
+            level = Level.FINEST
+            formatter = SimpleFormatter()
+        }
+        logger.addHandler(logHandler)
+        logger.exiting(LobbyMain::class, "init")
+    }
+
     override fun onEnable() {
-        instance = this
+        logger.entering(LobbyMain::class, "onEnable")
+        instance = Optional.of(this)
         loadConfig()
+        logger.finer("Loading database...")
         Database.connect("jdbc:h2:" + dataFolder.absolutePath + "/database", driver = "org.h2.Driver")
         transaction {
             createMissingTablesAndColumns(Meta, Users, Relationships)
             Meta.upgradeDatabase()
         }
+        logger.finer("Registering events...")
         Bukkit.getServer().pluginManager.registerEvents(EntityEventListener(), this)
         Bukkit.getServer().pluginManager.registerEvents(InventoryClickEventListener(), this)
         Bukkit.getServer().pluginManager.registerEvents(MiscEventListener(), this)
         Bukkit.getServer().pluginManager.registerEvents(PlayerEventListener(), this)
         registerCommands()
+
+        logger.finer("Scheduling tasks...")
         Bukkit.getServer().scheduler.scheduleSyncDelayedTask(SetRulesTask)
         Bukkit.getServer().scheduler.scheduleSyncRepeatingTask(ApplyPlayerEffectsTask)
         Bukkit.getServer().scheduler.scheduleSyncRepeatingTask(HidePlayersTask)
+
+        logger.finer("Setting difficulty of the hub world to peaceful")
         hubWorld?.difficulty = Difficulty.PEACEFUL
+        logger.exiting(LobbyMain::class, "onEnable")
     }
 
     private fun loadConfig() {
+        logger.entering(LobbyMain::class, "loadConfig")
         config.addDefault("inventory.content", listOf<ItemStack>())
         config.addDefault("hub.world", Bukkit.getWorlds()[0].name)
         config.addDefault("coins.dailyAmount", 100)
+        config.addDefault("log.verbosity", "FINEST")
         config.options().copyDefaults(true)
         saveDefaultConfig()
         if ("inventory.content" in config && config["inventory.content"] is List<*>) {
@@ -72,22 +105,33 @@ class LobbyMain : JavaPlugin() {
             hubWorld = Bukkit.getWorlds().first()
         }
         dailyCoins = config.getInt("coins.dailyAmount", 100)
+        logger.info("Setting logger verbosity to ${config.getString("log.verbosity", "FINEST")}")
+        logger.level = Level.parse(config.getString("log.verbosity", "FINEST"))
+        logger.finer("Loaded config.")
+        logger.exiting(LobbyMain::class, "loadConfig")
     }
 
     private fun registerCommands() {
+        logger.entering(LobbyMain::class, "registerCommands")
+        logger.finer("Registering commands...")
         LobbyCommandRegistry.registerCommand(CommandLobby())
         LobbyCommandRegistry.registerCommand(CommandVanish())
         LobbyCommandRegistry.registerCommand(CommandCoins())
         LobbyCommandRegistry.registerCommand(CommandFriend())
         LobbyCommandRegistry.registerCommand(CommandFriends())
+        logger.exiting(LobbyMain::class, "registerCommands")
     }
 
     override fun onDisable() {
+        logger.entering(LobbyMain::class, "onDisable")
+        logger.info("Saving configuration and disabling...")
         saveConfig()
+        logger.exiting(LobbyMain::class, "onDisable")
     }
 
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<String>?): Boolean {
         if (LobbyCommandRegistry.hasCommand(command.name)) {
+            LobbyMain.logger.finest("${sender.name} executed ${command.name}")
             return LobbyCommandRegistry.getCommand(command.name)!!.execute(sender, command, label, args)
         }
         return false
@@ -101,10 +145,12 @@ class LobbyMain : JavaPlugin() {
     }
 
     fun BukkitScheduler.scheduleSyncRepeatingTask(task: ITask): Int {
+        logger.entering(LobbyMain::class, "scheduleSyncRepeatingTask")
         return scheduleSyncRepeatingTask(this@LobbyMain, task, task.delay, task.period)
     }
 
     fun BukkitScheduler.scheduleSyncDelayedTask(task: ITask): Int {
+        logger.entering(LobbyMain::class, "scheduleSyncDelayedTask")
         return scheduleSyncDelayedTask(this@LobbyMain, task, task.delay)
     }
 
@@ -120,9 +166,11 @@ class LobbyMain : JavaPlugin() {
         /**
          * Common instance of this [LobbyMain] plugin.
          */
-        var instance: LobbyMain? = null
+        var instance: Optional<LobbyMain> = Optional.empty()
 
         var dailyCoins = 100
+        val logger: Logger
+            get() = instance.get().logger
     }
 
 }

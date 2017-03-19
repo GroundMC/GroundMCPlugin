@@ -1,5 +1,6 @@
 package gtlp.groundmc.lobby.util
 
+import com.google.common.base.Objects
 import de.tr7zw.itemnbtapi.NBTItem
 import gtlp.groundmc.lobby.enum.NBTIdentifier
 import org.bukkit.enchantments.Enchantment
@@ -97,4 +98,13 @@ class NBTItemExt(item: ItemStack) : NBTItem(item) {
     fun clone(): NBTItemExt {
         return NBTItemExt(item)
     }
+
+
+    override fun toString(): String {
+        return Objects.toStringHelper(this)
+                .add("bukkitItem", item)
+                .add("parent", parent)
+                .toString()
+    }
+
 }

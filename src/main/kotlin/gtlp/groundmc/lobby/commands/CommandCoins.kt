@@ -1,7 +1,9 @@
 package gtlp.groundmc.lobby.commands
 
+import gtlp.groundmc.lobby.LobbyMain
 import gtlp.groundmc.lobby.database.table.Users
 import gtlp.groundmc.lobby.util.I18n
+import gtlp.groundmc.lobby.util.entering
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 import org.bukkit.command.ConsoleCommandSender
@@ -19,6 +21,7 @@ class CommandCoins : ILobbyCommand {
     override fun getTabCompletion(sender: CommandSender, command: Command, alias: String?, args: Array<out String>?): List<String>? = null
 
     override fun execute(sender: CommandSender, command: Command, label: String, args: Array<String>?): Boolean {
+        LobbyMain.logger.entering(CommandCoins::class, "execute")
         if (sender is Player) {
             sender.sendMessage(I18n.getString("command.coins.currency", sender.spigot().locale) + ": " + Users.getPlayer(sender)[Users.coins])
             return true

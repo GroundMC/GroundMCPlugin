@@ -1,5 +1,6 @@
 package gtlp.groundmc.lobby.util
 
+import gtlp.groundmc.lobby.LobbyMain
 import org.bukkit.ChatColor
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
@@ -11,7 +12,7 @@ object I18n {
     /**
      * The ResourceBundleCache used in our project
      */
-    val bundleCache = ResourceBundleCache("lang.lobby")
+    internal val bundleCache = ResourceBundleCache("lang.lobby")
 
     /**
      * The character used to mark styling codes
@@ -29,7 +30,7 @@ object I18n {
      * @return The localized and parsed string or null, if the key has no translation
      */
     fun getString(key: String, locale: Locale = Locale.US): String? {
-
+        LobbyMain.logger.entering(I18n::class, "getString")
         val s = bundleCache.get(key, locale) ?: return null
         return ChatColor.translateAlternateColorCodes(colorChar, s)
     }
@@ -83,7 +84,7 @@ object I18n {
      * A cache for dynamically loading and storing used resource bundles.
      * Does not implement removing items from the cache because of low memory impact
      */
-    class ResourceBundleCache(val name: String) {
+    internal class ResourceBundleCache(val name: String) {
         /**
          * A map holding resource bundles for locales
          */
@@ -99,6 +100,7 @@ object I18n {
          * @return The localized string or null, if the key has no translation
          */
         fun get(key: String, locale: Locale): String? {
+            LobbyMain.logger.entering(ResourceBundleCache::class, "get")
             if (!backingMap.containsKey(locale)) {
                 backingMap[locale] = ResourceBundle.getBundle(name, locale)
             }

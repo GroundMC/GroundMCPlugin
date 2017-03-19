@@ -1,9 +1,11 @@
 package gtlp.groundmc.lobby.commands
 
+import gtlp.groundmc.lobby.LobbyMain
 import gtlp.groundmc.lobby.database.table.Relationships
 import gtlp.groundmc.lobby.database.table.Users
 import gtlp.groundmc.lobby.util.I18n
 import gtlp.groundmc.lobby.util.I18nUtils
+import gtlp.groundmc.lobby.util.entering
 import net.md_5.bungee.api.chat.ClickEvent
 import net.md_5.bungee.api.chat.TextComponent
 import org.bukkit.Bukkit
@@ -53,6 +55,7 @@ class CommandFriend : ILobbyCommand {
     }
 
     override fun execute(sender: CommandSender, command: Command, label: String, args: Array<String>?): Boolean {
+        LobbyMain.logger.entering(CommandFriend::class, "execute")
         if (sender !is Player) {
             sender.sendMessage(I18n.getString("command.playeronly"))
             return true
@@ -79,6 +82,7 @@ class CommandFriend : ILobbyCommand {
      * @return whether the command executed successfully.
      */
     private fun updateRelationship(sender: Player, args: Array<String>): Boolean {
+        LobbyMain.logger.entering(CommandFriend::class, "updateRelationship")
         if (args.size < 2) {
             sender.sendMessage(I18n.getString("command.friend.specify_player_update", sender.spigot().locale))
             return false
@@ -103,6 +107,7 @@ class CommandFriend : ILobbyCommand {
      * @return whether the command executed successfully (always true).
      */
     private fun sendOnlineFriends(sender: Player): Boolean {
+        LobbyMain.logger.entering(CommandFriend::class, "sendOnlineFriends")
         val friendsList = Relationships.getRelationships(sender)
         val onlinePlayers = Bukkit.getOnlinePlayers()
         val onlineFriends = friendsList.filter { it.user2 in onlinePlayers }
@@ -125,6 +130,7 @@ class CommandFriend : ILobbyCommand {
      * @return whether the command executed successfully.
      */
     private fun sendStatusMessage(sender: Player, args: Array<String>): Boolean {
+        LobbyMain.logger.entering(CommandFriend::class, "sendStatusMessage")
         if (args.size < 2) {
             sender.sendMessage(I18n.getString("command.friend.specify_player_status"))
             return false
@@ -155,6 +161,7 @@ class CommandFriend : ILobbyCommand {
      * @return whether the command executed successfully.
      */
     private fun removeFriend(sender: Player, args: Array<String>): Boolean {
+        LobbyMain.logger.entering(CommandFriend::class, "removeFriend")
         if (args.size < 2) {
             sender.sendMessage(I18n.getString("command.friend.specify_player", sender.spigot().locale))
             return false
@@ -183,6 +190,7 @@ class CommandFriend : ILobbyCommand {
      * @return whether the command executed successfully.
      */
     private fun addFriend(sender: Player, args: Array<String>): Boolean {
+        LobbyMain.logger.entering(CommandFriend::class, "addFriend")
         if (args.size == 1) {
             sender.sendMessage(I18n.getString("command.friend.specify_player", sender.spigot().locale))
             return false
@@ -205,6 +213,7 @@ class CommandFriend : ILobbyCommand {
             sender.spigot().sendMessage(msg)
             return true
         } else {
+            LobbyMain.logger.finer("${sender.name} tried to add ${friend.name} as a friend")
             Relationships.addRelationship(sender, friend)
             sender.sendMessage(I18n.getString("command.friend.successfully_added", sender.spigot().locale)!!.format(args[1]))
             return true

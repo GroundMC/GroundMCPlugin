@@ -1,7 +1,10 @@
 package gtlp.groundmc.lobby.database.table
 
+import gtlp.groundmc.lobby.LobbyMain
 import gtlp.groundmc.lobby.Relationship
 import gtlp.groundmc.lobby.util.I18n
+import gtlp.groundmc.lobby.util.entering
+import gtlp.groundmc.lobby.util.exiting
 import org.bukkit.OfflinePlayer
 import org.bukkit.entity.Player
 import org.jetbrains.exposed.sql.*
@@ -41,6 +44,7 @@ object Relationships : Table() {
      * @see addRelationship
      */
     fun addRelationship(relationship: Relationship) {
+        LobbyMain.logger.entering(Relationships::class, "addRelationship")
         return transaction {
             if (!areRelated(relationship.user1, relationship.user2)) {
                 insert {
@@ -66,6 +70,7 @@ object Relationships : Table() {
             } else if (relationship.user1 is Player) {
                 relationship.user1.sendMessage(I18n.getString("relationship.exists", relationship.user1.spigot().locale))
             }
+            LobbyMain.logger.exiting(Relationships::class, "addRelationship")
         }
     }
 
@@ -78,6 +83,7 @@ object Relationships : Table() {
      * @return whether there exists a relationship between [player] and [friend]
      */
     fun areRelated(player: OfflinePlayer, friend: OfflinePlayer): Boolean {
+        LobbyMain.logger.entering(Relationships::class, "areRelated")
         return transaction {
             return@transaction select {
                 userId1.eq(player.uniqueId).and(userId2.eq(friend.uniqueId))
@@ -96,6 +102,7 @@ object Relationships : Table() {
      * @see areRelated
      */
     fun areRelated(player: UUID, friend: UUID): Boolean {
+        LobbyMain.logger.entering(Relationships::class, "areRelated")
         return transaction {
             return@transaction select {
                 userId1.eq(player).and(userId2.eq(friend))
@@ -111,12 +118,15 @@ object Relationships : Table() {
      * @return a list of relationships of [player]
      */
     fun getRelationships(player: Player): List<Relationship> {
+        LobbyMain.logger.entering(Relationships::class, "getRelationships")
+        LobbyMain.logger.finest("Getting relationships for ${player.name}...")
         return transaction {
             val friendsField = select(userId1 eq player.uniqueId)
             return@transaction mutableListOf<Relationship>().apply {
                 for (relationship in friendsField) {
                     add(Relationship(relationship[userId1], relationship[userId2], relationship[since]))
                 }
+                LobbyMain.logger.exiting(Relationships::class, "getRelationships")
             }
         }
     }
@@ -131,6 +141,7 @@ object Relationships : Table() {
      * @return a [Relationship] object holding the relationship between [player] and [friend], if any, otherwise null
      */
     fun getRelationship(player: OfflinePlayer, friend: OfflinePlayer): Relationship? {
+        LobbyMain.logger.entering(Relationships::class, "getRelationship")
         return transaction {
             val relationship = select((userId1 eq player.uniqueId) and (userId2 eq friend.uniqueId))
             if (relationship.any()) {
@@ -149,6 +160,7 @@ object Relationships : Table() {
      * @return a [Relationship] object holding the relationship between [player] and [friend], if any, otherwise null
      */
     fun getRelationship(player: UUID, friend: UUID): Relationship? {
+        LobbyMain.logger.entering(Relationships::class, "getRelationship")
         return transaction {
             val relationship = select((userId1 eq player) and (userId2 eq friend))
             if (relationship.any()) {
@@ -165,6 +177,7 @@ object Relationships : Table() {
      * @param friend the friend to remove the relationship of
      */
     fun removeRelationship(player: Player, friend: OfflinePlayer) {
+        LobbyMain.logger.entering(Relationships::class, "removeRelationship")
         transaction {
             val relationship = select((userId1 eq player.uniqueId) and (userId2 eq friend.uniqueId))
             if (relationship.any()) {

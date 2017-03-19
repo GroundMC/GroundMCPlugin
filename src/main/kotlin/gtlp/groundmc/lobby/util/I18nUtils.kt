@@ -19,6 +19,7 @@ package gtlp.groundmc.lobby.util
  */
 
 
+import gtlp.groundmc.lobby.LobbyMain
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import java.util.*
@@ -26,7 +27,7 @@ import java.util.*
 /**
  * Utility class for internationalization. This class provides a
  * central location to do specialized formatting in both
- * a default and a locale specfic manner.
+ * a default and a locale specific manner.
 
  * @version $Revision: 1.2 $
  */
@@ -42,6 +43,7 @@ object I18nUtils {
      * @return the Locale
      */
     fun getLocaleFromString(localeString: String): Locale {
+        LobbyMain.logger.entering(I18nUtils::class, "getLocaleFromString")
         @Suppress("NAME_SHADOWING")
         var localeString = localeString
         localeString = localeString.trim { it <= ' ' }
@@ -75,6 +77,7 @@ object I18nUtils {
     }
 
     fun getLocaleFromCommandSender(sender: CommandSender): Locale {
+        LobbyMain.logger.entering(I18nUtils::class, "getLocaleFromCommandSender")
         if (sender is Player) {
             return getLocaleFromString(sender.spigot().locale)
         } else {
