@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.githuvb.gianttreelp</groupId>
+    <groupId>com.github.gianttreelp</groupId>
     <artifactId>groundmc-plugin</artifactId>
     <version>1.4</version>
 
@@ -33,7 +33,7 @@
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
-            <version>1.4.193</version>
+            <version>1.4.194</version>
         </dependency>
         <dependency>
             <groupId>org.jetbrains.exposed</groupId>
@@ -48,12 +48,12 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-            <version>1.7.22</version>
+            <version>1.7.24</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-simple</artifactId>
-            <version>1.7.22</version>
+            <artifactId>slf4j-jdk14</artifactId>
+            <version>1.7.24</version>
         </dependency>
         <dependency>
             <groupId>org.spigotmc</groupId>
