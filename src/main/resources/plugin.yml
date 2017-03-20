@@ -8,8 +8,8 @@ softdepend: [Multiverse-Core]
 commands:
    lobby:
       description: Lobby commands
-      usage: "Usage: /<command> <additem|help|maketp> [parameters]"
-      aliases: [lb]
+      usage: "Usage: /<command> [additem|help|maketp] [parameters]"
+      aliases: [lb, l, hub]
    friend:
       description: Friendship commands
       usage: "Usage: /<command> <add|update|remove|status|online> <username> [relation]"

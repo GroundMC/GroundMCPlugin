@@ -1,7 +1,6 @@
 # Hub world
-# The world this plugin should work in.
+# The location and world this plugin should work in.
 hub:
-  world: world
 
 coins:
   dailyAmount: 100

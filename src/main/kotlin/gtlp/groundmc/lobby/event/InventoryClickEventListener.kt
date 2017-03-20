@@ -20,7 +20,7 @@ import org.jetbrains.exposed.sql.transactions.transaction
 import org.jetbrains.exposed.sql.update
 
 /**
- * Created by Marv1 on 14.11.2016.
+ * Listener to handle events that occur in a [org.bukkit.entity.Player]'s [org.bukkit.inventory.Inventory]
  */
 class InventoryClickEventListener : Listener {
     @EventHandler
@@ -45,7 +45,7 @@ class InventoryClickEventListener : Listener {
 
     @EventHandler
     fun cancelInventoryClick(event: InventoryClickEvent) {
-        if (event.whoClicked.world == LobbyMain.hubWorld) {
+        if (event.whoClicked.world == LobbyMain.hubLocation.get().world) {
             if (event.currentItem == Items.COMPASS_ITEM.item) {
                 event.isCancelled = true
                 event.whoClicked.openInventory(LobbyMain.lobbyInventoryMap[event.whoClicked]?.lobbyInventory)

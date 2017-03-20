@@ -20,9 +20,10 @@ import gtlp.groundmc.lobby.util.exiting
 import gtlp.groundmc.lobby.util.megabytes
 import org.bukkit.Bukkit
 import org.bukkit.Difficulty
-import org.bukkit.World
+import org.bukkit.Location
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
+import org.bukkit.configuration.MemorySection
 import org.bukkit.entity.HumanEntity
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
@@ -58,6 +59,7 @@ class LobbyMain : JavaPlugin() {
     override fun onEnable() {
         logger.entering(LobbyMain::class, "onEnable")
         instance = Optional.of(this)
+        upgradeConfig()
         loadConfig()
         logger.finer("Loading database...")
         Database.connect("jdbc:h2:" + dataFolder.absolutePath + "/database", driver = "org.h2.Driver")
@@ -78,14 +80,24 @@ class LobbyMain : JavaPlugin() {
         Bukkit.getServer().scheduler.scheduleSyncRepeatingTask(HidePlayersTask)
 
         logger.finer("Setting difficulty of the hub world to peaceful")
-        hubWorld?.difficulty = Difficulty.PEACEFUL
+        hubLocation.get().world.difficulty = Difficulty.PEACEFUL
         logger.exiting(LobbyMain::class, "onEnable")
+    }
+
+    private fun upgradeConfig() {
+        logger.entering(LobbyMain::class, "upgradeConfig")
+        logger.info("Upgrading configuration...")
+        if (config["hub"] is MemorySection) {
+            logger.warning("Upgraded 'hub', please set new hub location!")
+            config["hub"] = Bukkit.getWorlds().first().spawnLocation
+        }
+        logger.exiting(LobbyMain::class, "upgradeConfig")
     }
 
     private fun loadConfig() {
         logger.entering(LobbyMain::class, "loadConfig")
         config.addDefault("inventory.content", listOf<ItemStack>())
-        config.addDefault("hub.world", Bukkit.getWorlds()[0].name)
+        config.addDefault("hub", Bukkit.getWorlds().first().spawnLocation)
         config.addDefault("coins.dailyAmount", 100)
         config.addDefault("log.verbosity", "FINEST")
         config.options().copyDefaults(true)
@@ -100,10 +112,8 @@ class LobbyMain : JavaPlugin() {
                 }
             }
         }
-        hubWorld = Bukkit.getWorlds().firstOrNull { it.name == config.getString("hub.world") }
-        if (hubWorld == null) {
-            hubWorld = Bukkit.getWorlds().first()
-        }
+        // Get lobby location
+        hubLocation = Optional.of(config.get("hub") as Location)
         dailyCoins = config.getInt("coins.dailyAmount", 100)
         logger.info("Setting logger verbosity to ${config.getString("log.verbosity", "FINEST")}")
         logger.level = Level.parse(config.getString("log.verbosity", "FINEST"))
@@ -156,7 +166,7 @@ class LobbyMain : JavaPlugin() {
 
     companion object {
         val lobbyInventoryMap = mutableMapOf<HumanEntity, LobbyInventoryHolder>()
-        var hubWorld: World? = null
+        var hubLocation: Optional<Location> = Optional.empty()
 
         /**
          * Set holding players that want their chat to be silent

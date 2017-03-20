@@ -6,12 +6,12 @@ import org.bukkit.event.Listener
 import org.bukkit.event.entity.EntityDamageEvent
 
 /**
- * Created by Marv1 on 14.11.2016.
+ * Listener to affect all instances of [org.bukkit.entity.Entity]
  */
 class EntityEventListener : Listener {
     @EventHandler
     fun preventDamage(event: EntityDamageEvent) {
-        if (event.entity.world == LobbyMain.hubWorld) {
+        if (event.entity.world == LobbyMain.hubLocation.get().world) {
             event.isCancelled = true
         }
     }
