@@ -12,6 +12,7 @@ import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 import org.bukkit.command.ConsoleCommandSender
 import org.bukkit.entity.Player
+import org.bukkit.event.player.PlayerTeleportEvent
 import java.io.File
 import java.util.*
 import java.util.logging.FileHandler
@@ -25,7 +26,7 @@ class CommandLobby : ILobbyCommand {
     override fun getTabCompletion(sender: CommandSender, command: Command, alias: String?, args: Array<out String>?): List<String>? {
         if (args != null) {
             when (args.size) {
-                1 -> return mutableListOf("additem", "maketp", "help", "debug").filter { it.startsWith(args.last()) }.sorted()
+                1 -> return mutableListOf("", "additem", "maketp", "help", "debug").filter { it.startsWith(args.last()) }.sorted()
                 2 -> if (args[0] == "maketp") {
                     return listOf("name")
                 }
@@ -36,7 +37,7 @@ class CommandLobby : ILobbyCommand {
 
     override fun execute(sender: CommandSender, command: Command, label: String, args: Array<String>?): Boolean {
         LobbyMain.logger.entering(CommandLobby::class, "execute")
-        LobbyMain.logger.finest("${sender.name} issued $command - $args")
+        LobbyMain.logger.finest("${sender.name} issued $command - ${args?.joinToString() ?: "null"}")
         if (args != null && args.isNotEmpty()) {
             when (args[0]) {
                 "maketp" -> {
@@ -52,13 +53,37 @@ class CommandLobby : ILobbyCommand {
                 "debug" -> {
                     return debug(sender)
                 }
+            //Not in help for a reason
+                "set" -> {
+                    return setLobby(sender)
+                }
                 else -> {
                     sender.sendMessage(getCommandHelp(I18nUtils.getLocaleFromCommandSender(sender)))
                     return false
                 }
             }
+        } else if (sender is Player) {
+            sender.teleport(LobbyMain.hubLocation.get(), PlayerTeleportEvent.TeleportCause.COMMAND)
+            return true
         }
         return false
+    }
+
+    private fun setLobby(sender: CommandSender): Boolean {
+        if (sender.hasPermission(Permission.ADMIN.id) && sender is Player) {
+            LobbyMain.hubLocation = Optional.of(sender.location)
+            LobbyMain.instance.ifPresent {
+                it.config["hub"] = sender.location
+                it.saveConfig()
+            }
+            val locale = if (sender is Player) sender.spigot().locale else Locale.getDefault().toString()
+            sender.sendMessage(I18n.getString("command.lobby.location_set", locale))
+        } else if (sender is Player) {
+            sender.sendMessage(I18n.getString("lobby.nopermission", sender.spigot().locale))
+        } else if (sender is ConsoleCommandSender) {
+            sender.sendMessage(I18n.getString("command.playeronly", Locale.getDefault()))
+        }
+        return true
     }
 
     private fun debug(sender: CommandSender): Boolean {
@@ -72,6 +97,7 @@ class CommandLobby : ILobbyCommand {
                 val clazz = handler.javaClass
                 clazz.getDeclaredMethod("rotate").apply { isAccessible = true }.invoke(handler)
 
+                @Suppress("unchecked_cast")
                 val file = clazz.getDeclaredField("files").apply { isAccessible = true }.get(handler) as Array<File>
 
                 sender.sendMessage("See the log file ${file[1].canonicalPath}")

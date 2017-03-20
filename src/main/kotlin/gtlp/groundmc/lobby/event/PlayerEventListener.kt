@@ -29,19 +29,19 @@ import org.jetbrains.exposed.sql.update
 import org.joda.time.DateTime
 
 /**
- * Created by Marv1 on 14.11.2016.
+ * Listener to affect [Player]s directly.
  */
 class PlayerEventListener : Listener {
 
     @EventHandler
     fun onPlayerChangeWorld(event: PlayerChangedWorldEvent) {
-        if (event.from == LobbyMain.hubWorld) {
+        if (event.from == LobbyMain.hubLocation.get().world) {
             event.player.inventory.apply {
                 setItem(0, null)
                 setItem(1, null)
                 setItem(2, null)
             }
-        } else if (event.player.world == LobbyMain.hubWorld) {
+        } else if (event.player.world == LobbyMain.hubLocation) {
             addItemsToInventory(event.player)
         }
     }
@@ -190,7 +190,7 @@ class PlayerEventListener : Listener {
     @EventHandler
     fun launchPlayerForward(event: PlayerInteractEvent) {
         if (event.clickedBlock != null) {
-            if (event.clickedBlock.type == Material.GOLD_PLATE && event.player.world == LobbyMain.hubWorld && event.action == Action.PHYSICAL) {
+            if (event.clickedBlock.type == Material.GOLD_PLATE && event.player.world == LobbyMain.hubLocation.get().world && event.action == Action.PHYSICAL) {
                 event.player.velocity = event.player.location.getDirectionXZ().setY(0.5).multiply(3)
                 event.isCancelled = true
             }
