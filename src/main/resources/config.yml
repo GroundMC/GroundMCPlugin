@@ -5,6 +5,12 @@ hub:
 coins:
   dailyAmount: 100
 
+# Slowchat configuration
+# Timeout is measured in milliseconds.
+slowchat:
+  enabled: false
+  timeout: 3000
+
 # The verbosity of the log that is created by this plugin.
 # The lower the number, the more verbose.
 # For the numbers to put here, see this: https://docs.oracle.com/javase/7/docs/api/java/util/logging/Level.html

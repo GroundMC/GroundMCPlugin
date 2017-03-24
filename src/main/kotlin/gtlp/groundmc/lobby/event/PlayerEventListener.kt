@@ -21,12 +21,14 @@ import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
 import org.bukkit.event.block.Action
 import org.bukkit.event.player.*
+import org.bukkit.metadata.FixedMetadataValue
 import org.bukkit.util.Vector
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.jetbrains.exposed.sql.update
 import org.joda.time.DateTime
+import org.joda.time.Instant
 
 /**
  * Listener to affect [Player]s directly.
@@ -126,6 +128,20 @@ class PlayerEventListener : Listener {
         }
         event.recipients.removeAll(LobbyMain.SILENCED_PLAYERS)
         event.recipients.add(event.player)
+    }
+
+    @EventHandler(priority = EventPriority.LOWEST)
+    fun slowChat(event: AsyncPlayerChatEvent) {
+        if (LobbyMain.instance.get().config.getBoolean("slowchat.enabled")) {
+            val key = "lastChatMsg"
+            if (event.player.hasMetadata(key) && (Instant.now() - event.player.getMetadata(key).first { it.owningPlugin == LobbyMain.instance.get() }.asLong()) < Instant(LobbyMain.instance.get().config.getLong("slowchat.timeout"))) {
+                event.isCancelled = true
+                event.player.sendMessage(I18n.getString("too_many_messages", event.player.spigot().locale))
+                LobbyMain.logger.finest("${event.player} sent messages too quickly!")
+            } else {
+                event.player.setMetadata(key, FixedMetadataValue(LobbyMain.instance.get(), Instant().millis))
+            }
+        }
     }
 
     @EventHandler(priority = EventPriority.LOWEST)

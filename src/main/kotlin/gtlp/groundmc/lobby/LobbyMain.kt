@@ -100,6 +100,8 @@ class LobbyMain : JavaPlugin() {
         config.addDefault("hub", Bukkit.getWorlds().first().spawnLocation)
         config.addDefault("coins.dailyAmount", 100)
         config.addDefault("log.verbosity", "FINEST")
+        config.addDefault("slowchat.enabled", true)
+        config.addDefault("slowchat.timeout", 5)
         config.options().copyDefaults(true)
         saveDefaultConfig()
         if ("inventory.content" in config && config["inventory.content"] is List<*>) {
@@ -114,7 +116,7 @@ class LobbyMain : JavaPlugin() {
         }
         // Get lobby location
         hubLocation = Optional.of(config.get("hub") as Location)
-        dailyCoins = config.getInt("coins.dailyAmount", 100)
+        dailyCoins = config.getInt("coins.dailyAmount")
         logger.info("Setting logger verbosity to ${config.getString("log.verbosity", "FINEST")}")
         logger.level = Level.parse(config.getString("log.verbosity", "FINEST"))
         logger.finer("Loaded config.")
