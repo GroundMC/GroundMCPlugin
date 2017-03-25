@@ -1,0 +1,31 @@
+# Hub world
+# The location and world this plugin should work in.
+hub:
+
+coins:
+  dailyAmount: 100
+
+# Slowchat configuration
+# Timeout is measured in milliseconds.
+slowchat:
+  enabled: false
+  timeout: 3000
+
+# The verbosity of the log that is created by this plugin.
+# The lower the number, the more verbose.
+# For the numbers to put here, see this: https://docs.oracle.com/javase/7/docs/api/java/util/logging/Level.html
+log:
+  verbosity: 0
+
+# Database connection information
+# Uses an in-memory database by default.
+# This database is saved in a file next to this config file by default.
+#
+# The following substitutions are available:
+#
+# $dataFolder     -     Is replaced with the absolute path of the data folder of this plugin at runtime
+database:
+  username:
+  driver: org.h2.Driver
+  password:
+  url: jdbc:h2:$dataFolder/database

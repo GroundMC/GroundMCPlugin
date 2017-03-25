@@ -1,0 +1,28 @@
+name: GroundMC_Lobby_Plugin
+version: 1.4
+author: GiantTreeLP
+main: gtlp.groundmc.lobby.LobbyMain
+depend: [ItemNBTAPI]
+softdepend: [Multiverse-Core]
+
+commands:
+   lobby:
+      description: Lobby commands
+      usage: "Usage: /<command> [additem|help|maketp] [parameters]"
+      aliases: [lb, l, hub]
+   friend:
+      description: Friendship commands
+      usage: "Usage: /<command> <add|remove|status|online> <username> [relation]"
+      aliases: [fr, relationship]
+   friends:
+      description: Lists friends
+      usage: "Usage /<command>"
+      aliases: [frs]
+   vanish:
+      description: Vanish yourself
+      usage: "Usage: /<command>"
+      aliases: [v]
+   coins:
+      description: Information about your coins
+      usage: "Usage: /<command>"
+      aliases: [money]
