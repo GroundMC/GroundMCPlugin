@@ -8,6 +8,7 @@ import gtlp.groundmc.lobby.util.NBTItemExt
 import org.bukkit.ChatColor
 import org.bukkit.DyeColor
 import org.bukkit.Material
+import org.bukkit.SkullType
 import org.bukkit.enchantments.Enchantment
 import org.bukkit.inventory.ItemFlag
 import org.bukkit.inventory.ItemStack
@@ -44,6 +45,15 @@ object Items {
             nbtItem.addEnchantment(Enchantment.LUCK)
             nbtItem.addItemFlags(ItemFlag.HIDE_ENCHANTS)
             nbtItem.displayName = I18n.getString("visibility.all")
+            return nbtItem
+        }
+    val FRIENDS_ITEM: NBTItemExt
+        get() {
+            val nbtItem = NBTItemExt(ItemStack(Material.SKULL_ITEM, 1, SkullType.PLAYER.ordinal.toShort()))
+            nbtItem.setBoolean(NBTIdentifier.PREFIX, true)
+            nbtItem.setInteger(NBTIdentifier.TYPE, GMCType.FRIENDS.ordinal)
+            nbtItem.addItemFlags(ItemFlag.HIDE_ENCHANTS)
+            nbtItem.displayName = I18n.getString("friendsitem.name")
             return nbtItem
         }
 
