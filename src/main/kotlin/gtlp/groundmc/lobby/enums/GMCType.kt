@@ -7,5 +7,6 @@ enum class GMCType {
     NONE,
     TP,
     SILENT,
-    HIDE_PLAYERS;
+    HIDE_PLAYERS,
+    FRIENDS;
 }
