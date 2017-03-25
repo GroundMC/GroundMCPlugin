@@ -6,8 +6,6 @@ import gtlp.groundmc.lobby.database.table.Users
 import gtlp.groundmc.lobby.util.I18n
 import gtlp.groundmc.lobby.util.I18nUtils
 import gtlp.groundmc.lobby.util.entering
-import net.md_5.bungee.api.chat.ClickEvent
-import net.md_5.bungee.api.chat.TextComponent
 import org.bukkit.Bukkit
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
@@ -26,7 +24,7 @@ class CommandFriend : ILobbyCommand {
     override fun getTabCompletion(sender: CommandSender, command: Command, alias: String?, args: Array<out String>?): List<String>? {
         if (args != null) {
             when (args.size) {
-                1 -> return mutableListOf("add", "update", "remove", "status", "online").filter { it.startsWith(args.last()) }
+                1 -> return mutableListOf("add", "remove", "status", "online").filter { it.startsWith(args.last()) }
                 2 -> when (args[0]) {
                     "add" -> return Bukkit.getOnlinePlayers().map { it -> it.name }.filter { it.startsWith(args.last()) }
                     "update" -> return friendsStartWith(sender, args)
@@ -63,7 +61,6 @@ class CommandFriend : ILobbyCommand {
         if (args != null && args.isNotEmpty()) {
             when (args[0]) {
                 "add" -> return addFriend(sender, args)
-                "update" -> return updateRelationship(sender, args)
                 "remove" -> return removeFriend(sender, args)
                 "status" -> return sendStatusMessage(sender, args)
                 "online" -> return sendOnlineFriends(sender)
@@ -71,32 +68,6 @@ class CommandFriend : ILobbyCommand {
 
         }
         return false
-    }
-
-    /**
-     * Updates a relationship between two players.
-     *
-     * @param sender the initiator of the relationship update
-     * @param args the arguments passed to this command, requires 3 to be successful ("update", the name of the friend and the new relationship level).
-     *
-     * @return whether the command executed successfully.
-     */
-    private fun updateRelationship(sender: Player, args: Array<String>): Boolean {
-        LobbyMain.logger.entering(CommandFriend::class, "updateRelationship")
-        if (args.size < 2) {
-            sender.sendMessage(I18n.getString("command.friend.specify_player_update", sender.spigot().locale))
-            return false
-        }
-        if (args.size < 3) {
-            sender.sendMessage(I18n.getString("command.friend.specify_level_update", sender.spigot().locale))
-            return false
-        }
-        val friend = Bukkit.getPlayer(args[2])
-        if (friend == null) {
-            sender.sendMessage(I18n.getString("command.friend.player_not_found", sender.spigot().locale))
-            return true
-        }
-        return true
     }
 
     /**
@@ -135,7 +106,7 @@ class CommandFriend : ILobbyCommand {
             sender.sendMessage(I18n.getString("command.friend.specify_player_status"))
             return false
         } else {
-            val friend = Users.byName(name)
+            val friend = Users.byName(args[1])
             if (friend == null) {
                 sender.sendMessage(I18n.getString("command.friend.not_found"))
                 return true
@@ -200,17 +171,12 @@ class CommandFriend : ILobbyCommand {
             sender.sendMessage(I18n.getString("command.friend.player_not_found", sender.spigot().locale)!!.format(args[1]))
             return true
         }
-        if (friend.name == args[1]) {
+        if (sender.name == args[1]) {
             sender.sendMessage(I18n.getString("command.friend.cant_add_yourself", sender.spigot().locale))
             return true
         }
         if (Relationships.areRelated(sender, friend)) {
             sender.sendMessage(I18n.getString("command.friend.already_friends", sender.spigot().locale)!!.format(args[1]))
-            val stringList = I18n.getString("command.friend.update_relationship", sender.spigot().locale)!!.split('|')
-            val msg = TextComponent(stringList[0])
-            msg.addExtra(TextComponent(stringList[1]).apply { clickEvent = ClickEvent(ClickEvent.Action.RUN_COMMAND, "friend update") })
-            msg.addExtra(stringList[2])
-            sender.spigot().sendMessage(msg)
             return true
         } else {
             LobbyMain.logger.finer("${sender.name} tried to add ${friend.name} as a friend")
