@@ -74,6 +74,7 @@ class PlayerEventListener : Listener {
             if (Users.select { Users.id.eq(player.uniqueId) }.count() == 0) {
                 Users.insert {
                     it[Users.id] = player.uniqueId
+                    it[Users.lastName] = player.name
                 }
             }
             val inventory = player.inventory
