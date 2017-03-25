@@ -88,7 +88,7 @@ object I18n {
         /**
          * A map holding resource bundles for locales
          */
-        internal val backingMap = ConcurrentHashMap<Locale, ResourceBundle>()
+        private val backingMap = ConcurrentHashMap<Locale, ResourceBundle>()
 
         /**
          * Returns the localized string (if available) for a given key
