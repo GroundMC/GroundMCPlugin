@@ -47,7 +47,7 @@ object Items {
             nbtItem.displayName = I18n.getString("visibility.all")
             return nbtItem
         }
-    val FRIENDS_ITEM: NBTItemExt
+val FRIENDS_ITEM: NBTItemExt
         get() {
             val nbtItem = NBTItemExt(ItemStack(Material.SKULL_ITEM, 1, SkullType.PLAYER.ordinal.toShort()))
             nbtItem.setBoolean(NBTIdentifier.PREFIX, true)
