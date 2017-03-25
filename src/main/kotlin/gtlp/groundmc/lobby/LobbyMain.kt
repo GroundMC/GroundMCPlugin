@@ -193,7 +193,7 @@ class LobbyMain : JavaPlugin() {
          */
         var instance: Optional<LobbyMain> = Optional.empty()
 
-        var dailyCoins = 100
+        var dailyCoins = 0
         val logger: Logger
             get() = instance.get().logger
     }
