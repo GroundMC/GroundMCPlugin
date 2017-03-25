@@ -12,7 +12,7 @@ object I18n {
     /**
      * The ResourceBundleCache used in our project
      */
-    internal val bundleCache = ResourceBundleCache("lang.lobby")
+    private val bundleCache = ResourceBundleCache("lang.lobby")
 
     /**
      * The character used to mark styling codes
