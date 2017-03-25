@@ -1,6 +1,6 @@
 package gtlp.groundmc.lobby.database.table
 
-import gtlp.groundmc.lobby.enum.VisibilityStates
+import gtlp.groundmc.lobby.enums.VisibilityStates
 import org.bukkit.entity.Player
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq

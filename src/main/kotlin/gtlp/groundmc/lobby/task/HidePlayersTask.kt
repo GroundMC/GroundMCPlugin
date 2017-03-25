@@ -3,7 +3,7 @@ package gtlp.groundmc.lobby.task
 import com.google.common.collect.ImmutableList
 import gtlp.groundmc.lobby.database.table.Relationships
 import gtlp.groundmc.lobby.database.table.Users
-import gtlp.groundmc.lobby.enum.VisibilityStates
+import gtlp.groundmc.lobby.enums.VisibilityStates
 import org.bukkit.Bukkit
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction

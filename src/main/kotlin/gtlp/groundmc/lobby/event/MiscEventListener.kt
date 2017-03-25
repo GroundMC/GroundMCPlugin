@@ -1,7 +1,7 @@
 package gtlp.groundmc.lobby.event
 
 import gtlp.groundmc.lobby.LobbyMain
-import gtlp.groundmc.lobby.enum.NBTIdentifier
+import gtlp.groundmc.lobby.enums.NBTIdentifier
 import gtlp.groundmc.lobby.util.NBTItemExt
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler

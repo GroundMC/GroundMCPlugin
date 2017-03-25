@@ -1,4 +1,4 @@
-package gtlp.groundmc.lobby.enum
+package gtlp.groundmc.lobby.enums
 
 /**
  * Enum to store NBTIdentifiers for use with NBTItemExt

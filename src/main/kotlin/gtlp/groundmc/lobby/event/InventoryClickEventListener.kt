@@ -3,9 +3,9 @@ package gtlp.groundmc.lobby.event
 import gtlp.groundmc.lobby.Items
 import gtlp.groundmc.lobby.LobbyMain
 import gtlp.groundmc.lobby.database.table.Users
-import gtlp.groundmc.lobby.enum.GMCType
-import gtlp.groundmc.lobby.enum.NBTIdentifier
-import gtlp.groundmc.lobby.enum.VisibilityStates
+import gtlp.groundmc.lobby.enums.GMCType
+import gtlp.groundmc.lobby.enums.NBTIdentifier
+import gtlp.groundmc.lobby.enums.VisibilityStates
 import gtlp.groundmc.lobby.util.NBTItemExt
 import org.bukkit.Bukkit
 import org.bukkit.Location

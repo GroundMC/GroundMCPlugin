@@ -1,4 +1,4 @@
-package gtlp.groundmc.lobby.enum
+package gtlp.groundmc.lobby.enums
 
 /**
  * Created by Marv1 on 28.07.2016.

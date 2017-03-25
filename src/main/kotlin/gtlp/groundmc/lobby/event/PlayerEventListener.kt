@@ -3,9 +3,9 @@ package gtlp.groundmc.lobby.event
 import gtlp.groundmc.lobby.Items
 import gtlp.groundmc.lobby.LobbyMain
 import gtlp.groundmc.lobby.database.table.Users
-import gtlp.groundmc.lobby.enum.GMCType
-import gtlp.groundmc.lobby.enum.NBTIdentifier
-import gtlp.groundmc.lobby.enum.Permission
+import gtlp.groundmc.lobby.enums.GMCType
+import gtlp.groundmc.lobby.enums.NBTIdentifier
+import gtlp.groundmc.lobby.enums.Permission
 import gtlp.groundmc.lobby.inventory.LobbyInventoryHolder
 import gtlp.groundmc.lobby.util.I18n
 import gtlp.groundmc.lobby.util.NBTItemExt

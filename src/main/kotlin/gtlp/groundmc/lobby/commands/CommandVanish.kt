@@ -2,7 +2,7 @@ package gtlp.groundmc.lobby.commands
 
 import gtlp.groundmc.lobby.LobbyMain
 import gtlp.groundmc.lobby.database.table.Users
-import gtlp.groundmc.lobby.enum.Permission
+import gtlp.groundmc.lobby.enums.Permission
 import gtlp.groundmc.lobby.util.I18n
 import gtlp.groundmc.lobby.util.entering
 import org.bukkit.command.Command
