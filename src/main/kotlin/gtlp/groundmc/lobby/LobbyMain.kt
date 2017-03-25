@@ -62,7 +62,9 @@ class LobbyMain : JavaPlugin() {
         upgradeConfig()
         loadConfig()
         logger.finer("Loading database...")
-        Database.connect("jdbc:h2:" + dataFolder.absolutePath + "/database", driver = "org.h2.Driver")
+        Database.connect(config.getString("database.url")
+                .replace("\$dataFolder", dataFolder.absolutePath)
+                , config.getString("database.driver"), config.getString("database.username", ""), config.getString("database.password", ""))
         transaction {
             createMissingTablesAndColumns(Meta, Users, Relationships)
             Meta.upgradeDatabase()
@@ -96,12 +98,23 @@ class LobbyMain : JavaPlugin() {
 
     private fun loadConfig() {
         logger.entering(LobbyMain::class, "loadConfig")
+
         config.addDefault("inventory.content", listOf<ItemStack>())
+
         config.addDefault("hub", Bukkit.getWorlds().first().spawnLocation)
+
         config.addDefault("coins.dailyAmount", 100)
+
         config.addDefault("log.verbosity", "FINEST")
+
         config.addDefault("slowchat.enabled", true)
         config.addDefault("slowchat.timeout", 5)
+
+        config.addDefault("database.username", "")
+        config.addDefault("database.password", "")
+        config.addDefault("database.driver", "org.h2.Driver")
+        config.addDefault("database.url", "jdbc:h2:\$dataFolder/database")
+
         config.options().copyDefaults(true)
         saveDefaultConfig()
         if ("inventory.content" in config && config["inventory.content"] is List<*>) {

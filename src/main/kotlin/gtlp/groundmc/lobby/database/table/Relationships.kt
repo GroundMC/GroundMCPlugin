@@ -10,10 +10,7 @@ import org.bukkit.entity.Player
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.transactions.transaction
-import java.io.ByteArrayOutputStream
-import java.io.ObjectOutputStream
 import java.util.*
-import javax.sql.rowset.serial.SerialBlob
 
 /**
  * Table holding relationships between players, including more information
@@ -22,7 +19,6 @@ object Relationships : Table() {
     private val userId1 = uuid("user1").references(Users.id).index()
     private val userId2 = uuid("user2").references(Users.id)
     private val since = datetime("since")
-    private val relation = blob("relationship")
 
     /**
      * Adds a relationship between [player] and [friend]
@@ -51,13 +47,6 @@ object Relationships : Table() {
                     it[userId1] = relationship.user1.uniqueId
                     it[userId2] = relationship.user2.uniqueId
                     it[since] = relationship.since
-
-                    val baos = ByteArrayOutputStream()
-                    val oos = ObjectOutputStream(baos)
-                    oos.writeObject(relationship)
-                    val blob = SerialBlob(baos.toByteArray())
-
-                    it[relation] = blob
                 }
                 insert {
                     it[userId1] = relationship.user2.uniqueId
