@@ -1,0 +1,16 @@
+gtlp.groundmc.lobby.Relationship
+gtlp.groundmc.lobby.util.ExtensionsKt
+gtlp.groundmc.lobby.util.I18n
+gtlp.groundmc.lobby.util.I18nUtils
+gtlp.groundmc.lobby.util.NBTItemExt
+gtlp.groundmc.lobby.registry.LobbyCommandRegistry
+gtlp.groundmc.lobby.inventory.LobbyInventoryHolder
+gtlp.groundmc.lobby.enums.GMCType
+gtlp.groundmc.lobby.enums.NBTIdentifier
+gtlp.groundmc.lobby.enums.Permission
+gtlp.groundmc.lobby.enums.VisibilityStates
+gtlp.groundmc.lobby.commands.CommandCoins
+gtlp.groundmc.lobby.commands.CommandFriend
+gtlp.groundmc.lobby.commands.CommandFriends
+gtlp.groundmc.lobby.commands.CommandLobby
+gtlp.groundmc.lobby.commands.CommandVanish
