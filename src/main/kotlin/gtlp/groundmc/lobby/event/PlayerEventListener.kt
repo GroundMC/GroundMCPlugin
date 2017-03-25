@@ -9,10 +9,7 @@ import gtlp.groundmc.lobby.enum.Permission
 import gtlp.groundmc.lobby.inventory.LobbyInventoryHolder
 import gtlp.groundmc.lobby.util.I18n
 import gtlp.groundmc.lobby.util.NBTItemExt
-import org.bukkit.GameMode
-import org.bukkit.Location
-import org.bukkit.Material
-import org.bukkit.Sound
+import org.bukkit.*
 import org.bukkit.attribute.Attribute
 import org.bukkit.enchantments.Enchantment
 import org.bukkit.entity.Player
@@ -21,6 +18,7 @@ import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
 import org.bukkit.event.block.Action
 import org.bukkit.event.player.*
+import org.bukkit.inventory.meta.SkullMeta
 import org.bukkit.metadata.FixedMetadataValue
 import org.bukkit.util.Vector
 import org.jetbrains.exposed.sql.insert
@@ -99,6 +97,12 @@ class PlayerEventListener : Listener {
                 }
                 inventory.setItem(2, nbtItem.item)
             }
+            inventory.setItem(5, Items.FRIENDS_ITEM.clone().apply {
+                val skullMeta = Bukkit.getItemFactory().asMetaFor(item.itemMeta, this.item) as SkullMeta
+                skullMeta.owner = player.name
+                item.itemMeta = skullMeta
+
+            }.item)
             if (!player.hasPermission(Permission.ADMIN.id)) {
                 player.gameMode = GameMode.ADVENTURE
             } else {
