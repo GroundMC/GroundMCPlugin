@@ -20,8 +20,6 @@
             </option>
             <option name="_commonCompilerArguments">
               <DummyImpl>
-                <option name="languageVersion" value="1.1" />
-                <option name="apiVersion" value="1.1" />
                 <option name="pluginClasspaths">
                   <array />
                 </option>
@@ -83,6 +81,17 @@
         </CLASSES>
         <JAVADOC />
         <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="Maven: com.onarandombox.multiversecore:Multiverse-Core:2.5.0-SNAPSHOT">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/Multiverse-Core-2.5.0-SNAPSHOT.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="jar://$MODULE_DIR$/lib/Multiverse-Core-2.5.0-SNAPSHOT-sources.jar!/" />
+        </SOURCES>
       </library>
     </orderEntry>
     <orderEntry type="library" scope="TEST" name="Maven: junit:junit:4.12" level="project" />

@@ -25,7 +25,7 @@
         </repository>
         <repository>
             <id>spigot-repo</id>
-            <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots</url>
+            <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
         </repository>
     </repositories>
 
@@ -84,6 +84,13 @@
             <version>1.4</version>
             <scope>system</scope>
             <systemPath>${basedir}/lib/Item-NBT-API.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>com.onarandombox.multiversecore</groupId>
+            <artifactId>Multiverse-Core</artifactId>
+            <version>2.5.0-SNAPSHOT</version>
+            <scope>system</scope>
+            <systemPath>${basedir}/lib/Multiverse-Core-2.5.0-SNAPSHOT.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
