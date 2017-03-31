@@ -108,3 +108,4 @@ $RECYCLE.BIN/
 *.lnk
 
 !/lib/Item-NBT-API.jar
+!/lib/Multiverse-Core-2.5.0-SNAPSHOT.jar

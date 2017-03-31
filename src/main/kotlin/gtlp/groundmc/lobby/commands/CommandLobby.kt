@@ -5,6 +5,7 @@ import gtlp.groundmc.lobby.enums.GMCType
 import gtlp.groundmc.lobby.enums.NBTIdentifier
 import gtlp.groundmc.lobby.enums.Permission
 import gtlp.groundmc.lobby.inventory.LobbyInventory
+import gtlp.groundmc.lobby.inventory.LobbyInventoryHolder.Companion.recreateInventories
 import gtlp.groundmc.lobby.util.*
 import net.md_5.bungee.api.chat.ClickEvent
 import net.md_5.bungee.api.chat.TextComponent
@@ -126,9 +127,7 @@ class CommandLobby : ILobbyCommand {
                     if (sender.openInventory == view) {
                         view.close()
                     }
-                    for ((player, inventories) in LobbyMain.lobbyInventoryMap) {
-                        inventories.lobbyInventory = LobbyInventory.create(player)
-                    }
+                    recreateInventories()
                 }
                 return true
             } else {
