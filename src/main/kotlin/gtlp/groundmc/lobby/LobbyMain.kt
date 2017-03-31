@@ -1,6 +1,5 @@
 package gtlp.groundmc.lobby
 
-import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import de.tr7zw.itemnbtapi.NBTReflectionUtil
 import gtlp.groundmc.lobby.commands.*
@@ -14,8 +13,8 @@ import gtlp.groundmc.lobby.event.PlayerEventListener
 import gtlp.groundmc.lobby.inventory.LobbyInventory
 import gtlp.groundmc.lobby.inventory.LobbyInventoryHolder
 import gtlp.groundmc.lobby.registry.LobbyCommandRegistry
-import gtlp.groundmc.lobby.util.*
 import gtlp.groundmc.lobby.task.*
+import gtlp.groundmc.lobby.util.*
 import org.bukkit.Bukkit
 import org.bukkit.Difficulty
 import org.bukkit.Location
@@ -98,7 +97,6 @@ class LobbyMain : JavaPlugin() {
         modifiersField.isAccessible = true
         modifiersField.setInt(fGson, fGson.modifiers and Modifier.FINAL.inv())
 
-        val gson = fGson.get(null) as Gson
         fGson.set(null, GsonBuilder().apply {
             registerTypeAdapter(Location::class.java, LocationTypeAdapter)
         }.create())
