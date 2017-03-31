@@ -10,6 +10,7 @@ import gtlp.groundmc.lobby.util.NBTItemExt
 import gtlp.groundmc.lobby.util.setOrAdd
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor
+import org.bukkit.Location
 import java.util.*
 
 object LobbyUpdateTask : ITask {
@@ -29,8 +30,9 @@ object LobbyUpdateTask : ITask {
         for (i in 0..LobbyInventory.TEMPLATE_INVENTORY.contents.size - 1) {
             val it = NBTItemExt(LobbyInventory.TEMPLATE_INVENTORY.contents[i])
             if (it.hasKey(NBTIdentifier.PREFIX) && it.getInteger(NBTIdentifier.TYPE) == GMCType.TP.ordinal) {
-                if (it.getString(NBTIdentifier.LOC_WORLD) != LobbyMain.hubLocation.get().world.name) {
-                    val mvWorld = worldManager.getMVWorld(it.getString(NBTIdentifier.LOC_WORLD))
+                val world = it.getObject(NBTIdentifier.TP_LOC, Location::class).world
+                if (world != LobbyMain.hubLocation.get().world) {
+                    val mvWorld = worldManager.getMVWorld(world)
                     val nPlayers = mvWorld.cbWorld.players.size
                     val playerLimit = mvWorld.playerLimit
                     if (playerLimit < 0) {
