@@ -5,10 +5,12 @@ import gtlp.groundmc.lobby.LobbyMain
 import gtlp.groundmc.lobby.enums.GMCType
 import gtlp.groundmc.lobby.enums.NBTIdentifier
 import gtlp.groundmc.lobby.inventory.LobbyInventory
+import gtlp.groundmc.lobby.inventory.LobbyInventoryHolder.Companion.recreateInventories
 import gtlp.groundmc.lobby.util.NBTItemExt
 import gtlp.groundmc.lobby.util.setOrAdd
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor
+import java.util.*
 
 object LobbyUpdateTask : ITask {
     override val delay: Long = 20
@@ -21,6 +23,8 @@ object LobbyUpdateTask : ITask {
 
         val multiVerse = Bukkit.getPluginManager().getPlugin("Multiverse-Core") as MultiverseCore
         val worldManager = multiVerse.mvWorldManager
+
+        val oldHash = Arrays.hashCode(LobbyInventory.TEMPLATE_INVENTORY.contents)
 
         for (i in 0..LobbyInventory.TEMPLATE_INVENTORY.contents.size - 1) {
             val it = NBTItemExt(LobbyInventory.TEMPLATE_INVENTORY.contents[i])
@@ -50,6 +54,10 @@ object LobbyUpdateTask : ITask {
                     LobbyInventory.TEMPLATE_INVENTORY.setItem(i, it.item)
                 }
             }
+        }
+
+        if (oldHash != Arrays.hashCode(LobbyInventory.TEMPLATE_INVENTORY.contents)) {
+            recreateInventories()
         }
     }
 }
