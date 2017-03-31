@@ -29,3 +29,10 @@ database:
   driver: org.h2.Driver
   password:
   url: jdbc:h2:$dataFolder/database
+
+# Version
+# The version of this config.
+# DON'T CHANGE THIS LINE UNLESS YOU KNOW WHAT YOU ARE DOING!
+# CHANGING THIS COULD CORRUPT YOUR CONFIG AND
+# PREVENT THE PLUGIN FROM WORKING!
+version: 1
