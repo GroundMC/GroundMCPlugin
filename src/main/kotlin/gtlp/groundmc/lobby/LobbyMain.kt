@@ -11,10 +11,7 @@ import gtlp.groundmc.lobby.event.PlayerEventListener
 import gtlp.groundmc.lobby.inventory.LobbyInventory
 import gtlp.groundmc.lobby.inventory.LobbyInventoryHolder
 import gtlp.groundmc.lobby.registry.LobbyCommandRegistry
-import gtlp.groundmc.lobby.task.ApplyPlayerEffectsTask
-import gtlp.groundmc.lobby.task.HidePlayersTask
-import gtlp.groundmc.lobby.task.ITask
-import gtlp.groundmc.lobby.task.SetRulesTask
+import gtlp.groundmc.lobby.task.*
 import gtlp.groundmc.lobby.util.entering
 import gtlp.groundmc.lobby.util.exiting
 import gtlp.groundmc.lobby.util.megabytes
@@ -80,6 +77,7 @@ class LobbyMain : JavaPlugin() {
         Bukkit.getServer().scheduler.scheduleSyncDelayedTask(SetRulesTask)
         Bukkit.getServer().scheduler.scheduleSyncRepeatingTask(ApplyPlayerEffectsTask)
         Bukkit.getServer().scheduler.scheduleSyncRepeatingTask(HidePlayersTask)
+        Bukkit.getServer().scheduler.scheduleSyncRepeatingTask(LobbyUpdateTask)
 
         logger.finer("Setting difficulty of the hub world to peaceful")
         hubLocation.get().world.difficulty = Difficulty.PEACEFUL
@@ -169,19 +167,21 @@ class LobbyMain : JavaPlugin() {
         return null
     }
 
-    fun BukkitScheduler.scheduleSyncRepeatingTask(task: ITask): Int {
+    fun BukkitScheduler.scheduleSyncRepeatingTask(task: ITask) {
         logger.entering(LobbyMain::class, "scheduleSyncRepeatingTask")
-        return scheduleSyncRepeatingTask(this@LobbyMain, task, task.delay, task.period)
+        tasks.put(task, scheduleSyncRepeatingTask(this@LobbyMain, task, task.delay, task.period))
     }
 
-    fun BukkitScheduler.scheduleSyncDelayedTask(task: ITask): Int {
+    fun BukkitScheduler.scheduleSyncDelayedTask(task: ITask) {
         logger.entering(LobbyMain::class, "scheduleSyncDelayedTask")
-        return scheduleSyncDelayedTask(this@LobbyMain, task, task.delay)
+        tasks.put(task, scheduleSyncDelayedTask(this@LobbyMain, task, task.delay))
     }
 
     companion object {
         val lobbyInventoryMap = mutableMapOf<HumanEntity, LobbyInventoryHolder>()
         var hubLocation: Optional<Location> = Optional.empty()
+
+        val tasks = emptyMap<ITask, Int>().toMutableMap()
 
         /**
          * Set holding players that want their chat to be silent
