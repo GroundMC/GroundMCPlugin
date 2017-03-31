@@ -6,6 +6,8 @@ import gtlp.groundmc.lobby.enums.NBTIdentifier
 import org.bukkit.enchantments.Enchantment
 import org.bukkit.inventory.ItemFlag
 import org.bukkit.inventory.ItemStack
+import org.bukkit.inventory.meta.ItemMeta
+import kotlin.reflect.KClass
 
 /**
  * Extension of [de.tr7zw.itemnbtapi.NBTItem]
@@ -33,6 +35,11 @@ class NBTItemExt(item: ItemStack) : NBTItem(item) {
         return this
     }
 
+    fun setObject(identifier: NBTIdentifier, value: Any): NBTItemExt {
+        super.setObject(identifier.toString(), value)
+        return this
+    }
+
     fun hasKey(identifier: NBTIdentifier): Boolean {
         return super.hasKey(identifier.toString())
     }
@@ -57,15 +64,28 @@ class NBTItemExt(item: ItemStack) : NBTItem(item) {
         return super.getDouble(identifier.toString())
     }
 
+    fun <T : Any> getObject(identifier: NBTIdentifier, kClass: KClass<T>): T {
+        return super.getObject(identifier.toString(), kClass.java)
+    }
+
     var displayName: String?
         set(displayName) {
             val meta = item.itemMeta
             meta.displayName = displayName
             item.itemMeta = meta
         }
-        get(): String? {
+        get() {
             return item.itemMeta.displayName
         }
+
+    var meta: ItemMeta
+        set(itemMeta) {
+            item.itemMeta = itemMeta
+        }
+        get() {
+            return item.itemMeta
+        }
+
 
     fun addEnchantment(enchantment: Enchantment, level: Int = 1, ignoreLevelRestrictions: Boolean = true): NBTItemExt {
         val meta = item.itemMeta
