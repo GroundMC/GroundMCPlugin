@@ -89,7 +89,9 @@
           <root url="jar://$MODULE_DIR$/lib/Multiverse-Core-2.5.0-SNAPSHOT.jar!/" />
         </CLASSES>
         <JAVADOC />
-        <SOURCES />
+        <SOURCES>
+          <root url="jar://$MODULE_DIR$/lib/Multiverse-Core-2.5.0-SNAPSHOT-sources.jar!/" />
+        </SOURCES>
       </library>
     </orderEntry>
     <orderEntry type="library" scope="TEST" name="Maven: junit:junit:4.12" level="project" />

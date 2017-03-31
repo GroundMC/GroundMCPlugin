@@ -18,5 +18,11 @@ class LobbyInventoryHolder private constructor(inventory1: Inventory, inventory2
             LobbyMain.logger.entering(Companion::class, "forPlayer")
             return LobbyInventoryHolder(LobbyInventory.create(player), HidePlayerInventory.create(player))
         }
+
+        fun recreateInventories() {
+            for ((player, inventories) in LobbyMain.lobbyInventoryMap) {
+                inventories.lobbyInventory = LobbyInventory.create(player)
+            }
+        }
     }
 }
