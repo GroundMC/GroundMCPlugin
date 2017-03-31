@@ -21,7 +21,6 @@ import org.bukkit.Location
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 import org.bukkit.configuration.MemorySection
-import org.bukkit.entity.HumanEntity
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import org.bukkit.plugin.java.JavaPlugin
@@ -178,7 +177,7 @@ class LobbyMain : JavaPlugin() {
     }
 
     companion object {
-        val lobbyInventoryMap = mutableMapOf<HumanEntity, LobbyInventoryHolder>()
+        val lobbyInventoryMap = mutableMapOf<Player, LobbyInventoryHolder>()
         var hubLocation: Optional<Location> = Optional.empty()
 
         val tasks = emptyMap<ITask, Int>().toMutableMap()
