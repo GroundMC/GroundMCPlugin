@@ -12,6 +12,15 @@ fun Logger.entering(kClass: KClass<*>, sourceMethod: String) {
     entering(kClass.qualifiedName, sourceMethod)
 }
 
+fun <E> MutableList<E>.setOrAdd(index: Int, value: E): MutableList<E> {
+    if(size > index) {
+        this[index] = value
+    } else {
+        this.add(index, value)
+    }
+    return this
+}
+
 val Int.megabytes: Int
     get() = this * 1024.kilobytes
 
