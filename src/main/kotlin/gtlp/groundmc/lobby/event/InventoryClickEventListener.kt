@@ -7,7 +7,6 @@ import gtlp.groundmc.lobby.enums.GMCType
 import gtlp.groundmc.lobby.enums.NBTIdentifier
 import gtlp.groundmc.lobby.enums.VisibilityStates
 import gtlp.groundmc.lobby.util.NBTItemExt
-import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.Particle
 import org.bukkit.Sound
@@ -31,7 +30,7 @@ class InventoryClickEventListener : Listener {
                 val nbtItem = NBTItemExt(event.currentItem)
                 if (nbtItem.hasKey(NBTIdentifier.PREFIX)) {
                     if (nbtItem.getInteger(NBTIdentifier.TYPE) == GMCType.TP.ordinal) {
-                        if (event.whoClicked.teleport(Location(Bukkit.getWorld(nbtItem.getString(NBTIdentifier.LOC_WORLD)), nbtItem.getDouble(NBTIdentifier.LOC_X), nbtItem.getDouble(NBTIdentifier.LOC_Y), nbtItem.getDouble(NBTIdentifier.LOC_Z), nbtItem.getDouble(NBTIdentifier.ROT_X).toFloat(), nbtItem.getDouble(NBTIdentifier.ROT_Y).toFloat()), PlayerTeleportEvent.TeleportCause.PLUGIN)) {
+                        if (event.whoClicked.teleport(nbtItem.getObject(NBTIdentifier.TP_LOC, Location::class), PlayerTeleportEvent.TeleportCause.PLUGIN)) {
                             val location = event.whoClicked.location
                             event.whoClicked.world.playSound(location, Sound.BLOCK_PORTAL_TRAVEL, 1.0f, 1.0f)
                             event.whoClicked.world.spawnParticle(Particle.PORTAL, location, 100)
@@ -65,11 +64,9 @@ class InventoryClickEventListener : Listener {
                         event.clickedInventory.contents.filterNotNull().forEach { itemstack -> itemstack.removeEnchantment(Enchantment.LUCK) }
                         nbtItem.addEnchantment(Enchantment.LUCK)
                         event.currentItem = nbtItem.item
-                        event.whoClicked.inventory.setItem(2, event.whoClicked.inventory.getItem(2).apply {
-                            val blazeRod = NBTItemExt(this)
-                            blazeRod.displayName = nbtItem.displayName
-                            this.itemMeta = blazeRod.item.itemMeta
-                        })
+                        event.whoClicked.inventory.setItem(2, NBTItemExt(event.whoClicked.inventory.getItem(2)).apply {
+                            this.displayName = nbtItem.displayName
+                        }.item)
                         transaction {
                             Users.update({ Users.id.eq(event.whoClicked.uniqueId) }) {
                                 it[hiddenStatus] = VisibilityStates.values()[nbtItem.getInteger(NBTIdentifier.HIDE_STATE)]

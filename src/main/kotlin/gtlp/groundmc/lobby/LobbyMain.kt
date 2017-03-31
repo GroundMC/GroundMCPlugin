@@ -1,5 +1,8 @@
 package gtlp.groundmc.lobby
 
+import com.google.gson.Gson
+import com.google.gson.GsonBuilder
+import de.tr7zw.itemnbtapi.NBTReflectionUtil
 import gtlp.groundmc.lobby.commands.*
 import gtlp.groundmc.lobby.database.table.Meta
 import gtlp.groundmc.lobby.database.table.Relationships
@@ -11,15 +14,14 @@ import gtlp.groundmc.lobby.event.PlayerEventListener
 import gtlp.groundmc.lobby.inventory.LobbyInventory
 import gtlp.groundmc.lobby.inventory.LobbyInventoryHolder
 import gtlp.groundmc.lobby.registry.LobbyCommandRegistry
+import gtlp.groundmc.lobby.util.*
 import gtlp.groundmc.lobby.task.*
-import gtlp.groundmc.lobby.util.entering
-import gtlp.groundmc.lobby.util.exiting
-import gtlp.groundmc.lobby.util.megabytes
 import org.bukkit.Bukkit
 import org.bukkit.Difficulty
 import org.bukkit.Location
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
+import org.bukkit.configuration.Configuration
 import org.bukkit.configuration.MemorySection
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
@@ -29,6 +31,8 @@ import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils.createMissingTablesAndColumns
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.io.File
+import java.lang.reflect.Field
+import java.lang.reflect.Modifier
 import java.util.*
 import java.util.logging.FileHandler
 import java.util.logging.Level
@@ -55,7 +59,8 @@ class LobbyMain : JavaPlugin() {
     override fun onEnable() {
         logger.entering(LobbyMain::class, "onEnable")
         instance = Optional.of(this)
-        upgradeConfig()
+        registerGsonHandlers()
+        upgradeConfig(config)
         loadConfig()
         logger.finer("Loading database...")
         Database.connect(config.getString("database.url")
@@ -83,13 +88,45 @@ class LobbyMain : JavaPlugin() {
         logger.exiting(LobbyMain::class, "onEnable")
     }
 
-    private fun upgradeConfig() {
+    private fun registerGsonHandlers() {
+        logger.entering(LobbyMain::class, "registerGsonHandlers")
+        val fClass = NBTReflectionUtil::class.java
+        val fGson = fClass.getDeclaredField("gson")
+        fGson.isAccessible = true
+
+        val modifiersField = Field::class.java.getDeclaredField("modifiers")
+        modifiersField.isAccessible = true
+        modifiersField.setInt(fGson, fGson.modifiers and Modifier.FINAL.inv())
+
+        val gson = fGson.get(null) as Gson
+        fGson.set(null, GsonBuilder().apply {
+            registerTypeAdapter(Location::class.java, LocationTypeAdapter)
+        }.create())
+        logger.exiting(LobbyMain::class, "registerGsonHandlers")
+    }
+
+
+    private fun upgradeConfig(config: Configuration) {
         logger.entering(LobbyMain::class, "upgradeConfig")
         logger.info("Upgrading configuration...")
+        logger.info("Current version is ${config["version"]}.")
+        logger.info("New version is $configVersion")
         if (config["hub"] is MemorySection) {
             logger.warning("Upgraded 'hub', please set new hub location!")
             config["hub"] = Bukkit.getWorlds().first().spawnLocation
         }
+        for (currentVersion in config.getInt("version", 1)..configVersion) {
+            when (currentVersion) {
+                1 -> ConfigUpgrader.upgradeItemsToUseObject(config)
+            }
+        }
+
+        config["version"] = configVersion
+
+        saveConfig()
+        reloadConfig()
+
+        logger.info("Configuration upgrade complete.")
         logger.exiting(LobbyMain::class, "upgradeConfig")
     }
 
@@ -111,6 +148,8 @@ class LobbyMain : JavaPlugin() {
         config.addDefault("database.password", "")
         config.addDefault("database.driver", "org.h2.Driver")
         config.addDefault("database.url", "jdbc:h2:\$dataFolder/database")
+
+        config.addDefault("version", configVersion)
 
         config.options().copyDefaults(true)
         saveDefaultConfig()
@@ -195,6 +234,8 @@ class LobbyMain : JavaPlugin() {
         var dailyCoins = 0
         val logger: Logger
             get() = instance.get().logger
+
+        val configVersion = 2
     }
 
 }

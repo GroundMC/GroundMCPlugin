@@ -71,6 +71,7 @@ class CommandLobby : ILobbyCommand {
     }
 
     private fun setLobby(sender: CommandSender): Boolean {
+        LobbyMain.logger.entering(CommandLobby::class, "setLobby")
         if (sender.hasPermission(Permission.ADMIN.id) && sender is Player) {
             LobbyMain.hubLocation = Optional.of(sender.location)
             LobbyMain.instance.ifPresent {
@@ -84,6 +85,7 @@ class CommandLobby : ILobbyCommand {
         } else if (sender is ConsoleCommandSender) {
             sender.sendMessage(I18n.getString("command.playeronly", Locale.getDefault()))
         }
+        LobbyMain.logger.exiting(CommandLobby::class, "setLobby")
         return true
     }
 
@@ -111,6 +113,7 @@ class CommandLobby : ILobbyCommand {
     }
 
     private fun addItem(sender: CommandSender): Boolean {
+        LobbyMain.logger.entering(CommandLobby::class, "addItem")
         if (sender is Player) {
             if (sender.hasPermission(Permission.ADMIN.id)) {
                 thread {
@@ -140,19 +143,15 @@ class CommandLobby : ILobbyCommand {
     }
 
     private fun makeTp(args: Array<String>, sender: CommandSender): Boolean {
+        LobbyMain.logger.entering(CommandLobby::class, "makeTp")
         if (sender is Player) {
             if (sender.hasPermission(Permission.ADMIN.id) && args.size >= 2 && !args[1].isNullOrBlank()) {
                 val nbtItem = NBTItemExt(sender.inventory.itemInMainHand)
                 nbtItem.apply {
                     setBoolean(NBTIdentifier.PREFIX, true)
                     setInteger(NBTIdentifier.TYPE, GMCType.TP.ordinal)
-                    setDouble(NBTIdentifier.LOC_X, sender.location.x)
-                    setDouble(NBTIdentifier.LOC_Y, sender.location.y)
-                    setDouble(NBTIdentifier.LOC_Z, sender.location.z)
-                    setDouble(NBTIdentifier.ROT_X, sender.location.yaw.toDouble())
-                    setDouble(NBTIdentifier.ROT_Y, sender.location.pitch.toDouble())
-                    setString(NBTIdentifier.LOC_WORLD, sender.location.world.name)
-                    displayName = args.sliceArray(IntRange(1, args.size - 1)).reduce { left, right -> left + " " + right }
+                    setObject(NBTIdentifier.TP_LOC, sender.location)
+                    displayName = args.sliceArray(IntRange(1, args.size - 1)).reduce { left, right -> "$left $right" }
                     sender.inventory.itemInMainHand = item
                 }
                 val string = I18n.getString("command.lobby.placeitem", sender.spigot().locale)!!
@@ -180,7 +179,7 @@ class CommandLobby : ILobbyCommand {
     private fun saveTemplate() {
         LobbyMain.logger.entering(CommandLobby::class, "saveTemplate")
         LobbyMain.instance.ifPresent {
-            it.config.set("inventory.content", LobbyInventory.TEMPLATE_INVENTORY.contents)
+            it.config["inventory.content"] = LobbyInventory.TEMPLATE_INVENTORY.contents
             it.saveConfig()
         }
         LobbyMain.logger.exiting(CommandLobby::class, "saveTemplate")
