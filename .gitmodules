@@ -1,9 +1,0 @@
-[submodule "Item-NBT-API"]
-	path = Item-NBT-API
-	url = https://github.com/tr7zw/Item-NBT-API
-[submodule "Exposed"]
-	path = Exposed
-	url = https://github.com/jetbrains/Exposed
-[submodule "h2database"]
-	path = h2database
-	url = https://github.com/h2database/h2database
