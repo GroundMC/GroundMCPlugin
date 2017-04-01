@@ -11,6 +11,7 @@ import org.bukkit.Location
 import org.bukkit.Particle
 import org.bukkit.Sound
 import org.bukkit.enchantments.Enchantment
+import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.inventory.InventoryClickEvent
@@ -24,17 +25,18 @@ import org.jetbrains.exposed.sql.update
 class InventoryClickEventListener : Listener {
     @EventHandler
     fun teleportPlayer(event: InventoryClickEvent) {
-        if (event.clickedInventory == LobbyMain.lobbyInventoryMap[event.whoClicked]?.lobbyInventory) {
+        val player = event.whoClicked as Player
+        if (event.clickedInventory == LobbyMain.lobbyInventoryMap[player]?.lobbyInventory) {
             event.isCancelled = true
             if (event.currentItem != null) {
                 val nbtItem = NBTItemExt(event.currentItem)
                 if (nbtItem.hasKey(NBTIdentifier.PREFIX)) {
                     if (nbtItem.getInteger(NBTIdentifier.TYPE) == GMCType.TP.ordinal) {
-                        if (event.whoClicked.teleport(nbtItem.getObject(NBTIdentifier.TP_LOC, Location::class), PlayerTeleportEvent.TeleportCause.PLUGIN)) {
-                            val location = event.whoClicked.location
-                            event.whoClicked.world.playSound(location, Sound.BLOCK_PORTAL_TRAVEL, 1.0f, 1.0f)
-                            event.whoClicked.world.spawnParticle(Particle.PORTAL, location, 100)
-                            event.whoClicked.world.spawnParticle(Particle.SMOKE_LARGE, location, 1000, 0.1, 0.1, 0.1)
+                        if (player.teleport(nbtItem.getObject(NBTIdentifier.TP_LOC, Location::class), PlayerTeleportEvent.TeleportCause.PLUGIN)) {
+                            val location = player.location
+                            player.playSound(location, Sound.BLOCK_PORTAL_TRAVEL, 1.0f, 1.0f)
+                            player.spawnParticle(Particle.PORTAL, location, 100)
+                            player.spawnParticle(Particle.SMOKE_LARGE, location, 1000, 0.1, 0.1, 0.1)
                         }
                     }
                 }
