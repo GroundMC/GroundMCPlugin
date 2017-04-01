@@ -47,16 +47,7 @@ object Items {
             nbtItem.displayName = I18n.getString("visibility.all")
             return nbtItem
         }
-
-val FRIENDS_ITEM: NBTItemExt
-        get() {
-            val nbtItem = NBTItemExt(ItemStack(Material.SKULL_ITEM, 1, SkullType.PLAYER.ordinal.toShort()))
-            nbtItem.setBoolean(NBTIdentifier.PREFIX, true)
-            nbtItem.setInteger(NBTIdentifier.TYPE, GMCType.FRIENDS.ordinal)
-            nbtItem.addItemFlags(ItemFlag.HIDE_ENCHANTS)
-            nbtItem.displayName = I18n.getString("friendsitem.name")
-            return nbtItem
-        }    val FRIENDS_ITEM: NBTItemExt
+    val FRIENDS_ITEM: NBTItemExt
         get() {
             val nbtItem = NBTItemExt(ItemStack(Material.SKULL_ITEM, 1, SkullType.PLAYER.ordinal.toShort()))
             nbtItem.setBoolean(NBTIdentifier.PREFIX, true)
@@ -65,7 +56,8 @@ val FRIENDS_ITEM: NBTItemExt
             nbtItem.displayName = I18n.getString("friendsitem.name")
             return nbtItem
         }
-    val FILLER: NBTItemExt= NBTItemExt(ItemStack(Material.STAINED_GLASS_PANE, 1, DyeColor.SILVER.woolData.toShort())).apply {
+    val FILLER: NBTItemExt
+        get() = NBTItemExt(ItemStack(Material.STAINED_GLASS_PANE, 1, DyeColor.SILVER.woolData.toShort())).apply {
             displayName = " "
         }
 }
