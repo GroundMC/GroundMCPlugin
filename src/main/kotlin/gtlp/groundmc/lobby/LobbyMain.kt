@@ -20,7 +20,6 @@ import org.bukkit.Difficulty
 import org.bukkit.Location
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
-import org.bukkit.configuration.Configuration
 import org.bukkit.configuration.MemorySection
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
@@ -59,7 +58,8 @@ class LobbyMain : JavaPlugin() {
         logger.entering(LobbyMain::class, "onEnable")
         instance = Optional.of(this)
         registerGsonHandlers()
-        upgradeConfig(config)
+        createDefaultConfig()
+        upgradeConfig()
         loadConfig()
         logger.finer("Loading database...")
         Database.connect(config.getString("database.url")
@@ -103,11 +103,13 @@ class LobbyMain : JavaPlugin() {
     }
 
 
-    private fun upgradeConfig(config: Configuration) {
+    private fun upgradeConfig() {
         logger.entering(LobbyMain::class, "upgradeConfig")
         logger.info("Upgrading configuration...")
         logger.info("Current version is ${config["version"]}.")
         logger.info("New version is $configVersion")
+        logger.finest("Config before:")
+        logger.finest(config.saveToString().replace(Regex("""\r?\n"""), "\r\n"))
         if (config["hub"] is MemorySection) {
             logger.warning("Upgraded 'hub', please set new hub location!")
             config["hub"] = Bukkit.getWorlds().first().spawnLocation
@@ -123,13 +125,36 @@ class LobbyMain : JavaPlugin() {
         saveConfig()
         reloadConfig()
 
+        logger.finest("Config after:")
+        logger.finest(config.saveToString().replace(Regex("""\r?\n"""), "\r\n"))
+
         logger.info("Configuration upgrade complete.")
         logger.exiting(LobbyMain::class, "upgradeConfig")
     }
 
     private fun loadConfig() {
         logger.entering(LobbyMain::class, "loadConfig")
+        if ("inventory.content" in config && config["inventory.content"] is List<*>) {
+            @Suppress("unchecked_cast")
+            LobbyInventory.TEMPLATE_INVENTORY.contents = (config["inventory.content"] as List<ItemStack>).toTypedArray()
 
+            (0..LobbyInventory.TEMPLATE_INVENTORY.contents.size - 1).forEach { i ->
+                if (LobbyInventory.TEMPLATE_INVENTORY.getItem(i) == null) {
+                    LobbyInventory.TEMPLATE_INVENTORY.setItem(i, Items.FILLER.item)
+                }
+            }
+        }
+        // Get lobby location
+        hubLocation = Optional.of(config.get("hub") as Location)
+        dailyCoins = config.getInt("coins.dailyAmount")
+        logger.info("Setting logger verbosity to ${config.getString("log.verbosity", "FINEST")}")
+        logger.level = Level.parse(config.getString("log.verbosity", "FINEST"))
+        logger.finer("Loaded config.")
+        logger.exiting(LobbyMain::class, "loadConfig")
+    }
+
+    private fun createDefaultConfig() {
+        logger.entering(LobbyMain::class, "createDefaultConfig")
         config.addDefault("inventory.content", listOf<ItemStack>())
 
         config.addDefault("hub", Bukkit.getWorlds().first().spawnLocation)
@@ -150,23 +175,7 @@ class LobbyMain : JavaPlugin() {
 
         config.options().copyDefaults(true)
         saveDefaultConfig()
-        if ("inventory.content" in config && config["inventory.content"] is List<*>) {
-            @Suppress("unchecked_cast")
-            LobbyInventory.TEMPLATE_INVENTORY.contents = (config["inventory.content"] as List<ItemStack>).toTypedArray()
-
-            (0..LobbyInventory.TEMPLATE_INVENTORY.contents.size - 1).forEach { i ->
-                if (LobbyInventory.TEMPLATE_INVENTORY.getItem(i) == null) {
-                    LobbyInventory.TEMPLATE_INVENTORY.setItem(i, Items.FILLER.item)
-                }
-            }
-        }
-        // Get lobby location
-        hubLocation = Optional.of(config.get("hub") as Location)
-        dailyCoins = config.getInt("coins.dailyAmount")
-        logger.info("Setting logger verbosity to ${config.getString("log.verbosity", "FINEST")}")
-        logger.level = Level.parse(config.getString("log.verbosity", "FINEST"))
-        logger.finer("Loaded config.")
-        logger.exiting(LobbyMain::class, "loadConfig")
+        logger.exiting(LobbyMain::class, "createDefaultConfig")
     }
 
     private fun registerCommands() {
@@ -189,7 +198,10 @@ class LobbyMain : JavaPlugin() {
 
     override fun saveConfig() {
         logger.entering(LobbyMain::class, "saveConfig")
-        config["inventory.content"] = LobbyInventory.TEMPLATE_INVENTORY.contents.map { if (it == Items.FILLER.item) null else it }
+        when (config["inventory.content"]) {
+            is List<*> -> config["inventory.content"] = (config["inventory.content"] as List<*>).map { if (it != Items.FILLER.item) it else null }
+            is Array<*> -> config["inventory.content"] = (config["inventory.content"] as Array<*>).map { if (it != Items.FILLER.item) it else null }.toTypedArray()
+        }
         super.saveConfig()
         logger.exiting(LobbyMain::class, "saveConfig")
     }
