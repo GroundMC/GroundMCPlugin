@@ -56,7 +56,6 @@ object Items {
             nbtItem.displayName = I18n.getString("friendsitem.name")
             return nbtItem
         }
-
     val FILLER: NBTItemExt
         get() = NBTItemExt(ItemStack(Material.STAINED_GLASS_PANE, 1, DyeColor.SILVER.woolData.toShort())).apply {
             displayName = " "
