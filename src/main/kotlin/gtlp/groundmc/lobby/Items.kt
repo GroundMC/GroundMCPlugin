@@ -46,7 +46,9 @@ object Items {
             nbtItem.displayName = I18n.getString("visibility.all")
             return nbtItem
         }
-    val FILLER: NBTItemExt = NBTItemExt(ItemStack(Material.STAINED_GLASS_PANE, 1, DyeColor.SILVER.woolData.toShort())).apply {
-        displayName = " "
-    }
+
+    val FILLER: NBTItemExt
+        get() = NBTItemExt(ItemStack(Material.STAINED_GLASS_PANE, 1, DyeColor.SILVER.woolData.toShort())).apply {
+            displayName = " "
+        }
 }
