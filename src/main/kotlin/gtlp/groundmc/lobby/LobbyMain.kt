@@ -29,13 +29,15 @@ import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils.createMissingTablesAndColumns
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.io.File
+import java.io.PrintWriter
+import java.io.StringWriter
 import java.lang.reflect.Field
 import java.lang.reflect.Modifier
 import java.util.*
 import java.util.logging.FileHandler
 import java.util.logging.Level
+import java.util.logging.LogRecord
 import java.util.logging.Logger
-import java.util.logging.SimpleFormatter
 
 
 class LobbyMain : JavaPlugin() {
@@ -48,7 +50,38 @@ class LobbyMain : JavaPlugin() {
         }
         val logHandler = FileHandler("$logFileDirectory/groundmc.%g.log", 5.megabytes, 10).apply {
             level = Level.FINEST
-            formatter = SimpleFormatter()
+            formatter = object : java.util.logging.Formatter() {
+
+                val date = Date()
+                val format = "%1\$tF %1\$tT %3\$s: [%2\$s] %4\$s%5\$s%n"
+
+                override fun format(record: LogRecord): String {
+                    date.time = record.millis
+
+                    var source: String
+                    if (record.sourceClassName != null) {
+                        source = record.sourceClassName
+                        if (record.sourceMethodName != null) {
+                            source += " " + record.sourceMethodName
+                        }
+                    } else {
+                        source = record.loggerName
+                    }
+
+                    var throwable = ""
+                    if (record.thrown != null) {
+                        val sw = StringWriter()
+                        val pw = PrintWriter(sw)
+                        pw.println()
+                        record.thrown.printStackTrace(pw)
+                        pw.close()
+                        throwable = sw.toString()
+                    }
+
+                    return format.format(date, source, record.level.localizedName, formatMessage(record), throwable)
+                }
+
+            }
         }
         logger.addHandler(logHandler)
         logger.exiting(LobbyMain::class, "init")
