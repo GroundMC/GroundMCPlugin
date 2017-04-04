@@ -1,5 +1,6 @@
 package gtlp.groundmc.lobby
 
+import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import de.tr7zw.itemnbtapi.NBTReflectionUtil
 import gtlp.groundmc.lobby.commands.*
@@ -122,6 +123,7 @@ class LobbyMain : JavaPlugin() {
     }
 
     private fun registerGsonHandlers() {
+
         logger.entering(LobbyMain::class, "registerGsonHandlers")
         val fGson = NBTReflectionUtil::class.java.getDeclaredField("gson")
         fGson.isAccessible = true
@@ -130,8 +132,13 @@ class LobbyMain : JavaPlugin() {
         modifiersField.isAccessible = true
         modifiersField.setInt(fGson, fGson.modifiers and Modifier.FINAL.inv())
 
+        val fFactories = Gson::class.java.getDeclaredField("factories")
+        fFactories.isAccessible = true
+        val factories = fFactories.get(fGson.get(null)) as List<*>
+
         fGson.set(null, GsonBuilder().apply {
             registerTypeAdapter(Location::class.java, LocationTypeAdapter)
+            factories.forEach { this::registerTypeAdapterFactory }
         }.create())
         logger.exiting(LobbyMain::class, "registerGsonHandlers")
     }
