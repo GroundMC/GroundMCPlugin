@@ -76,6 +76,7 @@ class LobbyMain : JavaPlugin() {
                         record.thrown.printStackTrace(pw)
                         pw.close()
                         throwable = sw.toString()
+                        sw.close()
                     }
 
                     return format.format(date, source, record.level.localizedName, formatMessage(record), throwable)
