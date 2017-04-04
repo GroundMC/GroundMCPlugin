@@ -28,7 +28,9 @@ import org.bukkit.plugin.java.JavaPlugin
 import org.bukkit.scheduler.BukkitScheduler
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils.createMissingTablesAndColumns
+import org.jetbrains.exposed.sql.exposedLogger
 import org.jetbrains.exposed.sql.transactions.transaction
+import org.slf4j.impl.JDK14LoggerAdapter
 import java.io.File
 import java.io.PrintWriter
 import java.io.StringWriter
@@ -82,10 +84,14 @@ class LobbyMain : JavaPlugin() {
 
                     return format.format(date, source, record.level.localizedName, formatMessage(record), throwable)
                 }
-
             }
         }
         logger.addHandler(logHandler)
+        if (exposedLogger is JDK14LoggerAdapter) {
+            val fLogger = JDK14LoggerAdapter::class.java.getDeclaredField("logger")
+            fLogger.isAccessible = true
+            (fLogger.get(exposedLogger) as Logger).addHandler(logHandler)
+        }
         logger.exiting(LobbyMain::class, "init")
     }
 
