@@ -6,7 +6,7 @@
 
     <groupId>com.github.gianttreelp</groupId>
     <artifactId>groundmc-plugin</artifactId>
-    <version>1.4.1</version>
+    <version>1.4.1-b${env.BUILDNR}</version>
 
     <properties>
         <kotlin.version>1.1.1</kotlin.version>
