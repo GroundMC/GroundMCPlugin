@@ -73,15 +73,7 @@
     <orderEntry type="library" scope="PROVIDED" name="Maven: javax.persistence:persistence-api:1.0" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.yaml:snakeyaml:1.17" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: net.md-5:bungeecord-chat:1.10-SNAPSHOT" level="project" />
-    <orderEntry type="module-library">
-      <library name="Maven: de.tr7wz:item-nbt-api:1.4">
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/lib/Item-NBT-API.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
+    <orderEntry type="library" scope="PROVIDED" name="Maven: de.tr7wz:Item-NBT-API:1.2" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: com.onarandombox.multiversecore:Multiverse-Core:2.5.0-SNAPSHOT" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: me.main__.util:SerializationConfig:1.7" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.bukkit:bukkit:1.8.7-R0.1-SNAPSHOT" level="project" />

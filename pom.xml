@@ -84,10 +84,9 @@
         </dependency>
         <dependency>
             <groupId>de.tr7wz</groupId>
-            <artifactId>item-nbt-api</artifactId>
-            <version>1.4</version>
-            <scope>system</scope>
-            <systemPath>${basedir}/lib/Item-NBT-API.jar</systemPath>
+            <artifactId>Item-NBT-API</artifactId>
+            <version>1.2</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.onarandombox.multiversecore</groupId>
