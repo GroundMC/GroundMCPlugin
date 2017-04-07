@@ -1,8 +1,8 @@
 name: GroundMC_Lobby_Plugin
 version: 1.4
 author: GiantTreeLP
-main: gtlp.groundmc.lobby.LobbyMain
-depend: [ItemNBTAPI]
+main: gtlp.groundmc.lobby.LobbyLoader
+depend: [ItemNBTAPI, BukkitDependencyLoader]
 softdepend: [Multiverse-Core]
 
 commands:
