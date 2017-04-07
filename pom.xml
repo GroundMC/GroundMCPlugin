@@ -93,7 +93,7 @@
         <dependency>
             <groupId>com.github.gianttreelp</groupId>
             <artifactId>bukkitdependencyloader</artifactId>
-            <version>0.2-b3</version>
+            <version>0.2-b6</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
