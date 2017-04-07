@@ -1,5 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module org.jetbrains.idea.maven.project.MavenProjectsManager.isMavenModule="true" type="JAVA_MODULE" version="4">
+  <component name="AutoImportedSourceRoots">
+    <option name="directories">
+      <list>
+        <option value="D:\Marv1\OneDrive\mc-mods\spigot-1.8/src/main/java" />
+        <option value="D:\Marv1\OneDrive\mc-mods\spigot-1.8/src/main/kotlin" />
+        <option value="D:\Marv1\OneDrive\mc-mods\spigot-1.8/src/test/java" />
+        <option value="D:\Marv1\OneDrive\mc-mods\spigot-1.8/src/test/kotlin" />
+      </list>
+    </option>
+  </component>
   <component name="FacetManager">
     <facet type="kotlin-language" name="Kotlin">
       <configuration version="1">
