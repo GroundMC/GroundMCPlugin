@@ -31,7 +31,7 @@
         </repository>
         <repository>
             <id>local-jenkins</id>
-            <url>http://assorted:8180/plugin/repository/everything/</url>
+            <url>http://jenkins:8080/plugin/repository/everything/</url>
         </repository>
     </repositories>
 
@@ -93,7 +93,7 @@
         <dependency>
             <groupId>com.github.gianttreelp</groupId>
             <artifactId>bukkitdependencyloader</artifactId>
-            <version>0.2-b6</version>
+            <version>0.3-b29</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
