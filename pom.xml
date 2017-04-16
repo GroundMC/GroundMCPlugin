@@ -30,7 +30,7 @@
         </repository>
         <repository>
             <id>local-jenkins</id>
-            <url>http://jenkins:8080/plugin/repository/everything/</url>
+            <url>http://127.0.0.1:8080/plugin/repository/everything/</url>
         </repository>
     </repositories>
 
