@@ -9,7 +9,6 @@ import gtlp.groundmc.lobby.enums.Permission
 import gtlp.groundmc.lobby.inventory.LobbyInventoryHolder
 import gtlp.groundmc.lobby.util.I18n
 import gtlp.groundmc.lobby.util.NBTItemExt
-import org.bukkit.GameMode
 import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.Sound
@@ -79,6 +78,7 @@ class PlayerEventListener : Listener {
             }
             val inventory = player.inventory
             inventory.setItem(0, Items.COMPASS_ITEM.item.clone())
+
             if (player.hasPermission(Permission.SILENT.id) || player.hasPermission(Permission.ADMIN.id)) {
                 val silentItem = NBTItemExt(Items.SILENT_ITEM.item.clone())
                 val silent = Users.select { Users.id.eq(player.uniqueId) }.first()[Users.silentStatus]
@@ -89,6 +89,7 @@ class PlayerEventListener : Listener {
                 }
                 inventory.setItem(1, silentItem.item)
             }
+
             if (player.hasPermission(Permission.HIDE_PLAYERS.id) || player.hasPermission(Permission.ADMIN.id)) {
                 val nbtItem = Items.HIDE_PLAYERS_ITEM.clone()
                 val hideState = Users.select { Users.id.eq(player.uniqueId) }.first()[Users.hiddenStatus]
@@ -99,11 +100,6 @@ class PlayerEventListener : Listener {
 
                 }
                 inventory.setItem(2, nbtItem.item)
-            }
-            if (!player.hasPermission(Permission.ADMIN.id)) {
-                player.gameMode = GameMode.ADVENTURE
-            } else {
-                player.gameMode = GameMode.CREATIVE
             }
         }
     }
