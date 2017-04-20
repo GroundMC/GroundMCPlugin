@@ -37,12 +37,12 @@ class PlayerEventListener : Listener {
     @EventHandler
     fun onPlayerChangeWorld(event: PlayerChangedWorldEvent) {
         if (event.from == LobbyMain.hubLocation.get().world) {
-            event.player.inventory.apply {
-                setItem(0, null)
-                setItem(1, null)
-                setItem(2, null)
+            event.player.inventory.forEachIndexed { index, itemStack ->
+                if (itemStack != null && NBTItemExt(itemStack).getBoolean(NBTIdentifier.PREFIX)) {
+                    event.player.inventory.setItem(index, null)
+                }
             }
-        } else if (event.player.world == LobbyMain.hubLocation) {
+        } else if (event.player.world == LobbyMain.hubLocation.get().world) {
             addItemsToInventory(event.player)
         }
     }
