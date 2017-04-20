@@ -12,6 +12,7 @@ import org.bukkit.Particle
 import org.bukkit.Sound
 import org.bukkit.enchantments.Enchantment
 import org.bukkit.entity.Player
+import org.bukkit.event.Event
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.inventory.InventoryClickEvent
@@ -23,6 +24,7 @@ import org.jetbrains.exposed.sql.update
  * Listener to handle events that occur in a [org.bukkit.entity.Player]'s [org.bukkit.inventory.Inventory]
  */
 class InventoryClickEventListener : Listener {
+
     @EventHandler
     fun teleportPlayer(event: InventoryClickEvent) {
         val player = event.whoClicked as Player
@@ -47,10 +49,13 @@ class InventoryClickEventListener : Listener {
     @EventHandler
     fun cancelInventoryClick(event: InventoryClickEvent) {
         if (event.whoClicked.world == LobbyMain.hubLocation.get().world) {
-            if (event.currentItem == Items.COMPASS_ITEM.item) {
-                event.isCancelled = true
-                event.whoClicked.openInventory(LobbyMain.lobbyInventoryMap[event.whoClicked]?.lobbyInventory)
-                return
+            if (event.currentItem != null && NBTItemExt(event.currentItem).getBoolean(NBTIdentifier.PREFIX)) {
+                event.result = Event.Result.DENY
+                when {
+                    event.currentItem == Items.COMPASS_ITEM.item -> {
+                        event.whoClicked.openInventory(LobbyMain.lobbyInventoryMap[event.whoClicked]?.lobbyInventory)
+                    }
+                }
             }
         }
     }
@@ -58,7 +63,7 @@ class InventoryClickEventListener : Listener {
     @EventHandler
     fun selectHideState(event: InventoryClickEvent) {
         if (event.clickedInventory == LobbyMain.lobbyInventoryMap[event.whoClicked]?.hidePlayerInventory) {
-            event.isCancelled = true
+            event.result = Event.Result.DENY
             if (event.currentItem != null) {
                 val nbtItem = NBTItemExt(event.currentItem)
                 if (nbtItem.hasKey(NBTIdentifier.PREFIX)) {
