@@ -142,7 +142,7 @@ class CommandFriend : ILobbyCommand {
             sender.sendMessage(I18n.getString("command.friend.player_not_found", sender.spigot().locale)!!.format(args[1]))
             return true
         }
-        if (Relationships.areRelated(sender, friend)) {
+        if (Relationships.areFriends(sender, friend)) {
             Relationships.removeRelationship(sender, friend)
             sender.sendMessage(I18n.getString("command.friend.no_longer_related")!!.format(friend.name))
             return true
@@ -175,7 +175,7 @@ class CommandFriend : ILobbyCommand {
             sender.sendMessage(I18n.getString("command.friend.cant_add_yourself", sender.spigot().locale))
             return true
         }
-        if (Relationships.areRelated(sender, friend)) {
+        if (Relationships.areFriends(sender, friend)) {
             sender.sendMessage(I18n.getString("command.friend.already_friends", sender.spigot().locale)!!.format(args[1]))
             return true
         } else {
