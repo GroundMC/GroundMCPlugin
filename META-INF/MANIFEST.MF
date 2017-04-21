@@ -1,4 +1,0 @@
-Manifest-Version: 1.0
-Class-Path: ./lib/exposed-0.7.4.jar ./lib/h2-1.4.193.jar ./lib/kotlin-
- runtime.jar ./lib/slf4j-api-1.7.21.jar ./lib/joda-time-2.5.jar
-
