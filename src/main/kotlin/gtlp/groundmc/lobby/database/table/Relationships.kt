@@ -42,7 +42,7 @@ object Relationships : Table() {
     fun addRelationship(relationship: Relationship) {
         LobbyMain.logger.entering(Relationships::class, "addRelationship")
         return transaction {
-            if (!areRelated(relationship.user1, relationship.user2)) {
+            if (!areFriends(relationship.user1, relationship.user2)) {
                 insert {
                     it[userId1] = relationship.user1.uniqueId
                     it[userId2] = relationship.user2.uniqueId
@@ -71,8 +71,8 @@ object Relationships : Table() {
      *
      * @return whether there exists a relationship between [player] and [friend]
      */
-    fun areRelated(player: OfflinePlayer, friend: OfflinePlayer): Boolean {
-        LobbyMain.logger.entering(Relationships::class, "areRelated")
+    fun areFriends(player: OfflinePlayer, friend: OfflinePlayer): Boolean {
+        LobbyMain.logger.entering(Relationships::class, "areFriends")
         return transaction {
             return@transaction select {
                 userId1.eq(player.uniqueId).and(userId2.eq(friend.uniqueId))
@@ -88,10 +88,10 @@ object Relationships : Table() {
      *
      * @return whether there exists a relationship between [player] and [friend]
      *
-     * @see areRelated
+     * @see areFriends
      */
-    fun areRelated(player: UUID, friend: UUID): Boolean {
-        LobbyMain.logger.entering(Relationships::class, "areRelated")
+    fun areFriends(player: UUID, friend: UUID): Boolean {
+        LobbyMain.logger.entering(Relationships::class, "areFriends")
         return transaction {
             return@transaction select {
                 userId1.eq(player).and(userId2.eq(friend))
