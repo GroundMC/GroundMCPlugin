@@ -37,19 +37,23 @@ class PlayerEventListener : Listener {
     @EventHandler
     fun onPlayerChangeWorld(event: PlayerChangedWorldEvent) {
         if (event.from == LobbyMain.hubLocation.get().world) {
-            event.player.inventory.forEachIndexed { index, itemStack ->
-                if (itemStack != null && NBTItemExt(itemStack).getBoolean(NBTIdentifier.PREFIX)) {
-                    event.player.inventory.setItem(index, null)
-                }
-            }
+            event.player.inventory.contents = LobbyMain.lobbyInventoryMap[event.player]?.originalContents
         } else if (event.player.world == LobbyMain.hubLocation.get().world) {
+            LobbyMain.lobbyInventoryMap[event.player]?.originalContents = event.player.inventory.contents.clone()
             addItemsToInventory(event.player)
         }
     }
 
     @EventHandler
     fun onPlayerLogin(event: PlayerJoinEvent) {
-        addItemsToInventory(event.player)
+        LobbyMain.lobbyInventoryMap[event.player] = LobbyInventoryHolder.forPlayer(event.player)
+        LobbyMain.lobbyInventoryMap[event.player]?.originalContents = event.player.inventory.contents.clone()
+
+        if (event.player.world == LobbyMain.hubLocation.get().world) {
+            event.player.inventory.contents
+            addItemsToInventory(event.player)
+        }
+
         event.player.getAttribute(Attribute.GENERIC_ATTACK_SPEED).baseValue = 16.0
 
         val playerRow = Users.getPlayer(event.player)
@@ -62,14 +66,12 @@ class PlayerEventListener : Listener {
                     it[Users.coins] = playerRow[Users.coins] + LobbyMain.dailyCoins
                     it[Users.lastDailyCoinsDate] = DateTime.now()
                 }
-                commit()
             }
         }
     }
 
     private fun addItemsToInventory(player: Player) {
         transaction {
-            LobbyMain.lobbyInventoryMap[player] = LobbyInventoryHolder.forPlayer(player)
             if (Users.select { Users.id.eq(player.uniqueId) }.count() == 0) {
                 Users.insert {
                     it[Users.id] = player.uniqueId
@@ -77,6 +79,7 @@ class PlayerEventListener : Listener {
                 }
             }
             val inventory = player.inventory
+            inventory.clear()
             inventory.setItem(0, Items.COMPASS_ITEM.item.clone())
 
             if (player.hasPermission(Permission.SILENT.id) || player.hasPermission(Permission.ADMIN.id)) {
@@ -106,6 +109,7 @@ class PlayerEventListener : Listener {
 
     @EventHandler
     fun onPlayerLogout(event: PlayerQuitEvent) {
+        event.player.inventory.contents = LobbyMain.lobbyInventoryMap[event.player]?.originalContents
         LobbyMain.lobbyInventoryMap.remove(event.player)
         LobbyMain.SILENCED_PLAYERS.remove(event.player)
     }
