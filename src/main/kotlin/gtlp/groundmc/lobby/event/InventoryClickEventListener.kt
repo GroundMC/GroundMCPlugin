@@ -68,7 +68,7 @@ class InventoryClickEventListener : Listener {
                 val nbtItem = NBTItemExt(event.currentItem)
                 if (nbtItem.hasKey(NBTIdentifier.PREFIX)) {
                     if (nbtItem.getInteger(NBTIdentifier.TYPE) == GMCType.HIDE_PLAYERS.ordinal) {
-                        event.clickedInventory.contents.filterNotNull().forEach { itemstack -> itemstack.removeEnchantment(Enchantment.LUCK) }
+                        event.clickedInventory.contents.filterNotNull().forEach { itemStack -> itemStack.removeEnchantment(Enchantment.LUCK) }
                         nbtItem.addEnchantment(Enchantment.LUCK)
                         event.currentItem = nbtItem.item
                         event.whoClicked.inventory.setItem(2, NBTItemExt(event.whoClicked.inventory.getItem(2)).apply {
