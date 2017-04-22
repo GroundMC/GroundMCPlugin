@@ -15,11 +15,7 @@ class LogSpeedTest {
     @Test
     fun SpeedTestString() {
         val logHandler = StreamHandler(
-                object : OutputStream() {
-                    override fun write(b: Int) {
-                        // Dummy output
-                    }
-                },
+                DummyOutputStream(),
                 object : java.util.logging.Formatter() {
 
                     val date = Date()
@@ -57,13 +53,15 @@ class LogSpeedTest {
         }
 
         var cumulativeNanos = 0L
-        val iterations = 100_000
+        val iterations = 200_000
 
         println("Testing with $iterations iterations and String...")
         val logger = Logger.getLogger("StringLogger")
         logger.useParentHandlers = false
         logger.handlers.forEach { logger::removeHandler }
         logger.addHandler(logHandler)
+
+        logger.info("")
 
         for (i in 0..iterations) {
             val start = System.nanoTime()
@@ -77,24 +75,22 @@ class LogSpeedTest {
     @Test
     fun SpeedTestCurrent() {
         val logHandler = StreamHandler(
-                object : OutputStream() {
-                    override fun write(b: Int) {
-                        // Dummy output
-                    }
-                },
+                DummyOutputStream(),
                 LogFormatter()).apply {
             level = Level.FINEST
 
         }
 
         var cumulativeNanos = 0L
-        val iterations = 100_000
+        val iterations = 200_000
 
         println("Testing with $iterations iterations and current implementation...")
         val logger = Logger.getLogger("StringBuilderLogger")
         logger.useParentHandlers = false
         logger.handlers.forEach { logger::removeHandler }
         logger.addHandler(logHandler)
+
+        logger.info("")
 
         for (i in 0..iterations) {
             val start = System.nanoTime()
@@ -103,5 +99,19 @@ class LogSpeedTest {
         }
 
         println("$iterations iterations took ${Duration.ofNanos(cumulativeNanos)}")
+    }
+}
+
+class DummyOutputStream : OutputStream() {
+    override fun write(b: Int) {
+        // Dummy write
+    }
+
+    override fun write(b: ByteArray?) {
+        // Dummy write
+    }
+
+    override fun write(b: ByteArray?, off: Int, len: Int) {
+        // Dummy write
     }
 }
