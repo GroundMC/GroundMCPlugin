@@ -72,7 +72,7 @@ class CommandLobby : ILobbyCommand {
 
     private fun setLobby(sender: CommandSender): Boolean {
         LobbyMain.logger.entering(CommandLobby::class, "setLobby")
-        if (sender.hasPermission(Permission.ADMIN.id) && sender is Player) {
+        if (sender.hasPermission(Permission.ADMIN.name) && sender is Player) {
             LobbyMain.hubLocation = Optional.of(sender.location)
             LobbyMain.instance.ifPresent {
                 it.config["hub"] = sender.location
@@ -90,7 +90,7 @@ class CommandLobby : ILobbyCommand {
     }
 
     private fun debug(sender: CommandSender): Boolean {
-        if (sender.hasPermission(Permission.ADMIN.id)) {
+        if (sender.hasPermission(Permission.ADMIN.name)) {
             LobbyMain.instance.ifPresent {
                 it.logger.info("Flushing log and forcing a rotate...")
 
@@ -115,7 +115,7 @@ class CommandLobby : ILobbyCommand {
     private fun addItem(sender: CommandSender): Boolean {
         LobbyMain.logger.entering(CommandLobby::class, "addItem")
         if (sender is Player) {
-            if (sender.hasPermission(Permission.ADMIN.id)) {
+            if (sender.hasPermission(Permission.ADMIN.name)) {
                 thread {
                     val view = sender.openInventory(LobbyInventory.TEMPLATE_INVENTORY)
                     sender.sendMessage(I18n.getString("command.lobby.30seconds", sender.spigot().locale))
@@ -145,7 +145,7 @@ class CommandLobby : ILobbyCommand {
     private fun makeTp(args: Array<String>, sender: CommandSender): Boolean {
         LobbyMain.logger.entering(CommandLobby::class, "makeTp")
         if (sender is Player) {
-            if (sender.hasPermission(Permission.ADMIN.id) && args.size >= 2 && !args[1].isNullOrBlank()) {
+            if (sender.hasPermission(Permission.ADMIN.name) && args.size >= 2 && !args[1].isNullOrBlank()) {
                 val nbtItem = NBTItemExt(sender.inventory.itemInMainHand)
                 nbtItem.apply {
                     setBoolean(NBTIdentifier.PREFIX, true)

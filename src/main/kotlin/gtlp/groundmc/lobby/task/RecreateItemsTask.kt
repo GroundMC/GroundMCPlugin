@@ -46,7 +46,7 @@ object RecreateItemsTask : ITask {
 
             inventory.setItem(0, Items.COMPASS_ITEM.clone().item)
 
-            if (player.hasPermission(Permission.SILENT.id) || player.hasPermission(Permission.ADMIN.id)) {
+            if (player.hasPermission(Permission.SILENT.name) || player.hasPermission(Permission.ADMIN.name)) {
                 val silentItem = Items.SILENT_ITEM.clone()
                 val silent = gtlp.groundmc.lobby.database.table.Users.select { Users.id.eq(player.uniqueId) }.first()[Users.silentStatus]
                 silentItem.displayName = I18n.getString(if (silent) "silentitem.on" else "silentitem.off", player.spigot().locale)
@@ -57,7 +57,7 @@ object RecreateItemsTask : ITask {
                 inventory.setItem(1, silentItem.item)
             }
 
-            if (player.hasPermission(Permission.HIDE_PLAYERS.id) || player.hasPermission(Permission.ADMIN.id)) {
+            if (player.hasPermission(Permission.HIDE_PLAYERS.name) || player.hasPermission(Permission.ADMIN.name)) {
                 val nbtItem = Items.HIDE_PLAYERS_ITEM.clone().apply { displayName = I18n.getString("visibility.all", player.spigot().locale) }
                 val hideState = gtlp.groundmc.lobby.database.table.Users.select { Users.id.eq(player.uniqueId) }.first()[Users.hiddenStatus]
                 LobbyMain.lobbyInventoryMap[player]!!.hidePlayerInventory.contents.filterNotNull().first { NBTItemExt(it).getInteger(NBTIdentifier.HIDE_STATE) == hideState.ordinal }.apply {

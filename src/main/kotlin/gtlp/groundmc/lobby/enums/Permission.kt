@@ -1,12 +1,10 @@
 package gtlp.groundmc.lobby.enums
 
-/**
- * Enum to store permissions as strings
- * Consolidates all permissions into one enum.
- */
-enum class Permission constructor(val id: String) {
-    ADMIN("groundmc.lobby.admin"),
-    HIDE_PLAYERS("groundmc.lobby.hide_players"),
-    SILENT("groundmc.lobby.silent"),
-    VANISH("groundmc.lobby.vanish");
+import org.bukkit.permissions.Permission
+
+object Permission {
+    val ADMIN = Permission("groundmc.lobby.admin")
+    val HIDE_PLAYERS = Permission("groundmc.lobby.hide_players")
+    val SILENT = Permission("groundmc.lobby.silent")
+    val VANISH = Permission("groundmc.lobby.vanish")
 }

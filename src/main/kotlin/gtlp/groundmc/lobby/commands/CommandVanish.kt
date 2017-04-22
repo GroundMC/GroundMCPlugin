@@ -27,7 +27,7 @@ class CommandVanish : ILobbyCommand {
     override fun execute(sender: CommandSender, command: Command, label: String, args: Array<String>?): Boolean {
         LobbyMain.logger.entering(CommandVanish::class, "execute")
         if (sender is Player) {
-            if (sender.hasPermission(Permission.VANISH.id) || sender.hasPermission(Permission.ADMIN.id)) {
+            if (sender.hasPermission(Permission.VANISH.name) || sender.hasPermission(Permission.ADMIN.name)) {
                 transaction {
                     val isVanished = Users.select { Users.id eq sender.uniqueId }.first()[Users.vanishStatus]
                     Users.update({ Users.id eq sender.uniqueId }) {
