@@ -11,6 +11,7 @@ import gtlp.groundmc.lobby.util.NBTItemExt
 import org.bukkit.Bukkit
 import org.bukkit.enchantments.Enchantment
 import org.bukkit.entity.Player
+import org.bukkit.inventory.meta.SkullMeta
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction
@@ -67,6 +68,12 @@ object RecreateItemsTask : ITask {
                 }
                 inventory.setItem(2, nbtItem.item)
             }
+            inventory.setItem(5, Items.FRIENDS_ITEM.clone().apply {
+                val skullMeta = Bukkit.getItemFactory().asMetaFor(item.itemMeta, this.item) as SkullMeta
+                skullMeta.owner = player.name
+                item.itemMeta = skullMeta
+
+            }.item)
         }
     }
 }
