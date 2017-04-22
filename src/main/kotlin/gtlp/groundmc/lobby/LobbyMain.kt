@@ -88,6 +88,7 @@ class LobbyMain : JavaPlugin() {
         Bukkit.getServer().scheduler.scheduleSyncRepeatingTask(ApplyPlayerEffectsTask)
         Bukkit.getServer().scheduler.scheduleSyncRepeatingTask(HidePlayersTask)
         Bukkit.getServer().scheduler.scheduleSyncRepeatingTask(LobbyUpdateTask)
+        Bukkit.getServer().scheduler.scheduleSyncRepeatingTask(RecreateItemsTask)
 
         logger.finer("Setting difficulty of the hub world to peaceful")
         hubLocation.get().world.difficulty = Difficulty.PEACEFUL

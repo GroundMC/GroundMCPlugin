@@ -5,8 +5,8 @@ import gtlp.groundmc.lobby.LobbyMain
 import gtlp.groundmc.lobby.database.table.Users
 import gtlp.groundmc.lobby.enums.GMCType
 import gtlp.groundmc.lobby.enums.NBTIdentifier
-import gtlp.groundmc.lobby.enums.Permission
 import gtlp.groundmc.lobby.inventory.LobbyInventoryHolder
+import gtlp.groundmc.lobby.task.RecreateItemsTask.addItemsToInventory
 import gtlp.groundmc.lobby.util.I18n
 import gtlp.groundmc.lobby.util.NBTItemExt
 import org.bukkit.Location
@@ -22,8 +22,6 @@ import org.bukkit.event.block.Action
 import org.bukkit.event.player.*
 import org.bukkit.metadata.FixedMetadataValue
 import org.bukkit.util.Vector
-import org.jetbrains.exposed.sql.insert
-import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.jetbrains.exposed.sql.update
 import org.joda.time.DateTime
@@ -47,10 +45,8 @@ class PlayerEventListener : Listener {
     @EventHandler
     fun onPlayerLogin(event: PlayerJoinEvent) {
         LobbyMain.lobbyInventoryMap[event.player] = LobbyInventoryHolder.forPlayer(event.player)
-        LobbyMain.lobbyInventoryMap[event.player]?.originalContents = event.player.inventory.contents.clone()
 
         if (event.player.world == LobbyMain.hubLocation.get().world) {
-            event.player.inventory.contents
             addItemsToInventory(event.player)
         }
 
@@ -66,43 +62,6 @@ class PlayerEventListener : Listener {
                     it[Users.coins] = playerRow[Users.coins] + LobbyMain.dailyCoins
                     it[Users.lastDailyCoinsDate] = DateTime.now()
                 }
-            }
-        }
-    }
-
-    private fun addItemsToInventory(player: Player) {
-        transaction {
-            if (Users.select { Users.id.eq(player.uniqueId) }.count() == 0) {
-                Users.insert {
-                    it[Users.id] = player.uniqueId
-                    it[Users.lastName] = player.name
-                }
-            }
-            val inventory = player.inventory
-            inventory.clear()
-            inventory.setItem(0, Items.COMPASS_ITEM.item.clone())
-
-            if (player.hasPermission(Permission.SILENT.id) || player.hasPermission(Permission.ADMIN.id)) {
-                val silentItem = NBTItemExt(Items.SILENT_ITEM.item.clone())
-                val silent = Users.select { Users.id.eq(player.uniqueId) }.first()[Users.silentStatus]
-                silentItem.displayName = I18n.getString(if (silent) "silentitem.on" else "silentitem.off")
-                silentItem.setBoolean(NBTIdentifier.SILENT_STATE, silent)
-                if (silent) {
-                    silentItem.addEnchantment(Enchantment.LUCK)
-                }
-                inventory.setItem(1, silentItem.item)
-            }
-
-            if (player.hasPermission(Permission.HIDE_PLAYERS.id) || player.hasPermission(Permission.ADMIN.id)) {
-                val nbtItem = Items.HIDE_PLAYERS_ITEM.clone()
-                val hideState = Users.select { Users.id.eq(player.uniqueId) }.first()[Users.hiddenStatus]
-                LobbyMain.lobbyInventoryMap[player]!!.hidePlayerInventory.contents.filterNotNull().first { NBTItemExt(it).getInteger(NBTIdentifier.HIDE_STATE) == hideState.ordinal }.apply {
-                    this.itemMeta = NBTItemExt(this).addEnchantment(Enchantment.LUCK).item.itemMeta
-                    nbtItem.displayName = itemMeta.displayName
-                    nbtItem.addEnchantment(Enchantment.LUCK)
-
-                }
-                inventory.setItem(2, nbtItem.item)
             }
         }
     }
