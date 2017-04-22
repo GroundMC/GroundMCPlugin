@@ -6,10 +6,7 @@ import java.util.*
 import java.util.logging.Formatter
 import java.util.logging.LogRecord
 
-/**
- * Created by Marvin on 22.04.2017.
- */
-open class LogFormatter : Formatter() {
+class LogFormatter : Formatter() {
 
     val date = Date()
     val format = "%1\$tF %1\$tT %3\$s: [%2\$s] %4\$s%5\$s%n"
