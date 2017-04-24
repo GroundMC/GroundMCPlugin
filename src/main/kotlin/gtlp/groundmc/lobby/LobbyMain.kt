@@ -70,8 +70,10 @@ class LobbyMain : JavaPlugin() {
         loadConfig()
         logger.finer("Loading database...")
         Database.connect(config.getString("database.url")
-                .replace("\$dataFolder", dataFolder.absolutePath)
-                , config.getString("database.driver"), config.getString("database.username", ""), config.getString("database.password", ""))
+                .replace("\$dataFolder", dataFolder.absolutePath),
+                config.getString("database.driver"),
+                config.getString("database.username", ""),
+                config.getString("database.password", ""))
         transaction {
             createMissingTablesAndColumns(Meta, Users, Relationships)
             Meta.upgradeDatabase()
