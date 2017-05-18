@@ -42,7 +42,7 @@ class PlayerEventListener : Listener {
         }
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.LOWEST)
     fun onPlayerLogin(event: PlayerJoinEvent) {
         LobbyMain.lobbyInventoryMap[event.player] = LobbyInventoryHolder.forPlayer(event.player)
 
@@ -66,9 +66,11 @@ class PlayerEventListener : Listener {
         }
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.LOWEST)
     fun onPlayerLogout(event: PlayerQuitEvent) {
-        event.player.inventory.contents = LobbyMain.lobbyInventoryMap[event.player]?.originalContents
+        if (event.player.world == LobbyMain.hubLocation.get().world) {
+            event.player.inventory.contents = LobbyMain.lobbyInventoryMap[event.player]?.originalContents
+        }
         LobbyMain.lobbyInventoryMap.remove(event.player)
         LobbyMain.SILENCED_PLAYERS.remove(event.player)
     }
