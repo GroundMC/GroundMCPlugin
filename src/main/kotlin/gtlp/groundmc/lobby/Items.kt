@@ -3,6 +3,7 @@ package gtlp.groundmc.lobby
 import gtlp.groundmc.lobby.enums.GMCType
 import gtlp.groundmc.lobby.enums.NBTIdentifier
 import gtlp.groundmc.lobby.enums.VisibilityStates
+import gtlp.groundmc.lobby.inventory.HidePlayerInventory
 import gtlp.groundmc.lobby.util.I18n
 import gtlp.groundmc.lobby.util.NBTItemExt
 import org.bukkit.ChatColor
@@ -17,6 +18,10 @@ import org.bukkit.inventory.ItemStack
  * this plugin.
  */
 object Items {
+
+    /**
+     * The item that is used to serve as the fast travel item.
+     */
     val COMPASS_ITEM: NBTItemExt
         get() {
             val nbtItem = NBTItemExt(ItemStack(Material.COMPASS))
@@ -25,6 +30,10 @@ object Items {
             nbtItem.displayName = ChatColor.RED.toString() + "Lobby"
             return nbtItem
         }
+
+    /**
+     * The item used to silence the chat.
+     */
     val SILENT_ITEM: NBTItemExt
         get() {
             val nbtItem = NBTItemExt(ItemStack(Material.TNT))
@@ -35,6 +44,10 @@ object Items {
             nbtItem.displayName = I18n.getString("silentitem.off")
             return nbtItem
         }
+
+    /**
+     * The item used to open the [HidePlayerInventory]
+     */
     val HIDE_PLAYERS_ITEM: NBTItemExt
         get() {
             val nbtItem = NBTItemExt(ItemStack(Material.BLAZE_ROD))
@@ -47,6 +60,9 @@ object Items {
             return nbtItem
         }
 
+    /**
+     * An item to fill empty inventory slots.
+     */
     val FILLER: NBTItemExt
         get() = NBTItemExt(ItemStack(Material.STAINED_GLASS_PANE, 1, DyeColor.SILVER.woolData.toShort())).apply {
             displayName = " "

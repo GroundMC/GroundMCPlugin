@@ -19,7 +19,7 @@ object LobbyUpdateTask : ITask {
 
     override fun run() {
         if (!Bukkit.getPluginManager().isPluginEnabled("Multiverse-Core")) {
-            Bukkit.getServer().scheduler.cancelTask(LobbyMain.tasks[this] as Int)
+            Bukkit.getServer().scheduler.cancelTask(LobbyMain.tasks[this]!!)
         }
 
         val multiVerse = Bukkit.getPluginManager().getPlugin("Multiverse-Core") as MultiverseCore

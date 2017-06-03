@@ -10,6 +10,7 @@
 
     <properties>
         <kotlin.version>1.1.2</kotlin.version>
+        <dokka.version>0.9.14</dokka.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
@@ -30,7 +31,7 @@
             <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
         </repository>
         <repository>
-            <id>local</id>
+            <id>local-system</id>
             <url>http://127.0.0.1:8080/plugin/repository/everything/</url>
         </repository>
         <repository>
@@ -38,6 +39,14 @@
             <url>http://jenkins:8080/plugin/repository/everything/</url>
         </repository>
     </repositories>
+
+    <pluginRepositories>
+        <pluginRepository>
+            <id>jcenter</id>
+            <name>JCenter</name>
+            <url>https://jcenter.bintray.com/</url>
+        </pluginRepository>
+    </pluginRepositories>
 
     <dependencies>
         <dependency>
@@ -167,17 +176,46 @@
                 </executions>
             </plugin>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-source-plugin</artifactId>
-                <version>3.0.1</version>
+                <groupId>org.jetbrains.dokka</groupId>
+                <artifactId>dokka-maven-plugin</artifactId>
+                <version>${dokka.version}</version>
                 <executions>
                     <execution>
-                        <id>attach-sources</id>
+                        <phase>pre-site</phase>
                         <goals>
-                            <goal>jar-no-fork</goal>
+                            <goal>dokka</goal>
                         </goals>
                     </execution>
                 </executions>
+                <configuration>
+                    <outputFormat>javadoc</outputFormat>
+                    <sourceDirectories>
+                        <dir>src/main/kotlin</dir>
+                    </sourceDirectories>
+                    <sourceLinks>
+                        <link>
+                            <dir>${project.basedir}/src/main/kotlin</dir>
+                            <url>https://github.com/GiantTreeLP/GroundMCPlugin
+                            </url>
+                            <urlSuffix>#L</urlSuffix>
+                        </link>
+                    </sourceLinks>
+                    <externalDocumentationLinks>
+                        <link>
+                            <url>https://hub.spigotmc.org/javadocs/spigot/</url>
+                        </link>
+                        <link>
+                            <url>http://www.joda.org/joda-time/apidocs/</url>
+                        </link>
+                    </externalDocumentationLinks>
+                    <perPackageOptions>
+                        <packageOptions>
+                            <prefix>gtlp</prefix>
+                            <reportUndocumented>true</reportUndocumented>
+                            <includeNonPublic>true</includeNonPublic>
+                        </packageOptions>
+                    </perPackageOptions>
+                </configuration>
             </plugin>
         </plugins>
     </build>

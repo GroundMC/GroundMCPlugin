@@ -19,6 +19,11 @@ import java.util.*
 import java.util.logging.FileHandler
 import kotlin.concurrent.thread
 
+/**
+ * The `/lobby` command.
+ * Allows players to teleport back to the lobby and obtain help.
+ * This also allows administrators to add more teleport destinations.
+ */
 class CommandLobby : ILobbyCommand {
     override val name: String = "lobby"
 
@@ -70,6 +75,12 @@ class CommandLobby : ILobbyCommand {
         return false
     }
 
+    /**
+     * Sets the [LobbyMain.hubLocation] to the [sender]s current location.
+     *
+     * @param sender the player that sent the command
+     * @return is always true to not trigger the command help of Spigot.
+     */
     private fun setLobby(sender: CommandSender): Boolean {
         LobbyMain.logger.entering(CommandLobby::class, "setLobby")
         if (sender.hasPermission(Permission.ADMIN.id) && sender is Player) {
@@ -89,6 +100,14 @@ class CommandLobby : ILobbyCommand {
         return true
     }
 
+    /**
+     * *Forcefully* rotates the log file and tells the player the location of
+     * the last log file that can be sent for assistance to the creator of this
+     * plugin.
+     *
+     * @param sender the player that sent the command
+     * @return is always true to not trigger the command help of Spigot.
+     */
     private fun debug(sender: CommandSender): Boolean {
         if (sender.hasPermission(Permission.ADMIN.id)) {
             LobbyMain.instance.ifPresent {
