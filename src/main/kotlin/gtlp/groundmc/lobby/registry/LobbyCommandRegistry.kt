@@ -9,25 +9,42 @@ import gtlp.groundmc.lobby.util.exiting
  * Registry where all commands are saved.
  * Used by [LobbyMain]
  */
-class LobbyCommandRegistry {
+object LobbyCommandRegistry {
+    /**
+     * A map of command strings to their respective command object.
+     */
+    private val commands = mutableMapOf<String, ILobbyCommand>()
 
-    companion object {
-        private val commands = mutableMapOf<String, ILobbyCommand>()
+    /**
+     * Registers a command by adding it to the map.
+     *
+     * @param cmd the command to register
+     */
+    fun registerCommand(cmd: ILobbyCommand) {
+        LobbyMain.logger.entering(LobbyCommandRegistry::class, "registerCommand")
+        commands[cmd.name] = cmd
+        LobbyMain.logger.exiting(LobbyCommandRegistry::class, "registerCommand")
+    }
 
-        fun registerCommand(cmd: ILobbyCommand) {
-            LobbyMain.logger.entering(Companion::class, "registerCommand")
-            commands[cmd.name] = cmd
-            LobbyMain.logger.exiting(Companion::class, "registerCommand")
-        }
+    /**
+     * Gets the command for the command string
+     *
+     * @param name the name of the command to get
+     * @return the command for the [name]
+     */
+    fun getCommand(name: String): ILobbyCommand? {
+        LobbyMain.logger.entering(LobbyCommandRegistry::class, "getCommand")
+        return commands[name]
+    }
 
-        fun getCommand(name: String): ILobbyCommand? {
-            LobbyMain.logger.entering(Companion::class, "getCommand")
-            return commands[name]
-        }
-
-        fun hasCommand(name: String): Boolean {
-            LobbyMain.logger.entering(Companion::class, "hasCommand")
-            return commands.containsKey(name)
-        }
+    /**
+     * Checks whether this registry contains a command.
+     *
+     * @param name the name of the command to get
+     * @return the command for the [name]
+     */
+    fun hasCommand(name: String): Boolean {
+        LobbyMain.logger.entering(LobbyCommandRegistry::class, "hasCommand")
+        return commands.containsKey(name)
     }
 }

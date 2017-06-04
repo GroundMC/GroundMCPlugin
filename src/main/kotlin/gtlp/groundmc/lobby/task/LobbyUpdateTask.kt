@@ -13,6 +13,11 @@ import org.bukkit.ChatColor
 import org.bukkit.Location
 import java.util.*
 
+/**
+ * Task to update the [LobbyInventory] with information about the amount of slots
+ * in the destination world.
+ * Stops when Multiverse is not installed.
+ */
 object LobbyUpdateTask : ITask {
     override val delay: Long = 20
     override val period: Long = 30

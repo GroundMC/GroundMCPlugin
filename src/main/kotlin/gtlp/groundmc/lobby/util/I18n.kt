@@ -84,7 +84,12 @@ object I18n {
      * A cache for dynamically loading and storing used resource bundles.
      * Does not implement removing items from the cache because of low memory impact
      */
-    internal class ResourceBundleCache(val name: String) {
+    private class ResourceBundleCache(
+            /**
+             * The name of this cache.
+             */
+            val name: String
+    ) {
         /**
          * A map holding resource bundles for locales
          */

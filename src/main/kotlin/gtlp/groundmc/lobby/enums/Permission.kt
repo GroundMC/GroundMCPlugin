@@ -4,7 +4,13 @@ package gtlp.groundmc.lobby.enums
  * Enum to store permissions as strings.
  * Consolidates all permissions into one enum.
  */
-enum class Permission constructor(val id: String) {
+enum class Permission constructor(
+        /**
+         * The string representation of this permission.
+         * Can be used in plugins that manage permissions.
+         */
+        val id: String
+) {
     /**
      * The administrator permission.
      * Players with this permission usually have full control over the functionality

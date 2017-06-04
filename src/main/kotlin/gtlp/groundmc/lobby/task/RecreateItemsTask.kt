@@ -15,6 +15,9 @@ import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction
 
+/**
+ * Task to recreate the [LobbyInventoryHolder] for players whose locale chnages
+ */
 object RecreateItemsTask : ITask {
     override val delay = 20L
     override val period = 40L
@@ -32,6 +35,11 @@ object RecreateItemsTask : ITask {
         }
     }
 
+    /**
+     * Generates and adds items to a player's inventory according to their permissions.
+     *
+     * @param player the player to generate the items for
+     */
     fun addItemsToInventory(player: Player) {
         transaction {
             if (gtlp.groundmc.lobby.database.table.Users.select { Users.id.eq(player.uniqueId) }.count() == 0) {

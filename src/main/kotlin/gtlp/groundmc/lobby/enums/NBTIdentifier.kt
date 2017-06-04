@@ -3,7 +3,12 @@ package gtlp.groundmc.lobby.enums
 /**
  * Enum to store NBTIdentifiers for use with [gtlp.groundmc.lobby.util.NBTItemExt]
  */
-enum class NBTIdentifier(private val id: String) {
+enum class NBTIdentifier(
+        /**
+         * The string representation of this identifier
+         */
+        private val id: String
+) {
     /**
      * The prefix of all identifiers
      */

@@ -9,6 +9,9 @@ import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction
 
+/**
+ * Task to update players and their change in the visibility state.
+ */
 object HidePlayersTask : ITask {
     override val delay: Long = 20L
     override val period: Long = 40L

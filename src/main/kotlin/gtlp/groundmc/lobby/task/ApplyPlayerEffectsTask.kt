@@ -3,6 +3,9 @@ package gtlp.groundmc.lobby.task
 import gtlp.groundmc.lobby.LobbyMain
 import org.bukkit.Bukkit
 
+/**
+ * Task to apply effects to players in the lobby world.
+ */
 object ApplyPlayerEffectsTask : ITask {
     override val delay: Long = 20L
     override val period: Long = 20L
