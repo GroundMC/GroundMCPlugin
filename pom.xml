@@ -189,6 +189,7 @@
                 </executions>
                 <configuration>
                     <outputFormat>jekyll</outputFormat>
+                    <outputDir>${project.basedir}/docs</outputDir>
                     <sourceDirectories>
                         <dir>src/main/kotlin</dir>
                     </sourceDirectories>
@@ -206,6 +207,9 @@
                         </link>
                         <link>
                             <url>http://www.joda.org/joda-time/apidocs/</url>
+                        </link>
+                        <link>
+                            <url>https://google.github.io/gson/apidocs/</url>
                         </link>
                     </externalDocumentationLinks>
                     <perPackageOptions>
