@@ -32,6 +32,12 @@ import org.joda.time.Instant
  */
 class PlayerEventListener : Listener {
 
+    /**
+     * Saves and restores a player's inventory when travelling between the lobby
+     * world and another world.
+     *
+     * @param event the event to handle
+     */
     @EventHandler
     fun onPlayerChangeWorld(event: PlayerChangedWorldEvent) {
         if (event.from == LobbyMain.hubLocation.get().world) {
@@ -42,6 +48,11 @@ class PlayerEventListener : Listener {
         }
     }
 
+    /**
+     * Handles a player joining the server.
+     *
+     * @param event the event to handle
+     */
     @EventHandler(priority = EventPriority.LOWEST)
     fun onPlayerLogin(event: PlayerJoinEvent) {
         LobbyMain.lobbyInventoryMap[event.player] = LobbyInventoryHolder.forPlayer(event.player)
@@ -66,6 +77,11 @@ class PlayerEventListener : Listener {
         }
     }
 
+    /**
+     * Cleans up when a player leaves the server.
+     *
+     * @param event the event to handle
+     */
     @EventHandler(priority = EventPriority.LOWEST)
     fun onPlayerLogout(event: PlayerQuitEvent) {
         if (event.player.world == LobbyMain.hubLocation.get().world) {
@@ -75,6 +91,11 @@ class PlayerEventListener : Listener {
         LobbyMain.SILENCED_PLAYERS.remove(event.player)
     }
 
+    /**
+     * Prevents players dropping items with the [NBTIdentifier.PREFIX] on them.
+     *
+     * @param event the event to handle
+     */
     @EventHandler(priority = EventPriority.LOWEST)
     fun cancelItemDrop(event: PlayerDropItemEvent) {
         val nbtItem = NBTItemExt(event.itemDrop.itemStack)
@@ -83,6 +104,12 @@ class PlayerEventListener : Listener {
         }
     }
 
+    /**
+     * Filters the recipients of a chat message by removing all players that
+     * want a silent chat.
+     *
+     * @param event the event to handle
+     */
     @EventHandler
     fun filterChat(event: AsyncPlayerChatEvent) {
         if (event.isCancelled) {
@@ -92,6 +119,11 @@ class PlayerEventListener : Listener {
         event.recipients.add(event.player)
     }
 
+    /**
+     * Slows down the chat by cancelling fast chat messages.
+     *
+     * @param event the event to handle
+     */
     @EventHandler(priority = EventPriority.LOWEST)
     fun slowChat(event: AsyncPlayerChatEvent) {
         if (LobbyMain.instance.get().config.getBoolean("slowchat.enabled")) {
@@ -106,6 +138,11 @@ class PlayerEventListener : Listener {
         }
     }
 
+    /**
+     * Opens the [gtlp.groundmc.lobby.inventory.HidePlayerInventory].
+     *
+     * @param event the event to handle
+     */
     @EventHandler(priority = EventPriority.LOWEST)
     fun hidePlayers(event: PlayerInteractEvent) {
         if (event.item != null) {
@@ -117,6 +154,11 @@ class PlayerEventListener : Listener {
         }
     }
 
+    /**
+     * Updates the chat silence setting.
+     *
+     * @param event the event to handle
+     */
     @EventHandler(priority = EventPriority.LOWEST)
     fun silentChat(event: PlayerInteractEvent) {
         if (event.item != null) {
@@ -151,6 +193,11 @@ class PlayerEventListener : Listener {
         }
     }
 
+    /**
+     * Opens the inventory that matches the item.
+     *
+     * @param event the event to handle
+     */
     @EventHandler(priority = EventPriority.LOWEST)
     fun openInventory(event: PlayerInteractEvent) {
         when (event.item) {
@@ -165,6 +212,11 @@ class PlayerEventListener : Listener {
         }
     }
 
+    /**
+     * Launches a player forward when stepping on a golden pressure plate.
+     *
+     * @param event the event to handle
+     */
     @EventHandler
     fun launchPlayerForward(event: PlayerInteractEvent) {
         if (event.clickedBlock != null) {
@@ -175,6 +227,11 @@ class PlayerEventListener : Listener {
         }
     }
 
+    /**
+     * Calculates a normalized vector based on the [Location.yaw] on the XZ-plane.
+     *
+     * @return a vector pointing in the direction of [Location.yaw] with a length of 1.
+     */
     fun Location.getDirectionXZ(): Vector {
         val vector = Vector()
 

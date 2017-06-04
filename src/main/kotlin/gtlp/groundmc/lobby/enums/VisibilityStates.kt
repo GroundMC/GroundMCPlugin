@@ -1,10 +1,21 @@
 package gtlp.groundmc.lobby.enums
 
 /**
- * Created by Marvin on 11.11.2016.
+ * Enum to hold the visibility states.
  */
 enum class VisibilityStates {
+    /**
+     * Hides all players.
+     */
     NONE,
+
+    /**
+     * Hides all players except for friends.
+     */
     FRIENDS,
+
+    /**
+     * Hides no players == All players are visible.
+     */
     ALL;
 }

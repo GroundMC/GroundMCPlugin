@@ -28,7 +28,7 @@ import java.util.*
  * Utility class for internationalization. This class provides a
  * central location to do specialized formatting in both
  * a default and a locale specific manner.
-
+ *
  * @version $Revision: 1.2 $
  */
 object I18nUtils {
@@ -37,9 +37,9 @@ object I18nUtils {
      * Convert a string based locale into a Locale Object.
      * Assumes the string has form "{language}_{country}_{variant}".
      * Examples: "en", "de_DE", "_GB", "en_US_WIN", "de__POSIX", "fr_MAC"
-
+     *
      * @param localeString The String
-     * *
+     *
      * @return the Locale
      */
     fun getLocaleFromString(localeString: String): Locale {
@@ -76,6 +76,14 @@ object I18nUtils {
         }
     }
 
+    /**
+     * Parses the locale from a [CommandSender] to translate messages to the [sender]
+     *
+     * @param sender the sender of a command to translate messages for
+     *
+     * @return the locale that has been parsed or [Locale.getDefault],
+     * if the [sender] is not a player (e.g. the command has been sent from the console)
+     */
     fun getLocaleFromCommandSender(sender: CommandSender): Locale {
         LobbyMain.logger.entering(I18nUtils::class, "getLocaleFromCommandSender")
         if (sender is Player) {

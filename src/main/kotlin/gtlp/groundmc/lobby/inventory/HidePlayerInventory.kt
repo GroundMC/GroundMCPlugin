@@ -20,6 +20,14 @@ import org.bukkit.material.Dye
  * Inventory with clickable items to hide other players
  */
 object HidePlayerInventory {
+
+    /**
+     * Creates an inventory for a player that is used to select the visibility
+     * state of other players.
+     *
+     * @param player the player to create the inventory for
+     * @return the created inventory
+     */
     fun create(player: Player): Inventory {
         LobbyMain.logger.entering(HidePlayerInventory::class, "create")
         val inventory = Bukkit.createInventory(player, 9)

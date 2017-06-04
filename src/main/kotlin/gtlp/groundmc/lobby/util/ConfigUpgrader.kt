@@ -8,7 +8,18 @@ import org.bukkit.Location
 import org.bukkit.configuration.Configuration
 import org.bukkit.inventory.ItemStack
 
+/**
+ * Upgrader to modify the configuration according to changes needed to work with the new version.
+ */
 object ConfigUpgrader {
+
+    /**
+     * Upgrades items in the lobby inventory section of the [config] to use a
+     * [Location] object instead of a bunch of keys for storing the teleport
+     * destination.
+     *
+     * @param config the configuration to update
+     */
     fun upgradeItemsToUseObject(config: Configuration) {
         LobbyMain.logger.entering(ConfigUpgrader::class, "upgradeItemsToUseObject")
         LobbyMain.logger.info("[Version 1] Upgrading items to use objects instead of separate keys")

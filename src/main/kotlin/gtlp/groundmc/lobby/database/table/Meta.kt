@@ -9,11 +9,25 @@ import org.jetbrains.exposed.sql.transactions.transaction
 import org.jetbrains.exposed.sql.update
 import java.util.*
 
+/**
+ * Meta table to handle upgrades to the database
+ */
 object Meta : Table() {
+    /**
+     * The latest version of the database.
+     * Used to track the upgrade process and to determine what upgrades to do.
+     */
     private val CURRENT_TABLE_VER = 2
 
+    /**
+     * Column to hold the current database version.
+     * Updated on upgrades.
+     */
     private val version = integer("version").default(CURRENT_TABLE_VER).uniqueIndex().primaryKey()
 
+    /**
+     * Upgrades the database by performing the needed modifications to the database.
+     */
     fun upgradeDatabase() {
         LobbyMain.logger.entering(Meta::class, "upgradeDatabase")
         try {
