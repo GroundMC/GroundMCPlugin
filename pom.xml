@@ -188,7 +188,7 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <outputFormat>javadoc</outputFormat>
+                    <outputFormat>jekyll</outputFormat>
                     <sourceDirectories>
                         <dir>src/main/kotlin</dir>
                     </sourceDirectories>
