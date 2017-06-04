@@ -25,6 +25,12 @@ import org.jetbrains.exposed.sql.update
  */
 class InventoryClickEventListener : Listener {
 
+    /**
+     * Handles an [InventoryClickEvent] and teleports a player to the location defined
+     * in the item that the player clicked on, if it is compatible.
+     *
+     * @param event the event to handle
+     */
     @EventHandler
     fun teleportPlayer(event: InventoryClickEvent) {
         val player = event.whoClicked as Player
@@ -46,20 +52,30 @@ class InventoryClickEventListener : Listener {
         }
     }
 
+    /**
+     * Denies default actions when clicking on items with the [NBTIdentifier.PREFIX].
+     * Although falsely named, this also opens the [gtlp.groundmc.lobby.inventory.LobbyInventory].
+     *
+     * @param event the event to handle.
+     */
     @EventHandler
     fun cancelInventoryClick(event: InventoryClickEvent) {
         if (event.whoClicked.world == LobbyMain.hubLocation.get().world) {
             if (event.currentItem != null && NBTItemExt(event.currentItem).getBoolean(NBTIdentifier.PREFIX)) {
                 event.result = Event.Result.DENY
-                when {
-                    event.currentItem == Items.COMPASS_ITEM.item -> {
-                        event.whoClicked.openInventory(LobbyMain.lobbyInventoryMap[event.whoClicked]?.lobbyInventory)
-                    }
+                if (event.currentItem == Items.COMPASS_ITEM.item) {
+                    event.whoClicked.openInventory(LobbyMain.lobbyInventoryMap[event.whoClicked]?.lobbyInventory)
                 }
             }
         }
     }
 
+    /**
+     * Updates the state of players to hide, when clicked on an option in the
+     * [gtlp.groundmc.lobby.inventory.HidePlayerInventory].
+     *
+     * @param event the event to handle
+     */
     @EventHandler
     fun selectHideState(event: InventoryClickEvent) {
         if (event.clickedInventory == LobbyMain.lobbyInventoryMap[event.whoClicked]?.hidePlayerInventory) {

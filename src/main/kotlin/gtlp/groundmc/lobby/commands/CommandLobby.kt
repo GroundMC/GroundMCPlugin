@@ -131,6 +131,13 @@ class CommandLobby : ILobbyCommand {
         return true
     }
 
+    /**
+     * Opens the [LobbyInventory.TEMPLATE_INVENTORY] for the [sender] and allows
+     * administrators to add items to, so that they can be used in the [gtlp.groundmc.lobby.Items.COMPASS_ITEM].
+     *
+     * @param sender the player that sent the command
+     * @return `true` when the items have been successfully, `false` otherwise.
+     */
     private fun addItem(sender: CommandSender): Boolean {
         LobbyMain.logger.entering(CommandLobby::class, "addItem")
         if (sender is Player) {
@@ -161,6 +168,16 @@ class CommandLobby : ILobbyCommand {
         return false
     }
 
+    /**
+     * Modifies the item the [sender] has in his hand, so that it can be used as
+     * a fast travel item in the [gtlp.groundmc.lobby.Items.COMPASS_ITEM].
+     *
+     * Uses the current [sender]s position for the teleport destination.
+     *
+     * @param args the arguments that accompany this command
+     * @param sender the player that sent the command
+     * @return `true` when the item has successfully been modified, `false` otherwise.
+     */
     private fun makeTp(args: Array<String>, sender: CommandSender): Boolean {
         LobbyMain.logger.entering(CommandLobby::class, "makeTp")
         if (sender is Player) {

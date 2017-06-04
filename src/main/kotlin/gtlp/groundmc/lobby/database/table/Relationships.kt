@@ -16,8 +16,21 @@ import java.util.*
  * Table holding relationships between players, including more information
  */
 object Relationships : Table() {
+
+    /**
+     * The [UUID] of the first player in the relationship.
+     * Usually the initiator.
+     */
     private val userId1 = uuid("user1").references(Users.id).index()
+
+    /**
+     * The [UUID] of the second player in the relationship.
+     */
     private val userId2 = uuid("user2").references(Users.id)
+
+    /**
+     * The timestamp at which the relationship was created.
+     */
     private val since = datetime("since")
 
     /**

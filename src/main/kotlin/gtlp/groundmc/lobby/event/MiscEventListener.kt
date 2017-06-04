@@ -9,8 +9,16 @@ import org.bukkit.event.Listener
 import org.bukkit.event.block.BlockPlaceEvent
 import org.bukkit.event.entity.PotionSplashEvent
 
-internal class MiscEventListener : Listener {
+/**
+ * Listener to handle miscellaneous events.
+ */
+class MiscEventListener : Listener {
 
+    /**
+     * Removes potion effects from splashed potions in the lobby world.
+     *
+     * @param event the event to handle
+     */
     @EventHandler
     fun removePotionEffects(event: PotionSplashEvent) {
         if (event.entity.world == LobbyMain.hubLocation.get().world) {
@@ -19,6 +27,11 @@ internal class MiscEventListener : Listener {
         }
     }
 
+    /**
+     * Prevents players to place blocks with the [NBTIdentifier.PREFIX] on them.
+     *
+     * @param event the event to handle
+     */
     @EventHandler
     fun cancelBlockPlace(event: BlockPlaceEvent) {
         val nbtItem = NBTItemExt(event.itemInHand)
