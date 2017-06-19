@@ -146,6 +146,7 @@ class LobbyMain : JavaPlugin() {
         for (currentVersion in config.getInt("version", 1)..configVersion) {
             when (currentVersion) {
                 1 -> ConfigUpgrader.upgradeItemsToUseObject(config)
+                2 -> ConfigUpgrader.addJumpPadConfiguration(config)
             }
         }
 
@@ -350,7 +351,7 @@ class LobbyMain : JavaPlugin() {
          * The latest version of the configuration.
          * Used in [upgradeConfig].
          */
-        val configVersion = 2
+        val configVersion = 3
     }
 
 }
