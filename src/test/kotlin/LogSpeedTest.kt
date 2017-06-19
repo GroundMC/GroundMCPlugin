@@ -1,4 +1,5 @@
 import gtlp.groundmc.lobby.LogFormatter
+import org.junit.Ignore
 import org.junit.Test
 import java.io.OutputStream
 import java.io.PrintWriter
@@ -10,6 +11,7 @@ import java.util.logging.LogRecord
 import java.util.logging.Logger
 import java.util.logging.StreamHandler
 
+@Ignore("Already proven.")
 class LogSpeedTest {
 
     @Test
@@ -63,13 +65,16 @@ class LogSpeedTest {
 
         logger.info("")
 
+        val blockStart = System.nanoTime()
         for (i in 0..iterations) {
             val start = System.nanoTime()
             logger.info("iteration $i")
             cumulativeNanos += System.nanoTime() - start
         }
+        val blockDuration = System.nanoTime() - blockStart
 
-        println("$iterations iterations took ${Duration.ofNanos(cumulativeNanos)}")
+        println("$iterations iterations took ${Duration.ofNanos(cumulativeNanos)} cumulative")
+        println("$iterations iterations took ${Duration.ofNanos(blockDuration)} for the block")
     }
 
     @Test
@@ -92,13 +97,16 @@ class LogSpeedTest {
 
         logger.info("")
 
+        val blockStart = System.nanoTime()
         for (i in 0..iterations) {
             val start = System.nanoTime()
             logger.info("iteration $i")
             cumulativeNanos += System.nanoTime() - start
         }
+        val blockDuration = System.nanoTime() - blockStart
 
-        println("$iterations iterations took ${Duration.ofNanos(cumulativeNanos)}")
+        println("$iterations iterations took ${Duration.ofNanos(cumulativeNanos)} cumulative")
+        println("$iterations iterations took ${Duration.ofNanos(blockDuration)} for the block")
     }
 }
 
