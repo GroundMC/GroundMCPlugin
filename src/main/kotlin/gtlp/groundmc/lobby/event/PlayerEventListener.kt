@@ -10,7 +10,6 @@ import gtlp.groundmc.lobby.task.RecreateItemsTask.addItemsToInventory
 import gtlp.groundmc.lobby.util.I18n
 import gtlp.groundmc.lobby.util.NBTItemExt
 import org.bukkit.Location
-import org.bukkit.Material
 import org.bukkit.Sound
 import org.bukkit.attribute.Attribute
 import org.bukkit.enchantments.Enchantment
@@ -220,8 +219,8 @@ class PlayerEventListener : Listener {
     @EventHandler
     fun launchPlayerForward(event: PlayerInteractEvent) {
         if (event.clickedBlock != null) {
-            if (event.clickedBlock.type == Material.GOLD_PLATE && event.player.world == LobbyMain.hubLocation.get().world && event.action == Action.PHYSICAL) {
-                event.player.velocity = event.player.location.getDirectionXZ().setY(0.5).multiply(3)
+            if (event.clickedBlock.type.name in LobbyMain.instance.get().config.getList("jumppads.material") && event.player.world == LobbyMain.hubLocation.get().world && event.action == Action.PHYSICAL) {
+                event.player.velocity = event.player.location.getDirectionXZ().multiply(LobbyMain.instance.get().config.getDouble("jumppads.multiplier")).setY(LobbyMain.instance.get().config.getDouble("jumppads.y"))
                 event.isCancelled = true
             }
         }

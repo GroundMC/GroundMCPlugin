@@ -5,6 +5,7 @@ import gtlp.groundmc.lobby.enums.GMCType
 import gtlp.groundmc.lobby.enums.NBTIdentifier
 import org.bukkit.Bukkit
 import org.bukkit.Location
+import org.bukkit.Material
 import org.bukkit.configuration.Configuration
 import org.bukkit.inventory.ItemStack
 
@@ -51,6 +52,16 @@ object ConfigUpgrader {
             config["inventory.content"] = contents
         }
         LobbyMain.logger.exiting(ConfigUpgrader::class, "upgradeItemsToUseObject")
+    }
+
+    fun addJumpPadConfiguration(config: Configuration) {
+        LobbyMain.logger.entering(ConfigUpgrader::class, "addJumpPadConfiguration")
+        if ("jumppads" !in config) {
+            config["jumppads.material"] = listOf(Material.GOLD_PLATE.name)
+            config["jumppads.multiplier"] = 3.0
+            config["jumppads.y"] = 1
+        }
+        LobbyMain.logger.exiting(ConfigUpgrader::class, "addJumpPadConfiguration")
     }
 
 }
