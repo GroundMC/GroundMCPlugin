@@ -19,6 +19,7 @@ import gtlp.groundmc.lobby.util.*
 import org.bukkit.Bukkit
 import org.bukkit.Difficulty
 import org.bukkit.Location
+import org.bukkit.Material
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 import org.bukkit.configuration.MemorySection
@@ -206,6 +207,10 @@ class LobbyMain : JavaPlugin() {
         config.addDefault("database.password", "")
         config.addDefault("database.driver", "org.h2.Driver")
         config.addDefault("database.url", "jdbc:h2:\$dataFolder/database")
+
+        config.addDefault("jumppads.material", listOf(Material.GOLD_PLATE))
+        config.addDefault("jumppads.multiplier", 3.0)
+        config.addDefault("jumppads.y", 1.5)
 
         config.addDefault("version", configVersion)
 
