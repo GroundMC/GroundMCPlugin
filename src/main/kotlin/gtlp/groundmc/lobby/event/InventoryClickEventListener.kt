@@ -6,6 +6,8 @@ import gtlp.groundmc.lobby.database.table.Users
 import gtlp.groundmc.lobby.enums.GMCType
 import gtlp.groundmc.lobby.enums.NBTIdentifier
 import gtlp.groundmc.lobby.enums.VisibilityStates
+import gtlp.groundmc.lobby.inventory.HidePlayerInventory
+import gtlp.groundmc.lobby.inventory.LobbyInventory
 import gtlp.groundmc.lobby.util.NBTItemExt
 import org.bukkit.Location
 import org.bukkit.Particle
@@ -34,19 +36,17 @@ class InventoryClickEventListener : Listener {
     @EventHandler
     fun teleportPlayer(event: InventoryClickEvent) {
         val player = event.whoClicked as Player
-        if (event.clickedInventory == LobbyMain.lobbyInventoryMap[player]?.lobbyInventory) {
+        if (event.clickedInventory.title == LobbyInventory.TITLE) {
             event.isCancelled = true
-            if (event.currentItem != null) {
-                val nbtItem = NBTItemExt(event.currentItem)
-                if (nbtItem.hasKey(NBTIdentifier.PREFIX)) {
-                    if (nbtItem.getInteger(NBTIdentifier.TYPE) == GMCType.TP.ordinal) {
-                        if (player.teleport(nbtItem.getObject(NBTIdentifier.TP_LOC, Location::class), PlayerTeleportEvent.TeleportCause.PLUGIN)) {
-                            val location = player.location
-                            player.playSound(location, Sound.BLOCK_PORTAL_TRAVEL, 1.0f, 1.0f)
-                            player.spawnParticle(Particle.PORTAL, location, 100)
-                            player.spawnParticle(Particle.SMOKE_LARGE, location, 1000, 0.1, 0.1, 0.1)
-                        }
-                    }
+            if (event.currentItem == null) {
+                return
+            }
+            val nbtItem = NBTItemExt(event.currentItem)
+            if (nbtItem.hasKey(NBTIdentifier.PREFIX) && nbtItem.getInteger(NBTIdentifier.TYPE) == GMCType.TP.ordinal) {
+                if (player.teleport(nbtItem.getObject(NBTIdentifier.TP_LOC, Location::class), PlayerTeleportEvent.TeleportCause.PLUGIN)) {
+                    player.playSound(player.location, Sound.BLOCK_PORTAL_TRAVEL, 1.0f, 1.0f)
+                    player.spawnParticle(Particle.PORTAL, player.location, 100)
+                    player.spawnParticle(Particle.SMOKE_LARGE, player.location, 1000, 0.1, 0.1, 0.1)
                 }
             }
         }
@@ -64,7 +64,7 @@ class InventoryClickEventListener : Listener {
             if (event.currentItem != null && NBTItemExt(event.currentItem).getBoolean(NBTIdentifier.PREFIX)) {
                 event.result = Event.Result.DENY
                 if (event.currentItem == Items.COMPASS_ITEM.item) {
-                    event.whoClicked.openInventory(LobbyMain.lobbyInventoryMap[event.whoClicked]?.lobbyInventory)
+                    event.whoClicked.openInventory(LobbyInventory.create(event.whoClicked))
                 }
             }
         }
@@ -78,7 +78,7 @@ class InventoryClickEventListener : Listener {
      */
     @EventHandler
     fun selectHideState(event: InventoryClickEvent) {
-        if (event.clickedInventory == LobbyMain.lobbyInventoryMap[event.whoClicked]?.hidePlayerInventory) {
+        if (event.clickedInventory.title == HidePlayerInventory.TITLE) {
             event.result = Event.Result.DENY
             if (event.currentItem != null) {
                 val nbtItem = NBTItemExt(event.currentItem)

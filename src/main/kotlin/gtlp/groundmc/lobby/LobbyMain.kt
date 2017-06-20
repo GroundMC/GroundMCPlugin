@@ -14,7 +14,10 @@ import gtlp.groundmc.lobby.event.PlayerEventListener
 import gtlp.groundmc.lobby.inventory.LobbyInventory
 import gtlp.groundmc.lobby.inventory.LobbyInventoryHolder
 import gtlp.groundmc.lobby.registry.LobbyCommandRegistry
-import gtlp.groundmc.lobby.task.*
+import gtlp.groundmc.lobby.task.ApplyPlayerEffectsTask
+import gtlp.groundmc.lobby.task.HidePlayersTask
+import gtlp.groundmc.lobby.task.ITask
+import gtlp.groundmc.lobby.task.SetRulesTask
 import gtlp.groundmc.lobby.util.*
 import org.bukkit.Bukkit
 import org.bukkit.Difficulty
@@ -99,8 +102,6 @@ class LobbyMain : JavaPlugin() {
         Bukkit.getServer().scheduler.scheduleSyncDelayedTask(SetRulesTask)
         Bukkit.getServer().scheduler.scheduleSyncRepeatingTask(ApplyPlayerEffectsTask)
         Bukkit.getServer().scheduler.scheduleSyncRepeatingTask(HidePlayersTask)
-        Bukkit.getServer().scheduler.scheduleSyncRepeatingTask(LobbyUpdateTask)
-        Bukkit.getServer().scheduler.scheduleSyncRepeatingTask(RecreateItemsTask)
 
         logger.finer("Setting difficulty of the hub world to peaceful")
         hubLocation.get().world.difficulty = Difficulty.PEACEFUL
