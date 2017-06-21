@@ -1,4 +1,4 @@
-package gtlp.groundmc.lobby.event
+package gtlp.groundmc.lobby.event.listener
 
 import gtlp.groundmc.lobby.Items
 import gtlp.groundmc.lobby.LobbyMain

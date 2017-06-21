@@ -1,4 +1,4 @@
-package gtlp.groundmc.lobby.event
+package gtlp.groundmc.lobby.event.listener
 
 import gtlp.groundmc.lobby.Items
 import gtlp.groundmc.lobby.LobbyMain
@@ -7,6 +7,7 @@ import gtlp.groundmc.lobby.enums.GMCType
 import gtlp.groundmc.lobby.enums.NBTIdentifier
 import gtlp.groundmc.lobby.enums.Permission
 import gtlp.groundmc.lobby.enums.VisibilityStates
+import gtlp.groundmc.lobby.event.PlayerChangeLocaleEvent
 import gtlp.groundmc.lobby.inventory.HidePlayerInventory
 import gtlp.groundmc.lobby.inventory.LobbyInventory
 import gtlp.groundmc.lobby.inventory.LobbyInventoryHolder
@@ -64,7 +65,13 @@ class PlayerEventListener : Listener {
         }
 
         if (player.hasPermission(Permission.HIDE_PLAYERS.id) || player.hasPermission(Permission.ADMIN.id)) {
-            val nbtItem = Items.HIDE_PLAYERS_ITEM.apply { displayName = I18n.getString("visibility.all", player.spigot().locale) }
+            val nbtItem = Items.HIDE_PLAYERS_ITEM.apply {
+                displayName = I18n.getString(when (hideState) {
+                    VisibilityStates.ALL -> "visibility.all"
+                    VisibilityStates.NONE -> "visibility.none"
+                    VisibilityStates.FRIENDS -> "visibility.friends"
+                }, player.spigot().locale)
+            }
             inventory.setItem(2, nbtItem.item)
         }
     }
@@ -81,6 +88,13 @@ class PlayerEventListener : Listener {
             event.player.inventory.contents = LobbyMain.lobbyInventoryMap[event.player]?.originalContents
         } else if (event.player.world == LobbyMain.hubLocation.get().world) {
             LobbyMain.lobbyInventoryMap[event.player]?.originalContents = event.player.inventory.contents.clone()
+            addItemsToInventory(event.player)
+        }
+    }
+
+    @EventHandler
+    fun onPlayerChangeLocale(event: PlayerChangeLocaleEvent) {
+        if (event.player.world == LobbyMain.hubLocation.get().world) {
             addItemsToInventory(event.player)
         }
     }
