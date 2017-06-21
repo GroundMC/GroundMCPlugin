@@ -1,5 +1,5 @@
 ---
-title: LobbyUpdateTask.run - groundmc-plugin
+TITLE: LobbyUpdateTask.run - groundmc-plugin
 ---
 
 [groundmc-plugin](../../index.html) / [gtlp.groundmc.lobby.task](../index.html) / [LobbyUpdateTask](index.html) / [run](.)

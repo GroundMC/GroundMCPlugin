@@ -1,5 +1,5 @@
 ---
-title: LobbyInventoryHolder.hidePlayerInventory - groundmc-plugin
+TITLE: LobbyInventoryHolder.hidePlayerInventory - groundmc-plugin
 ---
 
 [groundmc-plugin](../../index.html) / [gtlp.groundmc.lobby.inventory](../index.html) / [LobbyInventoryHolder](index.html) / [hidePlayerInventory](.)

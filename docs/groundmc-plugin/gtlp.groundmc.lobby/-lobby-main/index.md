@@ -33,7 +33,7 @@ Serves as the entry point and commander of all things.
 ### Companion Object Properties
 
 | [SILENCED_PLAYERS](-s-i-l-e-n-c-e-d_-p-l-a-y-e-r-s.html) | `val SILENCED_PLAYERS: `[`MutableSet`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-mutable-set/index.html)`<`[`Player`](https://hub.spigotmc.org/javadocs/spigot/org/bukkit/entity/Player.html)`>`<br>Set holding players that want their chat to be silent |
-| [configVersion](config-version.html) | `val configVersion: `[`Int`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html)<br>The latest version of the configuration. Used in [upgradeConfig](upgrade-config.html). |
+| [configVersion](config-version.html) | `const val configVersion: `[`Int`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html)<br>The latest version of the configuration. Used in [upgradeConfig](upgrade-config.html). |
 | [dailyCoins](daily-coins.html) | `var dailyCoins: `[`Int`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html)<br>The variable holding the amount of coins a player gets every day. |
 | [hubLocation](hub-location.html) | `var hubLocation: `[`Optional`](http://docs.oracle.com/javase/6/docs/api/java/util/Optional.html)`<`[`Location`](https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Location.html)`>`<br>Variable to hold the [Location](https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Location.html) of the hub/lobby. |
 | [instance](instance.html) | `var instance: `[`Optional`](http://docs.oracle.com/javase/6/docs/api/java/util/Optional.html)`<LobbyMain>`<br>Common instance of this LobbyMain plugin. |

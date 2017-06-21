@@ -1,5 +1,5 @@
 ---
-title: InventoryClickEventListener.teleportPlayer - groundmc-plugin
+TITLE: InventoryClickEventListener.teleportPlayer - groundmc-plugin
 ---
 
 [groundmc-plugin](../../index.html) / [gtlp.groundmc.lobby.event](../index.html) / [InventoryClickEventListener](index.html) / [teleportPlayer](.)

@@ -1,5 +1,5 @@
 ---
-title: LobbyInventoryHolder.recreateInventories - groundmc-plugin
+TITLE: LobbyInventoryHolder.recreateInventories - groundmc-plugin
 ---
 
 [groundmc-plugin](../../index.html) / [gtlp.groundmc.lobby.inventory](../index.html) / [LobbyInventoryHolder](index.html) / [recreateInventories](.)

@@ -1,5 +1,5 @@
 ---
-title: PlayerEventListener.onPlayerChangeWorld - groundmc-plugin
+TITLE: PlayerEventListener.onPlayerChangeWorld - groundmc-plugin
 ---
 
 [groundmc-plugin](../../index.html) / [gtlp.groundmc.lobby.event](../index.html) / [PlayerEventListener](index.html) / [onPlayerChangeWorld](.)

@@ -1,5 +1,5 @@
 ---
-title: PlayerEventListener.launchPlayerForward - groundmc-plugin
+TITLE: PlayerEventListener.launchPlayerForward - groundmc-plugin
 ---
 
 [groundmc-plugin](../../index.html) / [gtlp.groundmc.lobby.event](../index.html) / [PlayerEventListener](index.html) / [launchPlayerForward](.)

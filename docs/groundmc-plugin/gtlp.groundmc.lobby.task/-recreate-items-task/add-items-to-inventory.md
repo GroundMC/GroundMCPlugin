@@ -1,5 +1,5 @@
 ---
-title: RecreateItemsTask.addItemsToInventory - groundmc-plugin
+TITLE: RecreateItemsTask.addItemsToInventory - groundmc-plugin
 ---
 
 [groundmc-plugin](../../index.html) / [gtlp.groundmc.lobby.task](../index.html) / [RecreateItemsTask](index.html) / [addItemsToInventory](.)

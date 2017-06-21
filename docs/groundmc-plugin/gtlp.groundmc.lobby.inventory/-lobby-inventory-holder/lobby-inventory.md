@@ -1,5 +1,5 @@
 ---
-title: LobbyInventoryHolder.lobbyInventory - groundmc-plugin
+TITLE: LobbyInventoryHolder.lobbyInventory - groundmc-plugin
 ---
 
 [groundmc-plugin](../../index.html) / [gtlp.groundmc.lobby.inventory](../index.html) / [LobbyInventoryHolder](index.html) / [lobbyInventory](.)

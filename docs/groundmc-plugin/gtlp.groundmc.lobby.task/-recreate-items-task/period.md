@@ -1,5 +1,5 @@
 ---
-title: RecreateItemsTask.period - groundmc-plugin
+TITLE: RecreateItemsTask.period - groundmc-plugin
 ---
 
 [groundmc-plugin](../../index.html) / [gtlp.groundmc.lobby.task](../index.html) / [RecreateItemsTask](index.html) / [period](.)

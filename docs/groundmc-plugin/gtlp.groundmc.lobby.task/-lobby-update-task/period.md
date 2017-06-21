@@ -1,5 +1,5 @@
 ---
-title: LobbyUpdateTask.period - groundmc-plugin
+TITLE: LobbyUpdateTask.period - groundmc-plugin
 ---
 
 [groundmc-plugin](../../index.html) / [gtlp.groundmc.lobby.task](../index.html) / [LobbyUpdateTask](index.html) / [period](.)

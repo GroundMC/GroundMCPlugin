@@ -14,4 +14,4 @@ destination.
 
 ### Parameters
 
-`config` - the configuration to update
+`config` - the configuration to upgrade

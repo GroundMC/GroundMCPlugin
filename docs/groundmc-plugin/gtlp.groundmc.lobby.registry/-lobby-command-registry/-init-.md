@@ -1,5 +1,5 @@
 ---
-title: LobbyCommandRegistry.<init> - groundmc-plugin
+TITLE: LobbyCommandRegistry.<init> - groundmc-plugin
 ---
 
 [groundmc-plugin](../../index.html) / [gtlp.groundmc.lobby.registry](../index.html) / [LobbyCommandRegistry](index.html) / [&lt;init&gt;](.)

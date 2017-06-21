@@ -1,5 +1,5 @@
 ---
-title: PlayerEventListener.getDirectionXZ - groundmc-plugin
+TITLE: PlayerEventListener.getDirectionXZ - groundmc-plugin
 ---
 
 [groundmc-plugin](../../index.html) / [gtlp.groundmc.lobby.event](../index.html) / [PlayerEventListener](index.html) / [getDirectionXZ](.)

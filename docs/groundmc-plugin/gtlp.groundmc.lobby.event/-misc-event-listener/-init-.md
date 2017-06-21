@@ -1,5 +1,5 @@
 ---
-title: MiscEventListener.<init> - groundmc-plugin
+TITLE: MiscEventListener.<init> - groundmc-plugin
 ---
 
 [groundmc-plugin](../../index.html) / [gtlp.groundmc.lobby.event](../index.html) / [MiscEventListener](index.html) / [&lt;init&gt;](.)

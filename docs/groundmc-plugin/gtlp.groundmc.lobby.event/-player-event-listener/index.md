@@ -1,5 +1,5 @@
 ---
-title: PlayerEventListener - groundmc-plugin
+TITLE: PlayerEventListener - groundmc-plugin
 ---
 
 [groundmc-plugin](../../index.html) / [gtlp.groundmc.lobby.event](../index.html) / [PlayerEventListener](.)

@@ -1,5 +1,5 @@
 ---
-title: PlayerEventListener.silentChat - groundmc-plugin
+TITLE: PlayerEventListener.silentChat - groundmc-plugin
 ---
 
 [groundmc-plugin](../../index.html) / [gtlp.groundmc.lobby.event](../index.html) / [PlayerEventListener](index.html) / [silentChat](.)
