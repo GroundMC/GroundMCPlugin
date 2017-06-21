@@ -1,5 +1,8 @@
 package gtlp.groundmc.lobby.enums
 
+import gtlp.groundmc.lobby.util.NBTItemExt
+import org.bukkit.inventory.ItemStack
+
 /**
  * Enum to store NBTIdentifiers for use with [gtlp.groundmc.lobby.util.NBTItemExt]
  */
@@ -45,5 +48,16 @@ enum class NBTIdentifier(
             return id
         }
         return "$PREFIX$id"
+    }
+
+    companion object {
+        /**
+         * Checks whether an item fulfills the constraint of being not-null and having
+         * an element of type [Boolean] with key [PREFIX] and that that element is true.
+         *
+         * @return whether the [item] has an element with key [PREFIX] of type [Boolean]
+         *          and is true.
+         */
+        fun itemHasPrefix(item: ItemStack?): Boolean = item != null && NBTItemExt(item).getBoolean(PREFIX)
     }
 }

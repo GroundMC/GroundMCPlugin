@@ -54,14 +54,18 @@ class InventoryClickEventListener : Listener {
 
     /**
      * Denies default actions when clicking on items with the [NBTIdentifier.PREFIX].
-     * Although falsely named, this also opens the [gtlp.groundmc.lobby.inventory.LobbyInventory].
+     * Although falsely named, this also opens the [gtlp.groundmc.lobby.inventory.LobbyInventory]
+     * when clicking on [Items.COMPASS_ITEM].
      *
      * @param event the event to handle.
      */
     @EventHandler
     fun cancelInventoryClick(event: InventoryClickEvent) {
+        if (event.inventory.title == LobbyInventory.TEMPLATE_INVENTORY.title) {
+            return
+        }
         if (event.whoClicked.world == LobbyMain.hubLocation.get().world) {
-            if (event.currentItem != null && NBTItemExt(event.currentItem).getBoolean(NBTIdentifier.PREFIX)) {
+            if (NBTIdentifier.itemHasPrefix(event.currentItem)) {
                 event.result = Event.Result.DENY
                 if (event.currentItem == Items.COMPASS_ITEM.item) {
                     event.whoClicked.openInventory(LobbyInventory.create(event.whoClicked))
@@ -80,24 +84,22 @@ class InventoryClickEventListener : Listener {
     fun selectHideState(event: InventoryClickEvent) {
         if (event.clickedInventory.title == HidePlayerInventory.TITLE) {
             event.result = Event.Result.DENY
-            if (event.currentItem != null) {
+            if (NBTIdentifier.itemHasPrefix(event.currentItem)) {
                 val nbtItem = NBTItemExt(event.currentItem)
-                if (nbtItem.hasKey(NBTIdentifier.PREFIX)) {
-                    if (nbtItem.getInteger(NBTIdentifier.TYPE) == GMCType.HIDE_PLAYERS.ordinal) {
-                        event.clickedInventory.contents.filterNotNull().forEach { itemstack -> itemstack.removeEnchantment(Enchantment.LUCK) }
-                        nbtItem.addEnchantment(Enchantment.LUCK)
-                        event.currentItem = nbtItem.item
-                        event.whoClicked.inventory.setItem(2, NBTItemExt(event.whoClicked.inventory.getItem(2)).apply {
-                            this.displayName = nbtItem.displayName
-                        }.item)
-                        transaction {
-                            Users.update({ Users.id.eq(event.whoClicked.uniqueId) }) {
-                                it[hiddenStatus] = VisibilityStates.values()[nbtItem.getInteger(NBTIdentifier.HIDE_STATE)]
-                            }
+                if (nbtItem.getInteger(NBTIdentifier.TYPE) == GMCType.HIDE_PLAYERS.ordinal) {
+                    event.clickedInventory.contents.filterNotNull().forEach { itemstack -> itemstack.removeEnchantment(Enchantment.LUCK) }
+                    nbtItem.addEnchantment(Enchantment.LUCK)
+                    event.currentItem = nbtItem.item
+                    event.whoClicked.inventory.setItem(2, NBTItemExt(event.whoClicked.inventory.getItem(2)).apply {
+                        this.displayName = nbtItem.displayName
+                    }.item)
+                    transaction {
+                        Users.update({ Users.id.eq(event.whoClicked.uniqueId) }) {
+                            it[hiddenStatus] = VisibilityStates.values()[nbtItem.getInteger(NBTIdentifier.HIDE_STATE)]
                         }
-                        event.whoClicked.sendMessage(nbtItem.displayName)
-                        event.view.close()
                     }
+                    event.whoClicked.sendMessage(nbtItem.displayName)
+                    event.view.close()
                 }
             }
         }

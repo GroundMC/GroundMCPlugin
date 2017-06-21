@@ -17,7 +17,7 @@ internal object LobbyInventory {
     /**
      * The template to clone the contents off of.
      */
-    val TEMPLATE_INVENTORY: Inventory = Bukkit.createInventory(null, 6 * 9, TITLE)
+    val TEMPLATE_INVENTORY: Inventory = Bukkit.createInventory(null, 6 * 9, "Template")
 
     /**
      * Creates an inventory for teleporting around.
