@@ -92,6 +92,11 @@ class PlayerEventListener : Listener {
         }
     }
 
+    /**
+     * Handles changes in a player's locale.
+     *
+     * @param event the event to handle
+     */
     @EventHandler
     fun onPlayerChangeLocale(event: PlayerChangeLocaleEvent) {
         if (event.player.world == LobbyMain.hubLocation.get().world) {

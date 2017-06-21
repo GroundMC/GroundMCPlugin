@@ -25,6 +25,9 @@ import org.jetbrains.exposed.sql.transactions.transaction
  */
 object HidePlayerInventory {
 
+    /**
+     * Title of the inventory ("Hide")
+     */
     const val TITLE = "Hide"
 
     /**

@@ -12,6 +12,9 @@ import org.bukkit.inventory.InventoryHolder
  */
 internal object LobbyInventory {
 
+    /**
+     * Title of the inventory ("Lobby")
+     */
     const val TITLE = "Lobby"
 
     /**

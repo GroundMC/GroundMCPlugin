@@ -6,10 +6,19 @@ import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import java.util.*
 
+/**
+ * Task to monitor changes in locale changes of players.
+ * Calls the [PlayerChangeLocaleEvent] for changes in locale.
+ */
 object MonitorLocaleTask : ITask {
     override val delay = 10L
     override val period = 40L
 
+    /**
+     * A map of players to their locale.
+     * Used to track changes.
+     * Defaulted with [Locale.ENGLISH]
+     */
     private val playerLocaleMap = mutableMapOf<Player, Locale>().withDefault { Locale.ENGLISH }
 
     override fun run() {
