@@ -6,10 +6,10 @@ depend: [BukkitDependencyLoader, ItemNBTAPI]
 softdepend: [Multiverse-Core]
 
 commands:
-   lobby:
+   globby:
       description: Lobby commands
       usage: "Usage: /<command> [additem|help|maketp] [parameters]"
-      aliases: [lb, l, hub]
+      aliases: [glb, gl, ghub]
    friend:
       description: Friendship commands
       usage: "Usage: /<command> <add|remove|status|online> <username> [relation]"

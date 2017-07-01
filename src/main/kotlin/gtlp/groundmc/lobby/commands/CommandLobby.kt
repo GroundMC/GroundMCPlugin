@@ -25,7 +25,7 @@ import kotlin.concurrent.thread
  * This also allows administrators to add more teleport destinations.
  */
 class CommandLobby : ILobbyCommand {
-    override val name: String = "lobby"
+    override val name: String = "globby"
 
     override fun getCommandHelp(locale: Locale) = I18n.getStrings("command.lobby.help.1", "command.lobby.help.2", "command.lobby.help.3", locale = locale)
 
