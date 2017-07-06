@@ -86,8 +86,8 @@ class CommandFriend : ILobbyCommand {
             sender.sendMessage(I18n.getString("command.friend.no_friends_online", sender.spigot().locale))
             return true
         }
-        onlineFriends.let {
-            sender.sendMessage(it.joinToString(prefix = I18n.getString("relationship.friend", sender.spigot().locale) + ": ", transform = { it -> if (it.user1.uniqueId != sender.uniqueId) it.user1.name else it.user2.name }))
+        with(onlineFriends) {
+            sender.sendMessage(joinToString(prefix = I18n.getString("relationship.friend", sender.spigot().locale) + ": ", transform = { if (it.user1.uniqueId != sender.uniqueId) it.user1.name else it.user2.name }))
         }
         return true
     }

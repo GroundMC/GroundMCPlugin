@@ -31,7 +31,7 @@ class CommandFriends : ILobbyCommand {
             }
             friends.let {
                     if (it.isNotEmpty()) {
-                        sender.sendMessage(String.format("%2\$s: %1\$s", it.map { it -> it.user2.name }.joinToString(), it.size))
+                        sender.sendMessage(String.format("%2\$s: %1\$s", it.map { it.user2.name }.joinToString(), it.size))
                     }
             }
             return true
