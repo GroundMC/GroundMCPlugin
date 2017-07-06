@@ -36,7 +36,7 @@ class InventoryClickEventListener : Listener {
     @EventHandler
     fun teleportPlayer(event: InventoryClickEvent) {
         val player = event.whoClicked as Player
-        if (event.clickedInventory.title == LobbyInventory.TITLE) {
+        if (event.clickedInventory != null && event.clickedInventory.title == LobbyInventory.TITLE) {
             event.isCancelled = true
             if (event.currentItem == null) {
                 return
