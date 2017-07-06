@@ -1,5 +1,7 @@
 package gtlp.groundmc.lobby.util
 
+import org.bukkit.inventory.Inventory
+import org.bukkit.inventory.ItemStack
 import java.util.logging.Logger
 import kotlin.reflect.KClass
 
@@ -36,12 +38,22 @@ fun Logger.entering(kClass: KClass<*>, sourceMethod: String) {
  * @return the list with the element set or added.
  */
 fun <E> MutableList<E>.setOrAdd(index: Int, value: E): MutableList<E> {
-    if(size > index) {
+    if (size > index) {
         this[index] = value
     } else {
         this.add(index, value)
     }
     return this
+}
+
+fun Inventory.copy(): Array<ItemStack?> {
+    val array = arrayOfNulls<ItemStack>(size)
+    forEachIndexed { index: Int, item: ItemStack? ->
+        if (item != null) {
+            array[index] = item.clone()
+        }
+    }
+    return array
 }
 
 /**
