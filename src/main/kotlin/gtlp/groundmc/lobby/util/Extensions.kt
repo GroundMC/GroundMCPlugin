@@ -46,6 +46,16 @@ fun <E> MutableList<E>.setOrAdd(index: Int, value: E): MutableList<E> {
     return this
 }
 
+/**
+ * Extension to [Inventory].
+ *
+ * Creates a real copy of the contents of an inventory.
+ * This makes sure that changes to the inventory are not reflected in the
+ * resulting array.
+ *
+ * @receiver the inventory you want the contents to be copied from
+ * @return an array of the items in this inventory. Preserves `null`.
+ */
 fun Inventory.copy(): Array<ItemStack?> {
     val array = arrayOfNulls<ItemStack>(size)
     forEachIndexed { index: Int, item: ItemStack? ->
