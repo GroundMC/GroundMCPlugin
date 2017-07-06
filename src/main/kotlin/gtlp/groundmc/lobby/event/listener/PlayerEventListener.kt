@@ -10,9 +10,9 @@ import gtlp.groundmc.lobby.enums.VisibilityStates
 import gtlp.groundmc.lobby.event.PlayerChangeLocaleEvent
 import gtlp.groundmc.lobby.inventory.HidePlayerInventory
 import gtlp.groundmc.lobby.inventory.LobbyInventory
-import gtlp.groundmc.lobby.inventory.LobbyInventoryHolder
 import gtlp.groundmc.lobby.util.I18n
 import gtlp.groundmc.lobby.util.NBTItemExt
+import gtlp.groundmc.lobby.util.copy
 import org.bukkit.Location
 import org.bukkit.Sound
 import org.bukkit.attribute.Attribute
@@ -85,9 +85,9 @@ class PlayerEventListener : Listener {
     @EventHandler
     fun onPlayerChangeWorld(event: PlayerChangedWorldEvent) {
         if (event.from == LobbyMain.hubLocation.get().world) {
-            event.player.inventory.contents = LobbyMain.lobbyInventoryMap[event.player]?.originalContents
+            event.player.inventory.contents = LobbyMain.originalInventories[event.player]
         } else if (event.player.world == LobbyMain.hubLocation.get().world) {
-            LobbyMain.lobbyInventoryMap[event.player]?.originalContents = event.player.inventory.contents.clone()
+            LobbyMain.originalInventories[event.player] = event.player.inventory.copy()
             addItemsToInventory(event.player)
         }
     }
@@ -112,14 +112,14 @@ class PlayerEventListener : Listener {
     @EventHandler(priority = EventPriority.LOWEST)
     fun onPlayerLogin(event: PlayerJoinEvent) {
         transaction {
-            if (Users.select { Users.id.eq(event.player.uniqueId) }.count() == 0) {
+            if (Users.select { Users.id eq event.player.uniqueId }.count() == 0) {
                 Users.insert {
                     it[id] = event.player.uniqueId
                     it[lastName] = event.player.name
                 }
             }
         }
-        LobbyMain.lobbyInventoryMap[event.player] = LobbyInventoryHolder.forPlayer(event.player)
+        LobbyMain.originalInventories[event.player] = event.player.inventory.copy()
 
         if (event.player.world == LobbyMain.hubLocation.get().world) {
             addItemsToInventory(event.player)
@@ -149,9 +149,9 @@ class PlayerEventListener : Listener {
     @EventHandler(priority = EventPriority.LOWEST)
     fun onPlayerLogout(event: PlayerQuitEvent) {
         if (event.player.world == LobbyMain.hubLocation.get().world) {
-            event.player.inventory.contents = LobbyMain.lobbyInventoryMap[event.player]?.originalContents
+            event.player.inventory.contents = LobbyMain.originalInventories[event.player]
         }
-        LobbyMain.lobbyInventoryMap.remove(event.player)
+        LobbyMain.originalInventories.remove(event.player)
         LobbyMain.SILENCED_PLAYERS.remove(event.player)
     }
 
