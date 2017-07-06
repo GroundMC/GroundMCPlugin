@@ -10,6 +10,7 @@ gtlp.groundmc.lobby.commands
 gtlp.groundmc.lobby.database.table
 gtlp.groundmc.lobby.enums
 gtlp.groundmc.lobby.event
+gtlp.groundmc.lobby.event.listener
 gtlp.groundmc.lobby.inventory
 gtlp.groundmc.lobby.registry
 gtlp.groundmc.lobby.task

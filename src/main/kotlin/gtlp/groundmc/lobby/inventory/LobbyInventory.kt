@@ -13,9 +13,14 @@ import org.bukkit.inventory.InventoryHolder
 internal object LobbyInventory {
 
     /**
+     * Title of the inventory ("Lobby")
+     */
+    const val TITLE = "Lobby"
+
+    /**
      * The template to clone the contents off of.
      */
-    val TEMPLATE_INVENTORY: Inventory = Bukkit.createInventory(null, 6 * 9, "Lobby")
+    val TEMPLATE_INVENTORY: Inventory = Bukkit.createInventory(null, 6 * 9, "Template")
 
     /**
      * Creates an inventory for teleporting around.
@@ -26,7 +31,7 @@ internal object LobbyInventory {
      */
     fun create(inventoryHolder: InventoryHolder): Inventory {
         LobbyMain.logger.entering(LobbyInventory::class, "create")
-        val clone = Bukkit.createInventory(inventoryHolder, TEMPLATE_INVENTORY.size, TEMPLATE_INVENTORY.title)
+        val clone = Bukkit.createInventory(inventoryHolder, TEMPLATE_INVENTORY.size, TITLE)
         clone.contents = TEMPLATE_INVENTORY.contents
         LobbyMain.logger.exiting(LobbyInventory::class, "create")
         return clone

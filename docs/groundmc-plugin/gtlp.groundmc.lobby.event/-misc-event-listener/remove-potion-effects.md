@@ -1,5 +1,5 @@
 ---
-title: MiscEventListener.removePotionEffects - groundmc-plugin
+TITLE: MiscEventListener.removePotionEffects - groundmc-plugin
 ---
 
 [groundmc-plugin](../../index.html) / [gtlp.groundmc.lobby.event](../index.html) / [MiscEventListener](index.html) / [removePotionEffects](.)

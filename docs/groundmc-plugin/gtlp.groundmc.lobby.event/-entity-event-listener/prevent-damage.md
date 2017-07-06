@@ -1,5 +1,5 @@
 ---
-title: EntityEventListener.preventDamage - groundmc-plugin
+TITLE: EntityEventListener.preventDamage - groundmc-plugin
 ---
 
 [groundmc-plugin](../../index.html) / [gtlp.groundmc.lobby.event](../index.html) / [EntityEventListener](index.html) / [preventDamage](.)

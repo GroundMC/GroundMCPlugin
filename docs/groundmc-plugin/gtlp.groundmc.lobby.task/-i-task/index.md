@@ -25,7 +25,6 @@ or [org.bukkit.scheduler.BukkitScheduler.scheduleSyncDelayedTask](https://hub.sp
 
 | [ApplyPlayerEffectsTask](../-apply-player-effects-task/index.html) | `object ApplyPlayerEffectsTask : ITask`<br>Task to apply effects to players in the lobby world. |
 | [HidePlayersTask](../-hide-players-task/index.html) | `object HidePlayersTask : ITask`<br>Task to update players and their change in the visibility state. |
-| [LobbyUpdateTask](../-lobby-update-task/index.html) | `object LobbyUpdateTask : ITask`<br>Task to update the [LobbyInventory](../../gtlp.groundmc.lobby.inventory/-lobby-inventory/index.html) with information about the amount of slots in the destination world. Stops when Multiverse is not installed. |
-| [RecreateItemsTask](../-recreate-items-task/index.html) | `object RecreateItemsTask : ITask`<br>Task to recreate the [LobbyInventoryHolder](../../gtlp.groundmc.lobby.inventory/-lobby-inventory-holder/index.html) for players whose locale chnages |
+| [MonitorLocaleTask](../-monitor-locale-task/index.html) | `object MonitorLocaleTask : ITask`<br>Task to monitor changes in locale changes of players. Calls the [PlayerChangeLocaleEvent](../../gtlp.groundmc.lobby.event/-player-change-locale-event/index.html) for changes in locale. |
 | [SetRulesTask](../-set-rules-task/index.html) | `object SetRulesTask : ITask`<br>Task to set the rules. Should only be executed once. |
 

@@ -1,5 +1,5 @@
 ---
-title: MiscEventListener.cancelBlockPlace - groundmc-plugin
+TITLE: MiscEventListener.cancelBlockPlace - groundmc-plugin
 ---
 
 [groundmc-plugin](../../index.html) / [gtlp.groundmc.lobby.event](../index.html) / [MiscEventListener](index.html) / [cancelBlockPlace](.)

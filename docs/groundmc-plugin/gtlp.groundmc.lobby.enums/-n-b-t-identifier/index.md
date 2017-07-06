@@ -30,3 +30,7 @@ Enum to store NBTIdentifiers for use with [gtlp.groundmc.lobby.util.NBTItemExt](
 
 | [toString](to-string.html) | `fun toString(): `[`String`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html)<br>Returns the prefix concatenated with the internal identifier. Does not concatenate the [PREFIX](-p-r-e-f-i-x.html) with itself. |
 
+### Companion Object Functions
+
+| [itemHasPrefix](item-has-prefix.html) | `fun itemHasPrefix(item: `[`ItemStack`](https://hub.spigotmc.org/javadocs/spigot/org/bukkit/inventory/ItemStack.html)`?): `[`Boolean`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html)<br>Checks whether an item fulfills the constraint of being not-null and having an element of type [Boolean](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html) with key [PREFIX](-p-r-e-f-i-x.html) and that that element is true. |
+

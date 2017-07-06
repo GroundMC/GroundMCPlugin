@@ -1,5 +1,5 @@
 ---
-title: PlayerEventListener.openInventory - groundmc-plugin
+TITLE: PlayerEventListener.openInventory - groundmc-plugin
 ---
 
 [groundmc-plugin](../../index.html) / [gtlp.groundmc.lobby.event](../index.html) / [PlayerEventListener](index.html) / [openInventory](.)

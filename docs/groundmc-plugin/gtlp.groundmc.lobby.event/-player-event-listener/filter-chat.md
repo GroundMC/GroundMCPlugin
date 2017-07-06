@@ -1,5 +1,5 @@
 ---
-title: PlayerEventListener.filterChat - groundmc-plugin
+TITLE: PlayerEventListener.filterChat - groundmc-plugin
 ---
 
 [groundmc-plugin](../../index.html) / [gtlp.groundmc.lobby.event](../index.html) / [PlayerEventListener](index.html) / [filterChat](.)

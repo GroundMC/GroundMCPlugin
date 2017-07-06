@@ -1,5 +1,5 @@
 ---
-title: PlayerEventListener.cancelItemDrop - groundmc-plugin
+TITLE: PlayerEventListener.cancelItemDrop - groundmc-plugin
 ---
 
 [groundmc-plugin](../../index.html) / [gtlp.groundmc.lobby.event](../index.html) / [PlayerEventListener](index.html) / [cancelItemDrop](.)

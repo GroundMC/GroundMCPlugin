@@ -1,5 +1,5 @@
 ---
-title: LobbyInventoryHolder.lastLocale - groundmc-plugin
+TITLE: LobbyInventoryHolder.lastLocale - groundmc-plugin
 ---
 
 [groundmc-plugin](../../index.html) / [gtlp.groundmc.lobby.inventory](../index.html) / [LobbyInventoryHolder](index.html) / [lastLocale](.)

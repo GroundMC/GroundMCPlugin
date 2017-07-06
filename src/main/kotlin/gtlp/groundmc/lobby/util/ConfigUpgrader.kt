@@ -19,7 +19,7 @@ object ConfigUpgrader {
      * [Location] object instead of a bunch of keys for storing the teleport
      * destination.
      *
-     * @param config the configuration to update
+     * @param config the configuration to upgrade
      */
     fun upgradeItemsToUseObject(config: Configuration) {
         LobbyMain.logger.entering(ConfigUpgrader::class, "upgradeItemsToUseObject")
@@ -54,6 +54,11 @@ object ConfigUpgrader {
         LobbyMain.logger.exiting(ConfigUpgrader::class, "upgradeItemsToUseObject")
     }
 
+    /**
+     * Add configuration options for the jump pads in the hub.
+     *
+     * @param config the configuration to upgrade
+     */
     fun addJumpPadConfiguration(config: Configuration) {
         LobbyMain.logger.entering(ConfigUpgrader::class, "addJumpPadConfiguration")
         if ("jumppads" !in config) {

@@ -7,12 +7,11 @@ import gtlp.groundmc.lobby.commands.*
 import gtlp.groundmc.lobby.database.table.Meta
 import gtlp.groundmc.lobby.database.table.Relationships
 import gtlp.groundmc.lobby.database.table.Users
-import gtlp.groundmc.lobby.event.EntityEventListener
-import gtlp.groundmc.lobby.event.InventoryClickEventListener
-import gtlp.groundmc.lobby.event.MiscEventListener
-import gtlp.groundmc.lobby.event.PlayerEventListener
+import gtlp.groundmc.lobby.event.listener.EntityEventListener
+import gtlp.groundmc.lobby.event.listener.InventoryClickEventListener
+import gtlp.groundmc.lobby.event.listener.MiscEventListener
+import gtlp.groundmc.lobby.event.listener.PlayerEventListener
 import gtlp.groundmc.lobby.inventory.LobbyInventory
-import gtlp.groundmc.lobby.inventory.LobbyInventoryHolder
 import gtlp.groundmc.lobby.registry.LobbyCommandRegistry
 import gtlp.groundmc.lobby.task.*
 import gtlp.groundmc.lobby.util.*
@@ -99,8 +98,7 @@ class LobbyMain : JavaPlugin() {
         Bukkit.getServer().scheduler.scheduleSyncDelayedTask(SetRulesTask)
         Bukkit.getServer().scheduler.scheduleSyncRepeatingTask(ApplyPlayerEffectsTask)
         Bukkit.getServer().scheduler.scheduleSyncRepeatingTask(HidePlayersTask)
-        Bukkit.getServer().scheduler.scheduleSyncRepeatingTask(LobbyUpdateTask)
-        Bukkit.getServer().scheduler.scheduleSyncRepeatingTask(RecreateItemsTask)
+        Bukkit.getServer().scheduler.scheduleSyncRepeatingTask(MonitorLocaleTask)
 
         logger.finer("Setting difficulty of the hub world to peaceful")
         hubLocation.get().world.difficulty = Difficulty.PEACEFUL
@@ -239,6 +237,7 @@ class LobbyMain : JavaPlugin() {
     override fun onDisable() {
         logger.entering(LobbyMain::class, "onDisable")
         logger.info("Saving configuration and disabling...")
+        tasks.forEach { Bukkit.getServer().scheduler.cancelTask(it.value) }
         saveConfig()
         logger.exiting(LobbyMain::class, "onDisable")
     }
@@ -317,9 +316,9 @@ class LobbyMain : JavaPlugin() {
 
     companion object {
         /**
-         * A map of [Player]s to their [LobbyInventoryHolder]s.
+         * A map of [Player]s to their inventory contents.
          */
-        val lobbyInventoryMap = mutableMapOf<Player, LobbyInventoryHolder>()
+        val originalInventories = mutableMapOf<Player, Array<ItemStack?>>()
 
         /**
          * Variable to hold the [Location] of the hub/lobby.
@@ -356,7 +355,7 @@ class LobbyMain : JavaPlugin() {
          * The latest version of the configuration.
          * Used in [upgradeConfig].
          */
-        val configVersion = 3
+        const val configVersion = 3
     }
 
 }

@@ -1,5 +1,5 @@
 ---
-title: EntityEventListener - groundmc-plugin
+TITLE: EntityEventListener - groundmc-plugin
 ---
 
 [groundmc-plugin](../../index.html) / [gtlp.groundmc.lobby.event](../index.html) / [EntityEventListener](.)

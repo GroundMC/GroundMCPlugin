@@ -1,5 +1,5 @@
 ---
-title: LobbyUpdateTask.delay - groundmc-plugin
+TITLE: LobbyUpdateTask.delay - groundmc-plugin
 ---
 
 [groundmc-plugin](../../index.html) / [gtlp.groundmc.lobby.task](../index.html) / [LobbyUpdateTask](index.html) / [delay](.)

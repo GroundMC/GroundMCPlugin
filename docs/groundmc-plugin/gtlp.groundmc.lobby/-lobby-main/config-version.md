@@ -6,7 +6,7 @@ title: LobbyMain.configVersion - groundmc-plugin
 
 # configVersion
 
-`val configVersion: `[`Int`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html)
+`const val configVersion: `[`Int`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html)
 
 The latest version of the configuration.
 Used in [upgradeConfig](upgrade-config.html).

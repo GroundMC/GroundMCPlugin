@@ -1,5 +1,5 @@
 ---
-title: InventoryClickEventListener.selectHideState - groundmc-plugin
+TITLE: InventoryClickEventListener.selectHideState - groundmc-plugin
 ---
 
 [groundmc-plugin](../../index.html) / [gtlp.groundmc.lobby.event](../index.html) / [InventoryClickEventListener](index.html) / [selectHideState](.)

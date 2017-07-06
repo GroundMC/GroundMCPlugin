@@ -1,5 +1,5 @@
 ---
-title: InventoryClickEventListener.<init> - groundmc-plugin
+TITLE: InventoryClickEventListener.<init> - groundmc-plugin
 ---
 
 [groundmc-plugin](../../index.html) / [gtlp.groundmc.lobby.event](../index.html) / [InventoryClickEventListener](index.html) / [&lt;init&gt;](.)
