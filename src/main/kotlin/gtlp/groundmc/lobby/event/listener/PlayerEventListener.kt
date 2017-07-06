@@ -292,6 +292,18 @@ class PlayerEventListener : Listener {
     }
 
     /**
+     * Prevents players from picking up items when they are in the hub.
+     *
+     * @param event the event to handle
+     */
+    @EventHandler(priority = EventPriority.LOWEST)
+    fun preventItemPickup(event: PlayerPickupItemEvent) {
+        if (event.player.world == LobbyMain.hubLocation.get().world) {
+            event.isCancelled = true
+        }
+    }
+
+    /**
      * Calculates a normalized vector based on the [Location.yaw] on the XZ-plane.
      *
      * @return a vector pointing in the direction of [Location.yaw] with a length of 1.
