@@ -2,7 +2,6 @@ package gtlp.groundmc.lobby
 
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
-import com.google.gson.TypeAdapterFactory
 import de.tr7zw.itemnbtapi.NBTReflectionUtil
 import gtlp.groundmc.lobby.commands.*
 import gtlp.groundmc.lobby.database.table.Meta
@@ -13,7 +12,6 @@ import gtlp.groundmc.lobby.event.listener.InventoryClickEventListener
 import gtlp.groundmc.lobby.event.listener.MiscEventListener
 import gtlp.groundmc.lobby.event.listener.PlayerEventListener
 import gtlp.groundmc.lobby.inventory.LobbyInventory
-import gtlp.groundmc.lobby.inventory.LobbyInventoryHolder
 import gtlp.groundmc.lobby.registry.LobbyCommandRegistry
 import gtlp.groundmc.lobby.task.*
 import gtlp.groundmc.lobby.util.*
@@ -121,12 +119,11 @@ class LobbyMain : JavaPlugin() {
 
         val fFactories = Gson::class.java.getDeclaredField("factories")
         fFactories.isAccessible = true
-        @Suppress("unchecked_cast")
-        val factories = fFactories.get(fGson.get(null)) as List<TypeAdapterFactory>
+        val factories = fFactories.get(fGson.get(null)) as List<*>
 
         fGson.set(null, GsonBuilder().apply {
             registerTypeAdapter(Location::class.java, LocationTypeAdapter)
-            factories.forEach { registerTypeAdapterFactory(it) }
+            factories.forEach { this::registerTypeAdapterFactory }
         }.create())
         logger.exiting(LobbyMain::class, "registerGsonHandlers")
     }
@@ -319,9 +316,9 @@ class LobbyMain : JavaPlugin() {
 
     companion object {
         /**
-         * A map of [Player]s to their [LobbyInventoryHolder]s.
+         * A map of [Player]s to their inventory contents.
          */
-        val lobbyInventoryMap = mutableMapOf<Player, LobbyInventoryHolder>()
+        val originalInventories = mutableMapOf<Player, Array<ItemStack?>>()
 
         /**
          * Variable to hold the [Location] of the hub/lobby.
