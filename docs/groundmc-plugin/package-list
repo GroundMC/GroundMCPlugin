@@ -1,5 +1,6 @@
 $dokka.format:jekyll
 $dokka.linkExtension:html
+$dokka.location:gtlp.groundmc.lobby.util$copy(org.bukkit.inventory.Inventory)gtlp.groundmc.lobby.util/org.bukkit.inventory.-inventory/copy.html
 $dokka.location:gtlp.groundmc.lobby.util$entering(java.util.logging.Logger, kotlin.reflect.KClass((kotlin.Any)), kotlin.String)gtlp.groundmc.lobby.util/java.util.logging.-logger/entering.html
 $dokka.location:gtlp.groundmc.lobby.util$exiting(java.util.logging.Logger, kotlin.reflect.KClass((kotlin.Any)), kotlin.String)gtlp.groundmc.lobby.util/java.util.logging.-logger/exiting.html
 $dokka.location:gtlp.groundmc.lobby.util$kilobytes#kotlin.Intgtlp.groundmc.lobby.util/kotlin.-int/kilobytes.html
