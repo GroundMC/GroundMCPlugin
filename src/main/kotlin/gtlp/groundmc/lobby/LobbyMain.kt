@@ -2,6 +2,7 @@ package gtlp.groundmc.lobby
 
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
+import com.google.gson.TypeAdapterFactory
 import de.tr7zw.itemnbtapi.NBTReflectionUtil
 import gtlp.groundmc.lobby.commands.*
 import gtlp.groundmc.lobby.database.table.Meta
@@ -120,11 +121,12 @@ class LobbyMain : JavaPlugin() {
 
         val fFactories = Gson::class.java.getDeclaredField("factories")
         fFactories.isAccessible = true
-        val factories = fFactories.get(fGson.get(null)) as List<*>
+        @Suppress("unchecked_cast")
+        val factories = fFactories.get(fGson.get(null)) as List<TypeAdapterFactory>
 
         fGson.set(null, GsonBuilder().apply {
             registerTypeAdapter(Location::class.java, LocationTypeAdapter)
-            factories.forEach { this::registerTypeAdapterFactory }
+            factories.forEach { registerTypeAdapterFactory(it) }
         }.create())
         logger.exiting(LobbyMain::class, "registerGsonHandlers")
     }
