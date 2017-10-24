@@ -4,6 +4,7 @@ import gtlp.groundmc.lobby.LobbyMain
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.entity.EntityDamageEvent
+import org.bukkit.event.entity.EntityDamageEvent.DamageCause.*
 
 /**
  * Listener to affect all instances of [org.bukkit.entity.Entity]
@@ -17,7 +18,7 @@ class EntityEventListener : Listener {
      */
     @EventHandler
     fun preventDamage(event: EntityDamageEvent) {
-        if (event.cause == EntityDamageEvent.DamageCause.SUICIDE && event.entity.world == LobbyMain.hubLocation.get().world) {
+        if (event.cause !in arrayOf(SUICIDE, CUSTOM, VOID) && event.entity.world == LobbyMain.hubLocation.get().world) {
             event.isCancelled = true
         }
     }
