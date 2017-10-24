@@ -17,7 +17,7 @@ class EntityEventListener : Listener {
      */
     @EventHandler
     fun preventDamage(event: EntityDamageEvent) {
-        if (event.entity.world == LobbyMain.hubLocation.get().world) {
+        if (event.cause == EntityDamageEvent.DamageCause.SUICIDE && event.entity.world == LobbyMain.hubLocation.get().world) {
             event.isCancelled = true
         }
     }
