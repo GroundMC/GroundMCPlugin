@@ -21,12 +21,12 @@ object Relationships : Table() {
      * The [UUID] of the first player in the relationship.
      * Usually the initiator.
      */
-    private val userId1 = uuid("user1").references(Users.id).index()
+    private val userId1 = uuid("user1").references(Users.id).primaryKey()
 
     /**
      * The [UUID] of the second player in the relationship.
      */
-    private val userId2 = uuid("user2").references(Users.id)
+    private val userId2 = uuid("user2").references(Users.id).primaryKey()
 
     /**
      * The timestamp at which the relationship was created.

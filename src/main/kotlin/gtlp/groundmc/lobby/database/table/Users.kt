@@ -17,7 +17,7 @@ object Users : Table() {
     /**
      * The [UUID] of the player
      */
-    val id = uuid("playerId").primaryKey().uniqueIndex()
+    val id = uuid("playerId").primaryKey()
 
     /**
      * The last name with which this player has been seen
@@ -42,7 +42,7 @@ object Users : Table() {
     /**
      * The amount of coins this player has
      */
-    val coins = long("coins").default(0)
+    val coins = integer("coins").default(0)
 
     /**
      * The last date at which the player has received daily coins (does not accumulate)
@@ -55,10 +55,8 @@ object Users : Table() {
      * @param player the player to query the database for
      * @return a row that contains all the columns defined in this class
      */
-    fun getPlayer(player: Player): ResultRow {
-        return transaction {
-            return@transaction Users.select(Users.id eq player.uniqueId).first()
-        }
+    fun getPlayer(player: Player) = transaction {
+        return@transaction Users.select(Users.id eq player.uniqueId).first()
     }
 
     /**
@@ -67,10 +65,8 @@ object Users : Table() {
      * @param uuid the id to query the database for
      * @return a row that contains all the columns defined in this class
      */
-    fun getPlayer(uuid: UUID): ResultRow {
-        return transaction {
-            return@transaction Users.select(Users.id eq uuid).first()
-        }
+    fun getPlayer(uuid: UUID) = transaction {
+        return@transaction Users.select(Users.id eq uuid).first()
     }
 
     /**
@@ -80,13 +76,11 @@ object Users : Table() {
      * @return the row that contains all the columns defined in this class or
      * `null`, if there is no player with the given [name]
      */
-    fun byName(name: String): ResultRow? {
-        try {
-            return transaction {
-                return@transaction select { lastName eq name }.first()
-            }
-        } catch (ex: NoSuchElementException) {
-            return null
+    fun byName(name: String) = try {
+        transaction {
+            return@transaction select { lastName eq name }.first()
         }
+    } catch (ex: NoSuchElementException) {
+        null
     }
 }
