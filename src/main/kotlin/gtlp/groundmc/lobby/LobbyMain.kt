@@ -27,11 +27,13 @@ import org.bukkit.scheduler.BukkitScheduler
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils.createMissingTablesAndColumns
 import org.jetbrains.exposed.sql.exposedLogger
+import org.jetbrains.exposed.sql.transactions.TransactionManager
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.slf4j.impl.JDK14LoggerAdapter
 import java.io.File
 import java.lang.reflect.Field
 import java.lang.reflect.Modifier
+import java.sql.Connection
 import java.util.*
 import java.util.logging.FileHandler
 import java.util.logging.Level
@@ -81,6 +83,9 @@ class LobbyMain : JavaPlugin() {
                 .replace("\$dataFolder", dataFolder.absolutePath),
                 config.getString("database.driver"), config.getString("database.username", ""),
                 config.getString("database.password", ""))
+        if (config.getString("database.driver") == "org.sqlite.JDBC") {
+            TransactionManager.manager.defaultIsolationLevel = Connection.TRANSACTION_SERIALIZABLE
+        }
         transaction {
             createMissingTablesAndColumns(Meta, Users, Relationships)
             Meta.upgradeDatabase()
