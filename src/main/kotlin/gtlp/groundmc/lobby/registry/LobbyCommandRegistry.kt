@@ -12,7 +12,8 @@ import org.bukkit.Bukkit
  */
 object LobbyCommandRegistry {
     /**
-     * Registers a command by adding it to the map.
+     * Registers the [org.bukkit.command.CommandExecutor] and
+     * [org.bukkit.command.TabCompleter] for the given [ILobbyCommand]
      *
      * @param cmd the command to register
      */
