@@ -22,10 +22,10 @@ class CommandVanish : ILobbyCommand {
 
     override fun getCommandHelp(locale: Locale): Array<String?> = arrayOf("Vanishes")
 
-    override fun getTabCompletion(sender: CommandSender, command: Command, alias: String?, args: Array<out String>?): List<String>? = null
+    override fun onTabComplete(sender: CommandSender, command: Command, alias: String?, args: Array<out String>?): List<String>? = null
 
-    override fun execute(sender: CommandSender, command: Command, label: String, args: Array<String>?): Boolean {
-        LobbyMain.logger.entering(CommandVanish::class, "execute")
+    override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<String>?): Boolean {
+        LobbyMain.logger.entering(CommandVanish::class, "onCommand")
         if (sender is Player) {
             if (sender.hasPermission(Permission.VANISH.id) || sender.hasPermission(Permission.ADMIN.id)) {
                 transaction {

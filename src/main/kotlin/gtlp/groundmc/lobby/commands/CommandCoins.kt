@@ -18,10 +18,10 @@ class CommandCoins : ILobbyCommand {
 
     override fun getCommandHelp(locale: Locale): Array<String?> = arrayOf(I18n.getString("command.coins.help", locale))
 
-    override fun getTabCompletion(sender: CommandSender, command: Command, alias: String?, args: Array<out String>?): List<String>? = null
+    override fun onTabComplete(sender: CommandSender, command: Command, alias: String?, args: Array<out String>?): List<String>? = null
 
-    override fun execute(sender: CommandSender, command: Command, label: String, args: Array<String>?): Boolean {
-        LobbyMain.logger.entering(CommandCoins::class, "execute")
+    override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<String>?): Boolean {
+        LobbyMain.logger.entering(CommandCoins::class, "onCommand")
         if (sender is Player) {
             sender.sendMessage(I18n.getString("command.coins.currency", sender.spigot().locale) + ": " + Users.getPlayer(sender)[Users.coins])
             return true

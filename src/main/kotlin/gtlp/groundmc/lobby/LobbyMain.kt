@@ -270,7 +270,7 @@ class LobbyMain : JavaPlugin() {
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<String>?): Boolean {
         if (LobbyCommandRegistry.hasCommand(command.name)) {
             LobbyMain.logger.finest("${sender.name} executed ${command.name}")
-            return LobbyCommandRegistry.getCommand(command.name)!!.execute(sender, command, label, args)
+            return LobbyCommandRegistry.getCommand(command.name)!!.onCommand(sender, command, label, args)
         }
         return false
     }
@@ -290,7 +290,7 @@ class LobbyMain : JavaPlugin() {
      */
     override fun onTabComplete(sender: CommandSender, command: Command, alias: String?, args: Array<out String>?): List<String>? {
         if (LobbyCommandRegistry.hasCommand(command.name)) {
-            return LobbyCommandRegistry.getCommand(command.name)?.getTabCompletion(sender, command, alias, args)
+            return LobbyCommandRegistry.getCommand(command.name)?.onTabComplete(sender, command, alias, args)
         }
         return null
     }
