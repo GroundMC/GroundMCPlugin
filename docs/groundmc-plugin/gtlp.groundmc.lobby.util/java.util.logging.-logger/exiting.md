@@ -6,9 +6,9 @@ title: exiting - groundmc-plugin
 
 # exiting
 
-`fun `[`Logger`](http://docs.oracle.com/javase/6/docs/api/java/util/logging/Logger.html)`.exiting(kClass: `[`KClass`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.reflect/-k-class/index.html)`<*>, sourceMethod: `[`String`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html)`): `[`Unit`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html)
+`fun Logger.exiting(kClass: `[`KClass`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.reflect/-k-class/index.html)`<*>, sourceMethod: `[`String`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html)`): `[`Unit`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html)
 
-Extension to [Logger](http://docs.oracle.com/javase/6/docs/api/java/util/logging/Logger.html) to use [Logger.exiting](http://docs.oracle.com/javase/6/docs/api/java/util/logging/Logger.html#exiting(java.lang.String, java.lang.String)) with [KClass](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.reflect/-k-class/index.html)es.
+Extension to [Logger](#) to use [Logger.exiting](#) with [KClass](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.reflect/-k-class/index.html)es.
 
 ### Parameters
 

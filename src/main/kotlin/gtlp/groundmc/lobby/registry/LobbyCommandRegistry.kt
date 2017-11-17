@@ -2,8 +2,12 @@ package gtlp.groundmc.lobby.registry
 
 import gtlp.groundmc.lobby.LobbyMain
 import gtlp.groundmc.lobby.commands.ILobbyCommand
+import gtlp.groundmc.lobby.util.I18nUtils
 import gtlp.groundmc.lobby.util.entering
 import gtlp.groundmc.lobby.util.exiting
+import org.bukkit.Bukkit
+import org.bukkit.command.CommandSender
+import org.bukkit.help.HelpTopic
 
 /**
  * Registry where all commands are saved.
@@ -11,40 +15,22 @@ import gtlp.groundmc.lobby.util.exiting
  */
 object LobbyCommandRegistry {
     /**
-     * A map of command strings to their respective command object.
-     */
-    private val commands = mutableMapOf<String, ILobbyCommand>()
-
-    /**
-     * Registers a command by adding it to the map.
+     * Registers the [org.bukkit.command.CommandExecutor] and
+     * [org.bukkit.command.TabCompleter] for the given [ILobbyCommand]
      *
      * @param cmd the command to register
      */
     fun registerCommand(cmd: ILobbyCommand) {
         LobbyMain.logger.entering(LobbyCommandRegistry::class, "registerCommand")
-        commands[cmd.name] = cmd
+        Bukkit.getServer().getPluginCommand(cmd.name).executor = cmd
+        Bukkit.getServer().getPluginCommand(cmd.name).tabCompleter = cmd
+        Bukkit.getServer().helpMap.addTopic(object : HelpTopic() {
+            override fun canSee(player: CommandSender) = true
+            override fun getName() = cmd.name
+            override fun getFullText(forWho: CommandSender): String {
+                return cmd.getCommandHelp(I18nUtils.getLocaleFromCommandSender(forWho)).joinToString { System.lineSeparator() }
+            }
+        })
         LobbyMain.logger.exiting(LobbyCommandRegistry::class, "registerCommand")
-    }
-
-    /**
-     * Gets the command for the command string
-     *
-     * @param name the name of the command to get
-     * @return the command for the [name]
-     */
-    fun getCommand(name: String): ILobbyCommand? {
-        LobbyMain.logger.entering(LobbyCommandRegistry::class, "getCommand")
-        return commands[name]
-    }
-
-    /**
-     * Checks whether this registry contains a command.
-     *
-     * @param name the name of the command to get
-     * @return the command for the [name]
-     */
-    fun hasCommand(name: String): Boolean {
-        LobbyMain.logger.entering(LobbyCommandRegistry::class, "hasCommand")
-        return commands.containsKey(name)
     }
 }

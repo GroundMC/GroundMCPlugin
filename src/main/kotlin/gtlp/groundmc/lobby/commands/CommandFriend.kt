@@ -21,7 +21,7 @@ class CommandFriend : ILobbyCommand {
 
     override fun getCommandHelp(locale: Locale): Array<String?> = I18n.getStrings("command.friend.help.1", "command.friend.help.2", "command.friend.help.3", "command.friend.help.4", "command.friend.help.5", locale = locale)
 
-    override fun getTabCompletion(sender: CommandSender, command: Command, alias: String?, args: Array<out String>?): List<String>? {
+    override fun onTabComplete(sender: CommandSender, command: Command, alias: String?, args: Array<out String>?): List<String>? {
         if (args != null) {
             when (args.size) {
                 1 -> return mutableListOf("add", "remove", "status", "online").filter { it.startsWith(args.last()) }
@@ -52,8 +52,8 @@ class CommandFriend : ILobbyCommand {
         return null
     }
 
-    override fun execute(sender: CommandSender, command: Command, label: String, args: Array<String>?): Boolean {
-        LobbyMain.logger.entering(CommandFriend::class, "execute")
+    override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<String>?): Boolean {
+        LobbyMain.logger.entering(CommandFriend::class, "onCommand")
         if (sender !is Player) {
             sender.sendMessage(I18n.getString("command.playeronly"))
             return true

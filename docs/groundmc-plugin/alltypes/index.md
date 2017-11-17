@@ -27,7 +27,7 @@ title: alltypes - groundmc-plugin
 | [gtlp.groundmc.lobby.inventory.LobbyInventory](../gtlp.groundmc.lobby.inventory/-lobby-inventory/index.html) | Inventory for navigating the lobby |
 | [gtlp.groundmc.lobby.LobbyMain](../gtlp.groundmc.lobby/-lobby-main/index.html) | The main class for this plugin. Serves as the entry point and commander of all things. |
 | [gtlp.groundmc.lobby.util.LocationTypeAdapter](../gtlp.groundmc.lobby.util/-location-type-adapter/index.html) | An adapter to serialize and deserialize a [Location](https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Location.html) object |
-| [gtlp.groundmc.lobby.LogFormatter](../gtlp.groundmc.lobby/-log-formatter/index.html) | A custom [Formatter](http://docs.oracle.com/javase/6/docs/api/java/util/logging/Formatter.html) for log files. Inspired by [SimpleFormatter](http://docs.oracle.com/javase/6/docs/api/java/util/logging/SimpleFormatter.html) |
+| [gtlp.groundmc.lobby.LogFormatter](../gtlp.groundmc.lobby/-log-formatter/index.html) | A custom [Formatter](#) for log files. Inspired by [SimpleFormatter](#) |
 | [java.util.logging.Logger](../gtlp.groundmc.lobby.util/java.util.logging.-logger/index.html) (extensions in package gtlp.groundmc.lobby.util) |  |
 | [gtlp.groundmc.lobby.database.table.Meta](../gtlp.groundmc.lobby.database.table/-meta/index.html) | Meta table to handle upgrades to the database |
 | [gtlp.groundmc.lobby.event.listener.MiscEventListener](../gtlp.groundmc.lobby.event.listener/-misc-event-listener/index.html) | Listener to handle miscellaneous events. |

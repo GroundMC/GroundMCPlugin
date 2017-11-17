@@ -6,7 +6,7 @@ title: I18n.getString - groundmc-plugin
 
 # getString
 
-`fun getString(key: `[`String`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html)`, locale: `[`Locale`](http://docs.oracle.com/javase/6/docs/api/java/util/Locale.html)` = Locale.US): `[`String`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html)`?`
+`fun getString(key: `[`String`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html)`, locale: Locale = Locale.US): `[`String`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html)`?`
 
 Returns the localized string (if available) for a given key.
 Automatically parses color codes using the [colorChar](color-char.html)
@@ -15,7 +15,7 @@ Automatically parses color codes using the [colorChar](color-char.html)
 
 `key` - A string representing the common name for a localized string, used in resources
 
-`locale` - The locale to translate to. If not given, [Locale.US](http://docs.oracle.com/javase/6/docs/api/java/util/Locale.html#US)
+`locale` - The locale to translate to. If not given, [Locale.US](#)
 
 **Return**
 The localized and parsed string or null, if the key has no translation

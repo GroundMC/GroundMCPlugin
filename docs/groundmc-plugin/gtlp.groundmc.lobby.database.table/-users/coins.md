@@ -6,7 +6,7 @@ title: Users.coins - groundmc-plugin
 
 # coins
 
-`val coins: Column<`[`Long`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-long/index.html)`>`
+`val coins: Column<`[`Int`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html)`>`
 
 The amount of coins this player has
 

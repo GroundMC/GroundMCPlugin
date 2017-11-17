@@ -8,21 +8,21 @@ softdepend: [Multiverse-Core]
 commands:
    globby:
       description: Lobby commands
-      usage: "Usage: /<command> [additem|help|maketp] [parameters]"
+      usage: "/<command> [additem|help|maketp] [parameters]"
       aliases: [glb, gl, ghub]
    friend:
       description: Friendship commands
-      usage: "Usage: /<command> <add|remove|status|online> <username> [relation]"
+      usage: "/<command> <add|remove|status|online> <username>"
       aliases: [fr]
    friends:
       description: Lists friends
-      usage: "Usage /<command>"
+      usage: "/<command>"
       aliases: [frs]
    vanish:
       description: Vanish yourself
-      usage: "Usage: /<command>"
+      usage: "/<command>"
       aliases: [v]
    coins:
       description: Information about your coins
-      usage: "Usage: /<command>"
+      usage: "/<command>"
       aliases: [money]

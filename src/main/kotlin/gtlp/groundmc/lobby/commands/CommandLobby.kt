@@ -24,11 +24,12 @@ import kotlin.concurrent.thread
  * This also allows administrators to add more teleport destinations.
  */
 class CommandLobby : ILobbyCommand {
-    override val name: String = "globby"
+
+    override val name = "globby"
 
     override fun getCommandHelp(locale: Locale) = I18n.getStrings("command.lobby.help.1", "command.lobby.help.2", "command.lobby.help.3", locale = locale)
 
-    override fun getTabCompletion(sender: CommandSender, command: Command, alias: String?, args: Array<out String>?): List<String>? {
+    override fun onTabComplete(sender: CommandSender, command: Command, alias: String?, args: Array<out String>?): List<String>? {
         if (args != null) {
             when (args.size) {
                 1 -> return mutableListOf("", "additem", "maketp", "help", "debug").filter { it.startsWith(args.last()) }.sorted()
@@ -40,8 +41,8 @@ class CommandLobby : ILobbyCommand {
         return null
     }
 
-    override fun execute(sender: CommandSender, command: Command, label: String, args: Array<String>?): Boolean {
-        LobbyMain.logger.entering(CommandLobby::class, "execute")
+    override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<String>?): Boolean {
+        LobbyMain.logger.entering(CommandLobby::class, "onCommand")
         LobbyMain.logger.finest("${sender.name} issued $command - ${args?.joinToString() ?: "null"}")
         if (args != null && args.isNotEmpty()) {
             when (args[0]) {
@@ -88,7 +89,7 @@ class CommandLobby : ILobbyCommand {
                 it.config["hub"] = sender.location
                 it.saveConfig()
             }
-            val locale = if (sender is Player) sender.spigot().locale else Locale.getDefault().toString()
+            val locale = sender.spigot().locale
             sender.sendMessage(I18n.getString("command.lobby.location_set", locale))
         } else if (sender is Player) {
             sender.sendMessage(I18n.getString("lobby.nopermission", sender.spigot().locale))
@@ -179,7 +180,7 @@ class CommandLobby : ILobbyCommand {
     private fun makeTp(args: Array<String>, sender: CommandSender): Boolean {
         LobbyMain.logger.entering(CommandLobby::class, "makeTp")
         if (sender is Player) {
-            if (sender.hasPermission(Permission.ADMIN.id) && args.size >= 2 && !args[1].isNullOrBlank()) {
+            if (sender.hasPermission(Permission.ADMIN.id) && args.size >= 2 && !args[1].isBlank()) {
                 val nbtItem = NBTItemExt(sender.inventory.itemInMainHand)
                 nbtItem.apply {
                     setBoolean(NBTIdentifier.PREFIX, true)
