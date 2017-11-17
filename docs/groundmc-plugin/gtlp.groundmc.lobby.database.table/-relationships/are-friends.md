@@ -19,7 +19,7 @@ Queries the database for a relationship between [player](are-friends.html#gtlp.g
 **Return**
 whether there exists a relationship between [player](are-friends.html#gtlp.groundmc.lobby.database.table.Relationships$areFriends(org.bukkit.OfflinePlayer, org.bukkit.OfflinePlayer)/player) and [friend](are-friends.html#gtlp.groundmc.lobby.database.table.Relationships$areFriends(org.bukkit.OfflinePlayer, org.bukkit.OfflinePlayer)/friend)
 
-`fun areFriends(player: `[`UUID`](http://docs.oracle.com/javase/6/docs/api/java/util/UUID.html)`, friend: `[`UUID`](http://docs.oracle.com/javase/6/docs/api/java/util/UUID.html)`): `[`Boolean`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html)
+`fun areFriends(player: UUID, friend: UUID): `[`Boolean`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html)
 
 Queries the database for a relationship between [player](are-friends.html#gtlp.groundmc.lobby.database.table.Relationships$areFriends(java.util.UUID, java.util.UUID)/player) and [friend](are-friends.html#gtlp.groundmc.lobby.database.table.Relationships$areFriends(java.util.UUID, java.util.UUID)/friend)
 

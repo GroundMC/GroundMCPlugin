@@ -6,7 +6,7 @@ title: ITask - groundmc-plugin
 
 # ITask
 
-`interface ITask : `[`Runnable`](http://docs.oracle.com/javase/6/docs/api/java/lang/Runnable.html)
+`interface ITask : Runnable`
 
 Interface to describe a Task for use as a Runnable
 in [org.bukkit.scheduler.BukkitScheduler.scheduleSyncRepeatingTask](https://hub.spigotmc.org/javadocs/spigot/org/bukkit/scheduler/BukkitScheduler.html#scheduleSyncRepeatingTask(org.bukkit.plugin.Plugin, java.lang.Runnable, long, long))

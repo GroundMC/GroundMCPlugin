@@ -6,7 +6,7 @@ title: CommandVanish.getCommandHelp - groundmc-plugin
 
 # getCommandHelp
 
-`fun getCommandHelp(locale: `[`Locale`](http://docs.oracle.com/javase/6/docs/api/java/util/Locale.html)`): `[`Array`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-array/index.html)`<`[`String`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html)`?>`
+`fun getCommandHelp(locale: Locale): `[`Array`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-array/index.html)`<`[`String`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html)`?>`
 
 Overrides [ILobbyCommand.getCommandHelp](../-i-lobby-command/get-command-help.html)
 

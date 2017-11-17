@@ -6,7 +6,7 @@ title: LobbyMain.logger - groundmc-plugin
 
 # logger
 
-`val logger: `[`Logger`](http://docs.oracle.com/javase/6/docs/api/java/util/logging/Logger.html)
+`val logger: Logger`
 
-The [Logger](http://docs.oracle.com/javase/6/docs/api/java/util/logging/Logger.html) that is created in the init block.
+The [Logger](#) that is created in the init block.
 
