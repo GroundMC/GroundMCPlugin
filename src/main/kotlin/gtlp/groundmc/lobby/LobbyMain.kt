@@ -19,8 +19,6 @@ import org.bukkit.Bukkit
 import org.bukkit.Difficulty
 import org.bukkit.Location
 import org.bukkit.Material
-import org.bukkit.command.Command
-import org.bukkit.command.CommandSender
 import org.bukkit.configuration.MemorySection
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
@@ -173,7 +171,7 @@ class LobbyMain : JavaPlugin() {
             @Suppress("unchecked_cast")
             LobbyInventory.TEMPLATE_INVENTORY.contents = (config["inventory.content"] as List<ItemStack>).toTypedArray()
 
-            (0..LobbyInventory.TEMPLATE_INVENTORY.contents.size - 1).forEach { i ->
+            (0 until LobbyInventory.TEMPLATE_INVENTORY.contents.size).forEach { i ->
                 if (LobbyInventory.TEMPLATE_INVENTORY.getItem(i) == null) {
                     LobbyInventory.TEMPLATE_INVENTORY.setItem(i, Items.FILLER.item)
                 }
@@ -256,43 +254,6 @@ class LobbyMain : JavaPlugin() {
         }
         super.saveConfig()
         logger.exiting(LobbyMain::class, "saveConfig")
-    }
-
-    /**
-     * Executes the given command, returning its success
-     *
-     * @param sender Source of the command
-     * @param command Command which was executed
-     * @param label Alias of the command which was used
-     * @param args Passed command arguments
-     * @return true if a valid command, otherwise false
-     */
-    override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<String>?): Boolean {
-        if (LobbyCommandRegistry.hasCommand(command.name)) {
-            LobbyMain.logger.finest("${sender.name} executed ${command.name}")
-            return LobbyCommandRegistry.getCommand(command.name)!!.onCommand(sender, command, label, args)
-        }
-        return false
-    }
-
-    /**
-     * Requests a list of possible completions for a command argument.
-     *
-     * @param sender Source of the command.  For players tab-completing a
-     *     command inside of a command block, this will be the player, not
-     *     the command block.
-     * @param command Command which was executed
-     * @param alias The alias used
-     * @param args The arguments passed to the command, including final
-     *     partial argument to be completed and command label
-     * @return A List of possible completions for the final argument, or null
-     *     to default to the command executor
-     */
-    override fun onTabComplete(sender: CommandSender, command: Command, alias: String?, args: Array<out String>?): List<String>? {
-        if (LobbyCommandRegistry.hasCommand(command.name)) {
-            return LobbyCommandRegistry.getCommand(command.name)?.onTabComplete(sender, command, alias, args)
-        }
-        return null
     }
 
     /**
