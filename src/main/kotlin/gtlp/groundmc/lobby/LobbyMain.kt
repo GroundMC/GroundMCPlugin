@@ -2,6 +2,7 @@ package gtlp.groundmc.lobby
 
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
+import com.google.gson.TypeAdapterFactory
 import de.tr7zw.itemnbtapi.GsonWrapper
 import gtlp.groundmc.lobby.commands.*
 import gtlp.groundmc.lobby.database.table.Meta
@@ -124,7 +125,8 @@ class LobbyMain : JavaPlugin() {
         // Sets private static final Gson gson
         fGson.set(null, GsonBuilder().apply {
             registerTypeAdapter(Location::class.java, LocationTypeAdapter)
-            factories.forEach { this::registerTypeAdapterFactory }
+            factories.forEach { factory -> this.registerTypeAdapterFactory(factory as TypeAdapterFactory) }
+//            factories.forEach { this::registerTypeAdapterFactory }
         }.create())
         logger.exiting(LobbyMain::class, "registerGsonHandlers")
     }

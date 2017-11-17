@@ -2,9 +2,12 @@ package gtlp.groundmc.lobby.registry
 
 import gtlp.groundmc.lobby.LobbyMain
 import gtlp.groundmc.lobby.commands.ILobbyCommand
+import gtlp.groundmc.lobby.util.I18nUtils
 import gtlp.groundmc.lobby.util.entering
 import gtlp.groundmc.lobby.util.exiting
 import org.bukkit.Bukkit
+import org.bukkit.command.CommandSender
+import org.bukkit.help.HelpTopic
 
 /**
  * Registry where all commands are saved.
@@ -21,6 +24,13 @@ object LobbyCommandRegistry {
         LobbyMain.logger.entering(LobbyCommandRegistry::class, "registerCommand")
         Bukkit.getServer().getPluginCommand(cmd.name).executor = cmd
         Bukkit.getServer().getPluginCommand(cmd.name).tabCompleter = cmd
+        Bukkit.getServer().helpMap.addTopic(object : HelpTopic() {
+            override fun canSee(player: CommandSender) = true
+            override fun getName() = cmd.name
+            override fun getFullText(forWho: CommandSender): String {
+                return cmd.getCommandHelp(I18nUtils.getLocaleFromCommandSender(forWho)).joinToString { System.lineSeparator() }
+            }
+        })
         LobbyMain.logger.exiting(LobbyCommandRegistry::class, "registerCommand")
     }
 }

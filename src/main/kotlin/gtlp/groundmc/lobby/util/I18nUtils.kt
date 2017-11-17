@@ -64,15 +64,15 @@ object I18nUtils {
         // Extract country
         val countryIndex = localeString.indexOf('_', languageIndex + 1)
         val country: String
-        if (countryIndex == -1) {
+        return if (countryIndex == -1) {
             // No further "_" so is "{language}_{country}"
             country = localeString.substring(languageIndex + 1)
-            return Locale(language, country)
+            Locale(language, country)
         } else {
             // Assume all remaining is the variant so is "{language}_{country}_{variant}"
             country = localeString.substring(languageIndex + 1, countryIndex)
             val variant = localeString.substring(countryIndex + 1)
-            return Locale(language, country, variant)
+            Locale(language, country, variant)
         }
     }
 
@@ -86,10 +86,10 @@ object I18nUtils {
      */
     fun getLocaleFromCommandSender(sender: CommandSender): Locale {
         LobbyMain.logger.entering(I18nUtils::class, "getLocaleFromCommandSender")
-        if (sender is Player) {
-            return getLocaleFromString(sender.spigot().locale)
+        return if (sender is Player) {
+            getLocaleFromString(sender.spigot().locale)
         } else {
-            return Locale.getDefault()
+            Locale.getDefault()
         }
     }
 }
