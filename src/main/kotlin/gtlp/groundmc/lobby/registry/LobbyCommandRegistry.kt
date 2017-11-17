@@ -4,6 +4,7 @@ import gtlp.groundmc.lobby.LobbyMain
 import gtlp.groundmc.lobby.commands.ILobbyCommand
 import gtlp.groundmc.lobby.util.entering
 import gtlp.groundmc.lobby.util.exiting
+import org.bukkit.Bukkit
 
 /**
  * Registry where all commands are saved.
@@ -22,7 +23,10 @@ object LobbyCommandRegistry {
      */
     fun registerCommand(cmd: ILobbyCommand) {
         LobbyMain.logger.entering(LobbyCommandRegistry::class, "registerCommand")
-        commands[cmd.name] = cmd
+
+        Bukkit.getServer().getPluginCommand(cmd.name).executor = cmd
+        Bukkit.getServer().getPluginCommand(cmd.name).tabCompleter = cmd
+        //commands[cmd.name] = cmd
         LobbyMain.logger.exiting(LobbyCommandRegistry::class, "registerCommand")
     }
 
