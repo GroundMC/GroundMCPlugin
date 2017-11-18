@@ -31,7 +31,6 @@ import java.io.File
 import java.lang.reflect.Field
 import java.lang.reflect.Modifier
 import java.sql.Connection
-import java.util.*
 import java.util.logging.FileHandler
 import java.util.logging.Level
 import java.util.logging.Logger
@@ -70,7 +69,7 @@ class LobbyMain : JavaPlugin() {
      */
     override fun onEnable() {
         logger.entering(LobbyMain::class, "onEnable")
-        instance = Optional.of(this)
+        instance = this
         registerGsonHandlers()
         createDefaultConfig()
         upgradeConfig()
@@ -98,7 +97,7 @@ class LobbyMain : JavaPlugin() {
         Bukkit.getServer().scheduler.scheduleSyncRepeatingTask(MonitorLocaleTask)
 
         logger.finer("Setting difficulty of the hub world to peaceful")
-        hubLocation.get().world.difficulty = Difficulty.PEACEFUL
+        hubLocation.world.difficulty = Difficulty.PEACEFUL
         logger.exiting(LobbyMain::class, "onEnable")
     }
 
@@ -189,7 +188,7 @@ class LobbyMain : JavaPlugin() {
             }
         }
         // Get lobby location
-        hubLocation = Optional.of(config.get("hub") as Location)
+        hubLocation = config.get("hub") as Location
         dailyCoins = config.getInt("coins.dailyAmount")
         logger.info("Setting logger verbosity to ${config.getString("log.verbosity", "FINEST")}")
         logger.level = Level.parse(config.getString("log.verbosity", "FINEST"))
@@ -298,7 +297,7 @@ class LobbyMain : JavaPlugin() {
         /**
          * Variable to hold the [Location] of the hub/lobby.
          */
-        lateinit var hubLocation: Optional<Location>
+        lateinit var hubLocation: Location
 
         /**
          * A map of tasks to their IDs
@@ -313,7 +312,7 @@ class LobbyMain : JavaPlugin() {
         /**
          * Common instance of this [LobbyMain] plugin.
          */
-        var instance: Optional<LobbyMain> = Optional.empty()
+        lateinit var instance: LobbyMain
 
         /**
          * The variable holding the amount of coins a player gets every day.
@@ -324,7 +323,7 @@ class LobbyMain : JavaPlugin() {
          * The [Logger] that is created in the init block.
          */
         val logger: Logger
-            get() = instance.get().logger
+            get() = instance.logger
 
         /**
          * The latest version of the configuration.

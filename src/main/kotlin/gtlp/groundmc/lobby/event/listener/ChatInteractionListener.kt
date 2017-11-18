@@ -11,6 +11,10 @@ import org.joda.time.Instant
 
 object ChatInteractionListener : Listener {
 
+    private val timeout: Long by lazy {
+        LobbyMain.instance.config.getLong("slowchat.timeout")
+    }
+
     /**
      * Slows down the chat by cancelling fast chat messages.
      *
@@ -18,14 +22,14 @@ object ChatInteractionListener : Listener {
      */
     @EventHandler(priority = EventPriority.LOWEST)
     fun slowChat(event: AsyncPlayerChatEvent) {
-        if (LobbyMain.instance.get().config.getBoolean("slowchat.enabled")) {
+        if (LobbyMain.instance.config.getBoolean("slowchat.enabled")) {
             val key = "lastChatMsg"
-            if (event.player.hasMetadata(key) && (Instant.now() - event.player.getMetadata(key).first { it.owningPlugin == LobbyMain.instance.get() }.asLong()) < Instant(LobbyMain.instance.get().config.getLong("slowchat.timeout"))) {
+            if (event.player.hasMetadata(key) && (Instant.now() - event.player.getMetadata(key).first { it.owningPlugin == LobbyMain.instance }.asLong()) < Instant(timeout)) {
                 event.isCancelled = true
                 event.player.sendMessage(I18n.getString("too_many_messages", event.player.locale))
                 LobbyMain.logger.finest("${event.player} sent messages too quickly!")
             } else {
-                event.player.setMetadata(key, FixedMetadataValue(LobbyMain.instance.get(), Instant().millis))
+                event.player.setMetadata(key, FixedMetadataValue(LobbyMain.instance, Instant().millis))
             }
         }
     }

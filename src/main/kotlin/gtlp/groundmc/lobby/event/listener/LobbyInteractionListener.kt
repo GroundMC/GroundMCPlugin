@@ -33,8 +33,8 @@ object LobbyInteractionListener : Listener {
 
             return vector.normalize()
         }
-        if (event.clickedBlock != null && event.action == Action.PHYSICAL && event.clickedBlock.type.name in LobbyMain.instance.get().config.getList("jumppads.material") && event.player.world == LobbyMain.hubLocation.get().world) {
-            event.player.velocity = event.player.location.getDirectionXZ().multiply(LobbyMain.instance.get().config.getDouble("jumppads.multiplier")).setY(LobbyMain.instance.get().config.getDouble("jumppads.y"))
+        if (event.clickedBlock != null && event.action == Action.PHYSICAL && event.clickedBlock.type.name in LobbyMain.instance.config.getList("jumppads.material") && event.player.world == LobbyMain.hubLocation.world) {
+            event.player.velocity = event.player.location.getDirectionXZ().multiply(LobbyMain.instance.config.getDouble("jumppads.multiplier")).setY(LobbyMain.instance.config.getDouble("jumppads.y"))
             event.isCancelled = true
         }
     }

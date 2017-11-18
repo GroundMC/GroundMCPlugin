@@ -77,9 +77,9 @@ object ServerStateListener : Listener {
      */
     @EventHandler
     fun onPlayerChangeWorld(event: PlayerChangedWorldEvent) {
-        if (event.from == LobbyMain.hubLocation.get().world) {
+        if (event.from == LobbyMain.hubLocation.world) {
             event.player.inventory.contents = LobbyMain.originalInventories[event.player]
-        } else if (event.player.world == LobbyMain.hubLocation.get().world) {
+        } else if (event.player.world == LobbyMain.hubLocation.world) {
             LobbyMain.originalInventories[event.player] = event.player.inventory.copy()
             addItemsToInventory(event.player)
         }
@@ -92,7 +92,7 @@ object ServerStateListener : Listener {
      */
     @EventHandler
     fun onPlayerChangeLocale(event: PlayerChangeLocaleEvent) {
-        if (event.player.world == LobbyMain.hubLocation.get().world) {
+        if (event.player.world == LobbyMain.hubLocation.world) {
             addItemsToInventory(event.player)
         }
     }
@@ -114,7 +114,7 @@ object ServerStateListener : Listener {
         }
         LobbyMain.originalInventories[event.player] = event.player.inventory.copy()
 
-        if (event.player.world == LobbyMain.hubLocation.get().world) {
+        if (event.player.world == LobbyMain.hubLocation.world) {
             addItemsToInventory(event.player)
         }
 
@@ -150,7 +150,7 @@ object ServerStateListener : Listener {
      */
     @EventHandler(priority = EventPriority.LOWEST)
     fun onPlayerLogout(event: PlayerQuitEvent) {
-        if (event.player.world == LobbyMain.hubLocation.get().world) {
+        if (event.player.world == LobbyMain.hubLocation.world) {
             event.player.inventory.contents = LobbyMain.originalInventories[event.player]
         }
         LobbyMain.originalInventories.remove(event.player)

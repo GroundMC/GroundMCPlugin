@@ -69,7 +69,7 @@ class CommandLobby : ILobbyCommand {
                 }
             }
         } else if (sender is Player) {
-            sender.teleport(LobbyMain.hubLocation.get(), PlayerTeleportEvent.TeleportCause.COMMAND)
+            sender.teleport(LobbyMain.hubLocation, PlayerTeleportEvent.TeleportCause.COMMAND)
             return true
         }
         return false
@@ -84,11 +84,9 @@ class CommandLobby : ILobbyCommand {
     private fun setLobby(sender: CommandSender): Boolean {
         LobbyMain.logger.entering(CommandLobby::class, "setLobby")
         if (sender.hasPermission(Permission.ADMIN.id) && sender is Player) {
-            LobbyMain.hubLocation = Optional.of(sender.location)
-            LobbyMain.instance.ifPresent {
-                it.config["hub"] = sender.location
-                it.saveConfig()
-            }
+            LobbyMain.hubLocation = sender.location
+            LobbyMain.instance.config["hub"] = sender.location
+            LobbyMain.instance.saveConfig()
             val locale = sender.locale
             sender.sendMessage(I18n.getString("command.lobby.location_set", locale))
         } else if (sender is Player) {
@@ -110,21 +108,19 @@ class CommandLobby : ILobbyCommand {
      */
     private fun debug(sender: CommandSender): Boolean {
         if (sender.hasPermission(Permission.ADMIN.id)) {
-            LobbyMain.instance.ifPresent {
-                it.logger.info("Flushing log and forcing a rotate...")
+            LobbyMain.instance.logger.info("Flushing log and forcing a rotate...")
 
-                val handler = it.logger.handlers.first {
-                    it is FileHandler
-                } as FileHandler
-                val clazz = handler.javaClass
-                clazz.getDeclaredMethod("rotate").apply { isAccessible = true }.invoke(handler)
+            val handler = LobbyMain.instance.logger.handlers.first {
+                it is FileHandler
+            } as FileHandler
+            val clazz = handler.javaClass
+            clazz.getDeclaredMethod("rotate").apply { isAccessible = true }.invoke(handler)
 
-                @Suppress("unchecked_cast")
-                val file = clazz.getDeclaredField("files").apply { isAccessible = true }.get(handler) as Array<File>
+            @Suppress("unchecked_cast")
+            val file = clazz.getDeclaredField("files").apply { isAccessible = true }.get(handler) as Array<File>
 
-                sender.sendMessage("See the log file ${file[1].canonicalPath}")
-                it.logger.info("Log finished.")
-            }
+            sender.sendMessage("See the log file ${file[1].canonicalPath}")
+            LobbyMain.instance.logger.info("Log finished.")
         } else if (sender is Player) {
             sender.sendMessage(I18n.getString("lobby.nopermission", sender.locale))
         }
@@ -213,10 +209,8 @@ class CommandLobby : ILobbyCommand {
      */
     private fun saveTemplate() {
         LobbyMain.logger.entering(CommandLobby::class, "saveTemplate")
-        LobbyMain.instance.ifPresent {
-            it.config["inventory.content"] = LobbyInventory.TEMPLATE_INVENTORY.contents
-            it.saveConfig()
-        }
+        LobbyMain.instance.config["inventory.content"] = LobbyInventory.TEMPLATE_INVENTORY.contents
+        LobbyMain.instance.saveConfig()
         LobbyMain.logger.exiting(CommandLobby::class, "saveTemplate")
     }
 

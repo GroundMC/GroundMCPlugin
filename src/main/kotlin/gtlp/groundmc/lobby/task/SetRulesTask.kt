@@ -11,7 +11,7 @@ object SetRulesTask : ITask {
     override val period = 0L
 
     override fun run() {
-        LobbyMain.hubLocation.get().world.apply {
+        LobbyMain.hubLocation.world.apply {
             setGameRuleValue("doDaylightCycle", "false")
             setGameRuleValue("doEntityDrops", "false")
             setGameRuleValue("doFireTick", "false")
