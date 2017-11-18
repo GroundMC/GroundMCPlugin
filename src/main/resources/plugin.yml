@@ -33,9 +33,6 @@ permissions:
     default: op
     children:
       groundmc.lobby.admin: true
-      groundmc.lobby.hide_players: true
-      groundmc.lobby.silent: true
-      groundmc.lobby.vanish: true
   groundmc.lobby.admin:
     description: Grants administrative access to lobby features
     default: op
