@@ -1,6 +1,6 @@
 package gtlp.groundmc.lobby.util
 
-import com.google.common.base.Objects
+import com.google.common.base.MoreObjects
 import de.tr7zw.itemnbtapi.NBTItem
 import gtlp.groundmc.lobby.enums.NBTIdentifier
 import org.bukkit.enchantments.Enchantment
@@ -282,7 +282,7 @@ class NBTItemExt(item: ItemStack) : NBTItem(item), Cloneable {
      * @return the string representation of this item.
      */
     override fun toString(): String {
-        return Objects.toStringHelper(this)
+        return MoreObjects.toStringHelper(this)
                 .add("bukkitItem", item)
                 .add("parent", parent)
                 .toString()
