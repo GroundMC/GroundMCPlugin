@@ -85,7 +85,7 @@ class CommandLobby : ILobbyCommand {
      */
     private fun setLobby(sender: CommandSender): Boolean {
         LobbyMain.logger.entering(CommandLobby::class, "setLobby")
-        if (sender.hasPermission(Permission.ADMIN.id) && sender is Player) {
+        if (sender.hasPermission(Permission.ADMIN) && sender is Player) {
             LobbyMain.hubLocation = sender.location
             LobbyMain.instance.config["hub"] = sender.location
             LobbyMain.instance.saveConfig()
@@ -109,7 +109,7 @@ class CommandLobby : ILobbyCommand {
      * @return is always true to not trigger the command help of Spigot.
      */
     private fun debug(sender: CommandSender): Boolean {
-        if (sender.hasPermission(Permission.ADMIN.id)) {
+        if (sender.hasPermission(Permission.ADMIN)) {
             LobbyMain.instance.logger.info("Flushing log and forcing a rotate...")
 
             val handler = LobbyMain.instance.logger.handlers.first {
@@ -139,7 +139,7 @@ class CommandLobby : ILobbyCommand {
     private fun addItem(sender: CommandSender): Boolean {
         LobbyMain.logger.entering(CommandLobby::class, "addItem")
         if (sender is Player) {
-            if (sender.hasPermission(Permission.ADMIN.id)) {
+            if (sender.hasPermission(Permission.ADMIN)) {
                 thread {
                     val view = sender.openInventory(LobbyInventory.TEMPLATE_INVENTORY)
                     sender.sendMessage(I18n.getString("command.lobby.30seconds", sender.locale))
@@ -178,7 +178,7 @@ class CommandLobby : ILobbyCommand {
     private fun makeTp(args: Array<String>, sender: CommandSender): Boolean {
         LobbyMain.logger.entering(CommandLobby::class, "makeTp")
         if (sender is Player) {
-            if (sender.hasPermission(Permission.ADMIN.id) && args.size >= 2 && !args[1].isBlank()) {
+            if (sender.hasPermission(Permission.ADMIN) && args.size >= 2 && !args[1].isBlank()) {
                 val nbtItem = NBTItemExt(sender.inventory.itemInMainHand)
                 nbtItem.apply {
                     setBoolean(NBTIdentifier.PREFIX, true)

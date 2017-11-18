@@ -9,6 +9,7 @@ import gtlp.groundmc.lobby.enums.VisibilityStates
 import gtlp.groundmc.lobby.event.PlayerChangeLocaleEvent
 import gtlp.groundmc.lobby.util.I18n
 import gtlp.groundmc.lobby.util.copy
+import gtlp.groundmc.lobby.util.hasPermission
 import org.bukkit.Sound
 import org.bukkit.attribute.Attribute
 import org.bukkit.enchantments.Enchantment
@@ -47,7 +48,7 @@ object ServerStateListener : Listener {
 
         inventory.setItem(0, Items.COMPASS_ITEM.clone().item)
 
-        if (player.hasPermission(Permission.SILENT.id) || player.hasPermission(Permission.ADMIN.id)) {
+        if (player.hasPermission(Permission.SILENT)) {
             val silentItem = Items.SILENT_ITEM
             silentItem.displayName = I18n.getString(if (silent) "silentitem.on" else "silentitem.off", player.locale)
             silentItem.setBoolean(NBTIdentifier.SILENT_STATE, silent)
@@ -57,7 +58,7 @@ object ServerStateListener : Listener {
             inventory.setItem(1, silentItem.item)
         }
 
-        if (player.hasPermission(Permission.HIDE_PLAYERS.id) || player.hasPermission(Permission.ADMIN.id)) {
+        if (player.hasPermission(Permission.HIDE_PLAYERS)) {
             val nbtItem = Items.HIDE_PLAYERS_ITEM.apply {
                 displayName = I18n.getString(when (hideState) {
                     VisibilityStates.ALL -> "visibility.all"
