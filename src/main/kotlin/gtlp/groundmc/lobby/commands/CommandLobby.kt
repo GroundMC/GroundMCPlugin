@@ -5,9 +5,11 @@ import gtlp.groundmc.lobby.enums.GMCType
 import gtlp.groundmc.lobby.enums.NBTIdentifier
 import gtlp.groundmc.lobby.enums.Permission
 import gtlp.groundmc.lobby.inventory.LobbyInventory
+import gtlp.groundmc.lobby.task.SetRulesTask
 import gtlp.groundmc.lobby.util.*
 import net.md_5.bungee.api.chat.ClickEvent
 import net.md_5.bungee.api.chat.TextComponent
+import org.bukkit.Bukkit
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 import org.bukkit.command.ConsoleCommandSender
@@ -87,8 +89,8 @@ class CommandLobby : ILobbyCommand {
             LobbyMain.hubLocation = sender.location
             LobbyMain.instance.config["hub"] = sender.location
             LobbyMain.instance.saveConfig()
-            val locale = sender.locale
-            sender.sendMessage(I18n.getString("command.lobby.location_set", locale))
+            Bukkit.getServer().scheduler.scheduleSyncDelayedTask(LobbyMain.instance, SetRulesTask)
+            sender.sendMessage(I18n.getString("command.lobby.location_set", sender.locale))
         } else if (sender is Player) {
             sender.sendMessage(I18n.getString("lobby.nopermission", sender.locale))
         } else if (sender is ConsoleCommandSender) {
