@@ -26,3 +26,29 @@ commands:
       description: Information about your coins
       usage: "/<command>"
       aliases: [money]
+
+permissions:
+  groundmc.lobby:
+    description: Grants access to all features
+    default: op
+    children:
+      groundmc.lobby.admin: true
+      groundmc.lobby.hide_players: true
+      groundmc.lobby.silent: true
+      groundmc.lobby.vanish: true
+  groundmc.lobby.admin:
+    description: Grants administrative access to lobby features
+    default: op
+    children:
+      groundmc.lobby.hide_players: true
+      groundmc.lobby.silent: true
+      groundmc.lobby.vanish: true
+  groundmc.lobby.hide_players:
+    description: Allows players to hide other players
+    default: false
+  groundmc.lobby.silent:
+    description: Allows players to silence their chat from other players
+    default: false
+  groundmc.lobby.vanish:
+    description: Allows players to vanish out of sight
+    default: false
