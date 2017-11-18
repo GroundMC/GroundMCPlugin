@@ -182,7 +182,7 @@ class CommandLobby : ILobbyCommand {
                     setBoolean(NBTIdentifier.PREFIX, true)
                     setInteger(NBTIdentifier.TYPE, GMCType.TP.ordinal)
                     setObject(NBTIdentifier.TP_LOC, sender.location)
-                    displayName = args.sliceArray(IntRange(1, args.size - 1)).reduce { left, right -> "$left $right" }
+                    displayName = args.sliceArray(1 until args.size).reduce { left, right -> "$left $right" }
                     sender.inventory.itemInMainHand = item
                 }
                 val string = I18n.getString("command.lobby.placeitem", sender.locale)!!
