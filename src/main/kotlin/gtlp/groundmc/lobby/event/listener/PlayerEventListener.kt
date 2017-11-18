@@ -299,7 +299,7 @@ class PlayerEventListener : Listener {
      */
     @EventHandler(priority = EventPriority.LOWEST)
     fun preventItemPickup(event: EntityPickupItemEvent) {
-        if (event.player.world == LobbyMain.hubLocation.get().world) {
+        if (event.entity.world == LobbyMain.hubLocation.get().world) {
             event.isCancelled = true
         }
     }
