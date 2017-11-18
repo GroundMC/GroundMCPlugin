@@ -68,6 +68,10 @@ fun Inventory.copy(): Array<ItemStack?> {
     return array
 }
 
+/**
+ * Extension to [CommandSender] that allows the use of our [Permission] enum
+ * directly without pulling out the [Permission.permission] member.
+ */
 fun CommandSender.hasPermission(permission: Permission) = this.hasPermission(permission.permission)
 
 /**

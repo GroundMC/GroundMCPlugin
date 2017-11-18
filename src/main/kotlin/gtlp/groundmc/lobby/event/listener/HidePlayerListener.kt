@@ -17,6 +17,12 @@ import org.bukkit.event.player.PlayerInteractEvent
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.jetbrains.exposed.sql.update
 
+/**
+ * This [Listener] handles the visibility of other players towards the calling
+ * player.
+ * Handles the opening of the inventory, as well as the selection of the desired
+ * [VisibilityStates]
+ */
 object HidePlayerListener : Listener {
     /**
      * Opens the [gtlp.groundmc.lobby.inventory.HidePlayerInventory].
@@ -34,6 +40,11 @@ object HidePlayerListener : Listener {
         }
     }
 
+    /**
+     * Opens the [gtlp.groundmc.lobby.inventory.HidePlayerInventory].
+     *
+     * @param event the event to handle
+     */
     @EventHandler
     fun openHidePlayInventory(event: InventoryClickEvent) {
         if (event.currentItem != null && event.whoClicked is Player) {

@@ -8,6 +8,10 @@ import org.bukkit.event.entity.EntityDamageEvent
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause.*
 import org.bukkit.event.entity.PotionSplashEvent
 
+/**
+ * This [Listener] takes care to protect players from any unwanted damage in
+ * the lobby by cancelling any damage or damage-inducing events.
+ */
 object LobbyInvincibilityListener : Listener {
     /**
      * Removes potion effects from splashed potions in the lobby world.

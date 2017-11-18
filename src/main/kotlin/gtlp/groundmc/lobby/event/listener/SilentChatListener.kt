@@ -18,6 +18,11 @@ import org.bukkit.event.player.PlayerInteractEvent
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.jetbrains.exposed.sql.update
 
+/**
+ * This [Listener] manages the silent chat function.
+ * It allows players to toggle their chat to silence and non-silence.
+ * It also filters the chat for those users that have enabled this feature.
+ */
 object SilentChatListener : Listener {
     /**
      * Updates the chat silence setting.

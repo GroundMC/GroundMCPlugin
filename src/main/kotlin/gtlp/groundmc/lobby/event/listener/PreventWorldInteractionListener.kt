@@ -9,6 +9,12 @@ import org.bukkit.event.block.BlockPlaceEvent
 import org.bukkit.event.entity.EntityPickupItemEvent
 import org.bukkit.event.player.PlayerDropItemEvent
 
+/**
+ * This [Listener] cancels any world interaction in the lobby or with items
+ * that are designed to be used in the lobby.
+ *
+ * Interactions include dropping items, placing blocks or picking up items.
+ */
 object PreventWorldInteractionListener : Listener {
 
     /**

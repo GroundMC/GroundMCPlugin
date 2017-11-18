@@ -9,11 +9,11 @@ import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.ItemMeta
 import kotlin.reflect.KClass
 
-@Suppress("unused")
 /**
  * Extension of [de.tr7zw.itemnbtapi.NBTItem]
  * Allows the use of [NBTIdentifier] as a key.
  */
+@Suppress("unused")
 class NBTItemExt(item: ItemStack) : NBTItem(item), Cloneable {
 
     /**
@@ -192,6 +192,10 @@ class NBTItemExt(item: ItemStack) : NBTItem(item), Cloneable {
         }
         get() = item.itemMeta
 
+    /**
+     * The lore of this item.
+     * This member allow easy read and write access.
+     */
     var lore: List<String>
         set(lore) {
             val meta = item.itemMeta

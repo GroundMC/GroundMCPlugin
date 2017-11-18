@@ -17,7 +17,7 @@ Kotlin object to aid with internationalization (I18n)
 ### Properties
 
 | [bundleCache](bundle-cache.html) | `val bundleCache: `[`ResourceBundleCache`](-resource-bundle-cache/index.html)<br>The ResourceBundleCache used in our project |
-| [colorChar](color-char.html) | `val colorChar: `[`Char`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-char/index.html)<br>The character used to mark styling codes Hardcoded to the most common value |
+| [colorChar](color-char.html) | `const val colorChar: `[`Char`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-char/index.html)<br>The character used to mark styling codes Hardcoded to the most common value |
 
 ### Functions
 

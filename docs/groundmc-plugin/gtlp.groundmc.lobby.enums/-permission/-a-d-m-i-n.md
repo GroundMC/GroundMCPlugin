@@ -9,10 +9,10 @@ title: Permission.ADMIN - groundmc-plugin
 `ADMIN`
 
 The administrator permission.
-Players with this permission usually have full control over the functionality
+Players with this permission have full control over the functionality
 of the plugin.
 
 ### Inherited Properties
 
-| [id](id.html) | `val id: `[`String`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html)<br>The string representation of this permission. Can be used in plugins that manage permissions. |
+| [permission](permission.html) | `val permission: `[`Permission`](https://hub.spigotmc.org/javadocs/spigot/org/bukkit/permissions/Permission.html)<br>The permission object used by Bukkit. Can be used in plugins that manage permissions. |
 

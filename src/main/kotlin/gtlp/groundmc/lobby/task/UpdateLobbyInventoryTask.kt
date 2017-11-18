@@ -10,6 +10,12 @@ import org.bukkit.Bukkit
 import org.bukkit.ChatColor
 import org.bukkit.Location
 
+/**
+ * Task to update the items in the [LobbyInventory] that refer to worlds that
+ * are managed by Multiverse-Core and have custom player limits set.
+ *
+ * @refer [MultiverseCore]
+ */
 object UpdateLobbyInventoryTask : ITask {
     override val delay = 20L
     override val period = 30L

@@ -102,6 +102,9 @@ class LobbyMain : JavaPlugin() {
         logger.exiting(LobbyMain::class, "onEnable")
     }
 
+    /**
+     * Registers all [org.bukkit.event.Listener]s that are used by this plugin.
+     */
     private fun registerListeners() {
         arrayOf(ChatInteractionListener,
                 HidePlayerListener,

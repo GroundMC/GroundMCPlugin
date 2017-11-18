@@ -13,16 +13,16 @@ Consolidates all permissions into one enum.
 
 ### Enum Values
 
-| [ADMIN](-a-d-m-i-n.html) | The administrator permission. Players with this permission usually have full control over the functionality of the plugin. |
+| [ADMIN](-a-d-m-i-n.html) | The administrator permission. Players with this permission have full control over the functionality of the plugin. |
 | [HIDE_PLAYERS](-h-i-d-e_-p-l-a-y-e-r-s.html) | Players with this permission are allowed to hide other players from their view. |
 | [SILENT](-s-i-l-e-n-t.html) | Players with this permission are allowed to silence their chat. |
 | [VANISH](-v-a-n-i-s-h.html) | Players with this permission are allowed to vanish and become invisible to other players. |
 
 ### Constructors
 
-| [&lt;init&gt;](-init-.html) | `Permission(id: `[`String`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html)`)`<br>Enum to store permissions as strings. Consolidates all permissions into one enum. |
+| [&lt;init&gt;](-init-.html) | `Permission(permission: `[`Permission`](https://hub.spigotmc.org/javadocs/spigot/org/bukkit/permissions/Permission.html)`)`<br>Enum to store permissions as strings. Consolidates all permissions into one enum. |
 
 ### Properties
 
-| [id](id.html) | `val id: `[`String`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html)<br>The string representation of this permission. Can be used in plugins that manage permissions. |
+| [permission](permission.html) | `val permission: `[`Permission`](https://hub.spigotmc.org/javadocs/spigot/org/bukkit/permissions/Permission.html)<br>The permission object used by Bukkit. Can be used in plugins that manage permissions. |
 

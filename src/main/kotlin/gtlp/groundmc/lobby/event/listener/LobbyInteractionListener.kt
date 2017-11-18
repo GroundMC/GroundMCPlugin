@@ -8,6 +8,9 @@ import org.bukkit.event.block.Action
 import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.util.Vector
 
+/**
+ * This [Listener] handles player interactions in the lobby.
+ */
 object LobbyInteractionListener : Listener {
     /**
      * Launches a player forward when stepping on a golden pressure plate.

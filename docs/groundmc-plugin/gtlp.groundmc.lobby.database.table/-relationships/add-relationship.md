@@ -20,7 +20,7 @@ Adds a relationship between [player](add-relationship.html#gtlp.groundmc.lobby.d
 
 addRelationship
 
-`fun addRelationship(relationship: `[`Relationship`](../../gtlp.groundmc.lobby/-relationship/index.html)`): `[`Unit`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html)
+`private fun addRelationship(relationship: `[`Relationship`](../../gtlp.groundmc.lobby/-relationship/index.html)`): `[`Unit`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html)
 
 Adds a relationship between [Relationship.user1](../../gtlp.groundmc.lobby/-relationship/user1.html) and [Relationship.user2](../../gtlp.groundmc.lobby/-relationship/user2.html)
 

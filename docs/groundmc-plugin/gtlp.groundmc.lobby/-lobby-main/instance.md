@@ -6,7 +6,7 @@ title: LobbyMain.instance - groundmc-plugin
 
 # instance
 
-`var instance: Optional<`[`LobbyMain`](index.html)`>`
+`lateinit var instance: `[`LobbyMain`](index.html)
 
 Common instance of this [LobbyMain](index.html) plugin.
 

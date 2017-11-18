@@ -19,5 +19,6 @@ title: gtlp.groundmc.lobby.util - groundmc-plugin
 | [java.util.logging.Logger](java.util.logging.-logger/index.html) |  |
 | [kotlin.Int](kotlin.-int/index.html) |  |
 | [kotlin.collections.MutableList](kotlin.collections.-mutable-list/index.html) |  |
+| [org.bukkit.command.CommandSender](org.bukkit.command.-command-sender/index.html) |  |
 | [org.bukkit.inventory.Inventory](org.bukkit.inventory.-inventory/index.html) |  |
 

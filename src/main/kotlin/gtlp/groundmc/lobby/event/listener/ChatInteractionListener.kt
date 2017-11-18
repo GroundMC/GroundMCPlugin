@@ -9,8 +9,17 @@ import org.bukkit.event.player.AsyncPlayerChatEvent
 import org.bukkit.metadata.FixedMetadataValue
 import org.joda.time.Instant
 
+/**
+ * This [Listener] handles the chat interaction of the players.
+ * It makes sure that the chat is not spammed by malicious players, if this
+ * feature is enabled.
+ */
 object ChatInteractionListener : Listener {
 
+    /**
+     * Holds the timeout for chat messages per user in milliseconds.
+     * This is initialized only once when needed, thus lazy.
+     */
     private val timeout: Long by lazy {
         LobbyMain.instance.config.getLong("slowchat.timeout")
     }
