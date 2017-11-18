@@ -15,7 +15,7 @@ enum class Permission constructor(
 ) {
     /**
      * The administrator permission.
-     * Players with this permission usually have full control over the functionality
+     * Players with this permission have full control over the functionality
      * of the plugin.
      */
     ADMIN(Bukkit.getServer().pluginManager.getPermission("groundmc.lobby.admin")),
