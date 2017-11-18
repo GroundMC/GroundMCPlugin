@@ -192,6 +192,14 @@ class NBTItemExt(item: ItemStack) : NBTItem(item), Cloneable {
         }
         get() = item.itemMeta
 
+    var lore: List<String>
+        set(lore) {
+            val meta = item.itemMeta
+            meta.lore = lore
+            item.itemMeta = meta
+        }
+        get() = item.itemMeta.lore
+
 
     /**
      * Adds the specified enchantment to this item meta.

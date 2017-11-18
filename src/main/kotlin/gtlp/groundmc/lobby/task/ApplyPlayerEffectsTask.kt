@@ -11,7 +11,7 @@ object ApplyPlayerEffectsTask : ITask {
     override val period: Long = 20L
 
     override fun run() {
-        Bukkit.getOnlinePlayers().filter { it.world == LobbyMain.hubLocation.get().world }.forEach {
+        Bukkit.getOnlinePlayers().filter { it.world == LobbyMain.hubLocation.world }.forEach {
             it.health = 20.0
             it.saturation = 20.0f
         }

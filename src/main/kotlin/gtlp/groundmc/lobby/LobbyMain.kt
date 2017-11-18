@@ -7,10 +7,7 @@ import gtlp.groundmc.lobby.commands.*
 import gtlp.groundmc.lobby.database.table.Meta
 import gtlp.groundmc.lobby.database.table.Relationships
 import gtlp.groundmc.lobby.database.table.Users
-import gtlp.groundmc.lobby.event.listener.EntityEventListener
-import gtlp.groundmc.lobby.event.listener.InventoryClickEventListener
-import gtlp.groundmc.lobby.event.listener.MiscEventListener
-import gtlp.groundmc.lobby.event.listener.PlayerEventListener
+import gtlp.groundmc.lobby.event.listener.*
 import gtlp.groundmc.lobby.inventory.LobbyInventory
 import gtlp.groundmc.lobby.registry.LobbyCommandRegistry
 import gtlp.groundmc.lobby.task.*
@@ -34,7 +31,6 @@ import java.io.File
 import java.lang.reflect.Field
 import java.lang.reflect.Modifier
 import java.sql.Connection
-import java.util.*
 import java.util.logging.FileHandler
 import java.util.logging.Level
 import java.util.logging.Logger
@@ -73,7 +69,7 @@ class LobbyMain : JavaPlugin() {
      */
     override fun onEnable() {
         logger.entering(LobbyMain::class, "onEnable")
-        instance = Optional.of(this)
+        instance = this
         registerGsonHandlers()
         createDefaultConfig()
         upgradeConfig()
@@ -91,10 +87,7 @@ class LobbyMain : JavaPlugin() {
             Meta.upgradeDatabase()
         }
         logger.finer("Registering events...")
-        Bukkit.getServer().pluginManager.registerEvents(EntityEventListener(), this)
-        Bukkit.getServer().pluginManager.registerEvents(InventoryClickEventListener(), this)
-        Bukkit.getServer().pluginManager.registerEvents(MiscEventListener(), this)
-        Bukkit.getServer().pluginManager.registerEvents(PlayerEventListener(), this)
+        registerListeners()
         registerCommands()
 
         logger.finer("Scheduling tasks...")
@@ -102,10 +95,23 @@ class LobbyMain : JavaPlugin() {
         Bukkit.getServer().scheduler.scheduleSyncRepeatingTask(ApplyPlayerEffectsTask)
         Bukkit.getServer().scheduler.scheduleSyncRepeatingTask(HidePlayersTask)
         Bukkit.getServer().scheduler.scheduleSyncRepeatingTask(MonitorLocaleTask)
+        Bukkit.getServer().scheduler.scheduleSyncRepeatingTask(UpdateLobbyInventoryTask)
 
         logger.finer("Setting difficulty of the hub world to peaceful")
-        hubLocation.get().world.difficulty = Difficulty.PEACEFUL
+        hubLocation.world.difficulty = Difficulty.PEACEFUL
         logger.exiting(LobbyMain::class, "onEnable")
+    }
+
+    private fun registerListeners() {
+        arrayOf(ChatInteractionListener,
+                HidePlayerListener,
+                LobbyInteractionListener,
+                LobbyInventoryListener,
+                LobbyInvincibilityListener,
+                PreventWorldInteractionListener,
+                ServerStateListener,
+                SilentChatListener
+        ).forEach { Bukkit.getServer().pluginManager.registerEvents(it, this) }
     }
 
     /**
@@ -183,7 +189,7 @@ class LobbyMain : JavaPlugin() {
             }
         }
         // Get lobby location
-        hubLocation = Optional.of(config.get("hub") as Location)
+        hubLocation = config.get("hub") as Location
         dailyCoins = config.getInt("coins.dailyAmount")
         logger.info("Setting logger verbosity to ${config.getString("log.verbosity", "FINEST")}")
         logger.level = Level.parse(config.getString("log.verbosity", "FINEST"))
@@ -292,7 +298,7 @@ class LobbyMain : JavaPlugin() {
         /**
          * Variable to hold the [Location] of the hub/lobby.
          */
-        var hubLocation: Optional<Location> = Optional.empty()
+        lateinit var hubLocation: Location
 
         /**
          * A map of tasks to their IDs
@@ -307,7 +313,7 @@ class LobbyMain : JavaPlugin() {
         /**
          * Common instance of this [LobbyMain] plugin.
          */
-        var instance: Optional<LobbyMain> = Optional.empty()
+        lateinit var instance: LobbyMain
 
         /**
          * The variable holding the amount of coins a player gets every day.
@@ -318,7 +324,7 @@ class LobbyMain : JavaPlugin() {
          * The [Logger] that is created in the init block.
          */
         val logger: Logger
-            get() = instance.get().logger
+            get() = instance.logger
 
         /**
          * The latest version of the configuration.
