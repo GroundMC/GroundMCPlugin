@@ -35,7 +35,7 @@ class MiscEventListener : Listener {
     @EventHandler
     fun cancelBlockPlace(event: BlockPlaceEvent) {
         val nbtItem = NBTItemExt(event.itemInHand)
-        if (nbtItem.hasKey(NBTIdentifier.PREFIX)) {
+        if (nbtItem.hasKey(NBTIdentifier.PREFIX)!!) {
             event.isCancelled = true
         }
     }

@@ -22,6 +22,7 @@ import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
 import org.bukkit.event.block.Action
+import org.bukkit.event.entity.EntityPickupItemEvent
 import org.bukkit.event.player.*
 import org.bukkit.metadata.FixedMetadataValue
 import org.bukkit.util.Vector
@@ -42,7 +43,7 @@ class PlayerEventListener : Listener {
      *
      * @param player the player to generate the items for
      */
-    fun addItemsToInventory(player: Player) {
+    private fun addItemsToInventory(player: Player) {
         var silent = false
         var hideState = VisibilityStates.ALL
         transaction {
@@ -56,7 +57,7 @@ class PlayerEventListener : Listener {
 
         if (player.hasPermission(Permission.SILENT.id) || player.hasPermission(Permission.ADMIN.id)) {
             val silentItem = Items.SILENT_ITEM
-            silentItem.displayName = I18n.getString(if (silent) "silentitem.on" else "silentitem.off", player.spigot().locale)
+            silentItem.displayName = I18n.getString(if (silent) "silentitem.on" else "silentitem.off", player.locale)
             silentItem.setBoolean(NBTIdentifier.SILENT_STATE, silent)
             if (silent) {
                 silentItem.addEnchantment(Enchantment.LUCK)
@@ -70,7 +71,7 @@ class PlayerEventListener : Listener {
                     VisibilityStates.ALL -> "visibility.all"
                     VisibilityStates.NONE -> "visibility.none"
                     VisibilityStates.FRIENDS -> "visibility.friends"
-                }, player.spigot().locale)
+                }, player.locale)
             }
             inventory.setItem(2, nbtItem.item)
         }
@@ -129,7 +130,7 @@ class PlayerEventListener : Listener {
 
         val playerRow = Users.getPlayer(event.player)
         if (playerRow[Users.lastDailyCoinsDate].plusDays(1).isBeforeNow) {
-            event.player.sendMessage(I18n.getString("event.dailyCoins", event.player.spigot().locale)?.format(LobbyMain.dailyCoins))
+            event.player.sendMessage(I18n.getString("event.dailyCoins", event.player.locale)?.format(LobbyMain.dailyCoins))
             event.player.playSound(event.player.location, Sound.ENTITY_PLAYER_LEVELUP, 1.0f, 1.0f)
             transaction {
                 Users.update({ Users.id eq event.player.uniqueId }) {
@@ -163,7 +164,7 @@ class PlayerEventListener : Listener {
     @EventHandler(priority = EventPriority.LOWEST)
     fun cancelItemDrop(event: PlayerDropItemEvent) {
         val nbtItem = NBTItemExt(event.itemDrop.itemStack)
-        if (nbtItem.hasKey(NBTIdentifier.PREFIX)) {
+        if (nbtItem.hasKey(NBTIdentifier.PREFIX)!!) {
             event.isCancelled = true
         }
     }
@@ -194,7 +195,7 @@ class PlayerEventListener : Listener {
             val key = "lastChatMsg"
             if (event.player.hasMetadata(key) && (Instant.now() - event.player.getMetadata(key).first { it.owningPlugin == LobbyMain.instance.get() }.asLong()) < Instant(LobbyMain.instance.get().config.getLong("slowchat.timeout"))) {
                 event.isCancelled = true
-                event.player.sendMessage(I18n.getString("too_many_messages", event.player.spigot().locale))
+                event.player.sendMessage(I18n.getString("too_many_messages", event.player.locale))
                 LobbyMain.logger.finest("${event.player} sent messages too quickly!")
             } else {
                 event.player.setMetadata(key, FixedMetadataValue(LobbyMain.instance.get(), Instant().millis))
@@ -211,7 +212,7 @@ class PlayerEventListener : Listener {
     fun hidePlayers(event: PlayerInteractEvent) {
         if (event.item != null) {
             val nbtItem = NBTItemExt(event.item)
-            if (nbtItem.hasKey(NBTIdentifier.PREFIX) && nbtItem.getInteger(NBTIdentifier.TYPE) == GMCType.HIDE_PLAYERS.ordinal) {
+            if (nbtItem.hasKey(NBTIdentifier.PREFIX)!! && nbtItem.getInteger(NBTIdentifier.TYPE) == GMCType.HIDE_PLAYERS.ordinal) {
                 event.isCancelled = true
                 event.player.openInventory(HidePlayerInventory.create(event.player))
             }
@@ -227,14 +228,14 @@ class PlayerEventListener : Listener {
     fun silentChat(event: PlayerInteractEvent) {
         if (event.item != null) {
             val nbtItem = NBTItemExt(event.item)
-            if (nbtItem.hasKey(NBTIdentifier.PREFIX) && nbtItem.getInteger(NBTIdentifier.TYPE) == GMCType.SILENT.ordinal) {
+            if (nbtItem.hasKey(NBTIdentifier.PREFIX)!! && nbtItem.getInteger(NBTIdentifier.TYPE) == GMCType.SILENT.ordinal) {
                 event.isCancelled = true
-                if (nbtItem.getBoolean(NBTIdentifier.SILENT_STATE)) {
+                if (nbtItem.getBoolean(NBTIdentifier.SILENT_STATE)!!) {
                     LobbyMain.SILENCED_PLAYERS.remove(event.player)
                     nbtItem.setBoolean(NBTIdentifier.SILENT_STATE, false)
-                    nbtItem.displayName = I18n.getString("silentitem.off", event.player.spigot().locale)
+                    nbtItem.displayName = I18n.getString("silentitem.off", event.player.locale)
                     nbtItem.removeEnchantment(Enchantment.LUCK)
-                    event.player.sendMessage(I18n.getString("silentmsg.off", event.player.spigot().locale))
+                    event.player.sendMessage(I18n.getString("silentmsg.off", event.player.locale))
                     transaction {
                         Users.update({ Users.id eq event.player.uniqueId }) {
                             it[Users.silentStatus] = false
@@ -243,9 +244,9 @@ class PlayerEventListener : Listener {
                 } else {
                     LobbyMain.SILENCED_PLAYERS.add(event.player)
                     nbtItem.setBoolean(NBTIdentifier.SILENT_STATE, true)
-                    nbtItem.displayName = I18n.getString("silentitem.on", event.player.spigot().locale)
+                    nbtItem.displayName = I18n.getString("silentitem.on", event.player.locale)
                     nbtItem.addEnchantment(Enchantment.LUCK)
-                    event.player.sendMessage(I18n.getString("silentmsg.on", event.player.spigot().locale))
+                    event.player.sendMessage(I18n.getString("silentmsg.on", event.player.locale))
                     transaction {
                         Users.update({ Users.id eq event.player.uniqueId }) {
                             it[Users.silentStatus] = true
@@ -297,7 +298,7 @@ class PlayerEventListener : Listener {
      * @param event the event to handle
      */
     @EventHandler(priority = EventPriority.LOWEST)
-    fun preventItemPickup(event: PlayerPickupItemEvent) {
+    fun preventItemPickup(event: EntityPickupItemEvent) {
         if (event.player.world == LobbyMain.hubLocation.get().world) {
             event.isCancelled = true
         }
@@ -308,7 +309,7 @@ class PlayerEventListener : Listener {
      *
      * @return a vector pointing in the direction of [Location.yaw] with a length of 1.
      */
-    fun Location.getDirectionXZ(): Vector {
+    private fun Location.getDirectionXZ(): Vector {
         val vector = Vector()
 
         val rotX = this.yaw.toDouble()

@@ -26,12 +26,12 @@ class CommandFriends : ILobbyCommand {
         if (sender is Player) {
             val friends = Relationships.getRelationships(sender)
             if (friends.isEmpty()) {
-                sender.sendMessage(I18n.getString("command.friends.no_friends", sender.spigot().locale))
+                sender.sendMessage(I18n.getString("command.friends.no_friends", sender.locale))
                 return true
             }
             friends.let {
                     if (it.isNotEmpty()) {
-                        sender.sendMessage(String.format("%2\$s: %1\$s", it.map { it.user2.name }.joinToString(), it.size))
+                        sender.sendMessage(String.format("%2\$s: %1\$s", it.joinToString { it.user2.name }, it.size))
                     }
             }
             return true

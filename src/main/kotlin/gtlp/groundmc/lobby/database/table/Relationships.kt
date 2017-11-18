@@ -52,7 +52,7 @@ object Relationships : Table() {
      *
      * @see addRelationship
      */
-    fun addRelationship(relationship: Relationship) {
+    private fun addRelationship(relationship: Relationship) {
         LobbyMain.logger.entering(Relationships::class, "addRelationship")
         return transaction {
             if (!areFriends(relationship.user1, relationship.user2)) {
@@ -67,10 +67,10 @@ object Relationships : Table() {
                     it[since] = relationship.since
                 }
                 if (relationship.user1 is Player) {
-                    relationship.user1.sendMessage(I18n.getString("relationship.success", relationship.user1.spigot().locale))
+                    relationship.user1.sendMessage(I18n.getString("relationship.success", relationship.user1.locale))
                 }
             } else if (relationship.user1 is Player) {
-                relationship.user1.sendMessage(I18n.getString("relationship.exists", relationship.user1.spigot().locale))
+                relationship.user1.sendMessage(I18n.getString("relationship.exists", relationship.user1.locale))
             }
             LobbyMain.logger.exiting(Relationships::class, "addRelationship")
         }

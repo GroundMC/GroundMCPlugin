@@ -87,7 +87,7 @@ object I18nUtils {
     fun getLocaleFromCommandSender(sender: CommandSender): Locale {
         LobbyMain.logger.entering(I18nUtils::class, "getLocaleFromCommandSender")
         return if (sender is Player) {
-            getLocaleFromString(sender.spigot().locale)
+            getLocaleFromString(sender.locale)
         } else {
             Locale.getDefault()
         }

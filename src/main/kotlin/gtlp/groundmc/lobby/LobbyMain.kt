@@ -267,7 +267,7 @@ class LobbyMain : JavaPlugin() {
      * @param task the task to schedule.
      * @see BukkitScheduler.scheduleSyncRepeatingTask
      */
-    fun BukkitScheduler.scheduleSyncRepeatingTask(task: ITask) {
+    private fun BukkitScheduler.scheduleSyncRepeatingTask(task: ITask) {
         logger.entering(LobbyMain::class, "scheduleSyncRepeatingTask")
         tasks.put(task, scheduleSyncRepeatingTask(this@LobbyMain, task, task.delay, task.period))
     }
@@ -278,7 +278,7 @@ class LobbyMain : JavaPlugin() {
      * @param task the task to schedule.
      * @see BukkitScheduler.scheduleSyncDelayedTask
      */
-    fun BukkitScheduler.scheduleSyncDelayedTask(task: ITask) {
+    private fun BukkitScheduler.scheduleSyncDelayedTask(task: ITask) {
         logger.entering(LobbyMain::class, "scheduleSyncDelayedTask")
         tasks.put(task, scheduleSyncDelayedTask(this@LobbyMain, task, task.delay))
     }

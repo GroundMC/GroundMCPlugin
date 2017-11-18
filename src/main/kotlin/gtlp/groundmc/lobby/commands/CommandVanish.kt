@@ -35,13 +35,13 @@ class CommandVanish : ILobbyCommand {
                     }
                     commit()
                     when (isVanished) {
-                        true -> sender.sendMessage(I18n.getString("vanish.off", sender.spigot().locale))
-                        false -> sender.sendMessage(I18n.getString("vanish.on", sender.spigot().locale))
+                        true -> sender.sendMessage(I18n.getString("vanish.off", sender.locale))
+                        false -> sender.sendMessage(I18n.getString("vanish.on", sender.locale))
                     }
                 }
                 return true
             } else {
-                sender.sendMessage(I18n.getString("nopermission", sender.spigot().locale))
+                sender.sendMessage(I18n.getString("nopermission", sender.locale))
             }
         } else if (sender is ConsoleCommandSender) {
             sender.sendMessage(I18n.getString("command.playeronly", Locale.getDefault()))

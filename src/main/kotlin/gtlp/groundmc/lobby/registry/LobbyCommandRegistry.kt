@@ -27,9 +27,8 @@ object LobbyCommandRegistry {
         Bukkit.getServer().helpMap.addTopic(object : HelpTopic() {
             override fun canSee(player: CommandSender) = true
             override fun getName() = cmd.name
-            override fun getFullText(forWho: CommandSender): String {
-                return cmd.getCommandHelp(I18nUtils.getLocaleFromCommandSender(forWho)).joinToString { System.lineSeparator() }
-            }
+            override fun getFullText(forWho: CommandSender) =
+                    cmd.getCommandHelp(I18nUtils.getLocaleFromCommandSender(forWho)).joinToString { System.lineSeparator() }
         })
         LobbyMain.logger.exiting(LobbyCommandRegistry::class, "registerCommand")
     }

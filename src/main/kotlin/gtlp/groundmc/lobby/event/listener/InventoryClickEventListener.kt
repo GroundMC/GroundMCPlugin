@@ -42,7 +42,7 @@ class InventoryClickEventListener : Listener {
                 return
             }
             val nbtItem = NBTItemExt(event.currentItem)
-            if (nbtItem.hasKey(NBTIdentifier.PREFIX) && nbtItem.getInteger(NBTIdentifier.TYPE) == GMCType.TP.ordinal) {
+            if (nbtItem.hasKey(NBTIdentifier.PREFIX)!! && nbtItem.getInteger(NBTIdentifier.TYPE) == GMCType.TP.ordinal) {
                 if (player.teleport(nbtItem.getObject(NBTIdentifier.TP_LOC, Location::class), PlayerTeleportEvent.TeleportCause.PLUGIN)) {
                     player.playSound(player.location, Sound.BLOCK_PORTAL_TRAVEL, 1.0f, 1.0f)
                     player.spawnParticle(Particle.PORTAL, player.location, 100)
@@ -95,7 +95,7 @@ class InventoryClickEventListener : Listener {
                     }.item)
                     transaction {
                         Users.update({ Users.id.eq(event.whoClicked.uniqueId) }) {
-                            it[hiddenStatus] = VisibilityStates.values()[nbtItem.getInteger(NBTIdentifier.HIDE_STATE)]
+                            it[hiddenStatus] = VisibilityStates.values()[nbtItem.getInteger(NBTIdentifier.HIDE_STATE)!!]
                         }
                     }
                     event.whoClicked.sendMessage(nbtItem.displayName)
