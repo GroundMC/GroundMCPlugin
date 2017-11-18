@@ -6,10 +6,10 @@
 
     <groupId>com.github.gianttreelp</groupId>
     <artifactId>groundmc-plugin</artifactId>
-    <version>1.4.1-b${env.BUILDNR}</version>
+    <version>1.5.0-b${env.BUILDNR}</version>
 
     <properties>
-        <kotlin.version>1.1.51</kotlin.version>
+        <kotlin.version>1.1.60</kotlin.version>
         <dokka.version>0.9.14</dokka.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.8</maven.compiler.source>
@@ -52,7 +52,7 @@
         <dependency>
             <groupId>org.jetbrains.exposed</groupId>
             <artifactId>exposed</artifactId>
-            <version>0.8.8</version>
+            <version>0.9.1</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -82,7 +82,7 @@
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
-            <version>1.11.2-R0.1-SNAPSHOT</version>
+            <version>1.12.2-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -98,9 +98,9 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.12</version>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
+            <version>5.0.2</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -139,7 +139,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.5.1</version>
+                <version>3.7.0</version>
                 <executions>
                     <!-- Replacing default-compile as it is treated specially by maven -->
                     <execution>
