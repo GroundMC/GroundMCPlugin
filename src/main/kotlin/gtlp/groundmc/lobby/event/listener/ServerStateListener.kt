@@ -132,7 +132,7 @@ object ServerStateListener : Listener {
     private fun addDailyBonus(player: Player) {
         val playerRow = Users.getPlayer(player)
         if (playerRow[Users.lastDailyCoinsDate].plusDays(1).isBeforeNow) {
-            player.sendMessage(I18n.getString("player.dailyCoins", player.locale)?.format(LobbyMain.dailyCoins))
+            player.sendMessage(I18n.getString("event.dailyCoins", player.locale)?.format(LobbyMain.dailyCoins))
             player.playSound(player.location, Sound.ENTITY_PLAYER_LEVELUP, 1.0f, 1.0f)
             transaction {
                 Users.update({ Users.id eq player.uniqueId }) {

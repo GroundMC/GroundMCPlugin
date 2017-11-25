@@ -54,7 +54,8 @@ object LobbyInventoryListener : Listener {
      */
     @EventHandler
     fun cancelInventoryClick(event: InventoryClickEvent) {
-        if (NBTIdentifier.itemHasPrefix(event.currentItem)) {
+        if (NBTIdentifier.itemHasPrefix(event.currentItem) &&
+                event.inventory.title != LobbyInventory.TEMPLATE_INVENTORY.title) {
             event.result = Event.Result.DENY
         }
     }
@@ -67,11 +68,9 @@ object LobbyInventoryListener : Listener {
      */
     @EventHandler
     fun openLobbyInventory(event: InventoryClickEvent) {
-        if (NBTIdentifier.itemHasPrefix(event.currentItem)) {
+        if (event.currentItem == Items.COMPASS_ITEM.item) {
             event.result = Event.Result.DENY
-            if (event.currentItem == Items.COMPASS_ITEM.item) {
-                event.whoClicked.openInventory(LobbyInventory.create(event.whoClicked))
-            }
+            event.whoClicked.openInventory(LobbyInventory.create(event.whoClicked))
         }
     }
 

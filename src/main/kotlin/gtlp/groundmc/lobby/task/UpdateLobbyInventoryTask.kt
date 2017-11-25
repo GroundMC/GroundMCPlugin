@@ -9,6 +9,7 @@ import gtlp.groundmc.lobby.util.NBTItemExt
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor
 import org.bukkit.Location
+import org.bukkit.inventory.ItemStack
 
 /**
  * Task to update the items in the [LobbyInventory] that refer to worlds that
@@ -29,7 +30,10 @@ object UpdateLobbyInventoryTask : ITask {
         val multiVerse = Bukkit.getPluginManager().getPlugin("Multiverse-Core") as MultiverseCore
         val worldManager = multiVerse.mvWorldManager
 
-        LobbyInventory.TEMPLATE_INVENTORY.forEach {
+        LobbyInventory.TEMPLATE_INVENTORY.forEach { it: ItemStack? ->
+            if (it == null) {
+                return
+            }
             val nbtItem = NBTItemExt(it)
             if (NBTIdentifier.itemHasPrefix(it) && nbtItem.getInteger(NBTIdentifier.TYPE) == GMCType.TP.ordinal) {
                 val world = nbtItem.getObject(NBTIdentifier.TP_LOC, Location::class)!!.world
