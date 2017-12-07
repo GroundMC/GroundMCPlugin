@@ -16,7 +16,9 @@ pipeline {
       }
     }
     stage('Archive') {
-      archiveArtifacts artifacts: 'target/*.jar', excludes: 'original*'
+      steps {
+        archiveArtifacts artifacts: 'target/*.jar', excludes: 'original*'
+      }
     }
   }
 }
