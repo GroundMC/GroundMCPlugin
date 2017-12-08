@@ -45,7 +45,7 @@ object PreventWorldInteractionListener : Listener {
     }
 
     /**
-     * Prevents players from picking up items when they are in the hub.
+     * Prevents non-admin players from picking up items when they are in the hub.
      *
      * @param event the event to handle
      */
