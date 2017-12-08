@@ -91,15 +91,20 @@ class LobbyMain : JavaPlugin() {
         registerCommands()
 
         logger.finer("Scheduling tasks...")
+        scheduleTasks()
+
+        logger.finer("Setting difficulty of the hub world to peaceful")
+        hubLocation.world.difficulty = Difficulty.PEACEFUL
+        logger.exiting(LobbyMain::class, "onEnable")
+    }
+
+    private fun scheduleTasks() {
         Bukkit.getServer().scheduler.scheduleSyncDelayedTask(SetRulesTask)
         Bukkit.getServer().scheduler.scheduleSyncRepeatingTask(ApplyPlayerEffectsTask)
         Bukkit.getServer().scheduler.scheduleSyncRepeatingTask(HidePlayersTask)
         Bukkit.getServer().scheduler.scheduleSyncRepeatingTask(MonitorLocaleTask)
         Bukkit.getServer().scheduler.scheduleSyncRepeatingTask(UpdateLobbyInventoryTask)
-
-        logger.finer("Setting difficulty of the hub world to peaceful")
-        hubLocation.world.difficulty = Difficulty.PEACEFUL
-        logger.exiting(LobbyMain::class, "onEnable")
+        Bukkit.getServer().scheduler.scheduleSyncRepeatingTask(UpdateScoreboardsTask)
     }
 
     /**
