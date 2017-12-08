@@ -46,7 +46,7 @@ object HidePlayerInventory {
         }
         val inventory = Bukkit.createInventory(player, 9, TITLE)
 
-        (0..inventory.size - 1).forEach { i ->
+        (0 until inventory.size).forEach { i ->
             inventory.setItem(i, Items.FILLER.item)
         }
 
@@ -56,7 +56,7 @@ object HidePlayerInventory {
             setInteger(NBTIdentifier.HIDE_STATE, VisibilityStates.ALL.ordinal)
             if (hideState == VisibilityStates.ALL) addEnchantment(Enchantment.LUCK)
             addItemFlags(ItemFlag.HIDE_ENCHANTS)
-            displayName = I18n.getString("visibility.all", player.spigot().locale)
+            displayName = I18n.getString("visibility.all", player.locale)
         }
 
         inventory.setItem(0, limeDye.item)
@@ -67,7 +67,7 @@ object HidePlayerInventory {
             setInteger(NBTIdentifier.HIDE_STATE, VisibilityStates.FRIENDS.ordinal)
             if (hideState == VisibilityStates.FRIENDS) addEnchantment(Enchantment.LUCK)
             addItemFlags(ItemFlag.HIDE_ENCHANTS)
-            displayName = I18n.getString("visibility.friends", player.spigot().locale)
+            displayName = I18n.getString("visibility.friends", player.locale)
         }
 
         inventory.setItem(4, purpleDye.item)
@@ -78,7 +78,7 @@ object HidePlayerInventory {
             setInteger(NBTIdentifier.HIDE_STATE, VisibilityStates.NONE.ordinal)
             if (hideState == VisibilityStates.NONE) addEnchantment(Enchantment.LUCK)
             addItemFlags(ItemFlag.HIDE_ENCHANTS)
-            displayName = I18n.getString("visibility.none", player.spigot().locale)
+            displayName = I18n.getString("visibility.none", player.locale)
         }
 
         inventory.setItem(8, grayDye.item)

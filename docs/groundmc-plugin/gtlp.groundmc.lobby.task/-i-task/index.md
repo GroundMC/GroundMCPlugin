@@ -6,7 +6,7 @@ title: ITask - groundmc-plugin
 
 # ITask
 
-`interface ITask : `[`Runnable`](http://docs.oracle.com/javase/6/docs/api/java/lang/Runnable.html)
+`interface ITask : Runnable`
 
 Interface to describe a Task for use as a Runnable
 in [org.bukkit.scheduler.BukkitScheduler.scheduleSyncRepeatingTask](https://hub.spigotmc.org/javadocs/spigot/org/bukkit/scheduler/BukkitScheduler.html#scheduleSyncRepeatingTask(org.bukkit.plugin.Plugin, java.lang.Runnable, long, long))
@@ -27,4 +27,5 @@ or [org.bukkit.scheduler.BukkitScheduler.scheduleSyncDelayedTask](https://hub.sp
 | [HidePlayersTask](../-hide-players-task/index.html) | `object HidePlayersTask : ITask`<br>Task to update players and their change in the visibility state. |
 | [MonitorLocaleTask](../-monitor-locale-task/index.html) | `object MonitorLocaleTask : ITask`<br>Task to monitor changes in locale changes of players. Calls the [PlayerChangeLocaleEvent](../../gtlp.groundmc.lobby.event/-player-change-locale-event/index.html) for changes in locale. |
 | [SetRulesTask](../-set-rules-task/index.html) | `object SetRulesTask : ITask`<br>Task to set the rules. Should only be executed once. |
+| [UpdateLobbyInventoryTask](../-update-lobby-inventory-task/index.html) | `object UpdateLobbyInventoryTask : ITask`<br>Task to update the items in the [LobbyInventory](../../gtlp.groundmc.lobby.inventory/-lobby-inventory/index.html) that refer to worlds that are managed by Multiverse-Core and have custom player limits set. |
 

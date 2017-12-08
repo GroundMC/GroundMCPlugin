@@ -6,7 +6,7 @@ title: NBTItemExt.getInteger - groundmc-plugin
 
 # getInteger
 
-`fun getInteger(identifier: `[`NBTIdentifier`](../../gtlp.groundmc.lobby.enums/-n-b-t-identifier/index.html)`): `[`Int`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html)
+`fun getInteger(identifier: `[`NBTIdentifier`](../../gtlp.groundmc.lobby.enums/-n-b-t-identifier/index.html)`): `[`Int`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html)`?`
 
 Gets an integer value for an identifier
 

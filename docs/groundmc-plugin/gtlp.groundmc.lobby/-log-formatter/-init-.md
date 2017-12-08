@@ -8,6 +8,6 @@ title: LogFormatter.<init> - groundmc-plugin
 
 `LogFormatter()`
 
-A custom [Formatter](http://docs.oracle.com/javase/6/docs/api/java/util/logging/Formatter.html) for log files.
-Inspired by [SimpleFormatter](http://docs.oracle.com/javase/6/docs/api/java/util/logging/SimpleFormatter.html)
+A custom [Formatter](#) for log files.
+Inspired by [SimpleFormatter](#)
 

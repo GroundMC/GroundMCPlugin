@@ -21,12 +21,12 @@ object Relationships : Table() {
      * The [UUID] of the first player in the relationship.
      * Usually the initiator.
      */
-    private val userId1 = uuid("user1").references(Users.id).index()
+    private val userId1 = uuid("user1").references(Users.id).primaryKey()
 
     /**
      * The [UUID] of the second player in the relationship.
      */
-    private val userId2 = uuid("user2").references(Users.id)
+    private val userId2 = uuid("user2").references(Users.id).primaryKey()
 
     /**
      * The timestamp at which the relationship was created.
@@ -52,7 +52,7 @@ object Relationships : Table() {
      *
      * @see addRelationship
      */
-    fun addRelationship(relationship: Relationship) {
+    private fun addRelationship(relationship: Relationship) {
         LobbyMain.logger.entering(Relationships::class, "addRelationship")
         return transaction {
             if (!areFriends(relationship.user1, relationship.user2)) {
@@ -67,10 +67,10 @@ object Relationships : Table() {
                     it[since] = relationship.since
                 }
                 if (relationship.user1 is Player) {
-                    relationship.user1.sendMessage(I18n.getString("relationship.success", relationship.user1.spigot().locale))
+                    relationship.user1.sendMessage(I18n.getString("relationship.success", relationship.user1.locale))
                 }
             } else if (relationship.user1 is Player) {
-                relationship.user1.sendMessage(I18n.getString("relationship.exists", relationship.user1.spigot().locale))
+                relationship.user1.sendMessage(I18n.getString("relationship.exists", relationship.user1.locale))
             }
             LobbyMain.logger.exiting(Relationships::class, "addRelationship")
         }

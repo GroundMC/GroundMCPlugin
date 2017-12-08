@@ -18,7 +18,7 @@ object I18n {
      * The character used to mark styling codes
      * Hardcoded to the most common value
      */
-    val colorChar = '&'
+    private const val colorChar = '&'
 
     /**
      * Returns the localized string (if available) for a given key.
@@ -46,9 +46,8 @@ object I18n {
      *
      * @see getString
      */
-    fun getStrings(vararg keys: String, locale: Locale = Locale.US): Array<String?> {
-        return keys.map { it -> getString(it, locale) }.toTypedArray()
-    }
+    fun getStrings(vararg keys: String, locale: Locale = Locale.US) =
+            keys.map { it -> getString(it, locale) }.toTypedArray()
 
     /**
      * Returns a list of localized strings (if available) for the given keys.
@@ -61,9 +60,8 @@ object I18n {
      *
      * @see getString
      */
-    fun getStrings(vararg keys: String, locale: String): Array<String?> {
-        return keys.map { it -> getString(it, locale) }.toTypedArray()
-    }
+    fun getStrings(vararg keys: String, locale: String) =
+            keys.map { it -> getString(it, locale) }.toTypedArray()
 
     /**
      * Returns the localized string (if available) for a given key.

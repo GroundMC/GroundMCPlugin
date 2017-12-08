@@ -12,5 +12,5 @@ Players with this permission are allowed to silence their chat.
 
 ### Inherited Properties
 
-| [id](id.html) | `val id: `[`String`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html)<br>The string representation of this permission. Can be used in plugins that manage permissions. |
+| [permission](permission.html) | `val permission: `[`Permission`](https://hub.spigotmc.org/javadocs/spigot/org/bukkit/permissions/Permission.html)<br>The permission object used by Bukkit. Can be used in plugins that manage permissions. |
 

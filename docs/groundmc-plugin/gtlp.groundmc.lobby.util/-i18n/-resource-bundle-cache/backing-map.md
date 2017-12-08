@@ -6,7 +6,7 @@ title: I18n.ResourceBundleCache.backingMap - groundmc-plugin
 
 # backingMap
 
-`private val backingMap: `[`ConcurrentHashMap`](http://docs.oracle.com/javase/6/docs/api/java/util/concurrent/ConcurrentHashMap.html)`<`[`Locale`](http://docs.oracle.com/javase/6/docs/api/java/util/Locale.html)`, `[`ResourceBundle`](http://docs.oracle.com/javase/6/docs/api/java/util/ResourceBundle.html)`>`
+`private val backingMap: ConcurrentHashMap<Locale, ResourceBundle>`
 
 A map holding resource bundles for locales
 

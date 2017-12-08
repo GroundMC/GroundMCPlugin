@@ -8,7 +8,8 @@ title: LobbyCommandRegistry.registerCommand - groundmc-plugin
 
 `fun registerCommand(cmd: `[`ILobbyCommand`](../../gtlp.groundmc.lobby.commands/-i-lobby-command/index.html)`): `[`Unit`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html)
 
-Registers a command by adding it to the map.
+Registers the [org.bukkit.command.CommandExecutor](https://hub.spigotmc.org/javadocs/spigot/org/bukkit/command/CommandExecutor.html) and
+[org.bukkit.command.TabCompleter](https://hub.spigotmc.org/javadocs/spigot/org/bukkit/command/TabCompleter.html) for the given [ILobbyCommand](../../gtlp.groundmc.lobby.commands/-i-lobby-command/index.html)
 
 ### Parameters
 
