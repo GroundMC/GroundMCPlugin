@@ -8,7 +8,7 @@ title: PreventWorldInteractionListener.preventItemPickup - groundmc-plugin
 
 `fun preventItemPickup(event: `[`EntityPickupItemEvent`](https://hub.spigotmc.org/javadocs/spigot/org/bukkit/event/entity/EntityPickupItemEvent.html)`): `[`Unit`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html)
 
-Prevents players from picking up items when they are in the hub.
+Prevents non-admin players from picking up items when they are in the hub.
 
 ### Parameters
 

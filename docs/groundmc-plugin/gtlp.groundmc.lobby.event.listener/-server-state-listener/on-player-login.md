@@ -9,6 +9,7 @@ title: ServerStateListener.onPlayerLogin - groundmc-plugin
 `fun onPlayerLogin(event: `[`PlayerJoinEvent`](https://hub.spigotmc.org/javadocs/spigot/org/bukkit/event/player/PlayerJoinEvent.html)`): `[`Unit`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html)
 
 Handles a player joining the server.
+Removes any message that should be sent on joining the server.
 
 ### Parameters
 
