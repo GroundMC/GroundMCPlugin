@@ -2,6 +2,8 @@ package gtlp.groundmc.lobby.event.listener
 
 import gtlp.groundmc.lobby.LobbyMain
 import gtlp.groundmc.lobby.enums.NBTIdentifier
+import gtlp.groundmc.lobby.enums.Permission
+import gtlp.groundmc.lobby.util.hasPermission
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
@@ -61,7 +63,8 @@ object PreventWorldInteractionListener : Listener {
      */
     @EventHandler(priority = EventPriority.LOWEST)
     fun preventBlockBreaking(event: BlockBreakEvent) {
-        if (event.player.world == LobbyMain.hubLocation.world) {
+        if (event.player.world == LobbyMain.hubLocation.world
+                && event.player.hasPermission(Permission.ADMIN)) {
             event.isCancelled = true
         }
     }
