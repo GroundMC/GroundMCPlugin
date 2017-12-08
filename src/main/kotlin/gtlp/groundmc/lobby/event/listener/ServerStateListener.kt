@@ -100,11 +100,13 @@ object ServerStateListener : Listener {
 
     /**
      * Handles a player joining the server.
+     * Removes any message that should be sent on joining the server.
      *
      * @param event the event to handle
      */
     @EventHandler(priority = EventPriority.LOWEST)
     fun onPlayerLogin(event: PlayerJoinEvent) {
+        event.joinMessage = null
         transaction {
             if (Users.select { Users.id eq event.player.uniqueId }.count() == 0) {
                 Users.insert {
@@ -146,11 +148,13 @@ object ServerStateListener : Listener {
 
     /**
      * Cleans up when a player leaves the server.
+     * Removes any message that should be sent on joining the server.
      *
      * @param event the event to handle
      */
     @EventHandler(priority = EventPriority.LOWEST)
     fun onPlayerLogout(event: PlayerQuitEvent) {
+        event.quitMessage = null
         if (event.player.world == LobbyMain.hubLocation.world) {
             event.player.inventory.contents = LobbyMain.originalInventories[event.player]
         }
