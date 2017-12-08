@@ -51,7 +51,8 @@ object PreventWorldInteractionListener : Listener {
      */
     @EventHandler(priority = EventPriority.LOWEST)
     fun preventItemPickup(event: EntityPickupItemEvent) {
-        if (event.entity.world == LobbyMain.hubLocation.world) {
+        if (event.entity.world == LobbyMain.hubLocation.world
+                && !event.entity.hasPermission(Permission.ADMIN)) {
             event.isCancelled = true
         }
     }
@@ -64,7 +65,7 @@ object PreventWorldInteractionListener : Listener {
     @EventHandler(priority = EventPriority.LOWEST)
     fun preventBlockBreaking(event: BlockBreakEvent) {
         if (event.player.world == LobbyMain.hubLocation.world
-                && event.player.hasPermission(Permission.ADMIN)) {
+                && !event.player.hasPermission(Permission.ADMIN)) {
             event.isCancelled = true
         }
     }
