@@ -4,6 +4,7 @@ import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import de.tr7zw.itemnbtapi.GsonWrapper
 import gtlp.groundmc.lobby.commands.*
+import gtlp.groundmc.lobby.database.table.Events
 import gtlp.groundmc.lobby.database.table.Meta
 import gtlp.groundmc.lobby.database.table.Relationships
 import gtlp.groundmc.lobby.database.table.Users
@@ -83,7 +84,7 @@ class LobbyMain : JavaPlugin() {
             TransactionManager.manager.defaultIsolationLevel = Connection.TRANSACTION_SERIALIZABLE
         }
         transaction {
-            createMissingTablesAndColumns(Meta, Users, Relationships)
+            createMissingTablesAndColumns(Meta, Users, Relationships, Events)
             Meta.upgradeDatabase()
         }
         logger.finer("Registering events...")
