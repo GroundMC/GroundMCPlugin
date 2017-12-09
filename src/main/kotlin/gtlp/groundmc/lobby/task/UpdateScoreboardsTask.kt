@@ -26,8 +26,8 @@ object UpdateScoreboardsTask : ITask {
                 lines += ChatColor.WHITE.toString() + DurationFormatUtils.formatDuration(
                         it.getStatistic(Statistic.PLAY_ONE_TICK) * 50L,
                         "HH'h':mm'm'")
-                lines += ChatColor.WHITE.toString() + I18n.getString("command.coins.currency", it.locale)
-                lines += ChatColor.YELLOW.toString() + Users.getPlayer(it)[Users.coins]
+                lines += ChatColor.YELLOW.toString() + I18n.getString("command.coins.currency", it.locale)
+                lines += ChatColor.WHITE.toString() + Users.getPlayer(it)[Users.coins]
                 lines += "${ChatColor.DARK_AQUA}Events!"
                 if (events.isNotEmpty()) {
                     lines += ChatColor.GREEN.toString() + I18n.getString("event.yes", it.locale)
