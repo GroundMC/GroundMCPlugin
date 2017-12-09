@@ -14,6 +14,7 @@ object UpdateScoreboardsTask : ITask {
     override val period = 20L
 
     override fun run() {
+        val events = Events.getCurrentEventTitles()
         Bukkit.getServer().onlinePlayers.forEach {
             val scoreboard = Bukkit.getScoreboardManager().newScoreboard
             scoreboard.registerNewObjective("1", "dummy").apply {
@@ -24,12 +25,17 @@ object UpdateScoreboardsTask : ITask {
                 lines += ChatColor.GOLD.toString() + I18n.getString("play_time", it.locale)
                 lines += ChatColor.WHITE.toString() + DurationFormatUtils.formatDuration(
                         it.getStatistic(Statistic.PLAY_ONE_TICK) * 50L,
-                        "HH:mm")
+                        "HH'h':mm'm'")
                 lines += ChatColor.WHITE.toString() + I18n.getString("command.coins.currency", it.locale)
                 lines += ChatColor.YELLOW.toString() + Users.getPlayer(it)[Users.coins]
                 lines += "${ChatColor.DARK_AQUA}Events!"
-                lines += "${ChatColor.GREEN}JA!"
-                Events.getCurrentEventTitles().forEach { lines += it }
+                if (events.isNotEmpty()) {
+                    lines += ChatColor.GREEN.toString() + I18n.getString("event.yes", it.locale)
+                    events.forEach { lines += it }
+                } else {
+                    lines += ChatColor.RED.toString() + I18n.getString("event.no", it.locale)
+                }
+                lines += "-".repeat(12)
 
                 var score = 0
                 lines.asReversed().forEach {
@@ -41,4 +47,3 @@ object UpdateScoreboardsTask : ITask {
         }
     }
 }
-
