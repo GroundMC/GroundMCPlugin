@@ -67,7 +67,7 @@ class CommandLobby : ILobbyCommand {
                     return setLobby(sender)
                 }
                 "event" -> {
-                    return handleEvent(sender, args)
+                    return handleEvent(sender, args.sliceArray(1 until args.size))
                 }
                 else -> {
                     sender.sendMessage(getCommandHelp(I18nUtils.getLocaleFromCommandSender(sender)))
@@ -213,11 +213,17 @@ class CommandLobby : ILobbyCommand {
     private fun handleEvent(sender: CommandSender, args: Array<String>): Boolean {
         LobbyMain.logger.entering(CommandLobby::class, "handleEvent")
         if (args.isEmpty()) {
-            Events.getCurrentEvents().forEach {
+            Events.getCurrentEventTitles().forEach {
                 sender.sendMessage(it)
             }
             return true
-        }
+        } else if (args.size == 2)
+            when (args[0]) {
+                "unset" -> {
+                    val index = args[1].toIntOrNull() ?: return false
+                    Events.disable(index)
+                }
+            }
         return false
     }
 
