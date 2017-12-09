@@ -31,7 +31,7 @@ object UpdateScoreboardsTask : ITask {
                 lines += "${ChatColor.DARK_AQUA}Events!"
                 if (events.isNotEmpty()) {
                     lines += ChatColor.GREEN.toString() + I18n.getString("event.yes", it.locale)
-                    events.forEach { lines += it }
+                    lines.addAll(events)
                 } else {
                     lines += ChatColor.RED.toString() + I18n.getString("event.no", it.locale)
                 }
