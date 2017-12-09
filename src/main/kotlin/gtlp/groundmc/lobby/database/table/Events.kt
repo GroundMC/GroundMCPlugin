@@ -20,7 +20,7 @@ object Events : Table() {
      * The title or description of this event.
      * Will be visible in the scoreboard.
      */
-    private val title = text("title")
+    internal val title = text("title")
 
     /**
      * The UUID of the creator of this event.
@@ -81,12 +81,14 @@ object Events : Table() {
      *
      * @param n the index of the event to disable
      *
+     * @return the disabled event.
+     *
      * @see getCurrentEvents
      */
-    fun disable(n: Int) {
-        transaction {
+    fun disable(n: Int): ResultRow {
+        return transaction {
             val events = getCurrentEvents()
-            events[n].also {
+            return@transaction events[n].also {
                 update({ id eq it[id] }, null, {
                     it[active] = false
                 })

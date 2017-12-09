@@ -18,6 +18,7 @@ import org.bukkit.command.ConsoleCommandSender
 import org.bukkit.entity.Player
 import org.bukkit.event.player.PlayerTeleportEvent
 import org.joda.time.DateTime
+import org.joda.time.format.ISODateTimeFormat
 import java.io.File
 import java.util.*
 import java.util.logging.FileHandler
@@ -245,12 +246,14 @@ class CommandLobby : ILobbyCommand {
             return true
         } else if (args.size >= 2) {
             if (!sender.hasPermission(Permission.ADMIN)) {
+                sender.sendMessage(I18n.getString("nopermission", I18nUtils.getLocaleFromCommandSender(sender)))
                 return false
             }
             when (args[0]) {
                 "unset" -> {
                     val index = args[1].toIntOrNull() ?: return false
-                    Events.disable(index)
+                    sender.sendMessage(I18n.getString("event.unset")?.format(Events.disable(index)[Events.title]))
+                    return true
                 }
                 "add" -> {
                     val matches = mutableListOf<String>()
@@ -265,10 +268,15 @@ class CommandLobby : ILobbyCommand {
                         }
                     }
                     val parser = Parser()
-                    val beginDate = parser.parse(matches[0]).first().dates.first()
-                    val endDate = parser.parse(matches[1]).first().dates.first()
+                    val beginDate = DateTime(parser.parse(matches[0]).first().dates.first())
+                    val endDate = DateTime(parser.parse(matches[1]).first().dates.first())
                     val title = matches[2]
-                    return Events.newEvent(title, sender, DateTime(beginDate), DateTime(endDate))
+                    if (Events.newEvent(title, sender, beginDate, endDate)) {
+                        sender.sendMessage(I18n.getString("event.create", I18nUtils.getLocaleFromCommandSender(sender))
+                                ?.format(title, ISODateTimeFormat.dateHourMinuteSecond().print(beginDate),
+                                        ISODateTimeFormat.dateHourMinuteSecond().print(endDate)))
+                        return true
+                    }
                 }
             }
         }
