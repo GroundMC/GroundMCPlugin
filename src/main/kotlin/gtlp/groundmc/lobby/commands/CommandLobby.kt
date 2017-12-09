@@ -1,6 +1,7 @@
 package gtlp.groundmc.lobby.commands
 
 import gtlp.groundmc.lobby.LobbyMain
+import gtlp.groundmc.lobby.database.table.Events
 import gtlp.groundmc.lobby.enums.GMCType
 import gtlp.groundmc.lobby.enums.NBTIdentifier
 import gtlp.groundmc.lobby.enums.Permission
@@ -64,6 +65,9 @@ class CommandLobby : ILobbyCommand {
             //Not in help for a reason
                 "set" -> {
                     return setLobby(sender)
+                }
+                "event" -> {
+                    return handleEvent(sender, args)
                 }
                 else -> {
                     sender.sendMessage(getCommandHelp(I18nUtils.getLocaleFromCommandSender(sender)))
@@ -202,6 +206,17 @@ class CommandLobby : ILobbyCommand {
             }
         } else {
             sender.sendMessage(I18n.getString("command.playeronly", Locale.getDefault()))
+        }
+        return false
+    }
+
+    private fun handleEvent(sender: CommandSender, args: Array<String>): Boolean {
+        LobbyMain.logger.entering(CommandLobby::class, "handleEvent")
+        if (args.isEmpty()) {
+            Events.getCurrentEvents().forEach {
+                sender.sendMessage(it)
+            }
+            return true
         }
         return false
     }
