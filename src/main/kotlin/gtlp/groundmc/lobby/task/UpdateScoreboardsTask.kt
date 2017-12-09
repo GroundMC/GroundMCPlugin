@@ -2,6 +2,7 @@ package gtlp.groundmc.lobby.task
 
 import gtlp.groundmc.lobby.database.table.Events
 import gtlp.groundmc.lobby.database.table.Users
+import gtlp.groundmc.lobby.util.I18n
 import org.apache.commons.lang.time.DurationFormatUtils
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor
@@ -20,12 +21,12 @@ object UpdateScoreboardsTask : ITask {
                 displayName = "${ChatColor.GRAY}${it.displayName}"
 
                 val lines = mutableListOf<String>()
-                lines += "${ChatColor.GOLD}Spielzeit"
+                lines += ChatColor.GOLD.toString() + I18n.getString("play_time", it.locale)
                 lines += ChatColor.WHITE.toString() + DurationFormatUtils.formatDuration(
                         it.getStatistic(Statistic.PLAY_ONE_TICK) * 50L,
                         "HH:mm")
+                lines += ChatColor.WHITE.toString() + I18n.getString("command.coins.currency", it.locale)
                 lines += ChatColor.YELLOW.toString() + Users.getPlayer(it)[Users.coins]
-                lines += "${ChatColor.WHITE}Coming Soon!"
                 lines += "${ChatColor.DARK_AQUA}Events!"
                 lines += "${ChatColor.GREEN}JA!"
                 Events.getCurrentEventTitles().forEach { lines += it }
