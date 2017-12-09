@@ -82,6 +82,11 @@
             <scope>compile</scope>
         </dependency>
         <dependency>
+            <groupId>com.joestelmach</groupId>
+            <artifactId>natty</artifactId>
+            <version>0.13</version>
+        </dependency>
+        <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
             <version>1.12.2-R0.1-SNAPSHOT</version>
@@ -225,6 +230,12 @@
                         <filter>
                             <artifact>org.jetbrains.kotlin:kotlin-reflect
                             </artifact>
+                            <includes>
+                                <include>**</include>
+                            </includes>
+                        </filter>
+                        <filter>
+                            <artifact>commons-logging:commons-logging</artifact>
                             <includes>
                                 <include>**</include>
                             </includes>
