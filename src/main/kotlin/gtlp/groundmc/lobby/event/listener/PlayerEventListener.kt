@@ -286,7 +286,6 @@ class PlayerEventListener : Listener {
         if (event.clickedBlock != null) {
             if (event.clickedBlock.type.name in LobbyMain.instance.get().config.getList("jumppads.material") && event.player.world == LobbyMain.hubLocation.get().world && event.action == Action.PHYSICAL) {
                 event.player.velocity = event.player.location.getDirectionXZ().multiply(LobbyMain.instance.get().config.getDouble("jumppads.multiplier")).setY(LobbyMain.instance.get().config.getDouble("jumppads.y"))
-                event.player.playSound(event.player.location, Sound.ENTITY_ENDERDRAGON_FLAP, 1f, 1f)
                 event.isCancelled = true
             }
         }
