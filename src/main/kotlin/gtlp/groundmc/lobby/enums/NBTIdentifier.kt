@@ -58,6 +58,6 @@ enum class NBTIdentifier(
          * @return whether the [item] has an element with key [PREFIX] of type [Boolean]
          *          and is true.
          */
-        fun itemHasPrefix(item: ItemStack?): Boolean = item != null && NBTItemExt(item).getBoolean(PREFIX)
+        fun itemHasPrefix(item: ItemStack?): Boolean = item != null && NBTItemExt(item).getBoolean(PREFIX)!!
     }
 }

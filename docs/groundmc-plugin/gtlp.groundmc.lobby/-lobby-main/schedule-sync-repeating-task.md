@@ -6,7 +6,7 @@ title: LobbyMain.scheduleSyncRepeatingTask - groundmc-plugin
 
 # scheduleSyncRepeatingTask
 
-`fun `[`BukkitScheduler`](https://hub.spigotmc.org/javadocs/spigot/org/bukkit/scheduler/BukkitScheduler.html)`.scheduleSyncRepeatingTask(task: `[`ITask`](../../gtlp.groundmc.lobby.task/-i-task/index.html)`): `[`Unit`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html)
+`private fun `[`BukkitScheduler`](https://hub.spigotmc.org/javadocs/spigot/org/bukkit/scheduler/BukkitScheduler.html)`.scheduleSyncRepeatingTask(task: `[`ITask`](../../gtlp.groundmc.lobby.task/-i-task/index.html)`): `[`Unit`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html)
 
 Schedules a repeating task.
 

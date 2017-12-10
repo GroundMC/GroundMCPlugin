@@ -23,7 +23,7 @@ object Meta : Table() {
      * Column to hold the current database version.
      * Updated on upgrades.
      */
-    private val version = integer("version").default(CURRENT_TABLE_VER).uniqueIndex().primaryKey()
+    private val version = integer("version").default(CURRENT_TABLE_VER).primaryKey()
 
     /**
      * Upgrades the database by performing the needed modifications to the database.

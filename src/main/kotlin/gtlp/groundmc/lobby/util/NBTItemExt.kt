@@ -1,6 +1,6 @@
 package gtlp.groundmc.lobby.util
 
-import com.google.common.base.Objects
+import com.google.common.base.MoreObjects
 import de.tr7zw.itemnbtapi.NBTItem
 import gtlp.groundmc.lobby.enums.NBTIdentifier
 import org.bukkit.enchantments.Enchantment
@@ -13,6 +13,7 @@ import kotlin.reflect.KClass
  * Extension of [de.tr7zw.itemnbtapi.NBTItem]
  * Allows the use of [NBTIdentifier] as a key.
  */
+@Suppress("unused")
 class NBTItemExt(item: ItemStack) : NBTItem(item), Cloneable {
 
     /**
@@ -97,9 +98,8 @@ class NBTItemExt(item: ItemStack) : NBTItem(item), Cloneable {
      *
      * @return whether a key by [identifier] exists.
      */
-    fun hasKey(identifier: NBTIdentifier): Boolean {
-        return super.hasKey(identifier.toString())
-    }
+    fun hasKey(identifier: NBTIdentifier): Boolean? =
+            super.hasKey(identifier.toString())
 
     /**
      * Removes a key-value pair from this item
@@ -119,9 +119,8 @@ class NBTItemExt(item: ItemStack) : NBTItem(item), Cloneable {
      *
      * @see NBTItem.getInteger
      */
-    fun getInteger(identifier: NBTIdentifier): Int {
-        return super.getInteger(identifier.toString())
-    }
+    fun getInteger(identifier: NBTIdentifier): Int? =
+            super.getInteger(identifier.toString())
 
     /**
      * Gets a boolean value for an identifier
@@ -132,9 +131,8 @@ class NBTItemExt(item: ItemStack) : NBTItem(item), Cloneable {
      *
      * @see NBTItem.getBoolean
      */
-    fun getBoolean(identifier: NBTIdentifier): Boolean {
-        return super.getBoolean(identifier.toString())
-    }
+    fun getBoolean(identifier: NBTIdentifier): Boolean? =
+            super.getBoolean(identifier.toString())
 
     /**
      * Gets a string value for an identifier
@@ -145,9 +143,8 @@ class NBTItemExt(item: ItemStack) : NBTItem(item), Cloneable {
      *
      * @see NBTItem.getString
      */
-    fun getString(identifier: NBTIdentifier): String {
-        return super.getString(identifier.toString())
-    }
+    fun getString(identifier: NBTIdentifier): String? =
+            super.getString(identifier.toString())
 
     /**
      * Gets a double value for an identifier
@@ -158,9 +155,8 @@ class NBTItemExt(item: ItemStack) : NBTItem(item), Cloneable {
      *
      * @see NBTItem.getDouble
      */
-    fun getDouble(identifier: NBTIdentifier): Double {
-        return super.getDouble(identifier.toString())
-    }
+    fun getDouble(identifier: NBTIdentifier): Double? =
+            super.getDouble(identifier.toString())
 
     /**
      * Gets an object value for an identifier
@@ -171,9 +167,8 @@ class NBTItemExt(item: ItemStack) : NBTItem(item), Cloneable {
      *
      * @see NBTItem.getObject
      */
-    fun <T : Any> getObject(identifier: NBTIdentifier, kClass: KClass<T>): T {
-        return super.getObject(identifier.toString(), kClass.java)
-    }
+    fun <T : Any> getObject(identifier: NBTIdentifier, kClass: KClass<T>): T? =
+            super.getObject(identifier.toString(), kClass.java)
 
     /**
      * The displayed name for this item.
@@ -185,9 +180,7 @@ class NBTItemExt(item: ItemStack) : NBTItem(item), Cloneable {
             meta.displayName = displayName
             item.itemMeta = meta
         }
-        get() {
-            return item.itemMeta.displayName
-        }
+        get() = item.itemMeta.displayName
 
     /**
      * The metadata of this item.
@@ -197,9 +190,19 @@ class NBTItemExt(item: ItemStack) : NBTItem(item), Cloneable {
         set(itemMeta) {
             item.itemMeta = itemMeta
         }
-        get() {
-            return item.itemMeta
+        get() = item.itemMeta
+
+    /**
+     * The lore of this item.
+     * This member allow easy read and write access.
+     */
+    var lore: List<String>
+        set(lore) {
+            val meta = item.itemMeta
+            meta.lore = lore
+            item.itemMeta = meta
         }
+        get() = item.itemMeta.lore
 
 
     /**
@@ -272,9 +275,7 @@ class NBTItemExt(item: ItemStack) : NBTItem(item), Cloneable {
      *
      * @return a clone of this item.
      */
-    override public fun clone(): NBTItemExt {
-        return NBTItemExt(item)
-    }
+    override public fun clone(): NBTItemExt = NBTItemExt(item)
 
     /**
      * Creates a string representation of this item.
@@ -282,7 +283,7 @@ class NBTItemExt(item: ItemStack) : NBTItem(item), Cloneable {
      * @return the string representation of this item.
      */
     override fun toString(): String {
-        return Objects.toStringHelper(this)
+        return MoreObjects.toStringHelper(this)
                 .add("bukkitItem", item)
                 .add("parent", parent)
                 .toString()

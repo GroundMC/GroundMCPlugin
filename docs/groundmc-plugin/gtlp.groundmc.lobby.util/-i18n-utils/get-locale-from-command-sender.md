@@ -6,7 +6,7 @@ title: I18nUtils.getLocaleFromCommandSender - groundmc-plugin
 
 # getLocaleFromCommandSender
 
-`fun getLocaleFromCommandSender(sender: `[`CommandSender`](https://hub.spigotmc.org/javadocs/spigot/org/bukkit/command/CommandSender.html)`): `[`Locale`](http://docs.oracle.com/javase/6/docs/api/java/util/Locale.html)
+`fun getLocaleFromCommandSender(sender: `[`CommandSender`](https://hub.spigotmc.org/javadocs/spigot/org/bukkit/command/CommandSender.html)`): Locale`
 
 Parses the locale from a [CommandSender](https://hub.spigotmc.org/javadocs/spigot/org/bukkit/command/CommandSender.html) to translate messages to the [sender](get-locale-from-command-sender.html#gtlp.groundmc.lobby.util.I18nUtils$getLocaleFromCommandSender(org.bukkit.command.CommandSender)/sender)
 
@@ -15,6 +15,6 @@ Parses the locale from a [CommandSender](https://hub.spigotmc.org/javadocs/spigo
 `sender` - the sender of a command to translate messages for
 
 **Return**
-the locale that has been parsed or [Locale.getDefault](http://docs.oracle.com/javase/6/docs/api/java/util/Locale.html#getDefault()),
+the locale that has been parsed or [Locale.getDefault](#),
 if the [sender](get-locale-from-command-sender.html#gtlp.groundmc.lobby.util.I18nUtils$getLocaleFromCommandSender(org.bukkit.command.CommandSender)/sender) is not a player (e.g. the command has been sent from the console)
 

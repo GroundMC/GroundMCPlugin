@@ -6,7 +6,7 @@ title: NBTItemExt.getObject - groundmc-plugin
 
 # getObject
 
-`fun <T : `[`Any`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html)`> getObject(identifier: `[`NBTIdentifier`](../../gtlp.groundmc.lobby.enums/-n-b-t-identifier/index.html)`, kClass: `[`KClass`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.reflect/-k-class/index.html)`<T>): T`
+`fun <T : `[`Any`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html)`> getObject(identifier: `[`NBTIdentifier`](../../gtlp.groundmc.lobby.enums/-n-b-t-identifier/index.html)`, kClass: `[`KClass`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.reflect/-k-class/index.html)`<T>): T?`
 
 Gets an object value for an identifier
 

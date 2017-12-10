@@ -6,7 +6,7 @@ title: I18nUtils.getLocaleFromString - groundmc-plugin
 
 # getLocaleFromString
 
-`fun getLocaleFromString(localeString: `[`String`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html)`): `[`Locale`](http://docs.oracle.com/javase/6/docs/api/java/util/Locale.html)
+`fun getLocaleFromString(localeString: `[`String`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html)`): Locale`
 
 Convert a string based locale into a Locale Object.
 Assumes the string has form "{language}*{country}*{variant}".

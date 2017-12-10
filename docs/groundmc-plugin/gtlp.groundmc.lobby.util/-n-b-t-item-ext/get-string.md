@@ -6,7 +6,7 @@ title: NBTItemExt.getString - groundmc-plugin
 
 # getString
 
-`fun getString(identifier: `[`NBTIdentifier`](../../gtlp.groundmc.lobby.enums/-n-b-t-identifier/index.html)`): `[`String`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html)
+`fun getString(identifier: `[`NBTIdentifier`](../../gtlp.groundmc.lobby.enums/-n-b-t-identifier/index.html)`): `[`String`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html)`?`
 
 Gets a string value for an identifier
 

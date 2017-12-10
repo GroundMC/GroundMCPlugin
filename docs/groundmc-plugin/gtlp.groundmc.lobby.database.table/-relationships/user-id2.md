@@ -6,7 +6,7 @@ title: Relationships.userId2 - groundmc-plugin
 
 # userId2
 
-`private val userId2: Column<`[`UUID`](http://docs.oracle.com/javase/6/docs/api/java/util/UUID.html)`>`
+`private val userId2: Column<UUID>`
 
-The [UUID](http://docs.oracle.com/javase/6/docs/api/java/util/UUID.html) of the second player in the relationship.
+The [UUID](#) of the second player in the relationship.
 

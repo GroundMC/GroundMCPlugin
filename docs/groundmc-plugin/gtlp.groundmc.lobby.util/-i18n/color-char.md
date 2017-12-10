@@ -6,7 +6,7 @@ title: I18n.colorChar - groundmc-plugin
 
 # colorChar
 
-`val colorChar: `[`Char`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-char/index.html)
+`private const val colorChar: `[`Char`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-char/index.html)
 
 The character used to mark styling codes
 Hardcoded to the most common value

@@ -13,5 +13,5 @@ title: gtlp.groundmc.lobby.commands - groundmc-plugin
 | [CommandFriends](-command-friends/index.html) | `class CommandFriends : `[`ILobbyCommand`](-i-lobby-command/index.html)<br>Command to list friends |
 | [CommandLobby](-command-lobby/index.html) | `class CommandLobby : `[`ILobbyCommand`](-i-lobby-command/index.html)<br>The `/lobby` command. Allows players to teleport back to the lobby and obtain help. This also allows administrators to add more teleport destinations. |
 | [CommandVanish](-command-vanish/index.html) | `class CommandVanish : `[`ILobbyCommand`](-i-lobby-command/index.html) |
-| [ILobbyCommand](-i-lobby-command/index.html) | `interface ILobbyCommand`<br>Interface for commands compatible with the {@link LobbyCommandRegistry} |
+| [ILobbyCommand](-i-lobby-command/index.html) | `interface ILobbyCommand : `[`CommandExecutor`](https://hub.spigotmc.org/javadocs/spigot/org/bukkit/command/CommandExecutor.html)`, `[`TabCompleter`](https://hub.spigotmc.org/javadocs/spigot/org/bukkit/command/TabCompleter.html)<br>Interface for commands compatible with the {@link LobbyCommandRegistry} |
 

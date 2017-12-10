@@ -6,7 +6,7 @@ title: NBTItemExt.getDouble - groundmc-plugin
 
 # getDouble
 
-`fun getDouble(identifier: `[`NBTIdentifier`](../../gtlp.groundmc.lobby.enums/-n-b-t-identifier/index.html)`): `[`Double`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-double/index.html)
+`fun getDouble(identifier: `[`NBTIdentifier`](../../gtlp.groundmc.lobby.enums/-n-b-t-identifier/index.html)`): `[`Double`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-double/index.html)`?`
 
 Gets a double value for an identifier
 

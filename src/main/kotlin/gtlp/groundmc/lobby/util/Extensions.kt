@@ -1,5 +1,7 @@
 package gtlp.groundmc.lobby.util
 
+import gtlp.groundmc.lobby.enums.Permission
+import org.bukkit.command.CommandSender
 import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
 import java.util.logging.Logger
@@ -65,6 +67,12 @@ fun Inventory.copy(): Array<ItemStack?> {
     }
     return array
 }
+
+/**
+ * Extension to [CommandSender] that allows the use of our [Permission] enum
+ * directly without pulling out the [Permission.permission] member.
+ */
+fun CommandSender.hasPermission(permission: Permission) = this.hasPermission(permission.permission)
 
 /**
  * Extension to [Int] to convert the integer in megabytes to bytes.

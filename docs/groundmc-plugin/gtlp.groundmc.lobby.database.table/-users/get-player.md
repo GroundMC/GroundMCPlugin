@@ -17,9 +17,9 @@ Queries the database for the [ResultRow](#) of the [player](get-player.html#gtlp
 **Return**
 a row that contains all the columns defined in this class
 
-`fun getPlayer(uuid: `[`UUID`](http://docs.oracle.com/javase/6/docs/api/java/util/UUID.html)`): ResultRow`
+`fun getPlayer(uuid: UUID): ResultRow`
 
-Queries the database for the [ResultRow](#) of a player based on the [UUID](http://docs.oracle.com/javase/6/docs/api/java/util/UUID.html)
+Queries the database for the [ResultRow](#) of a player based on the [UUID](#)
 
 ### Parameters
 

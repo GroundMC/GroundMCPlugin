@@ -6,8 +6,8 @@ title: Relationships.userId1 - groundmc-plugin
 
 # userId1
 
-`private val userId1: Column<`[`UUID`](http://docs.oracle.com/javase/6/docs/api/java/util/UUID.html)`>`
+`private val userId1: Column<UUID>`
 
-The [UUID](http://docs.oracle.com/javase/6/docs/api/java/util/UUID.html) of the first player in the relationship.
+The [UUID](#) of the first player in the relationship.
 Usually the initiator.
 

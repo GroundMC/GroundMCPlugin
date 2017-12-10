@@ -6,7 +6,7 @@ title: Users.id - groundmc-plugin
 
 # id
 
-`val id: Column<`[`UUID`](http://docs.oracle.com/javase/6/docs/api/java/util/UUID.html)`>`
+`val id: Column<UUID>`
 
-The [UUID](http://docs.oracle.com/javase/6/docs/api/java/util/UUID.html) of the player
+The [UUID](#) of the player
 

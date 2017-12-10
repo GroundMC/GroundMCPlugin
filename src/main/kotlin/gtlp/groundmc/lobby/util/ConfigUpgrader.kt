@@ -29,7 +29,7 @@ object ConfigUpgrader {
             val contents = (config["inventory.content"] as List<ItemStack>).toTypedArray()
 
             contents.map(::NBTItemExt).forEachIndexed { index, it ->
-                if (it.hasKey(NBTIdentifier.PREFIX) && it.getInteger(NBTIdentifier.TYPE) == GMCType.TP.ordinal) {
+                if (it.hasKey(NBTIdentifier.PREFIX)!! && it.getInteger(NBTIdentifier.TYPE) == GMCType.TP.ordinal) {
                     LobbyMain.logger.fine("Upgrading ${it.displayName}...")
 
                     val location = Location(Bukkit.getServer().getWorld(it.getString("GMCw")),

@@ -6,7 +6,7 @@ title: Permission.<init> - groundmc-plugin
 
 # &lt;init&gt;
 
-`private Permission(id: `[`String`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html)`)`
+`private Permission(permission: `[`Permission`](https://hub.spigotmc.org/javadocs/spigot/org/bukkit/permissions/Permission.html)`)`
 
 Enum to store permissions as strings.
 Consolidates all permissions into one enum.

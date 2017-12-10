@@ -10,9 +10,9 @@ title: Relationship.<init> - groundmc-plugin
 
 The constructor to create a [Relationship](index.html) out of two usernames.
 
-`Relationship(user1Id: `[`UUID`](http://docs.oracle.com/javase/6/docs/api/java/util/UUID.html)`, user2Id: `[`UUID`](http://docs.oracle.com/javase/6/docs/api/java/util/UUID.html)`, since: `[`DateTime`](http://www.joda.org/joda-time/apidocs/org/joda/time/DateTime.html)` = DateTime.now())`
+`Relationship(user1Id: UUID, user2Id: UUID, since: `[`DateTime`](http://www.joda.org/joda-time/apidocs/org/joda/time/DateTime.html)` = DateTime.now())`
 
-The constructor to create a [Relationship](index.html) out of two users' [UUID](http://docs.oracle.com/javase/6/docs/api/java/util/UUID.html)s.
+The constructor to create a [Relationship](index.html) out of two users' [UUID](#)s.
 
 `Relationship(user1: `[`OfflinePlayer`](https://hub.spigotmc.org/javadocs/spigot/org/bukkit/OfflinePlayer.html)`, user2: `[`OfflinePlayer`](https://hub.spigotmc.org/javadocs/spigot/org/bukkit/OfflinePlayer.html)`, since: `[`DateTime`](http://www.joda.org/joda-time/apidocs/org/joda/time/DateTime.html)` = DateTime.now())`
 
