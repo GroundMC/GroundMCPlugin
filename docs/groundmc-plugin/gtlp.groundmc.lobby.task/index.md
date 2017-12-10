@@ -14,4 +14,5 @@ title: gtlp.groundmc.lobby.task - groundmc-plugin
 | [MonitorLocaleTask](-monitor-locale-task/index.html) | `object MonitorLocaleTask : `[`ITask`](-i-task/index.html)<br>Task to monitor changes in locale changes of players. Calls the [PlayerChangeLocaleEvent](../gtlp.groundmc.lobby.event/-player-change-locale-event/index.html) for changes in locale. |
 | [SetRulesTask](-set-rules-task/index.html) | `object SetRulesTask : `[`ITask`](-i-task/index.html)<br>Task to set the rules. Should only be executed once. |
 | [UpdateLobbyInventoryTask](-update-lobby-inventory-task/index.html) | `object UpdateLobbyInventoryTask : `[`ITask`](-i-task/index.html)<br>Task to update the items in the [LobbyInventory](../gtlp.groundmc.lobby.inventory/-lobby-inventory/index.html) that refer to worlds that are managed by Multiverse-Core and have custom player limits set. |
+| [UpdateScoreboardsTask](-update-scoreboards-task/index.html) | `object UpdateScoreboardsTask : `[`ITask`](-i-task/index.html)<br>Task to regularly update the player's scoreboard with information about their play time, owned coins and currently active events. |
 

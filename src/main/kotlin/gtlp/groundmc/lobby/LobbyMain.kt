@@ -99,6 +99,9 @@ class LobbyMain : JavaPlugin() {
         logger.exiting(LobbyMain::class, "onEnable")
     }
 
+    /**
+     * Schedules all [ITask]s used by the plugin.
+     */
     private fun scheduleTasks() {
         Bukkit.getServer().scheduler.scheduleSyncDelayedTask(SetRulesTask)
         Bukkit.getServer().scheduler.scheduleSyncRepeatingTask(ApplyPlayerEffectsTask)

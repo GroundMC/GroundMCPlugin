@@ -9,10 +9,11 @@ title: alltypes - groundmc-plugin
 | [gtlp.groundmc.lobby.commands.CommandCoins](../gtlp.groundmc.lobby.commands/-command-coins/index.html) | Command to manage coins, a virtual currency of literally no value |
 | [gtlp.groundmc.lobby.commands.CommandFriend](../gtlp.groundmc.lobby.commands/-command-friend/index.html) | Collection of commands related to friends management |
 | [gtlp.groundmc.lobby.commands.CommandFriends](../gtlp.groundmc.lobby.commands/-command-friends/index.html) | Command to list friends |
-| [gtlp.groundmc.lobby.commands.CommandLobby](../gtlp.groundmc.lobby.commands/-command-lobby/index.html) | The `/lobby` command. Allows players to teleport back to the lobby and obtain help. This also allows administrators to add more teleport destinations. |
+| [gtlp.groundmc.lobby.commands.CommandLobby](../gtlp.groundmc.lobby.commands/-command-lobby/index.html) | The `/lobby` command. Allows players to teleport back to the lobby and obtain help. This also allows administrators to add more teleport destinations. Additionally, events can be added to the scoreboard as well. |
 | [org.bukkit.command.CommandSender](../gtlp.groundmc.lobby.util/org.bukkit.command.-command-sender/index.html) (extensions in package gtlp.groundmc.lobby.util) |  |
 | [gtlp.groundmc.lobby.commands.CommandVanish](../gtlp.groundmc.lobby.commands/-command-vanish/index.html) |  |
 | [gtlp.groundmc.lobby.util.ConfigUpgrader](../gtlp.groundmc.lobby.util/-config-upgrader/index.html) | Upgrader to modify the configuration according to changes needed to work with the new version. |
+| [gtlp.groundmc.lobby.database.table.Events](../gtlp.groundmc.lobby.database.table/-events/index.html) | Table holding all past, current and future events planned for the server. |
 | [gtlp.groundmc.lobby.enums.GMCType](../gtlp.groundmc.lobby.enums/-g-m-c-type/index.html) | Enum to determine the type of a lobby item. |
 | [gtlp.groundmc.lobby.inventory.HidePlayerInventory](../gtlp.groundmc.lobby.inventory/-hide-player-inventory/index.html) | Inventory with clickable items to hide other players |
 | [gtlp.groundmc.lobby.event.listener.HidePlayerListener](../gtlp.groundmc.lobby.event.listener/-hide-player-listener/index.html) | This [Listener](https://hub.spigotmc.org/javadocs/spigot/org/bukkit/event/Listener.html) handles the visibility of other players towards the calling player. Handles the opening of the inventory, as well as the selection of the desired [VisibilityStates](../gtlp.groundmc.lobby.enums/-visibility-states/index.html) |
@@ -47,6 +48,7 @@ title: alltypes - groundmc-plugin
 | [gtlp.groundmc.lobby.task.SetRulesTask](../gtlp.groundmc.lobby.task/-set-rules-task/index.html) | Task to set the rules. Should only be executed once. |
 | [gtlp.groundmc.lobby.event.listener.SilentChatListener](../gtlp.groundmc.lobby.event.listener/-silent-chat-listener/index.html) | This [Listener](https://hub.spigotmc.org/javadocs/spigot/org/bukkit/event/Listener.html) manages the silent chat function. It allows players to toggle their chat to silence and non-silence. It also filters the chat for those users that have enabled this feature. |
 | [gtlp.groundmc.lobby.task.UpdateLobbyInventoryTask](../gtlp.groundmc.lobby.task/-update-lobby-inventory-task/index.html) | Task to update the items in the [LobbyInventory](../gtlp.groundmc.lobby.inventory/-lobby-inventory/index.html) that refer to worlds that are managed by Multiverse-Core and have custom player limits set. |
+| [gtlp.groundmc.lobby.task.UpdateScoreboardsTask](../gtlp.groundmc.lobby.task/-update-scoreboards-task/index.html) | Task to regularly update the player's scoreboard with information about their play time, owned coins and currently active events. |
 | [gtlp.groundmc.lobby.database.table.Users](../gtlp.groundmc.lobby.database.table/-users/index.html) | Table to hold players' settings and more data |
 | [gtlp.groundmc.lobby.enums.VisibilityStates](../gtlp.groundmc.lobby.enums/-visibility-states/index.html) | Enum to hold the visibility states. |
 

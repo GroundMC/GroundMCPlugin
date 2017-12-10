@@ -11,4 +11,5 @@ title: CommandLobby.<init> - groundmc-plugin
 The `/lobby` command.
 Allows players to teleport back to the lobby and obtain help.
 This also allows administrators to add more teleport destinations.
+Additionally, events can be added to the scoreboard as well.
 

@@ -23,6 +23,6 @@ Interface for commands compatible with the {@link LobbyCommandRegistry}
 | [CommandCoins](../-command-coins/index.html) | `class CommandCoins : ILobbyCommand`<br>Command to manage coins, a virtual currency of literally no value |
 | [CommandFriend](../-command-friend/index.html) | `class CommandFriend : ILobbyCommand`<br>Collection of commands related to friends management |
 | [CommandFriends](../-command-friends/index.html) | `class CommandFriends : ILobbyCommand`<br>Command to list friends |
-| [CommandLobby](../-command-lobby/index.html) | `class CommandLobby : ILobbyCommand`<br>The `/lobby` command. Allows players to teleport back to the lobby and obtain help. This also allows administrators to add more teleport destinations. |
+| [CommandLobby](../-command-lobby/index.html) | `class CommandLobby : ILobbyCommand`<br>The `/lobby` command. Allows players to teleport back to the lobby and obtain help. This also allows administrators to add more teleport destinations. Additionally, events can be added to the scoreboard as well. |
 | [CommandVanish](../-command-vanish/index.html) | `class CommandVanish : ILobbyCommand` |
 

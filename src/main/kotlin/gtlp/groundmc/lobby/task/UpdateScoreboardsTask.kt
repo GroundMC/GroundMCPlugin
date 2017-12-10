@@ -9,6 +9,10 @@ import org.bukkit.ChatColor
 import org.bukkit.Statistic
 import org.bukkit.scoreboard.DisplaySlot
 
+/**
+ * Task to regularly update the player's scoreboard with information about their
+ * play time, owned coins and currently active events.
+ */
 object UpdateScoreboardsTask : ITask {
     override val delay = 20L
     override val period = 20L

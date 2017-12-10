@@ -28,4 +28,5 @@ or [org.bukkit.scheduler.BukkitScheduler.scheduleSyncDelayedTask](https://hub.sp
 | [MonitorLocaleTask](../-monitor-locale-task/index.html) | `object MonitorLocaleTask : ITask`<br>Task to monitor changes in locale changes of players. Calls the [PlayerChangeLocaleEvent](../../gtlp.groundmc.lobby.event/-player-change-locale-event/index.html) for changes in locale. |
 | [SetRulesTask](../-set-rules-task/index.html) | `object SetRulesTask : ITask`<br>Task to set the rules. Should only be executed once. |
 | [UpdateLobbyInventoryTask](../-update-lobby-inventory-task/index.html) | `object UpdateLobbyInventoryTask : ITask`<br>Task to update the items in the [LobbyInventory](../../gtlp.groundmc.lobby.inventory/-lobby-inventory/index.html) that refer to worlds that are managed by Multiverse-Core and have custom player limits set. |
+| [UpdateScoreboardsTask](../-update-scoreboards-task/index.html) | `object UpdateScoreboardsTask : ITask`<br>Task to regularly update the player's scoreboard with information about their play time, owned coins and currently active events. |
 
