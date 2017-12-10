@@ -1,6 +1,8 @@
 package gtlp.groundmc.lobby.commands
 
+import com.joestelmach.natty.Parser
 import gtlp.groundmc.lobby.LobbyMain
+import gtlp.groundmc.lobby.database.table.Events
 import gtlp.groundmc.lobby.enums.GMCType
 import gtlp.groundmc.lobby.enums.NBTIdentifier
 import gtlp.groundmc.lobby.enums.Permission
@@ -15,6 +17,8 @@ import org.bukkit.command.CommandSender
 import org.bukkit.command.ConsoleCommandSender
 import org.bukkit.entity.Player
 import org.bukkit.event.player.PlayerTeleportEvent
+import org.joda.time.DateTime
+import org.joda.time.format.ISODateTimeFormat
 import java.io.File
 import java.util.*
 import java.util.logging.FileHandler
@@ -24,6 +28,7 @@ import kotlin.concurrent.thread
  * The `/lobby` command.
  * Allows players to teleport back to the lobby and obtain help.
  * This also allows administrators to add more teleport destinations.
+ * Additionally, events can be added to the scoreboard as well.
  */
 class CommandLobby : ILobbyCommand {
 
@@ -34,7 +39,12 @@ class CommandLobby : ILobbyCommand {
     override fun onTabComplete(sender: CommandSender, command: Command, alias: String?, args: Array<out String>?): List<String>? {
         if (args != null) {
             when (args.size) {
-                1 -> return mutableListOf("", "additem", "maketp", "help", "debug").filter { it.startsWith(args.last()) }.sorted()
+                1 -> return mutableListOf("", "additem", "maketp", "help", "debug").apply {
+                    if (sender.hasPermission(Permission.ADMIN)) {
+                        add("set")
+                        add("event")
+                    }
+                }.filter { it.startsWith(args.last()) }.sorted()
                 2 -> if (args[0] == "maketp") {
                     return listOf("name")
                 }
@@ -61,9 +71,11 @@ class CommandLobby : ILobbyCommand {
                 "debug" -> {
                     return debug(sender)
                 }
-            //Not in help for a reason
                 "set" -> {
                     return setLobby(sender)
+                }
+                "event" -> {
+                    return handleEvent(sender, args.sliceArray(1 until args.size))
                 }
                 else -> {
                     sender.sendMessage(getCommandHelp(I18nUtils.getLocaleFromCommandSender(sender)))
@@ -202,6 +214,71 @@ class CommandLobby : ILobbyCommand {
             }
         } else {
             sender.sendMessage(I18n.getString("command.playeronly", Locale.getDefault()))
+        }
+        return false
+    }
+
+    /**
+     * Handles the event subset of this command.
+     *
+     * Called with no arguments, this returns just the titles of the currently
+     * active events.
+     *
+     * Called with `unset` as the first argument and an integer as the second
+     * argument, this will disable the n-th active event.
+     *
+     * Called with `add` as the first argument, this command will add a new event
+     * according to the following syntax:
+     * `/<command> event add "date and time of the beginning of the event"
+     * "date and time of the end of the event" "the title or description of the event"`.
+     * The date and time can be absolute as well as relative to the current time.
+     *
+     * @param args the arguments that accompany this command
+     * @param sender the player that sent the command
+     * @return `true` when the command has been handled successfully, `false` otherwise.
+     */
+    private fun handleEvent(sender: CommandSender, args: Array<String>): Boolean {
+        LobbyMain.logger.entering(CommandLobby::class, "handleEvent")
+        if (args.isEmpty()) {
+            Events.getCurrentEventTitles().forEach {
+                sender.sendMessage(it)
+            }
+            return true
+        } else if (args.size >= 2) {
+            if (!sender.hasPermission(Permission.ADMIN)) {
+                sender.sendMessage(I18n.getString("nopermission", I18nUtils.getLocaleFromCommandSender(sender)))
+                return false
+            }
+            when (args[0]) {
+                "unset" -> {
+                    val index = args[1].toIntOrNull() ?: return false
+                    sender.sendMessage(I18n.getString("event.unset")?.format(Events.disable(index)[Events.title]))
+                    return true
+                }
+                "add" -> {
+                    val matches = mutableListOf<String>()
+                    val joinedArgs = args.sliceArray(1 until args.size).joinToString(" ")
+                    "[^\\s\"']+|\"([^\"]*)\"|'([^']*)'".toPattern().matcher(joinedArgs).apply {
+                        while (find()) {
+                            when {
+                                group(1) != null -> matches.add(group(1))
+                                group(2) != null -> matches.add(group(2))
+                                else -> matches.add(group())
+                            }
+                        }
+                    }
+                    val parser = Parser()
+                    val beginDate = DateTime(parser.parse(matches[0]).first().dates.first())
+                    val endDate = DateTime(parser.parse(matches[1]).first().dates.first())
+                    val title = matches[2]
+                    if (Events.newEvent(title, sender, beginDate, endDate)) {
+                        sender.sendMessage(I18n.getString("event.create", I18nUtils.getLocaleFromCommandSender(sender))
+                                ?.format(title, ISODateTimeFormat.dateHourMinuteSecond().print(beginDate),
+                                        ISODateTimeFormat.dateHourMinuteSecond().print(endDate)))
+                        return true
+                    }
+                }
+            }
         }
         return false
     }

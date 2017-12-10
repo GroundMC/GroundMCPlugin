@@ -4,6 +4,7 @@ import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import de.tr7zw.itemnbtapi.GsonWrapper
 import gtlp.groundmc.lobby.commands.*
+import gtlp.groundmc.lobby.database.table.Events
 import gtlp.groundmc.lobby.database.table.Meta
 import gtlp.groundmc.lobby.database.table.Relationships
 import gtlp.groundmc.lobby.database.table.Users
@@ -83,7 +84,7 @@ class LobbyMain : JavaPlugin() {
             TransactionManager.manager.defaultIsolationLevel = Connection.TRANSACTION_SERIALIZABLE
         }
         transaction {
-            createMissingTablesAndColumns(Meta, Users, Relationships)
+            createMissingTablesAndColumns(Meta, Users, Relationships, Events)
             Meta.upgradeDatabase()
         }
         logger.finer("Registering events...")
@@ -91,15 +92,20 @@ class LobbyMain : JavaPlugin() {
         registerCommands()
 
         logger.finer("Scheduling tasks...")
+        scheduleTasks()
+
+        logger.finer("Setting difficulty of the hub world to peaceful")
+        hubLocation.world.difficulty = Difficulty.PEACEFUL
+        logger.exiting(LobbyMain::class, "onEnable")
+    }
+
+    private fun scheduleTasks() {
         Bukkit.getServer().scheduler.scheduleSyncDelayedTask(SetRulesTask)
         Bukkit.getServer().scheduler.scheduleSyncRepeatingTask(ApplyPlayerEffectsTask)
         Bukkit.getServer().scheduler.scheduleSyncRepeatingTask(HidePlayersTask)
         Bukkit.getServer().scheduler.scheduleSyncRepeatingTask(MonitorLocaleTask)
         Bukkit.getServer().scheduler.scheduleSyncRepeatingTask(UpdateLobbyInventoryTask)
-
-        logger.finer("Setting difficulty of the hub world to peaceful")
-        hubLocation.world.difficulty = Difficulty.PEACEFUL
-        logger.exiting(LobbyMain::class, "onEnable")
+        Bukkit.getServer().scheduler.scheduleSyncRepeatingTask(UpdateScoreboardsTask)
     }
 
     /**
