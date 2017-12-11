@@ -2,11 +2,9 @@ package gtlp.groundmc.lobby.database.table
 
 import gtlp.groundmc.lobby.LobbyMain
 import gtlp.groundmc.lobby.database.table.legacy.Meta0
+import gtlp.groundmc.lobby.enums.Config
 import gtlp.groundmc.lobby.util.entering
-import org.jetbrains.exposed.sql.Table
-import org.jetbrains.exposed.sql.insert
-import org.jetbrains.exposed.sql.select
-import org.jetbrains.exposed.sql.selectAll
+import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
 
 /**
@@ -21,11 +19,6 @@ object Meta : Table() {
     private val CURRENT_TABLE_VER = 3
 
     /**
-     * Key to be used to save the database's version
-     */
-    private val DB_VERSION = "db.version"
-
-    /**
      * Key part of the table.
      */
     val key = varchar("key", 255).primaryKey()
@@ -33,7 +26,7 @@ object Meta : Table() {
     /**
      * Value part of the table.
      */
-    val value = varchar("value", 16384)
+    val value = varchar("value", 16384).default("")
 
     /**
      * Upgrades the database by performing the needed modifications to the database.
@@ -44,7 +37,7 @@ object Meta : Table() {
             transaction {
                 var currentVersion = Meta0.selectAll().firstOrNull()?.tryGet(Meta0.version)
                 if (currentVersion == 0) {
-                    currentVersion = select { key eq DB_VERSION }.firstOrNull()?.tryGet(value)?.toInt() ?: CURRENT_TABLE_VER
+                    currentVersion = select { key eq Config.DATABASE_VERSION.key }.firstOrNull()?.tryGet(value)?.toInt() ?: CURRENT_TABLE_VER
                 }
                 for (version in currentVersion!!..CURRENT_TABLE_VER) {
                     when (version) {
@@ -58,7 +51,7 @@ object Meta : Table() {
                         2 -> {
                             Meta.dropStatement().forEach { exec(it) }
                             Meta.createStatement().forEach { exec(it) }
-                            exec("REPLACE INTO `Meta`(`key`, `value`) VALUES (\"$DB_VERSION\", \"$CURRENT_TABLE_VER\")")
+                            exec("REPLACE INTO `Meta`(`key`, `value`) VALUES (\"${Config.DATABASE_VERSION.key}\", \"$CURRENT_TABLE_VER\")")
                             commit()
                         }
                     }
@@ -67,12 +60,42 @@ object Meta : Table() {
         } catch (exception: NoSuchElementException) {
             transaction {
                 Meta.insert {
-                    it[key] = DB_VERSION
+                    it[key] = Config.DATABASE_VERSION.key
                     it[value] = CURRENT_TABLE_VER.toString()
                 }
                 commit()
             }
             LobbyMain.logger.info("Database newly created, no update necessary")
+        }
+    }
+
+    /**
+     * Queries the database for a given key and returns the value associated
+     * to it.
+     *
+     * @param key the key to lookup
+     *
+     * @return the value associated with the [key] or `null`, if not present.
+     */
+    fun getConfig(key: Config) = transaction {
+        select {
+            Meta.key eq key.key
+        }.toList().first().tryGet(value) ?: ""
+    }
+
+    /**
+     * Updates the config and replaces the current value with the new one.
+     *
+     * @param key the key to associate the value with
+     * @param value the contents of this configuration item
+     */
+    fun putConfig(key: Config, value: String) {
+        transaction {
+            replace {
+                it[Meta.key] = key.key
+                it[Meta.value] = value
+            }
+            commit()
         }
     }
 }
