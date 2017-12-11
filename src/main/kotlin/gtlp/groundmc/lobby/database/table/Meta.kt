@@ -1,11 +1,13 @@
 package gtlp.groundmc.lobby.database.table
 
+import com.google.common.cache.CacheBuilder
 import gtlp.groundmc.lobby.LobbyMain
 import gtlp.groundmc.lobby.database.table.legacy.Meta0
 import gtlp.groundmc.lobby.enums.Config
 import gtlp.groundmc.lobby.util.entering
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
+import java.util.concurrent.TimeUnit
 
 /**
  * Meta table to store the runtime configuration of the plugin.
@@ -17,6 +19,8 @@ object Meta : Table() {
      * Used to track the upgrade process and to determine what upgrades to do.
      */
     private val CURRENT_TABLE_VER = 3
+
+    private val configCache = CacheBuilder.newBuilder().expireAfterWrite(5L, TimeUnit.SECONDS).build<Config, String>()
 
     /**
      * Key part of the table.
@@ -77,11 +81,16 @@ object Meta : Table() {
      *
      * @return the value associated with the [key] or `null`, if not present.
      */
-    fun getConfig(key: Config) = transaction {
-        select {
-            Meta.key eq key.key
-        }.toList().first().tryGet(value) ?: ""
+    fun getConfig(key: Config): String {
+        return configCache.get(key, {
+            transaction {
+                select {
+                    Meta.key eq key.key
+                }.toList().first().tryGet(value) ?: ""
+            }
+        })
     }
+
 
     /**
      * Updates the config and replaces the current value with the new one.
