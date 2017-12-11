@@ -81,9 +81,9 @@ object ServerStateListener : Listener {
      */
     @EventHandler
     fun onPlayerChangeWorld(event: PlayerChangedWorldEvent) {
-        if (event.from == (Meta.getConfig(Config.HUB_LOCATION) as Location).world) {
+        if (event.from == (Meta[Config.HUB_LOCATION] as Location).world) {
             event.player.inventory.contents = LobbyMain.originalInventories[event.player]
-        } else if (event.player.world == (Meta.getConfig(Config.HUB_LOCATION) as Location).world) {
+        } else if (event.player.world == (Meta[Config.HUB_LOCATION] as Location).world) {
             LobbyMain.originalInventories[event.player] = event.player.inventory.copy()
             addItemsToInventory(event.player)
         }
@@ -96,7 +96,7 @@ object ServerStateListener : Listener {
      */
     @EventHandler
     fun onPlayerChangeLocale(event: PlayerChangeLocaleEvent) {
-        if (event.player.world == (Meta.getConfig(Config.HUB_LOCATION) as Location).world) {
+        if (event.player.world == (Meta[Config.HUB_LOCATION] as Location).world) {
             addItemsToInventory(event.player)
         }
     }
@@ -120,7 +120,7 @@ object ServerStateListener : Listener {
         }
         LobbyMain.originalInventories[event.player] = event.player.inventory.copy()
 
-        if (event.player.world == (Meta.getConfig(Config.HUB_LOCATION) as Location).world) {
+        if (event.player.world == (Meta[Config.HUB_LOCATION] as Location).world) {
             addItemsToInventory(event.player)
         }
 
@@ -137,12 +137,12 @@ object ServerStateListener : Listener {
     private fun addDailyBonus(player: Player) {
         val playerRow = Users.getPlayer(player)
         if (playerRow[Users.lastDailyCoinsDate].plusDays(1).isBeforeNow) {
-            player.sendMessage(I18n.getString("event.dailyCoins", player.locale)?.format(Meta.getConfig(Config.COINS_DAILY)))
+            player.sendMessage(I18n.getString("event.dailyCoins", player.locale)?.format(Meta[Config.COINS_DAILY]))
             player.playSound(player.location, Sound.ENTITY_PLAYER_LEVELUP, 1.0f, 1.0f)
             transaction {
                 Users.update({ Users.id eq player.uniqueId }) {
                     it[lastName] = player.name
-                    it[coins] = playerRow[coins] + Meta.getConfig(Config.COINS_DAILY) as Int
+                    it[coins] = playerRow[coins] + Meta[Config.COINS_DAILY] as Int
                     it[lastDailyCoinsDate] = DateTime.now()
                 }
             }
@@ -158,7 +158,7 @@ object ServerStateListener : Listener {
     @EventHandler(priority = EventPriority.LOWEST)
     fun onPlayerLogout(event: PlayerQuitEvent) {
         event.quitMessage = null
-        if (event.player.world == (Meta.getConfig(Config.HUB_LOCATION) as Location).world) {
+        if (event.player.world == (Meta[Config.HUB_LOCATION] as Location).world) {
             event.player.inventory.contents = LobbyMain.originalInventories[event.player]
         }
         LobbyMain.originalInventories.remove(event.player)

@@ -17,7 +17,6 @@ import gtlp.groundmc.lobby.util.*
 import org.bukkit.Bukkit
 import org.bukkit.Difficulty
 import org.bukkit.Location
-import org.bukkit.Material
 import org.bukkit.configuration.MemorySection
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
@@ -102,7 +101,7 @@ class LobbyMain : JavaPlugin() {
         scheduleTasks()
 
         logger.finer("Setting difficulty of the hub world to peaceful")
-        (Meta.getConfig(Config.HUB_LOCATION) as Location).world.difficulty = Difficulty.PEACEFUL
+        (Meta.get(Config.HUB_LOCATION) as Location).world.difficulty = Difficulty.PEACEFUL
         logger.exiting(LobbyMain::class, "onEnable")
     }
 
@@ -220,18 +219,12 @@ class LobbyMain : JavaPlugin() {
         logger.entering(LobbyMain::class, "createDefaultConfig")
         config.addDefault("inventory.content", listOf<ItemStack>())
 
-        config.addDefault("hub", Bukkit.getWorlds().first().spawnLocation)
-
         config.addDefault("log.verbosity", "FINEST")
 
         config.addDefault("database.username", "")
         config.addDefault("database.password", "")
         config.addDefault("database.driver", "org.h2.Driver")
         config.addDefault("database.url", "jdbc:h2:\$dataFolder/database")
-
-        config.addDefault("jumppads.material", listOf(Material.GOLD_PLATE))
-        config.addDefault("jumppads.multiplier", 3.0)
-        config.addDefault("jumppads.y", 1.5)
 
         config.addDefault("version", configVersion)
 

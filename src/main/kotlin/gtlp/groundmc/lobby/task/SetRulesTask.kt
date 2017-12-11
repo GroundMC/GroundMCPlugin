@@ -13,7 +13,7 @@ object SetRulesTask : ITask {
     override val period = 0L
 
     override fun run() {
-        (Meta.getConfig(Config.HUB_LOCATION) as Location).world.apply {
+        (Meta[Config.HUB_LOCATION] as Location).world.apply {
             setGameRuleValue("doDaylightCycle", "false")
             setGameRuleValue("doEntityDrops", "false")
             setGameRuleValue("doFireTick", "false")

@@ -86,14 +86,14 @@ class CommandLobby : ILobbyCommand {
                 }
             }
         } else if (sender is Player) {
-            sender.teleport(Meta.getConfig(Config.HUB_LOCATION) as Location, PlayerTeleportEvent.TeleportCause.COMMAND)
+            sender.teleport(Meta[Config.HUB_LOCATION] as Location, PlayerTeleportEvent.TeleportCause.COMMAND)
             return true
         }
         return false
     }
 
     /**
-     * Sets the [LobbyMain.hubLocation] to the [sender]s current location.
+     * Sets the hub location to the [sender]s current location.
      *
      * @param sender the player that sent the command
      * @return is always true to not trigger the command help of Spigot.
@@ -101,7 +101,7 @@ class CommandLobby : ILobbyCommand {
     private fun setLobby(sender: CommandSender): Boolean {
         LobbyMain.logger.entering(CommandLobby::class, "setLobby")
         if (sender.hasPermission(Permission.ADMIN) && sender is Player) {
-            Meta.putConfig(Config.HUB_LOCATION, sender.location)
+            Meta[Config.HUB_LOCATION] = sender.location
             Bukkit.getServer().scheduler.scheduleSyncDelayedTask(LobbyMain.instance, SetRulesTask)
             sender.sendMessage(I18n.getString("command.lobby.location_set", sender.locale))
         } else if (sender is Player) {

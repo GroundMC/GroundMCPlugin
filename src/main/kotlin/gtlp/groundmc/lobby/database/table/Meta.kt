@@ -67,16 +67,23 @@ object Meta : Table() {
                         }
                         3 -> {
                             if ("coins.dailyAmount" in LobbyMain.instance.config) {
-                                Meta.putConfig(Config.COINS_DAILY, LobbyMain.instance.config.getInt("coins.dailyAmount", 100))
+                                set(Config.COINS_DAILY, LobbyMain.instance.config.getInt("coins.dailyAmount", 100))
                             }
                             if ("slowchat.enabled" in LobbyMain.instance.config &&
                                     "slowchat.timeout" in LobbyMain.instance.config) {
-                                Meta.putConfig(Config.SLOWCHAT_ENABLED, LobbyMain.instance.config.getBoolean("slowchat.enabled", false).toString())
-                                Meta.putConfig(Config.SLOWCHAT_TIMEOUT, LobbyMain.instance.config.getLong("slowchat.timeout", 3000).toString())
+                                set(Config.SLOWCHAT_ENABLED, LobbyMain.instance.config.getBoolean("slowchat.enabled", false).toString())
+                                set(Config.SLOWCHAT_TIMEOUT, LobbyMain.instance.config.getLong("slowchat.timeout", 3000).toString())
                             }
                             if ("hub" in LobbyMain.instance.config) {
-                                Meta.putConfig(Config.HUB_LOCATION, GsonWrapper.getString(LobbyMain.instance.config.get("hub",
+                                set(Config.HUB_LOCATION, GsonWrapper.getString(LobbyMain.instance.config.get("hub",
                                         Bukkit.getWorlds().first().spawnLocation)))
+                            }
+                            if ("jumppads.material" in LobbyMain.instance.config &&
+                                    "jumppads.multiplier" in LobbyMain.instance.config &&
+                                    "jumppads.y" in LobbyMain.instance.config) {
+                                set(Config.JUMPPADS_MATERIAL, LobbyMain.instance.config.getList("jumppads.material"))
+                                set(Config.JUMPPADS_MULTIPLIER, LobbyMain.instance.config.getDouble("jumppads.multiplier"))
+                                set(Config.JUMPPADS_Y, LobbyMain.instance.config.getDouble("jumppads.y"))
                             }
                         }
                     }
@@ -102,7 +109,7 @@ object Meta : Table() {
      *
      * @return the value associated with the [key] or `null`, if not present.
      */
-    fun getConfig(key: Config): Any? {
+    operator fun get(key: Config): Any? {
         return GsonWrapper.deserializeJson(
                 StringEscapeUtils.unescapeJava(configCache.get(key, {
                     transaction {
@@ -120,7 +127,7 @@ object Meta : Table() {
      * @param key the key to associate the value with
      * @param value the contents of this configuration item
      */
-    fun putConfig(key: Config, value: Any) {
+    operator fun set(key: Config, value: Any) {
         transaction {
             deleteWhere { Meta.key eq key.key }
             insert {

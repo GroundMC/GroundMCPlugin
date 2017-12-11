@@ -39,7 +39,7 @@ object UpdateLobbyInventoryTask : ITask {
             val nbtItem = NBTItemExt(it)
             if (NBTIdentifier.itemHasPrefix(it) && nbtItem.getInteger(NBTIdentifier.TYPE) == GMCType.TP.ordinal) {
                 val world = nbtItem.getObject(NBTIdentifier.TP_LOC, Location::class)!!.world
-                if (world != (Meta.getConfig(Config.HUB_LOCATION) as Location).world) {
+                if (world != (Meta[Config.HUB_LOCATION] as Location).world) {
                     val mvWorld = worldManager.getMVWorld(world)
                     val nPlayers = mvWorld.cbWorld.players.size
                     val playerLimit = mvWorld.playerLimit

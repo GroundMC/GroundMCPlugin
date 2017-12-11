@@ -13,7 +13,7 @@ object ApplyPlayerEffectsTask : ITask {
     override val period: Long = 20L
 
     override fun run() {
-        Bukkit.getOnlinePlayers().filter { it.world == (Meta.getConfig(Config.HUB_LOCATION) as Location).world }.forEach {
+        Bukkit.getOnlinePlayers().filter { it.world == (Meta[Config.HUB_LOCATION] as Location).world }.forEach {
             it.health = 20.0
             it.saturation = 20.0f
         }
