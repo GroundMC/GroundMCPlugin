@@ -83,10 +83,16 @@ class LobbyMain : JavaPlugin() {
         if (config.getString("database.driver") == "org.sqlite.JDBC") {
             TransactionManager.manager.defaultIsolationLevel = Connection.TRANSACTION_SERIALIZABLE
         }
-        transaction {
-            createMissingTablesAndColumns(Meta, Users, Relationships, Events)
-            Meta.upgradeDatabase()
+        try {
+            transaction {
+                createMissingTablesAndColumns(Meta, Users, Relationships, Events)
+            }
+        } catch (e: Exception) {
+            logger.warning("Error in first database update pass. If you are updating the database from version " +
+                    "2 to version 3, you can ignore this warning.")
         }
+        Meta.upgradeDatabase()
+
         logger.finer("Registering events...")
         registerListeners()
         registerCommands()

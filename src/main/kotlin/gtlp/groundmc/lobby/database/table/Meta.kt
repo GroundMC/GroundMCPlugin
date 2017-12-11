@@ -1,29 +1,39 @@
 package gtlp.groundmc.lobby.database.table
 
 import gtlp.groundmc.lobby.LobbyMain
+import gtlp.groundmc.lobby.database.table.legacy.Meta0
 import gtlp.groundmc.lobby.util.entering
 import org.jetbrains.exposed.sql.Table
 import org.jetbrains.exposed.sql.insert
+import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
-import org.jetbrains.exposed.sql.update
-import java.util.*
 
 /**
- * Meta table to handle upgrades to the database
+ * Meta table to store the runtime configuration of the plugin.
+ * It also handles upgrades to the database.
  */
 object Meta : Table() {
     /**
      * The latest version of the database.
      * Used to track the upgrade process and to determine what upgrades to do.
      */
-    private val CURRENT_TABLE_VER = 2
+    private val CURRENT_TABLE_VER = 3
 
     /**
-     * Column to hold the current database version.
-     * Updated on upgrades.
+     * Key to be used to save the database's version
      */
-    private val version = integer("version").default(CURRENT_TABLE_VER).primaryKey()
+    private val DB_VERSION = "db.version"
+
+    /**
+     * Key part of the table.
+     */
+    val key = varchar("key", 255).primaryKey()
+
+    /**
+     * Value part of the table.
+     */
+    val value = varchar("value", 16384)
 
     /**
      * Upgrades the database by performing the needed modifications to the database.
@@ -32,23 +42,34 @@ object Meta : Table() {
         LobbyMain.logger.entering(Meta::class, "upgradeDatabase")
         try {
             transaction {
-                val currentVersion = Meta.selectAll().first()[version]
-                for (version in currentVersion..CURRENT_TABLE_VER) {
+                var currentVersion = Meta0.selectAll().firstOrNull()?.tryGet(Meta0.version)
+                if (currentVersion == 0) {
+                    currentVersion = select { key eq DB_VERSION }.firstOrNull()?.tryGet(value)?.toInt() ?: CURRENT_TABLE_VER
+                }
+                for (version in currentVersion!!..CURRENT_TABLE_VER) {
                     when (version) {
                         1 -> {
                             Relationships.columns.filter { it.name.toUpperCase() in arrayOf("LEVEL", "RELATIONSHIP") }.forEach {
                                 exec(it.dropStatement().first())
                             }
-                            update({ Meta.version eq 1 }) {
-                                it[Meta.version] = 2
-                            }
+                            exec("UPDATE `Meta` SET version = 2")
+                            commit()
+                        }
+                        2 -> {
+                            Meta.dropStatement().forEach { exec(it) }
+                            Meta.createStatement().forEach { exec(it) }
+                            exec("REPLACE INTO `Meta`(`key`, `value`) VALUES (\"$DB_VERSION\", \"$CURRENT_TABLE_VER\")")
+                            commit()
                         }
                     }
                 }
             }
         } catch (exception: NoSuchElementException) {
             transaction {
-                Meta.insert { it[version] = CURRENT_TABLE_VER }
+                Meta.insert {
+                    it[key] = DB_VERSION
+                    it[value] = CURRENT_TABLE_VER.toString()
+                }
                 commit()
             }
             LobbyMain.logger.info("Database newly created, no update necessary")
