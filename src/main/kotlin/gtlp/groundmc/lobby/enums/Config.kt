@@ -5,4 +5,5 @@ enum class Config(val key: String) {
     COINS_DAILY("coins.daily"),
     SLOWCHAT_ENABLED("slowchat.enabled"),
     SLOWCHAT_TIMEOUT("slowchat.timeout"),
+    HUB_LOCATION("hub.location")
 }

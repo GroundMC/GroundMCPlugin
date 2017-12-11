@@ -1,5 +1,6 @@
 package gtlp.groundmc.lobby.util
 
+import de.tr7zw.itemnbtapi.GsonWrapper
 import gtlp.groundmc.lobby.LobbyMain
 import gtlp.groundmc.lobby.database.table.Meta
 import gtlp.groundmc.lobby.enums.Config
@@ -78,11 +79,11 @@ object ConfigUpgrader {
         }
         if ("slowchat.enabled" in config &&
                 "slowchat.timeout" in config) {
-            Meta.putConfig(Config.SLOWCHAT_ENABLED, config.getString("slowchat.enabled"))
-            Meta.putConfig(Config.SLOWCHAT_TIMEOUT, config.getString("slowchat.timeout"))
+            Meta.putConfig(Config.SLOWCHAT_ENABLED, config.getBoolean("slowchat.enabled").toString())
+            Meta.putConfig(Config.SLOWCHAT_TIMEOUT, config.getLong("slowchat.timeout").toString())
         }
-        if ("" in config) {
-
+        if ("hub" in config) {
+            Meta.putConfig(Config.HUB_LOCATION, GsonWrapper.getString(config.get("hub")))
         }
         LobbyMain.logger.exiting(ConfigUpgrader::class, "moveRuntimeConfigToDatabase")
     }

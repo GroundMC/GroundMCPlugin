@@ -8,6 +8,7 @@ import gtlp.groundmc.lobby.database.table.Events
 import gtlp.groundmc.lobby.database.table.Meta
 import gtlp.groundmc.lobby.database.table.Relationships
 import gtlp.groundmc.lobby.database.table.Users
+import gtlp.groundmc.lobby.enums.Config
 import gtlp.groundmc.lobby.event.listener.*
 import gtlp.groundmc.lobby.inventory.LobbyInventory
 import gtlp.groundmc.lobby.registry.LobbyCommandRegistry
@@ -101,7 +102,7 @@ class LobbyMain : JavaPlugin() {
         scheduleTasks()
 
         logger.finer("Setting difficulty of the hub world to peaceful")
-        hubLocation.world.difficulty = Difficulty.PEACEFUL
+        GsonWrapper.deserializeJson(Meta.getConfig(Config.HUB_LOCATION), Location::class.java).world.difficulty = Difficulty.PEACEFUL
         logger.exiting(LobbyMain::class, "onEnable")
     }
 
@@ -207,8 +208,6 @@ class LobbyMain : JavaPlugin() {
                 }
             }
         }
-        // Get lobby location
-        hubLocation = config.get("hub") as Location
         logger.info("Setting logger verbosity to ${config.getString("log.verbosity", "FINEST")}")
         logger.level = Level.parse(config.getString("log.verbosity", "FINEST"))
         logger.finer("Loaded config.")
@@ -307,11 +306,6 @@ class LobbyMain : JavaPlugin() {
          * A map of [Player]s to their inventory contents.
          */
         val originalInventories = mutableMapOf<Player, Array<ItemStack?>>()
-
-        /**
-         * Variable to hold the [Location] of the hub/lobby.
-         */
-        lateinit var hubLocation: Location
 
         /**
          * A map of tasks to their IDs
