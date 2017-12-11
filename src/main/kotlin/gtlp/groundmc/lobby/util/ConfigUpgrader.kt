@@ -1,6 +1,8 @@
 package gtlp.groundmc.lobby.util
 
 import gtlp.groundmc.lobby.LobbyMain
+import gtlp.groundmc.lobby.database.table.Meta
+import gtlp.groundmc.lobby.enums.Config
 import gtlp.groundmc.lobby.enums.GMCType
 import gtlp.groundmc.lobby.enums.NBTIdentifier
 import org.bukkit.Bukkit
@@ -67,6 +69,14 @@ object ConfigUpgrader {
             config["jumppads.y"] = 1
         }
         LobbyMain.logger.exiting(ConfigUpgrader::class, "addJumpPadConfiguration")
+    }
+
+    fun moveRuntimeConfigToDatabase(config: Configuration) {
+        LobbyMain.logger.entering(ConfigUpgrader::class, "moveRuntimeConfigToDatabase")
+        if ("coins.dailyAmount" in config) {
+            Meta.putConfig(Config.COINS_DAILY, config.getString("coins.dailyAmount"))
+        }
+        LobbyMain.logger.exiting(ConfigUpgrader::class, "moveRuntimeConfigToDatabase")
     }
 
 }

@@ -2,7 +2,9 @@ package gtlp.groundmc.lobby.event.listener
 
 import gtlp.groundmc.lobby.Items
 import gtlp.groundmc.lobby.LobbyMain
+import gtlp.groundmc.lobby.database.table.Meta
 import gtlp.groundmc.lobby.database.table.Users
+import gtlp.groundmc.lobby.enums.Config
 import gtlp.groundmc.lobby.enums.NBTIdentifier
 import gtlp.groundmc.lobby.enums.Permission
 import gtlp.groundmc.lobby.enums.VisibilityStates
@@ -134,12 +136,12 @@ object ServerStateListener : Listener {
     private fun addDailyBonus(player: Player) {
         val playerRow = Users.getPlayer(player)
         if (playerRow[Users.lastDailyCoinsDate].plusDays(1).isBeforeNow) {
-            player.sendMessage(I18n.getString("event.dailyCoins", player.locale)?.format(LobbyMain.dailyCoins))
+            player.sendMessage(I18n.getString("event.dailyCoins", player.locale)?.format(Meta.getConfig(Config.COINS_DAILY)))
             player.playSound(player.location, Sound.ENTITY_PLAYER_LEVELUP, 1.0f, 1.0f)
             transaction {
                 Users.update({ Users.id eq player.uniqueId }) {
                     it[lastName] = player.name
-                    it[coins] = playerRow[coins] + LobbyMain.dailyCoins
+                    it[coins] = playerRow[coins] + Meta.getConfig(Config.COINS_DAILY).toInt()
                     it[lastDailyCoinsDate] = DateTime.now()
                 }
             }

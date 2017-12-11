@@ -2,8 +2,6 @@
 # The location and world this plugin should work in.
 hub:
 
-coins:
-  dailyAmount: 100
 
 # Slowchat configuration
 # Timeout is measured in milliseconds.

@@ -176,6 +176,7 @@ class LobbyMain : JavaPlugin() {
             when (currentVersion) {
                 1 -> ConfigUpgrader.upgradeItemsToUseObject(config)
                 2 -> ConfigUpgrader.addJumpPadConfiguration(config)
+                3 -> ConfigUpgrader.moveRuntimeConfigToDatabase(config)
             }
         }
 
@@ -208,7 +209,6 @@ class LobbyMain : JavaPlugin() {
         }
         // Get lobby location
         hubLocation = config.get("hub") as Location
-        dailyCoins = config.getInt("coins.dailyAmount")
         logger.info("Setting logger verbosity to ${config.getString("log.verbosity", "FINEST")}")
         logger.level = Level.parse(config.getString("log.verbosity", "FINEST"))
         logger.finer("Loaded config.")
@@ -332,11 +332,6 @@ class LobbyMain : JavaPlugin() {
          * Common instance of this [LobbyMain] plugin.
          */
         lateinit var instance: LobbyMain
-
-        /**
-         * The variable holding the amount of coins a player gets every day.
-         */
-        var dailyCoins = 0
 
         /**
          * The [Logger] that is created in the init block.
