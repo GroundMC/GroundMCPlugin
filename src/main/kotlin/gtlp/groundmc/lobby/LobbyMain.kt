@@ -224,12 +224,7 @@ class LobbyMain : JavaPlugin() {
 
         config.addDefault("hub", Bukkit.getWorlds().first().spawnLocation)
 
-        config.addDefault("coins.dailyAmount", 100)
-
         config.addDefault("log.verbosity", "FINEST")
-
-        config.addDefault("slowchat.enabled", true)
-        config.addDefault("slowchat.timeout", 5)
 
         config.addDefault("database.username", "")
         config.addDefault("database.password", "")

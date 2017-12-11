@@ -76,6 +76,14 @@ object ConfigUpgrader {
         if ("coins.dailyAmount" in config) {
             Meta.putConfig(Config.COINS_DAILY, config.getString("coins.dailyAmount"))
         }
+        if ("slowchat.enabled" in config &&
+                "slowchat.timeout" in config) {
+            Meta.putConfig(Config.SLOWCHAT_ENABLED, config.getString("slowchat.enabled"))
+            Meta.putConfig(Config.SLOWCHAT_TIMEOUT, config.getString("slowchat.timeout"))
+        }
+        if ("" in config) {
+
+        }
         LobbyMain.logger.exiting(ConfigUpgrader::class, "moveRuntimeConfigToDatabase")
     }
 

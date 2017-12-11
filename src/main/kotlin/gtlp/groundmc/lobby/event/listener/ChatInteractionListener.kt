@@ -1,6 +1,8 @@
 package gtlp.groundmc.lobby.event.listener
 
 import gtlp.groundmc.lobby.LobbyMain
+import gtlp.groundmc.lobby.database.table.Meta
+import gtlp.groundmc.lobby.enums.Config
 import gtlp.groundmc.lobby.util.I18n
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
@@ -17,23 +19,17 @@ import org.joda.time.Instant
 object ChatInteractionListener : Listener {
 
     /**
-     * Holds the timeout for chat messages per user in milliseconds.
-     * This is initialized only once when needed, thus lazy.
-     */
-    private val timeout: Long by lazy {
-        LobbyMain.instance.config.getLong("slowchat.timeout")
-    }
-
-    /**
      * Slows down the chat by cancelling fast chat messages.
      *
      * @param event the event to handle
      */
     @EventHandler(priority = EventPriority.LOWEST)
     fun slowChat(event: AsyncPlayerChatEvent) {
-        if (LobbyMain.instance.config.getBoolean("slowchat.enabled")) {
+        if (Meta.getConfig(Config.SLOWCHAT_ENABLED).toBoolean()) {
             val key = "lastChatMsg"
-            if (event.player.hasMetadata(key) && (Instant.now() - event.player.getMetadata(key).first { it.owningPlugin == LobbyMain.instance }.asLong()) < Instant(timeout)) {
+            if (event.player.hasMetadata(key) &&
+                    (Instant.now() - event.player.getMetadata(key).first { it.owningPlugin == LobbyMain.instance }.asLong())
+                            < Instant(Meta.getConfig(Config.SLOWCHAT_TIMEOUT).toLong())) {
                 event.isCancelled = true
                 event.player.sendMessage(I18n.getString("too_many_messages", event.player.locale))
                 LobbyMain.logger.finest("${event.player} sent messages too quickly!")
