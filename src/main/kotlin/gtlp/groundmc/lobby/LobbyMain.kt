@@ -102,7 +102,7 @@ class LobbyMain : JavaPlugin() {
         scheduleTasks()
 
         logger.finer("Setting difficulty of the hub world to peaceful")
-        GsonWrapper.deserializeJson(Meta.getConfig(Config.HUB_LOCATION), Location::class.java).world.difficulty = Difficulty.PEACEFUL
+        (Meta.getConfig(Config.HUB_LOCATION) as Location).world.difficulty = Difficulty.PEACEFUL
         logger.exiting(LobbyMain::class, "onEnable")
     }
 
@@ -177,7 +177,6 @@ class LobbyMain : JavaPlugin() {
             when (currentVersion) {
                 1 -> ConfigUpgrader.upgradeItemsToUseObject(config)
                 2 -> ConfigUpgrader.addJumpPadConfiguration(config)
-                3 -> ConfigUpgrader.moveRuntimeConfigToDatabase(config)
             }
         }
 

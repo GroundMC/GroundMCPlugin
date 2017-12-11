@@ -12,6 +12,7 @@ import gtlp.groundmc.lobby.event.PlayerChangeLocaleEvent
 import gtlp.groundmc.lobby.util.I18n
 import gtlp.groundmc.lobby.util.copy
 import gtlp.groundmc.lobby.util.hasPermission
+import org.bukkit.Location
 import org.bukkit.Sound
 import org.bukkit.attribute.Attribute
 import org.bukkit.enchantments.Enchantment
@@ -80,9 +81,9 @@ object ServerStateListener : Listener {
      */
     @EventHandler
     fun onPlayerChangeWorld(event: PlayerChangedWorldEvent) {
-        if (event.from == LobbyMain.hubLocation.world) {
+        if (event.from == (Meta.getConfig(Config.HUB_LOCATION) as Location).world) {
             event.player.inventory.contents = LobbyMain.originalInventories[event.player]
-        } else if (event.player.world == LobbyMain.hubLocation.world) {
+        } else if (event.player.world == (Meta.getConfig(Config.HUB_LOCATION) as Location).world) {
             LobbyMain.originalInventories[event.player] = event.player.inventory.copy()
             addItemsToInventory(event.player)
         }
@@ -95,7 +96,7 @@ object ServerStateListener : Listener {
      */
     @EventHandler
     fun onPlayerChangeLocale(event: PlayerChangeLocaleEvent) {
-        if (event.player.world == LobbyMain.hubLocation.world) {
+        if (event.player.world == (Meta.getConfig(Config.HUB_LOCATION) as Location).world) {
             addItemsToInventory(event.player)
         }
     }
@@ -119,7 +120,7 @@ object ServerStateListener : Listener {
         }
         LobbyMain.originalInventories[event.player] = event.player.inventory.copy()
 
-        if (event.player.world == LobbyMain.hubLocation.world) {
+        if (event.player.world == (Meta.getConfig(Config.HUB_LOCATION) as Location).world) {
             addItemsToInventory(event.player)
         }
 
@@ -141,7 +142,7 @@ object ServerStateListener : Listener {
             transaction {
                 Users.update({ Users.id eq player.uniqueId }) {
                     it[lastName] = player.name
-                    it[coins] = playerRow[coins] + Meta.getConfig(Config.COINS_DAILY).toInt()
+                    it[coins] = playerRow[coins] + Meta.getConfig(Config.COINS_DAILY) as Int
                     it[lastDailyCoinsDate] = DateTime.now()
                 }
             }
@@ -157,7 +158,7 @@ object ServerStateListener : Listener {
     @EventHandler(priority = EventPriority.LOWEST)
     fun onPlayerLogout(event: PlayerQuitEvent) {
         event.quitMessage = null
-        if (event.player.world == LobbyMain.hubLocation.world) {
+        if (event.player.world == (Meta.getConfig(Config.HUB_LOCATION) as Location).world) {
             event.player.inventory.contents = LobbyMain.originalInventories[event.player]
         }
         LobbyMain.originalInventories.remove(event.player)

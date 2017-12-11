@@ -25,11 +25,11 @@ object ChatInteractionListener : Listener {
      */
     @EventHandler(priority = EventPriority.LOWEST)
     fun slowChat(event: AsyncPlayerChatEvent) {
-        if (Meta.getConfig(Config.SLOWCHAT_ENABLED).toBoolean()) {
+        if (Meta.getConfig(Config.SLOWCHAT_ENABLED) as Boolean) {
             val key = "lastChatMsg"
             if (event.player.hasMetadata(key) &&
                     (Instant.now() - event.player.getMetadata(key).first { it.owningPlugin == LobbyMain.instance }.asLong())
-                            < Instant(Meta.getConfig(Config.SLOWCHAT_TIMEOUT).toLong())) {
+                            < Instant(Meta.getConfig(Config.SLOWCHAT_TIMEOUT) as Long)) {
                 event.isCancelled = true
                 event.player.sendMessage(I18n.getString("too_many_messages", event.player.locale))
                 LobbyMain.logger.finest("${event.player} sent messages too quickly!")

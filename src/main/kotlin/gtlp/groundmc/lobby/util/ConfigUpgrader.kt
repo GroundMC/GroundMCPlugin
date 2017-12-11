@@ -1,9 +1,6 @@
 package gtlp.groundmc.lobby.util
 
-import de.tr7zw.itemnbtapi.GsonWrapper
 import gtlp.groundmc.lobby.LobbyMain
-import gtlp.groundmc.lobby.database.table.Meta
-import gtlp.groundmc.lobby.enums.Config
 import gtlp.groundmc.lobby.enums.GMCType
 import gtlp.groundmc.lobby.enums.NBTIdentifier
 import org.bukkit.Bukkit
@@ -70,22 +67,6 @@ object ConfigUpgrader {
             config["jumppads.y"] = 1
         }
         LobbyMain.logger.exiting(ConfigUpgrader::class, "addJumpPadConfiguration")
-    }
-
-    fun moveRuntimeConfigToDatabase(config: Configuration) {
-        LobbyMain.logger.entering(ConfigUpgrader::class, "moveRuntimeConfigToDatabase")
-        if ("coins.dailyAmount" in config) {
-            Meta.putConfig(Config.COINS_DAILY, config.getString("coins.dailyAmount"))
-        }
-        if ("slowchat.enabled" in config &&
-                "slowchat.timeout" in config) {
-            Meta.putConfig(Config.SLOWCHAT_ENABLED, config.getBoolean("slowchat.enabled").toString())
-            Meta.putConfig(Config.SLOWCHAT_TIMEOUT, config.getLong("slowchat.timeout").toString())
-        }
-        if ("hub" in config) {
-            Meta.putConfig(Config.HUB_LOCATION, GsonWrapper.getString(config.get("hub")))
-        }
-        LobbyMain.logger.exiting(ConfigUpgrader::class, "moveRuntimeConfigToDatabase")
     }
 
 }

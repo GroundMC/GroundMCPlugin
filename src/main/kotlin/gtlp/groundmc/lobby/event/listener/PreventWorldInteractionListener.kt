@@ -1,9 +1,11 @@
 package gtlp.groundmc.lobby.event.listener
 
-import gtlp.groundmc.lobby.LobbyMain
+import gtlp.groundmc.lobby.database.table.Meta
+import gtlp.groundmc.lobby.enums.Config
 import gtlp.groundmc.lobby.enums.NBTIdentifier
 import gtlp.groundmc.lobby.enums.Permission
 import gtlp.groundmc.lobby.util.hasPermission
+import org.bukkit.Location
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
@@ -51,7 +53,7 @@ object PreventWorldInteractionListener : Listener {
      */
     @EventHandler(priority = EventPriority.LOWEST)
     fun preventItemPickup(event: EntityPickupItemEvent) {
-        if (event.entity.world == LobbyMain.hubLocation.world
+        if (event.entity.world == (Meta.getConfig(Config.HUB_LOCATION) as Location).world
                 && !event.entity.hasPermission(Permission.ADMIN)) {
             event.isCancelled = true
         }
@@ -64,7 +66,7 @@ object PreventWorldInteractionListener : Listener {
      */
     @EventHandler(priority = EventPriority.LOWEST)
     fun preventBlockBreaking(event: BlockBreakEvent) {
-        if (event.player.world == LobbyMain.hubLocation.world
+        if (event.player.world == (Meta.getConfig(Config.HUB_LOCATION) as Location).world
                 && !event.player.hasPermission(Permission.ADMIN)) {
             event.isCancelled = true
         }

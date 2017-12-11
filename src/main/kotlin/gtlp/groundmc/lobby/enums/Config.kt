@@ -1,9 +1,11 @@
 package gtlp.groundmc.lobby.enums
 
-enum class Config(val key: String) {
-    DATABASE_VERSION("db.version"),
-    COINS_DAILY("coins.daily"),
-    SLOWCHAT_ENABLED("slowchat.enabled"),
-    SLOWCHAT_TIMEOUT("slowchat.timeout"),
-    HUB_LOCATION("hub.location")
+import org.bukkit.Location
+
+enum class Config(val key: String, val type: Class<out Any> = String::class.java) {
+    DATABASE_VERSION("db.version", Int::class.javaObjectType),
+    COINS_DAILY("coins.daily", Int::class.javaObjectType),
+    SLOWCHAT_ENABLED("slowchat.enabled", Boolean::class.javaObjectType),
+    SLOWCHAT_TIMEOUT("slowchat.timeout", Long::class.javaObjectType),
+    HUB_LOCATION("hub.location", Location::class.javaObjectType)
 }
