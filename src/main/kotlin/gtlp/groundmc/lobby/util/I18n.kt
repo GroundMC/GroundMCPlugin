@@ -61,7 +61,7 @@ object I18n {
      * @see getString
      */
     fun getStrings(vararg keys: String, locale: String) =
-            keys.map { it -> getString(it, locale) }.toTypedArray()
+            getStrings(*keys, locale = I18nUtils.getLocaleFromString(locale))
 
     /**
      * Returns the localized string (if available) for a given key.
@@ -73,10 +73,8 @@ object I18n {
      *
      * @return The localized and parsed string or null, if the key has no translation
      */
-    fun getString(key: String, locale: String): String? {
-        val s: String = bundleCache.get(key, I18nUtils.getLocaleFromString(locale)) ?: return null
-        return ChatColor.translateAlternateColorCodes(colorChar, s)
-    }
+    fun getString(key: String, locale: String) =
+            getString(key, I18nUtils.getLocaleFromString(locale))
 
     /**
      * A cache for dynamically loading and storing used resource bundles.
