@@ -1,6 +1,7 @@
 package gtlp.groundmc.lobby.task
 
 import com.google.common.collect.ImmutableList
+import gtlp.groundmc.lobby.LobbyMain
 import gtlp.groundmc.lobby.database.table.Relationships
 import gtlp.groundmc.lobby.database.table.Users
 import gtlp.groundmc.lobby.enums.VisibilityStates
@@ -25,18 +26,18 @@ object HidePlayersTask : ITask {
         onlinePlayers.forEach { player ->
             when (player[Users.hiddenStatus]) {
                 VisibilityStates.ALL -> {
-                    onlinePlayers.forEach { Bukkit.getPlayer(player[Users.id]).showPlayer(Bukkit.getPlayer(it[Users.id])) }
+                    onlinePlayers.forEach { Bukkit.getPlayer(player[Users.id]).showPlayer(LobbyMain.instance, Bukkit.getPlayer(it[Users.id])) }
                 }
 
                 VisibilityStates.NONE -> {
-                    onlinePlayers.forEach { Bukkit.getPlayer(player[Users.id]).hidePlayer(Bukkit.getPlayer(it[Users.id])) }
+                    onlinePlayers.forEach { Bukkit.getPlayer(player[Users.id]).hidePlayer(LobbyMain.instance, Bukkit.getPlayer(it[Users.id])) }
                 }
                 VisibilityStates.FRIENDS -> {
                     onlinePlayers.forEach {
                         if (Relationships.areFriends(player[Users.id], it[Users.id])) {
-                            Bukkit.getPlayer(player[Users.id]).showPlayer(Bukkit.getPlayer(it[Users.id]))
+                            Bukkit.getPlayer(player[Users.id]).showPlayer(LobbyMain.instance, Bukkit.getPlayer(it[Users.id]))
                         } else {
-                            Bukkit.getPlayer(player[Users.id]).hidePlayer(Bukkit.getPlayer(it[Users.id]))
+                            Bukkit.getPlayer(player[Users.id]).hidePlayer(LobbyMain.instance, Bukkit.getPlayer(it[Users.id]))
                         }
                     }
                 }
@@ -50,7 +51,7 @@ object HidePlayersTask : ITask {
         }
         for (player in vanishedPlayers) {
             onlinePlayers.forEach {
-                Bukkit.getPlayer(it[Users.id]).hidePlayer(Bukkit.getPlayer(player[Users.id]))
+                Bukkit.getPlayer(it[Users.id]).hidePlayer(LobbyMain.instance, Bukkit.getPlayer(player[Users.id]))
             }
         }
     }
