@@ -2,7 +2,9 @@ package gtlp.groundmc.lobby.event.listener
 
 import gtlp.groundmc.lobby.Items
 import gtlp.groundmc.lobby.LobbyMain
+import gtlp.groundmc.lobby.database.table.Meta
 import gtlp.groundmc.lobby.database.table.Users
+import gtlp.groundmc.lobby.enums.Config
 import gtlp.groundmc.lobby.enums.NBTIdentifier
 import gtlp.groundmc.lobby.enums.Permission
 import gtlp.groundmc.lobby.enums.VisibilityStates
@@ -10,6 +12,7 @@ import gtlp.groundmc.lobby.event.PlayerChangeLocaleEvent
 import gtlp.groundmc.lobby.util.I18n
 import gtlp.groundmc.lobby.util.copy
 import gtlp.groundmc.lobby.util.hasPermission
+import org.bukkit.Location
 import org.bukkit.Sound
 import org.bukkit.attribute.Attribute
 import org.bukkit.enchantments.Enchantment
@@ -78,9 +81,9 @@ object ServerStateListener : Listener {
      */
     @EventHandler
     fun onPlayerChangeWorld(event: PlayerChangedWorldEvent) {
-        if (event.from == LobbyMain.hubLocation.world) {
+        if (event.from == (Meta[Config.HUB_LOCATION] as Location).world) {
             event.player.inventory.contents = LobbyMain.originalInventories[event.player]
-        } else if (event.player.world == LobbyMain.hubLocation.world) {
+        } else if (event.player.world == (Meta[Config.HUB_LOCATION] as Location).world) {
             LobbyMain.originalInventories[event.player] = event.player.inventory.copy()
             addItemsToInventory(event.player)
         }
@@ -93,7 +96,7 @@ object ServerStateListener : Listener {
      */
     @EventHandler
     fun onPlayerChangeLocale(event: PlayerChangeLocaleEvent) {
-        if (event.player.world == LobbyMain.hubLocation.world) {
+        if (event.player.world == (Meta[Config.HUB_LOCATION] as Location).world) {
             addItemsToInventory(event.player)
         }
     }
@@ -117,7 +120,7 @@ object ServerStateListener : Listener {
         }
         LobbyMain.originalInventories[event.player] = event.player.inventory.copy()
 
-        if (event.player.world == LobbyMain.hubLocation.world) {
+        if (event.player.world == (Meta[Config.HUB_LOCATION] as Location).world) {
             addItemsToInventory(event.player)
         }
 
@@ -134,12 +137,12 @@ object ServerStateListener : Listener {
     private fun addDailyBonus(player: Player) {
         val playerRow = Users.getPlayer(player)
         if (playerRow[Users.lastDailyCoinsDate].plusDays(1).isBeforeNow) {
-            player.sendMessage(I18n.getString("event.dailyCoins", player.locale)?.format(LobbyMain.dailyCoins))
+            player.sendMessage(I18n.getString("event.dailyCoins", player.locale)?.format(Meta[Config.COINS_DAILY]))
             player.playSound(player.location, Sound.ENTITY_PLAYER_LEVELUP, 1.0f, 1.0f)
             transaction {
                 Users.update({ Users.id eq player.uniqueId }) {
                     it[lastName] = player.name
-                    it[coins] = playerRow[coins] + LobbyMain.dailyCoins
+                    it[coins] = playerRow[coins] + Meta[Config.COINS_DAILY] as Int
                     it[lastDailyCoinsDate] = DateTime.now()
                 }
             }
@@ -155,7 +158,7 @@ object ServerStateListener : Listener {
     @EventHandler(priority = EventPriority.LOWEST)
     fun onPlayerLogout(event: PlayerQuitEvent) {
         event.quitMessage = null
-        if (event.player.world == LobbyMain.hubLocation.world) {
+        if (event.player.world == (Meta[Config.HUB_LOCATION] as Location).world) {
             event.player.inventory.contents = LobbyMain.originalInventories[event.player]
         }
         LobbyMain.originalInventories.remove(event.player)
