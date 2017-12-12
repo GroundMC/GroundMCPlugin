@@ -19,7 +19,6 @@ package gtlp.groundmc.lobby.util
  */
 
 
-import gtlp.groundmc.lobby.LobbyMain
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import java.util.*
@@ -43,7 +42,6 @@ object I18nUtils {
      * @return the Locale
      */
     fun getLocaleFromString(localeString: String): Locale {
-        LobbyMain.logger.entering(I18nUtils::class, "getLocaleFromString")
         @Suppress("NAME_SHADOWING")
         var localeString = localeString
         localeString = localeString.trim { it <= ' ' }
@@ -85,7 +83,6 @@ object I18nUtils {
      * if the [sender] is not a player (e.g. the command has been sent from the console)
      */
     fun getLocaleFromCommandSender(sender: CommandSender): Locale {
-        LobbyMain.logger.entering(I18nUtils::class, "getLocaleFromCommandSender")
         return if (sender is Player) {
             getLocaleFromString(sender.locale)
         } else {

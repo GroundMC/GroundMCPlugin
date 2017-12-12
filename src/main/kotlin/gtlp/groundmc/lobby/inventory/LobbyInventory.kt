@@ -42,6 +42,9 @@ internal object LobbyInventory {
         return clone
     }
 
+    /**
+     * Pulls the [TEMPLATE_INVENTORY] from the config.
+     */
     private fun pullTemplate() {
         @Suppress("unchecked_cast")
         TEMPLATE_INVENTORY.contents = (Meta[Config.INVENTORY_CONTENT] as List<ItemStack?>).toTypedArray()

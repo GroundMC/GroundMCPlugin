@@ -1,6 +1,5 @@
 package gtlp.groundmc.lobby.util
 
-import gtlp.groundmc.lobby.LobbyMain
 import org.bukkit.ChatColor
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
@@ -30,7 +29,6 @@ object I18n {
      * @return The localized and parsed string or null, if the key has no translation
      */
     fun getString(key: String, locale: Locale = Locale.US): String? {
-        LobbyMain.logger.entering(I18n::class, "getString")
         val s = bundleCache.get(key, locale) ?: return null
         return ChatColor.translateAlternateColorCodes(colorChar, s)
     }
@@ -101,7 +99,6 @@ object I18n {
          * @return The localized string or null, if the key has no translation
          */
         fun get(key: String, locale: Locale): String? {
-            LobbyMain.logger.entering(ResourceBundleCache::class, "get")
             if (!backingMap.containsKey(locale)) {
                 backingMap[locale] = ResourceBundle.getBundle(name, locale)
             }

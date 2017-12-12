@@ -75,7 +75,7 @@ class LobbyMain : JavaPlugin() {
         createDefaultConfig()
         upgradeConfig()
         loadConfig()
-        logger.finer("Loading database...")
+        logger.config("Loading database...")
         Database.connect(config.getString("database.url")
                 .replace("\$dataFolder", dataFolder.absolutePath),
                 config.getString("database.driver"), config.getString("database.username", ""),
@@ -93,14 +93,14 @@ class LobbyMain : JavaPlugin() {
         }
         Meta.upgradeDatabase()
 
-        logger.finer("Registering events...")
+        logger.config("Registering events...")
         registerListeners()
         registerCommands()
 
-        logger.finer("Scheduling tasks...")
+        logger.config("Scheduling tasks...")
         scheduleTasks()
 
-        logger.finer("Setting difficulty of the hub world to peaceful")
+        logger.config("Setting difficulty of the hub world to peaceful")
         (Meta[Config.HUB_LOCATION] as Location).world.difficulty = Difficulty.PEACEFUL
         logger.exiting(LobbyMain::class, "onEnable")
     }
@@ -208,7 +208,7 @@ class LobbyMain : JavaPlugin() {
         }
         logger.info("Setting logger verbosity to ${config.getString("log.verbosity", "FINEST")}")
         logger.level = Level.parse(config.getString("log.verbosity", "FINEST"))
-        logger.finer("Loaded config.")
+        logger.info("Loaded config.")
         logger.exiting(LobbyMain::class, "loadConfig")
     }
 
@@ -238,7 +238,7 @@ class LobbyMain : JavaPlugin() {
      */
     private fun registerCommands() {
         logger.entering(LobbyMain::class, "registerCommands")
-        logger.finer("Registering commands...")
+        logger.config("Registering commands...")
         LobbyCommandRegistry.registerCommand(CommandLobby())
         LobbyCommandRegistry.registerCommand(CommandVanish())
         LobbyCommandRegistry.registerCommand(CommandCoins())

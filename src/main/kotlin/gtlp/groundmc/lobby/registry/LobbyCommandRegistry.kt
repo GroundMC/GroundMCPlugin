@@ -22,6 +22,7 @@ object LobbyCommandRegistry {
      */
     fun registerCommand(cmd: ILobbyCommand) {
         LobbyMain.logger.entering(LobbyCommandRegistry::class, "registerCommand")
+        LobbyMain.logger.config("Registering command: ${cmd.name}")
         Bukkit.getServer().getPluginCommand(cmd.name).executor = cmd
         Bukkit.getServer().getPluginCommand(cmd.name).tabCompleter = cmd
         Bukkit.getServer().helpMap.addTopic(object : HelpTopic() {

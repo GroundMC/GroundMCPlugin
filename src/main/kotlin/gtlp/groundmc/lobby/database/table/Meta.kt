@@ -1,15 +1,18 @@
 package gtlp.groundmc.lobby.database.table
 
 import com.google.common.cache.CacheBuilder
+import com.google.common.cache.CacheLoader
 import gtlp.groundmc.lobby.LobbyMain
 import gtlp.groundmc.lobby.database.table.legacy.Meta0
 import gtlp.groundmc.lobby.enums.Config
 import gtlp.groundmc.lobby.util.entering
+import gtlp.groundmc.lobby.util.exiting
 import org.bukkit.Bukkit
 import org.bukkit.configuration.file.YamlConfiguration
 import org.bukkit.inventory.ItemStack
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
+import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 
 /**
@@ -23,7 +26,33 @@ object Meta : Table() {
      */
     private val CURRENT_TABLE_VER = 3
 
-    private val configCache = CacheBuilder.newBuilder().expireAfterWrite(5L, TimeUnit.SECONDS).build<Config, Any>()
+    /**
+     * The cache that is used to store configuration objects.
+     * Refreshes every 5 seconds.
+     */
+    private val configCache = CacheBuilder.newBuilder()
+            .refreshAfterWrite(5L, TimeUnit.SECONDS)
+            .build<Config, Any>(CacheLoader.asyncReloading(DatabaseCacheLoader(), Executors.newCachedThreadPool()))
+
+    /**
+     * Class to load config values for the cache.
+     */
+    class DatabaseCacheLoader : CacheLoader<Config, Any>() {
+        override fun load(key: Config): Any {
+            LobbyMain.logger.fine("Getting value for ${key.key}")
+            with(YamlConfiguration()) {
+                loadFromString(
+                        transaction {
+                            select {
+                                Meta.key eq key.key
+                            }.first().tryGet(value) ?: throw NullPointerException(
+                                    "value for key \"${key.key}\" is null!")
+                        })
+                return this.get(key.key) ?: throw NullPointerException(
+                        "value for key \"${key.key}\" is null!")
+            }
+        }
+    }
 
     /**
      * Key part of the table.
@@ -105,6 +134,7 @@ object Meta : Table() {
             }
             LobbyMain.logger.info("Database newly created, no update necessary")
         }
+        LobbyMain.logger.exiting(Meta::class, "upgradeDatabase")
     }
 
     /**
@@ -116,17 +146,7 @@ object Meta : Table() {
      * @return the value associated with the [key] or `null`, if not present.
      */
     operator fun get(key: Config): Any? {
-        return configCache.get(key, {
-            with(YamlConfiguration()) {
-                loadFromString(
-                        transaction {
-                            select {
-                                Meta.key eq key.key
-                            }.first().tryGet(value)
-                        })
-                this.get(key.key, null)
-            }
-        })
+        return configCache.get(key)
     }
 
 
@@ -137,6 +157,7 @@ object Meta : Table() {
      * @param value the contents of this configuration item
      */
     operator fun set(key: Config, value: Any) {
+        LobbyMain.logger.fine("Setting value for ${key.key}")
         transaction {
             deleteWhere { Meta.key eq key.key }
             insert {

@@ -1,5 +1,8 @@
 package gtlp.groundmc.lobby.database.table
 
+import gtlp.groundmc.lobby.LobbyMain
+import gtlp.groundmc.lobby.util.entering
+import gtlp.groundmc.lobby.util.exiting
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import org.jetbrains.exposed.sql.*
@@ -86,8 +89,10 @@ object Events : Table() {
      * @see getCurrentEvents
      */
     fun disable(n: Int): ResultRow {
+        LobbyMain.logger.entering(Events::class, "disable")
         return transaction {
             val events = getCurrentEvents()
+            LobbyMain.logger.info("Disabling ${events[0]}")
             return@transaction events[n].also {
                 update({ id eq it[id] }, null, {
                     it[active] = false
@@ -110,6 +115,8 @@ object Events : Table() {
      * @return the success of this insert call
      */
     fun newEvent(eventTitle: String, sender: CommandSender, beginDate: DateTime, endDate: DateTime): Boolean {
+        LobbyMain.logger.entering(Events::class, "newEvent")
+        LobbyMain.logger.info("Creating new event: $eventTitle, $sender, $beginDate, $endDate")
         transaction {
             insert {
                 it[title] = eventTitle
@@ -119,6 +126,7 @@ object Events : Table() {
                 it[endTime] = endDate
             }
         }
+        LobbyMain.logger.exiting(Events::class, "newEvent")
         return true
     }
 }

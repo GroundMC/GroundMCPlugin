@@ -179,7 +179,7 @@ class CommandFriend : ILobbyCommand {
             sender.sendMessage(I18n.getString("command.friend.already_friends", sender.locale)!!.format(args[1]))
             return true
         } else {
-            LobbyMain.logger.finer("${sender.name} tried to add ${friend.name} as a friend")
+            LobbyMain.logger.fine("${sender.name} tried to add ${friend.name} as a friend")
             Relationships.addRelationship(sender, friend)
             sender.sendMessage(I18n.getString("command.friend.successfully_added", sender.locale)!!.format(args[1]))
             return true

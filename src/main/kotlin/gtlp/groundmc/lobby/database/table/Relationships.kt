@@ -54,6 +54,7 @@ object Relationships : Table() {
      */
     private fun addRelationship(relationship: Relationship) {
         LobbyMain.logger.entering(Relationships::class, "addRelationship")
+        LobbyMain.logger.fine("Adding new relationship: $relationship")
         return transaction {
             if (!areFriends(relationship.user1, relationship.user2)) {
                 insert {

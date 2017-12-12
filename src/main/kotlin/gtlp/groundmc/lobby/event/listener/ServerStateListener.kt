@@ -9,9 +9,7 @@ import gtlp.groundmc.lobby.enums.NBTIdentifier
 import gtlp.groundmc.lobby.enums.Permission
 import gtlp.groundmc.lobby.enums.VisibilityStates
 import gtlp.groundmc.lobby.event.PlayerChangeLocaleEvent
-import gtlp.groundmc.lobby.util.I18n
-import gtlp.groundmc.lobby.util.copy
-import gtlp.groundmc.lobby.util.hasPermission
+import gtlp.groundmc.lobby.util.*
 import org.bukkit.Location
 import org.bukkit.Sound
 import org.bukkit.attribute.Attribute
@@ -96,9 +94,12 @@ object ServerStateListener : Listener {
      */
     @EventHandler
     fun onPlayerChangeLocale(event: PlayerChangeLocaleEvent) {
+        LobbyMain.logger.entering(ServerStateListener::class, "onPlayerChangeLocale")
+        LobbyMain.logger.fine("PlayerChangeLocaleEvent: $event")
         if (event.player.world == (Meta[Config.HUB_LOCATION] as Location).world) {
             addItemsToInventory(event.player)
         }
+        LobbyMain.logger.exiting(ServerStateListener::class, "onPlayerChangeLocale")
     }
 
     /**
@@ -109,6 +110,8 @@ object ServerStateListener : Listener {
      */
     @EventHandler(priority = EventPriority.LOWEST)
     fun onPlayerLogin(event: PlayerJoinEvent) {
+        LobbyMain.logger.entering(ServerStateListener::class, "onPlayerLogin")
+        LobbyMain.logger.fine("Player joined: $event")
         event.joinMessage = null
         transaction {
             if (Users.select { Users.id eq event.player.uniqueId }.count() == 0) {
@@ -127,6 +130,7 @@ object ServerStateListener : Listener {
         event.player.getAttribute(Attribute.GENERIC_ATTACK_SPEED).baseValue = 16.0
 
         addDailyBonus(event.player)
+        LobbyMain.logger.exiting(ServerStateListener::class, "onPlayerLogin")
     }
 
     /**
@@ -157,11 +161,14 @@ object ServerStateListener : Listener {
      */
     @EventHandler(priority = EventPriority.LOWEST)
     fun onPlayerLogout(event: PlayerQuitEvent) {
+        LobbyMain.logger.entering(ServerStateListener::class, "onPlayerLogout")
+        LobbyMain.logger.fine("Player left: $event")
         event.quitMessage = null
         if (event.player.world == (Meta[Config.HUB_LOCATION] as Location).world) {
             event.player.inventory.contents = LobbyMain.originalInventories[event.player]
         }
         LobbyMain.originalInventories.remove(event.player)
         LobbyMain.SILENCED_PLAYERS.remove(event.player)
+        LobbyMain.logger.exiting(ServerStateListener::class, "onPlayerLogout")
     }
 }
