@@ -8,6 +8,7 @@ import gtlp.groundmc.lobby.database.table.Events
 import gtlp.groundmc.lobby.database.table.Meta
 import gtlp.groundmc.lobby.database.table.Relationships
 import gtlp.groundmc.lobby.database.table.Users
+import gtlp.groundmc.lobby.enums.Config
 import gtlp.groundmc.lobby.event.listener.*
 import gtlp.groundmc.lobby.inventory.LobbyInventory
 import gtlp.groundmc.lobby.registry.LobbyCommandRegistry
@@ -16,7 +17,6 @@ import gtlp.groundmc.lobby.util.*
 import org.bukkit.Bukkit
 import org.bukkit.Difficulty
 import org.bukkit.Location
-import org.bukkit.Material
 import org.bukkit.configuration.MemorySection
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
@@ -83,10 +83,16 @@ class LobbyMain : JavaPlugin() {
         if (config.getString("database.driver") == "org.sqlite.JDBC") {
             TransactionManager.manager.defaultIsolationLevel = Connection.TRANSACTION_SERIALIZABLE
         }
-        transaction {
-            createMissingTablesAndColumns(Meta, Users, Relationships, Events)
-            Meta.upgradeDatabase()
+        try {
+            transaction {
+                createMissingTablesAndColumns(Meta, Users, Relationships, Events)
+            }
+        } catch (e: Exception) {
+            logger.warning("Error in first database update pass. If you are updating the database from version " +
+                    "2 to version 3, you can ignore this warning.")
         }
+        Meta.upgradeDatabase()
+
         logger.finer("Registering events...")
         registerListeners()
         registerCommands()
@@ -95,7 +101,7 @@ class LobbyMain : JavaPlugin() {
         scheduleTasks()
 
         logger.finer("Setting difficulty of the hub world to peaceful")
-        hubLocation.world.difficulty = Difficulty.PEACEFUL
+        (Meta[Config.HUB_LOCATION] as Location).world.difficulty = Difficulty.PEACEFUL
         logger.exiting(LobbyMain::class, "onEnable")
     }
 
@@ -192,7 +198,7 @@ class LobbyMain : JavaPlugin() {
         logger.entering(LobbyMain::class, "loadConfig")
         if ("inventory.content" in config && config["inventory.content"] is List<*>) {
             @Suppress("unchecked_cast")
-            LobbyInventory.TEMPLATE_INVENTORY.contents = (config["inventory.content"] as List<ItemStack>).toTypedArray()
+            LobbyInventory.TEMPLATE_INVENTORY.contents = (config["inventory.content"] as List<ItemStack?>).toTypedArray()
 
             (0 until LobbyInventory.TEMPLATE_INVENTORY.contents.size).forEach { i ->
                 if (LobbyInventory.TEMPLATE_INVENTORY.getItem(i) == null) {
@@ -200,9 +206,6 @@ class LobbyMain : JavaPlugin() {
                 }
             }
         }
-        // Get lobby location
-        hubLocation = config.get("hub") as Location
-        dailyCoins = config.getInt("coins.dailyAmount")
         logger.info("Setting logger verbosity to ${config.getString("log.verbosity", "FINEST")}")
         logger.level = Level.parse(config.getString("log.verbosity", "FINEST"))
         logger.finer("Loaded config.")
@@ -216,23 +219,12 @@ class LobbyMain : JavaPlugin() {
         logger.entering(LobbyMain::class, "createDefaultConfig")
         config.addDefault("inventory.content", listOf<ItemStack>())
 
-        config.addDefault("hub", Bukkit.getWorlds().first().spawnLocation)
-
-        config.addDefault("coins.dailyAmount", 100)
-
         config.addDefault("log.verbosity", "FINEST")
-
-        config.addDefault("slowchat.enabled", true)
-        config.addDefault("slowchat.timeout", 5)
 
         config.addDefault("database.username", "")
         config.addDefault("database.password", "")
         config.addDefault("database.driver", "org.h2.Driver")
         config.addDefault("database.url", "jdbc:h2:\$dataFolder/database")
-
-        config.addDefault("jumppads.material", listOf(Material.GOLD_PLATE))
-        config.addDefault("jumppads.multiplier", 3.0)
-        config.addDefault("jumppads.y", 1.5)
 
         config.addDefault("version", configVersion)
 
@@ -308,11 +300,6 @@ class LobbyMain : JavaPlugin() {
         val originalInventories = mutableMapOf<Player, Array<ItemStack?>>()
 
         /**
-         * Variable to hold the [Location] of the hub/lobby.
-         */
-        lateinit var hubLocation: Location
-
-        /**
          * A map of tasks to their IDs
          */
         val tasks = mutableMapOf<ITask, Int>()
@@ -326,11 +313,6 @@ class LobbyMain : JavaPlugin() {
          * Common instance of this [LobbyMain] plugin.
          */
         lateinit var instance: LobbyMain
-
-        /**
-         * The variable holding the amount of coins a player gets every day.
-         */
-        var dailyCoins = 0
 
         /**
          * The [Logger] that is created in the init block.

@@ -1,6 +1,8 @@
 package gtlp.groundmc.lobby.event.listener
 
-import gtlp.groundmc.lobby.LobbyMain
+import gtlp.groundmc.lobby.database.table.Meta
+import gtlp.groundmc.lobby.enums.Config
+import org.bukkit.Location
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
@@ -20,7 +22,7 @@ object LobbyInvincibilityListener : Listener {
      */
     @EventHandler
     fun removePotionEffects(event: PotionSplashEvent) {
-        if (event.entity.world == LobbyMain.hubLocation.world) {
+        if (event.entity.world == (Meta[Config.HUB_LOCATION] as Location).world) {
             // Remove players from affectedEntities
             event.affectedEntities.filter { it is Player }.forEach { event.setIntensity(it, -1.0) }
         }
@@ -33,7 +35,8 @@ object LobbyInvincibilityListener : Listener {
      */
     @EventHandler
     fun preventDamage(event: EntityDamageEvent) {
-        if (event.entity.world == LobbyMain.hubLocation.world && event.cause !in arrayOf(SUICIDE, CUSTOM, VOID)) {
+        if (event.entity.world == (Meta[Config.HUB_LOCATION] as Location).world
+                && event.cause !in arrayOf(SUICIDE, CUSTOM, VOID)) {
             event.isCancelled = true
         }
     }

@@ -1,6 +1,7 @@
 package gtlp.groundmc.lobby.event.listener
 
-import gtlp.groundmc.lobby.LobbyMain
+import gtlp.groundmc.lobby.database.table.Meta
+import gtlp.groundmc.lobby.enums.Config
 import org.bukkit.Location
 import org.bukkit.Sound
 import org.bukkit.event.EventHandler
@@ -37,8 +38,12 @@ object LobbyInteractionListener : Listener {
 
             return vector.normalize()
         }
-        if (event.clickedBlock != null && event.action == Action.PHYSICAL && event.clickedBlock.type.name in LobbyMain.instance.config.getList("jumppads.material") && event.player.world == LobbyMain.hubLocation.world) {
-            event.player.velocity = event.player.location.getDirectionXZ().multiply(LobbyMain.instance.config.getDouble("jumppads.multiplier")).setY(LobbyMain.instance.config.getDouble("jumppads.y"))
+        if (event.clickedBlock != null && event.action == Action.PHYSICAL
+                && event.clickedBlock.type.name in Meta[Config.JUMPPADS_MATERIAL] as List<*>
+                && event.player.world == (Meta[Config.HUB_LOCATION] as Location).world) {
+            event.player.velocity = event.player.location.getDirectionXZ()
+                    .multiply(Meta[Config.JUMPPADS_MULTIPLIER] as Double)
+                    .setY(Meta[Config.JUMPPADS_Y] as Double)
             event.player.playSound(event.player.location, Sound.ENTITY_ENDERDRAGON_FLAP, 10f, 1f)
             event.isCancelled = true
         }

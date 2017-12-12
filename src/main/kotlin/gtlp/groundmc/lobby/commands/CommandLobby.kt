@@ -3,6 +3,8 @@ package gtlp.groundmc.lobby.commands
 import com.joestelmach.natty.Parser
 import gtlp.groundmc.lobby.LobbyMain
 import gtlp.groundmc.lobby.database.table.Events
+import gtlp.groundmc.lobby.database.table.Meta
+import gtlp.groundmc.lobby.enums.Config
 import gtlp.groundmc.lobby.enums.GMCType
 import gtlp.groundmc.lobby.enums.NBTIdentifier
 import gtlp.groundmc.lobby.enums.Permission
@@ -12,6 +14,7 @@ import gtlp.groundmc.lobby.util.*
 import net.md_5.bungee.api.chat.ClickEvent
 import net.md_5.bungee.api.chat.TextComponent
 import org.bukkit.Bukkit
+import org.bukkit.Location
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 import org.bukkit.command.ConsoleCommandSender
@@ -83,14 +86,14 @@ class CommandLobby : ILobbyCommand {
                 }
             }
         } else if (sender is Player) {
-            sender.teleport(LobbyMain.hubLocation, PlayerTeleportEvent.TeleportCause.COMMAND)
+            sender.teleport(Meta[Config.HUB_LOCATION] as Location, PlayerTeleportEvent.TeleportCause.COMMAND)
             return true
         }
         return false
     }
 
     /**
-     * Sets the [LobbyMain.hubLocation] to the [sender]s current location.
+     * Sets the hub location to the [sender]s current location.
      *
      * @param sender the player that sent the command
      * @return is always true to not trigger the command help of Spigot.
@@ -98,9 +101,7 @@ class CommandLobby : ILobbyCommand {
     private fun setLobby(sender: CommandSender): Boolean {
         LobbyMain.logger.entering(CommandLobby::class, "setLobby")
         if (sender.hasPermission(Permission.ADMIN) && sender is Player) {
-            LobbyMain.hubLocation = sender.location
-            LobbyMain.instance.config["hub"] = sender.location
-            LobbyMain.instance.saveConfig()
+            Meta[Config.HUB_LOCATION] = sender.location
             Bukkit.getServer().scheduler.scheduleSyncDelayedTask(LobbyMain.instance, SetRulesTask)
             sender.sendMessage(I18n.getString("command.lobby.location_set", sender.locale))
         } else if (sender is Player) {
@@ -203,7 +204,7 @@ class CommandLobby : ILobbyCommand {
                 val strList = string.split("|")
                 val msg = TextComponent(strList[0])
                 val clickComponent = TextComponent(strList[1])
-                clickComponent.clickEvent = ClickEvent(ClickEvent.Action.RUN_COMMAND, "/lobby additem")
+                clickComponent.clickEvent = ClickEvent(ClickEvent.Action.RUN_COMMAND, "/$name additem")
                 msg.addExtra(clickComponent)
                 msg.addExtra(strList[2])
                 sender.spigot().sendMessage(msg)
@@ -288,8 +289,7 @@ class CommandLobby : ILobbyCommand {
      */
     private fun saveTemplate() {
         LobbyMain.logger.entering(CommandLobby::class, "saveTemplate")
-        LobbyMain.instance.config["inventory.content"] = LobbyInventory.TEMPLATE_INVENTORY.contents
-        LobbyMain.instance.saveConfig()
+        Meta[Config.INVENTORY_CONTENT] = LobbyInventory.TEMPLATE_INVENTORY.contents
         LobbyMain.logger.exiting(CommandLobby::class, "saveTemplate")
     }
 
