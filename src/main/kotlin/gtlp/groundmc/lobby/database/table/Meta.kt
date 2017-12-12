@@ -48,7 +48,7 @@ object Meta : Table() {
                     null
                 }
                 if (currentVersion == null) {
-                    currentVersion = select { key eq Config.DATABASE_VERSION.key }.firstOrNull()?.tryGet(value)?.toInt() ?: CURRENT_TABLE_VER
+                    currentVersion = get(Config.DATABASE_VERSION) as Int? ?: CURRENT_TABLE_VER
                 }
                 for (version in currentVersion..CURRENT_TABLE_VER) {
                     when (version) {
