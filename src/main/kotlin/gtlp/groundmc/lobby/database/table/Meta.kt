@@ -1,13 +1,13 @@
 package gtlp.groundmc.lobby.database.table
 
 import com.google.common.cache.CacheBuilder
-import de.tr7zw.itemnbtapi.GsonWrapper
 import gtlp.groundmc.lobby.LobbyMain
 import gtlp.groundmc.lobby.database.table.legacy.Meta0
 import gtlp.groundmc.lobby.enums.Config
 import gtlp.groundmc.lobby.util.entering
-import org.apache.commons.lang.StringEscapeUtils
 import org.bukkit.Bukkit
+import org.bukkit.configuration.file.YamlConfiguration
+import org.bukkit.inventory.ItemStack
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.util.concurrent.TimeUnit
@@ -23,7 +23,7 @@ object Meta : Table() {
      */
     private val CURRENT_TABLE_VER = 3
 
-    private val configCache = CacheBuilder.newBuilder().expireAfterWrite(5L, TimeUnit.SECONDS).build<Config, String>()
+    private val configCache = CacheBuilder.newBuilder().expireAfterWrite(5L, TimeUnit.SECONDS).build<Config, Any>()
 
     /**
      * Key part of the table.
@@ -62,7 +62,7 @@ object Meta : Table() {
                         2 -> {
                             Meta.dropStatement().forEach { exec(it) }
                             Meta.createStatement().forEach { exec(it) }
-                            exec("REPLACE INTO `Meta`(`key`, `value`) VALUES (\"${Config.DATABASE_VERSION.key}\", \"$CURRENT_TABLE_VER\")")
+                            exec("REPLACE INTO `Meta`(`key`, `value`) VALUES (\"${Config.DATABASE_VERSION.key}\", 3)")
                             commit()
                         }
                         3 -> {
@@ -75,8 +75,8 @@ object Meta : Table() {
                                 set(Config.SLOWCHAT_TIMEOUT, LobbyMain.instance.config.getLong("slowchat.timeout", 3000).toString())
                             }
                             if ("hub" in LobbyMain.instance.config) {
-                                set(Config.HUB_LOCATION, GsonWrapper.getString(LobbyMain.instance.config.get("hub",
-                                        Bukkit.getWorlds().first().spawnLocation)))
+                                set(Config.HUB_LOCATION, LobbyMain.instance.config.get("hub",
+                                        Bukkit.getWorlds().first().spawnLocation))
                             }
                             if ("jumppads.material" in LobbyMain.instance.config &&
                                     "jumppads.multiplier" in LobbyMain.instance.config &&
@@ -85,6 +85,12 @@ object Meta : Table() {
                                 set(Config.JUMPPADS_MULTIPLIER, LobbyMain.instance.config.getDouble("jumppads.multiplier"))
                                 set(Config.JUMPPADS_Y, LobbyMain.instance.config.getDouble("jumppads.y"))
                             }
+                            if ("inventory.content" in LobbyMain.instance.config) {
+                                @Suppress("UNCHECKED_CAST")
+                                set(Config.INVENTORY_CONTENT,
+                                        LobbyMain.instance.config.getList("inventory.content") as List<ItemStack?>)
+                            }
+                            set(Config.DATABASE_VERSION, 4)
                         }
                     }
                 }
@@ -110,14 +116,17 @@ object Meta : Table() {
      * @return the value associated with the [key] or `null`, if not present.
      */
     operator fun get(key: Config): Any? {
-        return GsonWrapper.deserializeJson(
-                StringEscapeUtils.unescapeJava(configCache.get(key, {
-                    transaction {
-                        select {
-                            Meta.key eq key.key
-                        }.toList().first().tryGet(value)
-                    }
-                })).replace("(^\"|\"$)".toRegex(), ""), key.type)
+        return configCache.get(key, {
+            with(YamlConfiguration()) {
+                loadFromString(
+                        transaction {
+                            select {
+                                Meta.key eq key.key
+                            }.first().tryGet(value)
+                        })
+                this.get(key.key, null)
+            }
+        })
     }
 
 
@@ -132,7 +141,10 @@ object Meta : Table() {
             deleteWhere { Meta.key eq key.key }
             insert {
                 it[Meta.key] = key.key
-                it[Meta.value] = GsonWrapper.getString(value)
+                it[Meta.value] = with(YamlConfiguration()) {
+                    this.set(key.key, value)
+                    saveToString()
+                }
             }
             commit()
         }

@@ -11,4 +11,5 @@ enum class Config(val key: String, val type: Class<out Any> = String::class.java
     JUMPPADS_MATERIAL("jumppads.material", List::class.javaObjectType),
     JUMPPADS_MULTIPLIER("jumppads.multiplier", Double::class.javaObjectType),
     JUMPPADS_Y("jumppads.y", Double::class.javaObjectType),
+    INVENTORY_CONTENT("inventory.content", List::class.javaObjectType)
 }

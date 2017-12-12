@@ -289,8 +289,7 @@ class CommandLobby : ILobbyCommand {
      */
     private fun saveTemplate() {
         LobbyMain.logger.entering(CommandLobby::class, "saveTemplate")
-        LobbyMain.instance.config["inventory.content"] = LobbyInventory.TEMPLATE_INVENTORY.contents
-        LobbyMain.instance.saveConfig()
+        Meta[Config.INVENTORY_CONTENT] = LobbyInventory.TEMPLATE_INVENTORY.contents
         LobbyMain.logger.exiting(CommandLobby::class, "saveTemplate")
     }
 

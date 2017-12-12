@@ -101,7 +101,7 @@ class LobbyMain : JavaPlugin() {
         scheduleTasks()
 
         logger.finer("Setting difficulty of the hub world to peaceful")
-        (Meta.get(Config.HUB_LOCATION) as Location).world.difficulty = Difficulty.PEACEFUL
+        (Meta[Config.HUB_LOCATION] as Location).world.difficulty = Difficulty.PEACEFUL
         logger.exiting(LobbyMain::class, "onEnable")
     }
 
@@ -198,7 +198,7 @@ class LobbyMain : JavaPlugin() {
         logger.entering(LobbyMain::class, "loadConfig")
         if ("inventory.content" in config && config["inventory.content"] is List<*>) {
             @Suppress("unchecked_cast")
-            LobbyInventory.TEMPLATE_INVENTORY.contents = (config["inventory.content"] as List<ItemStack>).toTypedArray()
+            LobbyInventory.TEMPLATE_INVENTORY.contents = (config["inventory.content"] as List<ItemStack?>).toTypedArray()
 
             (0 until LobbyInventory.TEMPLATE_INVENTORY.contents.size).forEach { i ->
                 if (LobbyInventory.TEMPLATE_INVENTORY.getItem(i) == null) {
