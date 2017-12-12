@@ -28,7 +28,7 @@ object Meta : Table() {
     /**
      * Value part of the table.
      */
-    val value = varchar("value", 16384).default("")
+    val value = varchar("value", 16384)
 
     /**
      * The latest version of the database.
