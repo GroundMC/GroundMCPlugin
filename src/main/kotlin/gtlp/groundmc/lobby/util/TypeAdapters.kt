@@ -19,7 +19,7 @@ object LocationTypeAdapter : TypeAdapter<Location>() {
      */
     override fun write(writer: JsonWriter, location: Location?) {
         if (location != null) {
-            writer.jsonValue(Gson().toJson(location.serialize()))
+            writer.value(Gson().toJson(location.serialize()))
         } else {
             writer.nullValue()
         }
