@@ -204,7 +204,7 @@ class CommandLobby : ILobbyCommand {
                 val strList = string.split("|")
                 val msg = TextComponent(strList[0])
                 val clickComponent = TextComponent(strList[1])
-                clickComponent.clickEvent = ClickEvent(ClickEvent.Action.RUN_COMMAND, "/lobby additem")
+                clickComponent.clickEvent = ClickEvent(ClickEvent.Action.RUN_COMMAND, "/$name additem")
                 msg.addExtra(clickComponent)
                 msg.addExtra(strList[2])
                 sender.spigot().sendMessage(msg)
