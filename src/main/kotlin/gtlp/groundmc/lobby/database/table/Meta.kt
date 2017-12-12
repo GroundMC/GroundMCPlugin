@@ -23,7 +23,7 @@ object Meta : Table() {
     /**
      * Key part of the table.
      */
-    val key = varchar("key", 255).uniqueIndex()
+    val key = varchar("key", 255)
 
     /**
      * Value part of the table.
