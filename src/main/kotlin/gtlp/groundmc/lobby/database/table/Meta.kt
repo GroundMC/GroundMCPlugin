@@ -126,7 +126,11 @@ object Meta : Table() {
      * @return the value associated with the [key] or `null`, if not present.
      */
     operator fun get(key: Config): Any? {
-        return configCache.get(key)
+        return try {
+            configCache.get(key)
+        } catch (e: Exception) {
+            null
+        }
     }
 
 
