@@ -21,6 +21,16 @@ import java.util.concurrent.TimeUnit
  */
 object Meta : Table() {
     /**
+     * Key part of the table.
+     */
+    val key = varchar("key", 255).uniqueIndex()
+
+    /**
+     * Value part of the table.
+     */
+    val value = varchar("value", 16384).default("")
+
+    /**
      * The latest version of the database.
      * Used to track the upgrade process and to determine what upgrades to do.
      */
@@ -33,36 +43,6 @@ object Meta : Table() {
     private val configCache = CacheBuilder.newBuilder()
             .refreshAfterWrite(5L, TimeUnit.SECONDS)
             .build<Config, Any>(CacheLoader.asyncReloading(DatabaseCacheLoader(), Executors.newCachedThreadPool()))
-
-    /**
-     * Class to load config values for the cache.
-     */
-    class DatabaseCacheLoader : CacheLoader<Config, Any>() {
-        override fun load(key: Config): Any {
-            LobbyMain.logger.fine("Getting value for ${key.key}")
-            with(YamlConfiguration()) {
-                loadFromString(
-                        transaction {
-                            select {
-                                Meta.key eq key.key
-                            }.first().tryGet(value) ?: throw NullPointerException(
-                                    "value for key \"${key.key}\" is null!")
-                        })
-                return this.get(key.key) ?: throw NullPointerException(
-                        "value for key \"${key.key}\" is null!")
-            }
-        }
-    }
-
-    /**
-     * Key part of the table.
-     */
-    val key = varchar("key", 255).primaryKey()
-
-    /**
-     * Value part of the table.
-     */
-    val value = varchar("value", 16384).default("")
 
     /**
      * Upgrades the database by performing the needed modifications to the database.
@@ -168,6 +148,26 @@ object Meta : Table() {
                 }
             }
             commit()
+        }
+    }
+
+    /**
+     * Class to load config values for the cache.
+     */
+    class DatabaseCacheLoader : CacheLoader<Config, Any>() {
+        override fun load(key: Config): Any {
+            LobbyMain.logger.fine("Getting value for ${key.key}")
+            with(YamlConfiguration()) {
+                loadFromString(
+                        transaction {
+                            select {
+                                Meta.key eq key.key
+                            }.first().tryGet(value) ?: throw NullPointerException(
+                                    "value for key \"${key.key}\" is null!")
+                        })
+                return this.get(key.key) ?: throw NullPointerException(
+                        "value for key \"${key.key}\" is null!")
+            }
         }
     }
 }
