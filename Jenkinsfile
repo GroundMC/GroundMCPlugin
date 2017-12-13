@@ -33,23 +33,11 @@ pipeline {
       }
     }
     stage('Parallel Test') {
-      stage('Test Java8') {
-        tools {
-          maven 'Maven3'
-          jdk 'Java8'
-        }
-        steps {
-          sh 'mvn test'
-        }
-        post {
-          success {
-            junit 'target/surefire-reports/**/*.xml'
-          }
-        }
-        stage('Test Java9') {
+      parallel{
+        stage('Test Java8') {
           tools {
             maven 'Maven3'
-            jdk 'Java9'
+            jdk 'Java8'
           }
           steps {
             sh 'mvn test'
@@ -57,6 +45,20 @@ pipeline {
           post {
             success {
               junit 'target/surefire-reports/**/*.xml'
+            }
+          }
+          stage('Test Java9') {
+            tools {
+              maven 'Maven3'
+              jdk 'Java9'
+            }
+            steps {
+              sh 'mvn test'
+            }
+            post {
+              success {
+                junit 'target/surefire-reports/**/*.xml'
+              }
             }
           }
         }
