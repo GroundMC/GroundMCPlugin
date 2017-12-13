@@ -16,7 +16,7 @@ import java.util.*
 class CommandFriends : ILobbyCommand {
     override val name: String = "friends"
 
-    override fun getCommandHelp(locale: Locale): Array<String?> = arrayOf(I18n.getString("command.friends.help", locale))
+    override fun getCommandHelp(locale: Locale) = I18n.getString("command.friends.help", locale)
 
     override fun onTabComplete(sender: CommandSender, command: Command, alias: String?, args: Array<out String>?): List<String>? = null
 
@@ -30,9 +30,9 @@ class CommandFriends : ILobbyCommand {
                 return true
             }
             friends.let {
-                    if (it.isNotEmpty()) {
-                        sender.sendMessage(String.format("%2\$s: %1\$s", it.joinToString { it.user2.name }, it.size))
-                    }
+                if (it.isNotEmpty()) {
+                    sender.sendMessage(String.format("%2\$s: %1\$s", it.joinToString { it.user2.name }, it.size))
+                }
             }
             return true
         } else if (sender is ConsoleCommandSender) {

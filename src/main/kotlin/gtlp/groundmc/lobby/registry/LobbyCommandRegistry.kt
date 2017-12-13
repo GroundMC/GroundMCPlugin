@@ -29,7 +29,7 @@ object LobbyCommandRegistry {
             override fun canSee(player: CommandSender) = true
             override fun getName() = cmd.name
             override fun getFullText(forWho: CommandSender) =
-                    cmd.getCommandHelp(I18nUtils.getLocaleFromCommandSender(forWho)).joinToString { System.lineSeparator() }
+                    cmd.getCommandHelp(I18nUtils.getLocaleFromCommandSender(forWho))
         })
         LobbyMain.logger.exiting(LobbyCommandRegistry::class, "registerCommand")
     }

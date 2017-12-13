@@ -37,7 +37,7 @@ class CommandLobby : ILobbyCommand {
 
     override val name = "globby"
 
-    override fun getCommandHelp(locale: Locale) = I18n.getStrings("command.lobby.help.1", "command.lobby.help.2", "command.lobby.help.3", locale = locale)
+    override fun getCommandHelp(locale: Locale) = I18n.getString("command.lobby.help", locale = locale)
 
     override fun onTabComplete(sender: CommandSender, command: Command, alias: String?, args: Array<out String>?): List<String>? {
         if (args != null) {
@@ -191,7 +191,7 @@ class CommandLobby : ILobbyCommand {
     private fun makeTp(args: Array<String>, sender: CommandSender): Boolean {
         LobbyMain.logger.entering(CommandLobby::class, "makeTp")
         if (sender is Player) {
-            if (sender.hasPermission(Permission.ADMIN) && args.size >= 2 && !args[1].isBlank()) {
+            if (sender.hasPermission(Permission.ADMIN) && args.size >= 2) {
                 val nbtItem = NBTItemExt(sender.inventory.itemInMainHand)
                 nbtItem.apply {
                     setBoolean(NBTIdentifier.PREFIX, true)
@@ -251,7 +251,7 @@ class CommandLobby : ILobbyCommand {
                 return false
             }
             when (args[0]) {
-                "unset" -> {
+                "disable" -> {
                     val index = args[1].toIntOrNull() ?: return false
                     sender.sendMessage(I18n.getString("event.unset")?.format(Events.disable(index)[Events.title]))
                     return true

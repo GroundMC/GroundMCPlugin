@@ -19,7 +19,7 @@ import java.util.*
 class CommandFriend : ILobbyCommand {
     override val name = "friend"
 
-    override fun getCommandHelp(locale: Locale): Array<String?> = I18n.getStrings("command.friend.help.1", "command.friend.help.2", "command.friend.help.3", "command.friend.help.4", "command.friend.help.5", locale = locale)
+    override fun getCommandHelp(locale: Locale) = I18n.getString("command.friend.help", locale = locale)
 
     override fun onTabComplete(sender: CommandSender, command: Command, alias: String?, args: Array<out String>?): List<String>? {
         if (args != null) {

@@ -17,5 +17,5 @@ interface ILobbyCommand : CommandExecutor, TabCompleter {
     /**
      * Message(s) that list help content for this command
      */
-    fun getCommandHelp(locale: Locale): Array<String?>
+    fun getCommandHelp(locale: Locale): String?
 }
