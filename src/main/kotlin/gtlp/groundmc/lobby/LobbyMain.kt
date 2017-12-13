@@ -8,14 +8,12 @@ import gtlp.groundmc.lobby.database.table.Events
 import gtlp.groundmc.lobby.database.table.Meta
 import gtlp.groundmc.lobby.database.table.Relationships
 import gtlp.groundmc.lobby.database.table.Users
-import gtlp.groundmc.lobby.enums.Config
 import gtlp.groundmc.lobby.event.listener.*
 import gtlp.groundmc.lobby.inventory.LobbyInventory
 import gtlp.groundmc.lobby.registry.LobbyCommandRegistry
 import gtlp.groundmc.lobby.task.*
 import gtlp.groundmc.lobby.util.*
 import org.bukkit.Bukkit
-import org.bukkit.Difficulty
 import org.bukkit.Location
 import org.bukkit.configuration.MemorySection
 import org.bukkit.entity.Player
@@ -81,6 +79,8 @@ class LobbyMain : JavaPlugin() {
                 config.getString("database.driver"), config.getString("database.username", ""),
                 config.getString("database.password", ""))
         if (config.getString("database.driver") == "org.sqlite.JDBC") {
+            logger.info("SQLite detected, setting default isolation level" +
+                    " to TransactionSerializable")
             TransactionManager.manager.defaultIsolationLevel = Connection.TRANSACTION_SERIALIZABLE
         }
         try {
@@ -93,15 +93,11 @@ class LobbyMain : JavaPlugin() {
         }
         Meta.upgradeDatabase()
 
-        logger.config("Registering events...")
         registerListeners()
         registerCommands()
 
-        logger.config("Scheduling tasks...")
         scheduleTasks()
 
-        logger.config("Setting difficulty of the hub world to peaceful")
-        (Meta[Config.HUB_LOCATION] as Location).world.difficulty = Difficulty.PEACEFUL
         logger.exiting(LobbyMain::class, "onEnable")
     }
 
@@ -109,6 +105,7 @@ class LobbyMain : JavaPlugin() {
      * Schedules all [ITask]s used by the plugin.
      */
     private fun scheduleTasks() {
+        logger.config("Scheduling tasks...")
         Bukkit.getServer().scheduler.scheduleSyncDelayedTask(SetRulesTask)
         Bukkit.getServer().scheduler.scheduleSyncRepeatingTask(ApplyPlayerEffectsTask)
         Bukkit.getServer().scheduler.scheduleSyncRepeatingTask(HidePlayersTask)
@@ -121,6 +118,7 @@ class LobbyMain : JavaPlugin() {
      * Registers all [org.bukkit.event.Listener]s that are used by this plugin.
      */
     private fun registerListeners() {
+        logger.config("Registering event listeners...")
         arrayOf(ChatInteractionListener,
                 HidePlayerListener,
                 LobbyInteractionListener,
@@ -217,14 +215,13 @@ class LobbyMain : JavaPlugin() {
      */
     private fun createDefaultConfig() {
         logger.entering(LobbyMain::class, "createDefaultConfig")
-        config.addDefault("inventory.content", listOf<ItemStack>())
 
         config.addDefault("log.verbosity", "FINEST")
 
         config.addDefault("database.username", "")
         config.addDefault("database.password", "")
-        config.addDefault("database.driver", "org.h2.Driver")
-        config.addDefault("database.url", "jdbc:h2:\$dataFolder/database")
+        config.addDefault("database.driver", "org.sqlite.JDBC")
+        config.addDefault("database.url", "jdbc:sqlite:\$dataFolder/database")
 
         config.addDefault("version", configVersion)
 

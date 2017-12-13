@@ -2,6 +2,7 @@ package gtlp.groundmc.lobby.task
 
 import gtlp.groundmc.lobby.database.table.Meta
 import gtlp.groundmc.lobby.enums.Config
+import org.bukkit.Difficulty
 import org.bukkit.Location
 
 /**
@@ -14,6 +15,7 @@ object SetRulesTask : ITask {
 
     override fun run() {
         (Meta[Config.HUB_LOCATION] as Location).world.apply {
+            difficulty = Difficulty.PEACEFUL
             setGameRuleValue("doDaylightCycle", "false")
             setGameRuleValue("doEntityDrops", "false")
             setGameRuleValue("doFireTick", "false")

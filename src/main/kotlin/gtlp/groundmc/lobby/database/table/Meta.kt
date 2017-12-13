@@ -129,6 +129,7 @@ object Meta : Table() {
         return try {
             configCache.get(key)
         } catch (e: Exception) {
+            LobbyMain.logger.throwing(this.javaClass.name, "get", e)
             null
         }
     }
