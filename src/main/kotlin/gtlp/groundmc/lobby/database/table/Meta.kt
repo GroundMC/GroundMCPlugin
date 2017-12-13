@@ -20,6 +20,12 @@ import java.util.concurrent.TimeUnit
  * It also handles upgrades to the database.
  */
 object Meta : Table() {
+
+    /**
+     * Unique ID for the configuration items, allows easier modification.
+     */
+    private val id = integer("id").autoIncrement().primaryKey()
+
     /**
      * Key part of the table.
      */
@@ -127,7 +133,26 @@ object Meta : Table() {
      */
     operator fun get(key: Config): Any? {
         return try {
-            configCache.get(key)
+            with(configCache[key]) {
+                try {
+                    key.type.cast(this)
+                } catch (e: ClassCastException) {
+                    if (this is String) {
+                        when (key.type) {
+                            Boolean::class.javaObjectType -> this.toBoolean()
+                            Byte::class.javaObjectType -> this.toByte()
+                            Short::class.javaObjectType -> this.toShort()
+                            Int::class.javaObjectType -> this.toInt()
+                            Long::class.javaObjectType -> this.toLong()
+                            Float::class.javaObjectType -> this.toFloat()
+                            Double::class.javaObjectType -> this.toDouble()
+                            else -> this
+                        }
+                    } else {
+                        this
+                    }
+                }
+            }
         } catch (e: Exception) {
             LobbyMain.logger.throwing(this.javaClass.name, "get", e)
             null
