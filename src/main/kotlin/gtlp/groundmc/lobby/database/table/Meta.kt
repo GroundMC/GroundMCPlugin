@@ -166,8 +166,8 @@ object Meta : Table() {
                         transaction {
                             select {
                                 Meta.key eq key.key
-                            }.first().tryGet(value) ?: throw NullPointerException(
-                                    "value for key \"${key.key}\" is null!")
+                            }.first().tryGet(value) ?: throw NoSuchElementException(
+                                    "value for key \"${key.key}\" is non-existent!")
                         })
                 return this.get(key.key) ?: throw NullPointerException(
                         "value for key \"${key.key}\" is null!")
