@@ -2,7 +2,7 @@ package gtlp.groundmc.lobby
 
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
-import de.tr7zw.itemnbtapi.GsonWrapper
+import de.tr7zw.itemnbtapi.utils.GsonWrapper
 import gtlp.groundmc.lobby.commands.*
 import gtlp.groundmc.lobby.database.table.Events
 import gtlp.groundmc.lobby.database.table.Meta
