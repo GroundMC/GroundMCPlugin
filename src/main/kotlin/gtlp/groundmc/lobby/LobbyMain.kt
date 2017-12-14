@@ -18,6 +18,7 @@ import org.bukkit.Location
 import org.bukkit.configuration.MemorySection
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
+import org.bukkit.plugin.PluginLogger
 import org.bukkit.plugin.java.JavaPlugin
 import org.bukkit.scheduler.BukkitScheduler
 import org.jetbrains.exposed.sql.Database
@@ -58,7 +59,9 @@ class LobbyMain : JavaPlugin() {
         if (exposedLogger is JDK14LoggerAdapter) {
             val fLogger = JDK14LoggerAdapter::class.java.getDeclaredField("logger")
             fLogger.isAccessible = true
-            (fLogger.get(exposedLogger) as Logger).addHandler(logHandler)
+            fLogger.set(exposedLogger, PluginLogger(this).apply {
+                level = Level.INFO
+            })
         }
         logger.exiting(LobbyMain::class, "init")
     }

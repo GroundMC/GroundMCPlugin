@@ -186,7 +186,7 @@ object Meta : Table() {
      */
     class DatabaseCacheLoader : CacheLoader<Config, Any>() {
         override fun load(key: Config): Any {
-            LobbyMain.logger.fine("Getting value for ${key.key}")
+            LobbyMain.logger.finer("Getting value for ${key.key}")
             with(YamlConfiguration()) {
                 loadFromString(
                         transaction {
