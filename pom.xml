@@ -85,6 +85,7 @@
             <groupId>com.joestelmach</groupId>
             <artifactId>natty</artifactId>
             <version>0.13</version>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.spigotmc</groupId>
@@ -103,6 +104,11 @@
             <artifactId>Multiverse-Core</artifactId>
             <version>2.6.0-SNAPSHOT</version>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>me.BukkitPVP</groupId>
+            <artifactId>PointsAPI-API</artifactId>
+            <version>1.6.5</version>
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>

@@ -1,8 +1,8 @@
 name: GroundMC_Lobby_Plugin
-version: 1.5
+version: 1.6
 author: GiantTreeLP
 main: gtlp.groundmc.lobby.LobbyMain
-depend: [ItemNBTAPI]
+depend: [ItemNBTAPI, PointsAPI]
 softdepend: [Multiverse-Core]
 
 commands:
@@ -22,6 +22,7 @@ commands:
       description: Vanish yourself
       usage: "/<command>"
       aliases: [v]
+      permission: groundmc.lobby.vanish
    coins:
       description: Information about your coins
       usage: "/<command>"

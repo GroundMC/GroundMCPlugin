@@ -40,11 +40,6 @@ object Users : Table() {
     val vanishStatus = bool("vanish_status").default(false)
 
     /**
-     * The amount of coins this player has
-     */
-    val coins = integer("coins").default(0)
-
-    /**
      * The last date at which the player has received daily coins (does not accumulate)
      */
     val lastDailyCoinsDate = date("lastDailyCoins").default(DateTime.parse("1970-01-01"))

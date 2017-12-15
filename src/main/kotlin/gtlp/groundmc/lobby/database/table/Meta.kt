@@ -4,9 +4,11 @@ import com.google.common.cache.CacheBuilder
 import com.google.common.cache.CacheLoader
 import gtlp.groundmc.lobby.LobbyMain
 import gtlp.groundmc.lobby.database.table.legacy.Meta0
+import gtlp.groundmc.lobby.database.table.legacy.Users0
 import gtlp.groundmc.lobby.enums.Config
 import gtlp.groundmc.lobby.util.entering
 import gtlp.groundmc.lobby.util.exiting
+import me.BukkitPVP.PointsAPI.PointsAPI
 import org.bukkit.Bukkit
 import org.bukkit.configuration.file.YamlConfiguration
 import org.bukkit.inventory.ItemStack
@@ -40,7 +42,7 @@ object Meta : Table() {
      * The latest version of the database.
      * Used to track the upgrade process and to determine what upgrades to do.
      */
-    private val CURRENT_TABLE_VER = 3
+    private val CURRENT_DB_VER = 5
 
     /**
      * The cache that is used to store configuration objects.
@@ -63,9 +65,9 @@ object Meta : Table() {
                     null
                 }
                 if (currentVersion == null) {
-                    currentVersion = get(Config.DATABASE_VERSION) as Int? ?: CURRENT_TABLE_VER
+                    currentVersion = get(Config.DATABASE_VERSION) as Int? ?: CURRENT_DB_VER
                 }
-                for (version in currentVersion..CURRENT_TABLE_VER) {
+                for (version in currentVersion..CURRENT_DB_VER) {
                     when (version) {
                         1 -> {
                             Relationships.columns.filter { it.name.toUpperCase() in arrayOf("LEVEL", "RELATIONSHIP") }.forEach {
@@ -107,6 +109,21 @@ object Meta : Table() {
                             }
                             set(Config.DATABASE_VERSION, 4)
                         }
+                        4 -> {
+                            Users0.selectAll().forEach {
+                                PointsAPI.setPoints(Bukkit.getOfflinePlayer(it[Users0.id]),
+                                        it[Users0.coins])
+                            }
+                            exec("ALTER TABLE `${identity(Users0)}` RENAME TO `${identity(Users0)}-old`")
+                            Users.createStatement().forEach {
+                                exec(it)
+                            }
+                            val newColumns = Users.columns.joinToString("`, `", "`", "`") { it.name }
+                            exec("INSERT INTO `${identity(Users)}`($newColumns) " +
+                                    "SELECT $newColumns FROM `${identity(Users0)}-old`")
+                            exec("DROP TABLE `${identity(Users0)}-old`")
+                            set(Config.DATABASE_VERSION, 5)
+                        }
                     }
                 }
             }
@@ -114,7 +131,7 @@ object Meta : Table() {
             transaction {
                 Meta.insert {
                     it[key] = Config.DATABASE_VERSION.key
-                    it[value] = CURRENT_TABLE_VER.toString()
+                    it[value] = CURRENT_DB_VER.toString()
                 }
                 commit()
             }

@@ -1,8 +1,8 @@
 package gtlp.groundmc.lobby.task
 
 import gtlp.groundmc.lobby.database.table.Events
-import gtlp.groundmc.lobby.database.table.Users
 import gtlp.groundmc.lobby.util.I18n
+import me.BukkitPVP.PointsAPI.PointsAPI
 import org.apache.commons.lang.time.DurationFormatUtils
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor
@@ -31,7 +31,7 @@ object UpdateScoreboardsTask : ITask {
                         it.getStatistic(Statistic.PLAY_ONE_TICK) * 50L,
                         "HH'h':mm'm'")
                 lines += ChatColor.YELLOW.toString() + I18n.getString("command.coins.currency", it.locale)
-                lines += ChatColor.WHITE.toString() + Users.getPlayer(it)[Users.coins]
+                lines += ChatColor.WHITE.toString() + PointsAPI.getPoints(it)
                 lines += "${ChatColor.DARK_AQUA}Events!"
                 if (events.isNotEmpty()) {
                     lines += ChatColor.GREEN.toString() + I18n.getString("event.yes", it.locale)

@@ -10,6 +10,7 @@ import gtlp.groundmc.lobby.enums.Permission
 import gtlp.groundmc.lobby.enums.VisibilityStates
 import gtlp.groundmc.lobby.event.PlayerChangeLocaleEvent
 import gtlp.groundmc.lobby.util.*
+import me.BukkitPVP.PointsAPI.PointsAPI
 import org.bukkit.Location
 import org.bukkit.Sound
 import org.bukkit.attribute.Attribute
@@ -146,7 +147,7 @@ object ServerStateListener : Listener {
             transaction {
                 Users.update({ Users.id eq player.uniqueId }) {
                     it[lastName] = player.name
-                    it[coins] = playerRow[coins] + Meta[Config.COINS_DAILY] as Int
+                    PointsAPI.setPoints(player, PointsAPI.getPoints(player) + Meta[Config.COINS_DAILY] as Int)
                     it[lastDailyCoinsDate] = DateTime.now()
                 }
             }
