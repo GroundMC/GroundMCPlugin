@@ -60,7 +60,8 @@ class LobbyMain : JavaPlugin() {
             val fLogger = JDK14LoggerAdapter::class.java.getDeclaredField("logger")
             fLogger.isAccessible = true
             fLogger.set(exposedLogger, PluginLogger(this).apply {
-                level = Level.INFO
+                addHandler(logHandler)
+                level = Level.ALL
             })
         }
         logger.exiting(LobbyMain::class, "init")
