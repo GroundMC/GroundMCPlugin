@@ -12,7 +12,11 @@ import me.BukkitPVP.PointsAPI.PointsAPI
 import org.bukkit.Bukkit
 import org.bukkit.configuration.file.YamlConfiguration
 import org.bukkit.inventory.ItemStack
-import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.dao.IntIdTable
+import org.jetbrains.exposed.sql.deleteWhere
+import org.jetbrains.exposed.sql.insert
+import org.jetbrains.exposed.sql.select
+import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
@@ -21,12 +25,7 @@ import java.util.concurrent.TimeUnit
  * Meta table to store the runtime configuration of the plugin.
  * It also handles upgrades to the database.
  */
-object Meta : Table() {
-
-    /**
-     * Unique ID for the configuration items, allows easier modification.
-     */
-    private val id = integer("id").autoIncrement().primaryKey()
+object Meta : IntIdTable() {
 
     /**
      * Key part of the table.
@@ -114,14 +113,19 @@ object Meta : Table() {
                                 PointsAPI.setPoints(Bukkit.getOfflinePlayer(it[Users0.id]),
                                         it[Users0.coins])
                             }
-                            exec("ALTER TABLE `${identity(Users0)}` RENAME TO `${identity(Users0)}-old`")
-                            Users.createStatement().forEach {
-                                exec(it)
+                            when (LobbyMain.instance.config["database.driver"]) {
+                                "org.sqlite.JDBC" -> {
+                                    exec("ALTER TABLE `${identity(Users0)}` RENAME TO `${identity(Users0)}-old`")
+                                    Users.createStatement().forEach { exec(it) }
+                                    val newColumns = Users.columns.joinToString("`, `", "`", "`") { it.name }
+                                    exec("INSERT INTO `${identity(Users)}`($newColumns) " +
+                                            "SELECT $newColumns FROM `${identity(Users0)}-old`")
+                                    exec("DROP TABLE `${identity(Users0)}-old`")
+                                }
+                                else -> {
+                                    Users0.coins.dropStatement().forEach { exec(it) }
+                                }
                             }
-                            val newColumns = Users.columns.joinToString("`, `", "`", "`") { it.name }
-                            exec("INSERT INTO `${identity(Users)}`($newColumns) " +
-                                    "SELECT $newColumns FROM `${identity(Users0)}-old`")
-                            exec("DROP TABLE `${identity(Users0)}-old`")
                             set(Config.DATABASE_VERSION, 5)
                         }
                     }
