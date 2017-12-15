@@ -200,6 +200,7 @@ object Meta : IntIdTable() {
             }
             commit()
         }
+        configCache.invalidate(key)
     }
 
     /**

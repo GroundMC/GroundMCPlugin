@@ -42,14 +42,26 @@ class CommandLobby : ILobbyCommand {
     override fun onTabComplete(sender: CommandSender, command: Command, alias: String?, args: Array<out String>?): List<String>? {
         if (args != null) {
             when (args.size) {
-                1 -> return mutableListOf("", "additem", "maketp", "help", "debug").apply {
+                1 -> return mutableListOf("", "additem", "maketp", "help", "debug", "event").apply {
                     if (sender.hasPermission(Permission.ADMIN)) {
                         add("set")
-                        add("event")
+                        add("config")
                     }
-                }.filter { it.startsWith(args.last()) }.sorted()
-                2 -> if (args[0] == "maketp") {
-                    return listOf("name")
+                }.filter { it.startsWith(args[0]) }.sorted()
+                2 -> when (args[0]) {
+                    "maketp" -> return listOf("name")
+                    "config" -> return Config.values().map { it.key }.toList().filter { it.startsWith(args[1]) }.sorted()
+                }
+                3 -> when (args[0]) {
+                    "config" -> {
+                        val config = Config.values().firstOrNull { it.key == args[1] } ?: return emptyList()
+                        return when (config.type) {
+                            Boolean::class.javaObjectType -> listOf("true", "false")
+                            Byte::class.javaObjectType, Short::class.javaObjectType, Int::class.javaObjectType, Long::class.javaObjectType -> listOf("0")
+                            Float::class.javaObjectType, Double::class.javaObjectType -> listOf("0.0")
+                            else -> emptyList()
+                        }
+                    }
                 }
             }
         }
@@ -79,6 +91,9 @@ class CommandLobby : ILobbyCommand {
                 }
                 "event" -> {
                     return handleEvent(sender, args.sliceArray(1 until args.size))
+                }
+                "config" -> {
+                    return handleConfig(sender, args.sliceArray(1 until args.size))
                 }
                 else -> {
                     sender.sendMessage(getCommandHelp(I18nUtils.getLocaleFromCommandSender(sender)))
@@ -282,6 +297,39 @@ class CommandLobby : ILobbyCommand {
             }
         }
         return false
+    }
+
+    /**
+     * This subsection handles the overall plugin configuration.
+     *
+     * When called with no additional parameter, it returns the value of the
+     * configuration key.
+     *
+     * When called with a second parameter, it sets the configuration value to
+     * the supplied value and returns a confirmation, that the value has been
+     * accepted and is in use immediately.
+     *
+     * The administrator is expected to enter a value of a type, that is compatible
+     * with the given configuration key.
+     *
+     * @param args the arguments that accompany this command
+     * @param sender the player that sent the command
+     * @return `true` when the command has been handled successfully, `false` otherwise.
+     */
+    private fun handleConfig(sender: CommandSender, args: Array<String>): Boolean {
+        if (!sender.hasPermission(Permission.ADMIN)) {
+            sender.sendMessage(I18n.getString("nopermission", I18nUtils.getLocaleFromCommandSender(sender)))
+            return false
+        }
+        if (args.size == 1) {
+            val config = Config.values().first { it.key == args[0] }
+            sender.sendMessage("%s: %s".format(config, Meta[config]))
+        } else if (args.size == 2) {
+            val config = Config.values().first { it.key == args[0] }
+            Meta[config] = args[1]
+            sender.sendMessage("%s: %s".format(config, Meta[config]))
+        }
+        return true
     }
 
     /**
