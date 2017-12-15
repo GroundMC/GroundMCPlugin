@@ -8,7 +8,7 @@ softdepend: [Multiverse-Core]
 commands:
    globby:
       description: Lobby commands
-      usage: "/<command> [additem|maketp|help|event|debug|set] <parameters>"
+      usage: "/<command> [additem|maketp|help|event|debug|set|config] <parameters>"
       aliases: [glb, gl, ghub]
    friend:
       description: Friendship commands
