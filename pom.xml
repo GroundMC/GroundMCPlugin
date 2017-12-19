@@ -38,7 +38,7 @@
         </repository>
         <repository>
             <id>local-jenkins</id>
-            <url>http://jenkins:8080/plugin/repository/everything/</url>
+            <url>http://giant.ddnss.de:8180/plugin/repository/everything/</url>
         </repository>
     </repositories>
 
