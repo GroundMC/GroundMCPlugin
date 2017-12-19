@@ -27,6 +27,7 @@ object SetRulesTask : ITask {
             setGameRuleValue("randomTickSpeed", "0")
             setGameRuleValue("showDeathMessages", "false")
             setGameRuleValue("reducedDebugInfo", "true")
+            setGameRuleValue("doWeatherCycle", "false")
         }
 
     }

@@ -10,6 +10,7 @@ import gtlp.groundmc.lobby.enums.Permission
 import gtlp.groundmc.lobby.enums.VisibilityStates
 import gtlp.groundmc.lobby.event.PlayerChangeLocaleEvent
 import gtlp.groundmc.lobby.util.*
+import kotlinx.coroutines.experimental.async
 import me.BukkitPVP.PointsAPI.PointsAPI
 import org.bukkit.Location
 import org.bukkit.Sound
@@ -114,14 +115,17 @@ object ServerStateListener : Listener {
         LobbyMain.logger.entering(ServerStateListener::class, "onPlayerLogin")
         LobbyMain.logger.fine("Player joined: $event")
         event.joinMessage = null
-        transaction {
-            if (Users.select { Users.id eq event.player.uniqueId }.count() == 0) {
-                Users.insert {
-                    it[id] = event.player.uniqueId
-                    it[lastName] = event.player.name
+        async {
+            transaction {
+                if (Users.select { Users.id eq event.player.uniqueId }.count() == 0) {
+                    Users.insert {
+                        it[id] = event.player.uniqueId
+                        it[lastName] = event.player.name
+                    }
                 }
             }
         }
+
         LobbyMain.originalInventories[event.player] = event.player.inventory.copy()
 
         if (event.player.world == (Meta[Config.HUB_LOCATION] as Location).world) {
@@ -130,7 +134,9 @@ object ServerStateListener : Listener {
 
         event.player.getAttribute(Attribute.GENERIC_ATTACK_SPEED).baseValue = 16.0
 
-        addDailyBonus(event.player)
+        async {
+            addDailyBonus(event.player)
+        }
         LobbyMain.logger.exiting(ServerStateListener::class, "onPlayerLogin")
     }
 

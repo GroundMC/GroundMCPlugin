@@ -1,5 +1,6 @@
 package gtlp.groundmc.lobby
 
+import com.google.common.collect.Sets
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import de.tr7zw.itemnbtapi.utils.GsonWrapper
@@ -113,7 +114,7 @@ class LobbyMain : JavaPlugin() {
         Bukkit.getServer().scheduler.scheduleSyncDelayedTask(SetRulesTask)
         Bukkit.getServer().scheduler.scheduleSyncRepeatingTask(ApplyPlayerEffectsTask)
         Bukkit.getServer().scheduler.scheduleSyncRepeatingTask(HidePlayersTask)
-        Bukkit.getServer().scheduler.scheduleSyncRepeatingTask(MonitorLocaleTask)
+        Bukkit.getServer().scheduler.runTaskTimerAsynchronously(MonitorLocaleTask)
         Bukkit.getServer().scheduler.scheduleSyncRepeatingTask(UpdateLobbyInventoryTask)
         Bukkit.getServer().scheduler.scheduleSyncRepeatingTask(UpdateScoreboardsTask)
     }
@@ -294,6 +295,18 @@ class LobbyMain : JavaPlugin() {
         tasks.put(task, scheduleSyncDelayedTask(this@LobbyMain, task, task.delay))
     }
 
+    /**
+     * Schedules an asynchronous, periodic task.
+     *
+     * @param task the task to schedule.
+     * @see BukkitScheduler.runTaskTimerAsynchronously
+     */
+    private fun BukkitScheduler.runTaskTimerAsynchronously(task: ITask) {
+        logger.entering(LobbyMain::class, "runTaskTimerAsynchronously")
+        tasks.put(task, runTaskTimerAsynchronously(this@LobbyMain, task, task.delay, task.period).taskId)
+    }
+
+
     companion object {
         /**
          * A map of [Player]s to their inventory contents.
@@ -308,7 +321,7 @@ class LobbyMain : JavaPlugin() {
         /**
          * Set holding players that want their chat to be silent
          */
-        val SILENCED_PLAYERS = mutableSetOf<Player>()
+        val SILENCED_PLAYERS: MutableSet<Player> = Sets.newConcurrentHashSet<Player>()
 
         /**
          * Common instance of this [LobbyMain] plugin.

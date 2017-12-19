@@ -6,6 +6,7 @@ import gtlp.groundmc.lobby.enums.GMCType
 import gtlp.groundmc.lobby.enums.NBTIdentifier
 import gtlp.groundmc.lobby.util.I18n
 import gtlp.groundmc.lobby.util.NBTItemExt
+import kotlinx.coroutines.experimental.async
 import org.bukkit.enchantments.Enchantment
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
@@ -65,32 +66,34 @@ object SilentChatListener : Listener {
      * @param player the player that toggles the setting
      */
     private fun toggleSilentChat(nbtItem: NBTItemExt, player: Player) {
-        if (nbtItem.getBoolean(NBTIdentifier.SILENT_STATE)!!) {
-            // silent -> loud
-            LobbyMain.SILENCED_PLAYERS.remove(player)
-            nbtItem.setBoolean(NBTIdentifier.SILENT_STATE, false)
-            nbtItem.displayName = I18n.getString("silentitem.off", player.locale)
-            nbtItem.removeEnchantment(Enchantment.LUCK)
-            player.sendMessage(I18n.getString("silentmsg.off", player.locale))
-            transaction {
-                Users.update({ Users.id eq player.uniqueId }) {
-                    it[silentStatus] = false
+        async {
+            if (nbtItem.getBoolean(NBTIdentifier.SILENT_STATE)!!) {
+                // silent -> loud
+                LobbyMain.SILENCED_PLAYERS.remove(player)
+                nbtItem.setBoolean(NBTIdentifier.SILENT_STATE, false)
+                nbtItem.displayName = I18n.getString("silentitem.off", player.locale)
+                nbtItem.removeEnchantment(Enchantment.LUCK)
+                player.sendMessage(I18n.getString("silentmsg.off", player.locale))
+                transaction {
+                    Users.update({ Users.id eq player.uniqueId }) {
+                        it[silentStatus] = false
+                    }
+                }
+            } else {
+                // loud -> silent
+                LobbyMain.SILENCED_PLAYERS.add(player)
+                nbtItem.setBoolean(NBTIdentifier.SILENT_STATE, true)
+                nbtItem.displayName = I18n.getString("silentitem.on", player.locale)
+                nbtItem.addEnchantment(Enchantment.LUCK)
+                player.sendMessage(I18n.getString("silentmsg.on", player.locale))
+                transaction {
+                    Users.update({ Users.id eq player.uniqueId }) {
+                        it[silentStatus] = true
+                    }
                 }
             }
-        } else {
-            // loud -> silent
-            LobbyMain.SILENCED_PLAYERS.add(player)
-            nbtItem.setBoolean(NBTIdentifier.SILENT_STATE, true)
-            nbtItem.displayName = I18n.getString("silentitem.on", player.locale)
-            nbtItem.addEnchantment(Enchantment.LUCK)
-            player.sendMessage(I18n.getString("silentmsg.on", player.locale))
-            transaction {
-                Users.update({ Users.id eq player.uniqueId }) {
-                    it[silentStatus] = true
-                }
-            }
+            player.inventory.setItem(1, nbtItem.item)
         }
-        player.inventory.setItem(1, nbtItem.item)
     }
 
     /**

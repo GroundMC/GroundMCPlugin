@@ -6,6 +6,7 @@ import gtlp.groundmc.lobby.enums.NBTIdentifier
 import gtlp.groundmc.lobby.enums.VisibilityStates
 import gtlp.groundmc.lobby.inventory.HidePlayerInventory
 import gtlp.groundmc.lobby.util.NBTItemExt
+import kotlinx.coroutines.experimental.async
 import org.bukkit.enchantments.Enchantment
 import org.bukkit.entity.Player
 import org.bukkit.event.Event
@@ -64,20 +65,22 @@ object HidePlayerListener : Listener {
      */
     @EventHandler
     fun selectHideState(event: InventoryClickEvent) {
-        if (event.clickedInventory.title == HidePlayerInventory.TITLE) {
+        if (event.clickedInventory != null && event.clickedInventory.title == HidePlayerInventory.TITLE) {
             event.result = Event.Result.DENY
             if (NBTIdentifier.itemHasPrefix(event.currentItem)) {
                 val nbtItem = NBTItemExt(event.currentItem)
                 if (nbtItem.getInteger(NBTIdentifier.TYPE) == GMCType.HIDE_PLAYERS.ordinal) {
-                    event.clickedInventory.contents.filterNotNull().forEach { itemstack -> itemstack.removeEnchantment(Enchantment.LUCK) }
+                    event.clickedInventory.contents.filterNotNull().forEach { itemStack -> itemStack.removeEnchantment(Enchantment.LUCK) }
                     nbtItem.addEnchantment(Enchantment.LUCK)
                     event.currentItem = nbtItem.item
                     event.whoClicked.inventory.setItem(2, NBTItemExt(event.whoClicked.inventory.getItem(2)).apply {
                         this.displayName = nbtItem.displayName
                     }.item)
-                    transaction {
-                        gtlp.groundmc.lobby.database.table.Users.update({ Users.id.eq(event.whoClicked.uniqueId) }) {
-                            it[hiddenStatus] = VisibilityStates.values()[nbtItem.getInteger(NBTIdentifier.HIDE_STATE)!!]
+                    async {
+                        transaction {
+                            gtlp.groundmc.lobby.database.table.Users.update({ Users.id.eq(event.whoClicked.uniqueId) }) {
+                                it[hiddenStatus] = VisibilityStates.values()[nbtItem.getInteger(NBTIdentifier.HIDE_STATE)!!]
+                            }
                         }
                     }
                     event.whoClicked.sendMessage(nbtItem.displayName)

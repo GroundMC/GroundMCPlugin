@@ -1,13 +1,13 @@
 package gtlp.groundmc.lobby.event
 
 import org.bukkit.entity.Player
+import org.bukkit.event.Event
 import org.bukkit.event.HandlerList
-import org.bukkit.event.player.PlayerEvent
 
 /**
  * An event that is called when a player changes locale.
  */
-class PlayerChangeLocaleEvent(player: Player) : PlayerEvent(player) {
+class PlayerChangeLocaleEvent(val player: Player) : Event(true) {
 
     /**
      * Gets the list of handlers
@@ -22,12 +22,5 @@ class PlayerChangeLocaleEvent(player: Player) : PlayerEvent(player) {
          * Used like any other event.
          */
         val handlersList = HandlerList()
-
-        /**
-         * Static method to return the [handlersList] to the server.
-         *
-         * @return the list of handlers
-         */
-        @JvmStatic fun getHandlerList(): HandlerList = handlersList
     }
 }

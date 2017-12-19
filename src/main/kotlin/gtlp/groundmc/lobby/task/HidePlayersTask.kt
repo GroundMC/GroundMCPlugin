@@ -6,7 +6,6 @@ import gtlp.groundmc.lobby.database.table.Relationships
 import gtlp.groundmc.lobby.database.table.Users
 import gtlp.groundmc.lobby.enums.VisibilityStates
 import org.bukkit.Bukkit
-import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction
 
@@ -19,9 +18,7 @@ object HidePlayersTask : ITask {
 
     override fun run() {
         val onlinePlayers = transaction {
-            return@transaction mutableListOf<ResultRow>().apply {
-                addAll(Users.select { Users.id inList ImmutableList.copyOf(Bukkit.getOnlinePlayers().map { it.uniqueId }) }.groupBy(Users.id))
-            }
+            Users.select { Users.id inList ImmutableList.copyOf(Bukkit.getOnlinePlayers().map { it.uniqueId }) }.toList()
         }
         onlinePlayers.forEach { player ->
             when (player[Users.hiddenStatus]) {
@@ -45,13 +42,11 @@ object HidePlayersTask : ITask {
         }
 
         val vanishedPlayers = transaction {
-            return@transaction mutableListOf<ResultRow>().apply {
-                addAll(Users.select { Users.vanishStatus eq true })
-            }
+            Users.select { Users.vanishStatus eq true }.toList()
         }
         for (player in vanishedPlayers) {
             onlinePlayers.forEach {
-                Bukkit.getPlayer(it[Users.id]).hidePlayer(LobbyMain.instance, Bukkit.getPlayer(player[Users.id]))
+                Bukkit.getPlayer(it[Users.id])?.hidePlayer(LobbyMain.instance, Bukkit.getPlayer(player[Users.id]))
             }
         }
     }
