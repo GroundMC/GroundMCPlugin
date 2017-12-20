@@ -22,5 +22,13 @@ class PlayerChangeLocaleEvent(val player: Player) : Event(true) {
          * Used like any other event.
          */
         val handlersList = HandlerList()
+
+        /**
+         * Static method to return the [handlersList] to the server.
+         *
+         * @return the list of handlers
+         */
+        @JvmStatic
+        fun getHandlerList(): HandlerList = handlersList
     }
 }
