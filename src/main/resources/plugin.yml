@@ -2,7 +2,7 @@ name: GroundMC_Lobby_Plugin
 version: 1.6
 author: GiantTreeLP
 main: gtlp.groundmc.lobby.LobbyMain
-depend: [ItemNBTAPI, PointsAPI]
+depend: [ItemNBTAPI, PointsAPI, StatsDB]
 softdepend: [Multiverse-Core]
 
 commands:

@@ -1,9 +1,18 @@
 package gtlp.groundmc.lobby.util
 
+import gtlp.groundmc.lobby.database.table.Statistics
 import gtlp.groundmc.lobby.enums.Permission
+import org.bukkit.Material
+import org.bukkit.Statistic
 import org.bukkit.command.CommandSender
+import org.bukkit.entity.EntityType
+import org.bukkit.entity.Player
 import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
+import org.jetbrains.exposed.sql.and
+import org.jetbrains.exposed.sql.select
+import org.jetbrains.exposed.sql.sum
+import org.jetbrains.exposed.sql.transactions.transaction
 import java.util.logging.Logger
 import kotlin.reflect.KClass
 
@@ -85,3 +94,29 @@ val Int.megabytes: Int
  */
 val Int.kilobytes: Int
     get() = this * 1024
+
+fun Player.aggregateStatistic(statistic: Statistic) =
+        transaction {
+            Statistics.slice(Statistics.value.sum()).select {
+                (Statistics.statistic eq statistic.name) and
+                        (Statistics.playerId eq uniqueId)
+            }.map { it[Statistics.value.sum()] }.firstOrNull()
+        }
+
+fun Player.aggregateStatistic(statistic: Statistic, entity: EntityType) =
+        transaction {
+            Statistics.slice(Statistics.value).select {
+                (Statistics.statistic eq statistic.name) and
+                        (Statistics.playerId eq uniqueId) and
+                        (Statistics.entity eq entity.name)
+            }.map { it[Statistics.value.sum()] }.firstOrNull()
+        }
+
+fun Player.aggregateStatistic(statistic: Statistic, material: Material) =
+        transaction {
+            Statistics.slice(Statistics.value).select {
+                (Statistics.statistic eq statistic.name) and
+                        (Statistics.playerId eq uniqueId) and
+                        (Statistics.material eq material.name)
+            }.map { it[Statistics.value.sum()] }.firstOrNull()
+        }
