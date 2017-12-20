@@ -12,11 +12,7 @@ import me.BukkitPVP.PointsAPI.PointsAPI
 import org.bukkit.Bukkit
 import org.bukkit.configuration.file.YamlConfiguration
 import org.bukkit.inventory.ItemStack
-import org.jetbrains.exposed.dao.IntIdTable
-import org.jetbrains.exposed.sql.deleteWhere
-import org.jetbrains.exposed.sql.insert
-import org.jetbrains.exposed.sql.select
-import org.jetbrains.exposed.sql.selectAll
+import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
@@ -25,12 +21,12 @@ import java.util.concurrent.TimeUnit
  * Meta table to store the runtime configuration of the plugin.
  * It also handles upgrades to the database.
  */
-object Meta : IntIdTable() {
+object Meta : Table() {
 
     /**
      * Key part of the table.
      */
-    val key = varchar("key", 255)
+    val key = varchar("key", 255).primaryKey()
 
     /**
      * Value part of the table.
@@ -133,10 +129,7 @@ object Meta : IntIdTable() {
             }
         } catch (exception: NoSuchElementException) {
             transaction {
-                Meta.insert {
-                    it[key] = Config.DATABASE_VERSION.key
-                    it[value] = CURRENT_DB_VER.toString()
-                }
+                set(Config.DATABASE_VERSION, CURRENT_DB_VER)
                 commit()
             }
             LobbyMain.logger.info("Database newly created, no update necessary")
