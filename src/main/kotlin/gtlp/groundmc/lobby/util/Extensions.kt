@@ -95,6 +95,13 @@ val Int.megabytes: Int
 val Int.kilobytes: Int
     get() = this * 1024
 
+/**
+ * Aggregate the values over one statistic.
+ *
+ * @param statistic the statistic to aggregate
+ *
+ * @return the aggregated value
+ */
 fun Player.aggregateStatistic(statistic: Statistic) =
         transaction {
             Statistics.slice(Statistics.value.sum()).select {
@@ -103,6 +110,14 @@ fun Player.aggregateStatistic(statistic: Statistic) =
             }.map { it[Statistics.value.sum()] }.firstOrNull()
         }
 
+/**
+ * Aggregate the values over one statistic, specified by an entity.
+ *
+ * @param statistic the statistic to aggregate
+ * @param entity the entity to specify on
+ *
+ * @return the aggregated value
+ */
 fun Player.aggregateStatistic(statistic: Statistic, entity: EntityType) =
         transaction {
             Statistics.slice(Statistics.value).select {
@@ -112,6 +127,14 @@ fun Player.aggregateStatistic(statistic: Statistic, entity: EntityType) =
             }.map { it[Statistics.value.sum()] }.firstOrNull()
         }
 
+/**
+ * Aggregate the values over one statistic, specified by a material.
+ *
+ * @param statistic the statistic to aggregate
+ * @param material the material to specify on
+ *
+ * @return the aggregated value
+ */
 fun Player.aggregateStatistic(statistic: Statistic, material: Material) =
         transaction {
             Statistics.slice(Statistics.value).select {
