@@ -322,12 +322,16 @@ class CommandLobby : ILobbyCommand {
             return false
         }
         if (args.size == 1) {
-            val config = Config.values().first { it.key == args[0] }
-            sender.sendMessage("%s: %s".format(config, Meta[config]))
+            val config = Config.values().firstOrNull { it.key == args[0] }
+            if (config != null) {
+                sender.sendMessage("%s: %s".format(config, Meta[config]))
+            }
         } else if (args.size == 2) {
-            val config = Config.values().first { it.key == args[0] }
-            Meta[config] = args[1]
-            sender.sendMessage("%s: %s".format(config, Meta[config]))
+            val config = Config.values().firstOrNull { it.key == args[0] }
+            if (config != null) {
+                Meta[config] = args[1]
+                sender.sendMessage("%s: %s".format(config, Meta[config]))
+            }
         }
         return true
     }
