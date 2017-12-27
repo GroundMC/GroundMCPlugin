@@ -14,6 +14,7 @@ import gtlp.groundmc.lobby.inventory.LobbyInventory
 import gtlp.groundmc.lobby.registry.LobbyCommandRegistry
 import gtlp.groundmc.lobby.task.*
 import gtlp.groundmc.lobby.util.*
+import org.apache.commons.dbcp2.BasicDataSource
 import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.configuration.MemorySection
@@ -79,10 +80,13 @@ class LobbyMain : JavaPlugin() {
         upgradeConfig()
         loadConfig()
         logger.config("Loading database...")
-        Database.connect(config.getString("database.url")
-                .replace("\$dataFolder", dataFolder.absolutePath),
-                config.getString("database.driver"), config.getString("database.username", ""),
-                config.getString("database.password", ""))
+        Database.connect(BasicDataSource().apply {
+            url = config.getString("database.url")
+                    .replace("\$dataFolder", dataFolder.absolutePath)
+            driverClassName = config.getString("database.driver")
+            username = config.getString("database.username", "")
+            password = config.getString("database.password", "")
+        })
         if (config.getString("database.driver") == "org.sqlite.JDBC") {
             logger.info("SQLite detected, setting default isolation level" +
                     " to TransactionSerializable")
