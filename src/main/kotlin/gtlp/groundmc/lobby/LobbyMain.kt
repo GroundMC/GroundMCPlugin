@@ -86,6 +86,7 @@ class LobbyMain : JavaPlugin() {
             driverClassName = config.getString("database.driver")
             username = config.getString("database.username", "")
             password = config.getString("database.password", "")
+            addConnectionProperty("journal_mode", "wal")
         })
         if (config.getString("database.driver") == "org.sqlite.JDBC") {
             logger.info("SQLite detected, setting default isolation level" +
