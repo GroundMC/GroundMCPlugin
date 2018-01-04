@@ -11,7 +11,6 @@ import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.select
-import org.jetbrains.exposed.sql.sum
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.util.logging.Logger
 import kotlin.reflect.KClass
@@ -104,10 +103,10 @@ val Int.kilobytes: Int
  */
 fun Player.aggregateStatistic(statistic: Statistic) =
         transaction {
-            Statistics.slice(Statistics.value.sum()).select {
+            Statistics.select {
                 (Statistics.statistic eq statistic.name) and
                         (Statistics.playerId eq uniqueId)
-            }.map { it[Statistics.value.sum()] }.firstOrNull()
+            }.first().tryGet(Statistics.value)
         }
 
 /**
@@ -120,11 +119,11 @@ fun Player.aggregateStatistic(statistic: Statistic) =
  */
 fun Player.aggregateStatistic(statistic: Statistic, entity: EntityType) =
         transaction {
-            Statistics.slice(Statistics.value).select {
+            Statistics.select {
                 (Statistics.statistic eq statistic.name) and
                         (Statistics.playerId eq uniqueId) and
                         (Statistics.entity eq entity.name)
-            }.map { it[Statistics.value.sum()] }.firstOrNull()
+            }.first().tryGet(Statistics.value)
         }
 
 /**
@@ -137,9 +136,9 @@ fun Player.aggregateStatistic(statistic: Statistic, entity: EntityType) =
  */
 fun Player.aggregateStatistic(statistic: Statistic, material: Material) =
         transaction {
-            Statistics.slice(Statistics.value).select {
+            Statistics.select {
                 (Statistics.statistic eq statistic.name) and
                         (Statistics.playerId eq uniqueId) and
                         (Statistics.material eq material.name)
-            }.map { it[Statistics.value.sum()] }.firstOrNull()
+            }.first().tryGet(Statistics.value)
         }
