@@ -8,11 +8,6 @@ import org.jetbrains.exposed.sql.Table
 object Statistics : Table() {
 
     /**
-     * The id of the server where the value comes from.
-     */
-    val serverId = varchar("server_id", 255)
-
-    /**
      * The [org.bukkit.OfflinePlayer.getUniqueId] of the player.
      */
     val playerId = uuid("player_id").references(Users.id)
