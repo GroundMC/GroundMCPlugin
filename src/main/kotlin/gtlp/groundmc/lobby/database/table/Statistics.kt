@@ -30,5 +30,5 @@ object Statistics : Table() {
     /**
      * The value of the statistic.
      */
-    val value = long("value")
+    val value = integer("value")
 }

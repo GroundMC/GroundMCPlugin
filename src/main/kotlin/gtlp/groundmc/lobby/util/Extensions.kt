@@ -85,13 +85,13 @@ fun CommandSender.hasPermission(permission: Permission) = this.hasPermission(per
 /**
  * Extension to [Int] to convert the integer in megabytes to bytes.
  */
-val Int.megabytes: Int
+inline val Int.megabytes: Int
     get() = this * 1024.kilobytes
 
 /**
  * Extension to [Int] to convert the integer in kilobytes to bytes.
  */
-val Int.kilobytes: Int
+inline val Int.kilobytes: Int
     get() = this * 1024
 
 /**

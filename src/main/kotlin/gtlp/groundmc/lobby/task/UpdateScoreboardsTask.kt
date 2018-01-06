@@ -46,7 +46,6 @@ object UpdateScoreboardsTask : ITask {
                 lines.asReversed().forEach {
                     getScore(it).score = score++
                 }
-
             }
             it.scoreboard = scoreboard
         }
