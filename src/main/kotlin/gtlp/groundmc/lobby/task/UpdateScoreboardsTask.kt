@@ -21,7 +21,9 @@ object UpdateScoreboardsTask : ITask {
     override fun run() {
         val events = Events.getCurrentEventTitles()
         Bukkit.getServer().onlinePlayers.forEach {
-            val scoreboard = Bukkit.getScoreboardManager().newScoreboard
+            val scoreboard = it.scoreboard.apply {
+                this.entries.forEach(this::resetScores)
+            }
             scoreboard.registerNewObjective("1", "dummy").apply {
                 displaySlot = DisplaySlot.SIDEBAR
                 displayName = "${ChatColor.GRAY}${it.displayName}"
