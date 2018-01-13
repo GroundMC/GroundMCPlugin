@@ -21,9 +21,7 @@ object UpdateScoreboardsTask : ITask {
     override fun run() {
         val events = Events.getCurrentEventTitles()
         Bukkit.getServer().onlinePlayers.forEach {
-            val scoreboard = it.scoreboard.apply {
-                this.entries.forEach(this::resetScores)
-            }
+            val scoreboard = it.scoreboard
             var objective = scoreboard.getObjective("1")
             if (objective == null) {
                 objective = scoreboard.registerNewObjective("1", "dummy")
@@ -48,9 +46,24 @@ object UpdateScoreboardsTask : ITask {
                 }
                 lines += "-".repeat(12)
 
-                var score = 0
-                lines.asReversed().forEach {
-                    getScore(it).score = score++
+                if (lines.size != scoreboard.entries.size) {
+                    scoreboard.entries.forEach(scoreboard::resetScores)
+                }
+
+                lines.asReversed().forEachIndexed { index, s ->
+                    if (!objective.getScore(s).isScoreSet) {
+                        val entry = scoreboard.entries.map { entry ->
+                            entry to scoreboard.getScores(entry)
+                        }.find { pair ->
+                            pair.second.find { score ->
+                                (score.score == index) && (score.objective == objective)
+                            } != null
+                        }?.first
+                        if (entry != null) {
+                            scoreboard.resetScores(entry)
+                        }
+                        getScore(s).score = index
+                    }
                 }
                 it.scoreboard = scoreboard
             }
