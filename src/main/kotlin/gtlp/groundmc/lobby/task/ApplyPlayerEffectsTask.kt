@@ -16,6 +16,9 @@ object ApplyPlayerEffectsTask : ITask {
         Bukkit.getOnlinePlayers().filter { it.world == (Meta[Config.HUB_LOCATION] as Location).world }.forEach {
             it.health = 20.0
             it.saturation = 20.0f
+            it.foodLevel = 20
+            it.exhaustion = 0.0f
+            it.activePotionEffects.forEach { effect -> it.removePotionEffect(effect.type) }
         }
     }
 }
