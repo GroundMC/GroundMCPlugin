@@ -9,6 +9,7 @@ import org.bukkit.Bukkit
 import org.bukkit.ChatColor
 import org.bukkit.Statistic
 import org.bukkit.scoreboard.DisplaySlot
+import kotlin.math.max
 
 /**
  * Task to regularly update the player's scoreboard with information about their
@@ -27,8 +28,13 @@ object UpdateScoreboardsTask : ITask {
                 objective = scoreboard.registerNewObjective("1", "dummy")
             }
             objective.apply {
-                displaySlot = DisplaySlot.SIDEBAR
-                displayName = "${ChatColor.GRAY}${it.displayName}"
+                if (displaySlot != DisplaySlot.SIDEBAR) {
+                    displaySlot = DisplaySlot.SIDEBAR
+                }
+                val newDisplayName = "${ChatColor.GRAY}${it.displayName}"
+                if (displayName != newDisplayName) {
+                    displayName = newDisplayName
+                }
 
                 val lines = mutableListOf<String>()
                 lines += ChatColor.GOLD.toString() + I18n.getString("play_time", it.locale)
@@ -44,7 +50,8 @@ object UpdateScoreboardsTask : ITask {
                 } else {
                     lines += ChatColor.RED.toString() + I18n.getString("event.no", it.locale)
                 }
-                lines += "-".repeat(12)
+                lines += ChatColor.STRIKETHROUGH.toString() + "-".repeat(max(10, lines.
+                        map { s -> s.length }.sortedDescending().first()))
 
                 if (lines.size != scoreboard.entries.size) {
                     scoreboard.entries.forEach(scoreboard::resetScores)
@@ -65,7 +72,6 @@ object UpdateScoreboardsTask : ITask {
                         getScore(s).score = index
                     }
                 }
-                it.scoreboard = scoreboard
             }
         }
     }
