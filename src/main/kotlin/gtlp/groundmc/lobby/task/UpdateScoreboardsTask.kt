@@ -24,7 +24,11 @@ object UpdateScoreboardsTask : ITask {
             val scoreboard = it.scoreboard.apply {
                 this.entries.forEach(this::resetScores)
             }
-            scoreboard.registerNewObjective("1", "dummy").apply {
+            var objective = scoreboard.getObjective("1")
+            if (objective == null) {
+                objective = scoreboard.registerNewObjective("1", "dummy")
+            }
+            objective.apply {
                 displaySlot = DisplaySlot.SIDEBAR
                 displayName = "${ChatColor.GRAY}${it.displayName}"
 
@@ -48,8 +52,8 @@ object UpdateScoreboardsTask : ITask {
                 lines.asReversed().forEach {
                     getScore(it).score = score++
                 }
+                it.scoreboard = scoreboard
             }
-            it.scoreboard = scoreboard
         }
     }
 }
