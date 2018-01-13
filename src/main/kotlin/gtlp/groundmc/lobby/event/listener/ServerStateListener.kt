@@ -12,6 +12,7 @@ import gtlp.groundmc.lobby.event.PlayerChangeLocaleEvent
 import gtlp.groundmc.lobby.util.*
 import kotlinx.coroutines.experimental.async
 import me.BukkitPVP.PointsAPI.PointsAPI
+import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.Sound
 import org.bukkit.attribute.Attribute
@@ -23,6 +24,7 @@ import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerChangedWorldEvent
 import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.event.player.PlayerQuitEvent
+import org.bukkit.scoreboard.Team
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction
@@ -136,6 +138,22 @@ object ServerStateListener : Listener {
 
         async {
             addDailyBonus(event.player)
+        }
+        val oldBoard = event.player.scoreboard
+        event.player.scoreboard = Bukkit.getScoreboardManager().newScoreboard
+        oldBoard.teams.forEach {
+            event.player.scoreboard.registerNewTeam(it.name).apply {
+                this.color = it.color
+                this.displayName = it.displayName
+                this.prefix = it.prefix
+                this.suffix = it.suffix
+                this.setAllowFriendlyFire(it.allowFriendlyFire())
+                this.setCanSeeFriendlyInvisibles(it.canSeeFriendlyInvisibles())
+                it.entries.forEach(this::addEntry)
+                Team.Option.values().forEach { option ->
+                    this.setOption(option, it.getOption(option))
+                }
+            }
         }
         LobbyMain.logger.exiting(ServerStateListener::class, "onPlayerLogin")
     }
