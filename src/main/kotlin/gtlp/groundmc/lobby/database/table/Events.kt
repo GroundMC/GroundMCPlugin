@@ -1,5 +1,7 @@
 package gtlp.groundmc.lobby.database.table
 
+import com.google.common.cache.CacheBuilder
+import com.google.common.cache.CacheLoader
 import gtlp.groundmc.lobby.LobbyMain
 import gtlp.groundmc.lobby.util.entering
 import gtlp.groundmc.lobby.util.exiting
@@ -8,6 +10,8 @@ import org.bukkit.entity.Player
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.joda.time.DateTime
+import java.util.concurrent.Executors
+import java.util.concurrent.TimeUnit
 
 /**
  * Table holding all past, current and future events planned for the server.
@@ -51,6 +55,24 @@ object Events : Table() {
      */
     private val active = bool("active").default(true)
 
+    private val eventCache = CacheBuilder.newBuilder().
+            refreshAfterWrite(5L, TimeUnit.SECONDS).
+            build(CacheLoader.asyncReloading(
+                    EventCacheLoader(), Executors.newCachedThreadPool()))
+
+    class EventCacheLoader : CacheLoader<Unit, List<ResultRow>>() {
+        override fun load(key: Unit?): List<ResultRow> {
+            return transaction {
+                return@transaction select {
+                    (beginTime less DateTime.now()) and
+                            (endTime greater DateTime.now()) and
+                            (active eq true)
+                }
+                        .orderBy(endTime, true).toList()
+            }
+        }
+    }
+
     /**
      * Fetches all currently active events and returns their titles in a [List]
      *
@@ -68,14 +90,7 @@ object Events : Table() {
      * @return a list of all the events that are currently active
      */
     private fun getCurrentEvents(): List<ResultRow> {
-        return transaction {
-            return@transaction select {
-                (beginTime less DateTime.now()) and
-                        (endTime greater DateTime.now()) and
-                        (active eq true)
-            }
-                    .orderBy(endTime, true).toList()
-        }
+        return eventCache.get(Unit)
     }
 
     /**
