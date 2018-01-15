@@ -57,19 +57,22 @@ object UpdateScoreboardsTask : ITask {
                     scoreboard.entries.forEach(scoreboard::resetScores)
                 }
 
-                lines.asReversed().forEachIndexed { index, s ->
-                    if (!objective.getScore(s).isScoreSet) {
-                        val entry = scoreboard.entries.map { entry ->
-                            entry to scoreboard.getScores(entry)
-                        }.find { pair ->
-                            pair.second.find { score ->
-                                (score.score == index) && (score.objective == objective)
-                            } != null
-                        }?.first
-                        if (entry != null) {
-                            scoreboard.resetScores(entry)
+                // Constraint: Entries are designed to be unique,
+                // no two entries can exist with the same name,
+                // one would overwrite the score of the other
+                val oldEntries = scoreboard.entries.map {
+                    scoreboard.getScores(it).first { it.objective == objective }
+                }.associate { it.score to it }
+
+                val newLines = lines.asReversed().withIndex()
+
+                newLines.forEach {
+                    val oldEntry = oldEntries[it.index]?.entry
+                    if (oldEntry != it.value) {
+                        if (oldEntry != null) {
+                            scoreboard.resetScores(oldEntry)
                         }
-                        getScore(s).score = index
+                        getScore(it.value).score = it.index
                     }
                 }
             }
