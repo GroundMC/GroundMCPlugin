@@ -3,6 +3,7 @@ package gtlp.groundmc.lobby
 import com.google.common.collect.Sets
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
+import com.zaxxer.hikari.HikariDataSource
 import de.tr7zw.itemnbtapi.utils.GsonWrapper
 import gtlp.groundmc.lobby.commands.*
 import gtlp.groundmc.lobby.database.table.Events
@@ -14,7 +15,6 @@ import gtlp.groundmc.lobby.inventory.LobbyInventory
 import gtlp.groundmc.lobby.registry.LobbyCommandRegistry
 import gtlp.groundmc.lobby.task.*
 import gtlp.groundmc.lobby.util.*
-import org.apache.commons.dbcp2.BasicDataSource
 import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.configuration.MemorySection
@@ -80,13 +80,13 @@ class LobbyMain : JavaPlugin() {
         upgradeConfig()
         loadConfig()
         logger.config("Loading database...")
-        Database.connect(BasicDataSource().apply {
-            url = config.getString("database.url")
+        Database.connect(HikariDataSource().apply {
+            jdbcUrl = config.getString("database.url")
                     .replace("\$dataFolder", dataFolder.absolutePath)
             driverClassName = config.getString("database.driver")
             username = config.getString("database.username", "")
             password = config.getString("database.password", "")
-            addConnectionProperty("journal_mode", "wal")
+            addDataSourceProperty("journal_mode", "wal")
         })
         if (config.getString("database.driver") == "org.sqlite.JDBC") {
             logger.info("SQLite detected, setting default isolation level" +
