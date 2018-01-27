@@ -51,7 +51,7 @@ class LobbyMain : JavaPlugin() {
         logger.entering(LobbyMain::class, "init")
         val logFileDirectory = File("${dataFolder.absolutePath}/logs")
         if (!logFileDirectory.exists()) {
-            logFileDirectory.mkdir()
+            logFileDirectory.mkdirs()
         }
         val logHandler = FileHandler("$logFileDirectory/groundmc.%g.log", 5.megabytes, 10).apply {
             level = Level.FINEST

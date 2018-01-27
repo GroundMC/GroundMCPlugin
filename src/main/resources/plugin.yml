@@ -1,8 +1,8 @@
-name: GroundMC_Lobby_Plugin
-version: 1.6
+name: GroundMCLobbyPlugin
+version: 1.7
 author: GiantTreeLP
 main: gtlp.groundmc.lobby.LobbyMain
-depend: [ItemNBTAPI, PointsAPI, StatsDB]
+depend: [GroundMCKotlinLoader, ItemNBTAPI, PointsAPI, StatsDB]
 softdepend: [Multiverse-Core]
 
 commands:
