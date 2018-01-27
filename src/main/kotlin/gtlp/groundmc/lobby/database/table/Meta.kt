@@ -37,7 +37,7 @@ object Meta : Table() {
      * The latest version of the database.
      * Used to track the upgrade process and to determine what upgrades to do.
      */
-    private val CURRENT_DB_VER = 5
+    private const val CURRENT_DB_VER = 5
 
     /**
      * The cache that is used to store configuration objects.

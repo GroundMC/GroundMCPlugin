@@ -286,7 +286,7 @@ class LobbyMain : JavaPlugin() {
      */
     private fun BukkitScheduler.scheduleSyncRepeatingTask(task: ITask) {
         logger.entering(LobbyMain::class, "scheduleSyncRepeatingTask")
-        tasks.put(task, scheduleSyncRepeatingTask(this@LobbyMain, task, task.delay, task.period))
+        tasks[task] = scheduleSyncRepeatingTask(this@LobbyMain, task, task.delay, task.period)
     }
 
     /**
@@ -297,7 +297,7 @@ class LobbyMain : JavaPlugin() {
      */
     private fun BukkitScheduler.scheduleSyncDelayedTask(task: ITask) {
         logger.entering(LobbyMain::class, "scheduleSyncDelayedTask")
-        tasks.put(task, scheduleSyncDelayedTask(this@LobbyMain, task, task.delay))
+        tasks[task] = scheduleSyncDelayedTask(this@LobbyMain, task, task.delay)
     }
 
     /**
@@ -308,7 +308,7 @@ class LobbyMain : JavaPlugin() {
      */
     private fun BukkitScheduler.runTaskTimerAsynchronously(task: ITask) {
         logger.entering(LobbyMain::class, "runTaskTimerAsynchronously")
-        tasks.put(task, runTaskTimerAsynchronously(this@LobbyMain, task, task.delay, task.period).taskId)
+        tasks[task] = runTaskTimerAsynchronously(this@LobbyMain, task, task.delay, task.period).taskId
     }
 
 

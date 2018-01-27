@@ -1,8 +1,8 @@
 package gtlp.groundmc.lobby.task
 
 import gtlp.groundmc.lobby.database.table.Events
+import gtlp.groundmc.lobby.database.table.queryStatistic
 import gtlp.groundmc.lobby.util.I18n
-import gtlp.groundmc.lobby.util.aggregateStatistic
 import me.BukkitPVP.PointsAPI.PointsAPI
 import org.apache.commons.lang.time.DurationFormatUtils
 import org.bukkit.Bukkit
@@ -39,7 +39,7 @@ object UpdateScoreboardsTask : ITask {
                 val lines = mutableListOf<String>()
                 lines += ChatColor.GOLD.toString() + I18n.getString("play_time", it.locale)
                 lines += ChatColor.WHITE.toString() + DurationFormatUtils.formatDuration(
-                        (it.aggregateStatistic(Statistic.PLAY_ONE_TICK) ?: 0) * 50L,
+                        (it.queryStatistic(Statistic.PLAY_ONE_TICK) ?: 0) * 50L,
                         "HH'h':mm'm'")
                 lines += ChatColor.YELLOW.toString() + I18n.getString("command.coins.currency", it.locale)
                 lines += ChatColor.WHITE.toString() + PointsAPI.getPoints(it)
@@ -50,8 +50,7 @@ object UpdateScoreboardsTask : ITask {
                 } else {
                     lines += ChatColor.RED.toString() + I18n.getString("event.no", it.locale)
                 }
-                lines += ChatColor.STRIKETHROUGH.toString() + "-".repeat(max(10, lines.
-                        map { s -> s.length }.sortedDescending().first()))
+                lines += ChatColor.STRIKETHROUGH.toString() + "-".repeat(max(10, lines.map { s -> s.length }.sortedDescending().first()))
 
                 if (lines.size != scoreboard.entries.size) {
                     scoreboard.entries.forEach(scoreboard::resetScores)

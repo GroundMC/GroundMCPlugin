@@ -1,17 +1,9 @@
 package gtlp.groundmc.lobby.util
 
-import gtlp.groundmc.lobby.database.table.Statistics
 import gtlp.groundmc.lobby.enums.Permission
-import org.bukkit.Material
-import org.bukkit.Statistic
 import org.bukkit.command.CommandSender
-import org.bukkit.entity.EntityType
-import org.bukkit.entity.Player
 import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
-import org.jetbrains.exposed.sql.and
-import org.jetbrains.exposed.sql.select
-import org.jetbrains.exposed.sql.transactions.transaction
 import java.util.logging.Logger
 import kotlin.reflect.KClass
 
@@ -93,52 +85,3 @@ inline val Int.megabytes: Int
  */
 inline val Int.kilobytes: Int
     get() = this * 1024
-
-/**
- * Aggregate the values over one statistic.
- *
- * @param statistic the statistic to aggregate
- *
- * @return the aggregated value
- */
-fun Player.aggregateStatistic(statistic: Statistic) =
-        transaction {
-            Statistics.select {
-                (Statistics.statistic eq statistic.name) and
-                        (Statistics.playerId eq uniqueId)
-            }.first().tryGet(Statistics.value)
-        }
-
-/**
- * Aggregate the values over one statistic, specified by an entity.
- *
- * @param statistic the statistic to aggregate
- * @param entity the entity to specify on
- *
- * @return the aggregated value
- */
-fun Player.aggregateStatistic(statistic: Statistic, entity: EntityType) =
-        transaction {
-            Statistics.select {
-                (Statistics.statistic eq statistic.name) and
-                        (Statistics.playerId eq uniqueId) and
-                        (Statistics.entity eq entity.name)
-            }.first().tryGet(Statistics.value)
-        }
-
-/**
- * Aggregate the values over one statistic, specified by a material.
- *
- * @param statistic the statistic to aggregate
- * @param material the material to specify on
- *
- * @return the aggregated value
- */
-fun Player.aggregateStatistic(statistic: Statistic, material: Material) =
-        transaction {
-            Statistics.select {
-                (Statistics.statistic eq statistic.name) and
-                        (Statistics.playerId eq uniqueId) and
-                        (Statistics.material eq material.name)
-            }.first().tryGet(Statistics.value)
-        }
