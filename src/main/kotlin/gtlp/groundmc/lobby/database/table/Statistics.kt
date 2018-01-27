@@ -1,5 +1,7 @@
 package gtlp.groundmc.lobby.database.table
 
+import com.google.common.cache.CacheBuilder
+import com.google.common.cache.CacheLoader
 import org.bukkit.Material
 import org.bukkit.Statistic
 import org.bukkit.entity.EntityType
@@ -8,6 +10,8 @@ import org.jetbrains.exposed.sql.Table
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction
+import java.util.concurrent.Executors
+import java.util.concurrent.TimeUnit
 
 /**
  * Table to store and organize statistic entries.
@@ -38,14 +42,71 @@ object Statistics : Table() {
      * The value of the statistic.
      */
     val value = integer("value")
+
+    /**
+     * Cache to store the statistics of a player in for 10 seconds.
+     */
+    private val statisticsCache = CacheBuilder.newBuilder()
+            .refreshAfterWrite(10L, TimeUnit.SECONDS)
+            .build<StatisticsObject, Int?>(CacheLoader.asyncReloading(StatisticsCacheLoader(), Executors.newCachedThreadPool()))
+
+    /**
+     * Class to load statistics when needed
+     */
+    class StatisticsCacheLoader : CacheLoader<StatisticsObject, Int?>() {
+        override fun load(key: StatisticsObject) = when {
+            key.material != null -> key.player.queryStatistic(key.statistic, key.material)
+            key.entity != null -> key.player.queryStatistic(key.statistic, key.entity)
+            else -> key.player.queryStatistic(key.statistic)
+        }
+
+    }
+
+    /**
+     * A class that holds a player and a defined statistic without value.
+     */
+    data class StatisticsObject(
+            /**
+             * The player, who's statistic this is meant to be.
+             */
+            val player: Player,
+
+            /**
+             * The type of statistic.
+             */
+            val statistic: Statistic,
+
+            /**
+             * The material which defines the statistic.
+             * `null` for statistics without a material identifier.
+             */
+            val material: Material? = null,
+
+            /**
+             * The entity which defines the statistic.
+             * `null` for statistics without a entity identifier.
+             */
+            val entity: EntityType? = null)
+
+    /**
+     * Asks the [statisticsCache] for a player's statistic and returns its value,
+     * if there is one.
+     *
+     * @param player the player. who's statistics to get
+     * @param statistic the statistic to get
+     * @param material the material definition for statistics that require this
+     * @param entity the entity type definition for statistics that require this
+     */
+    fun getStatistic(player: Player, statistic: Statistic, material: Material? = null, entity: EntityType? = null) =
+            statisticsCache[StatisticsObject(player, statistic, material, entity)]
 }
 
 /**
- * Aggregate the values over one statistic.
+ * Query the values of a statistic.
  *
- * @param statistic the statistic to aggregate
+ * @param statistic the statistic to query
  *
- * @return the aggregated value
+ * @return the queried value
  */
 fun Player.queryStatistic(statistic: Statistic) =
         transaction {
@@ -56,12 +117,12 @@ fun Player.queryStatistic(statistic: Statistic) =
         }
 
 /**
- * Aggregate the values over one statistic, specified by an entity.
+ * Query the value of a statistic, specified with an entity.
  *
- * @param statistic the statistic to aggregate
+ * @param statistic the statistic to query
  * @param entity the entity to specify on
  *
- * @return the aggregated value
+ * @return the queried value
  */
 fun Player.queryStatistic(statistic: Statistic, entity: EntityType) =
         transaction {
@@ -73,12 +134,12 @@ fun Player.queryStatistic(statistic: Statistic, entity: EntityType) =
         }
 
 /**
- * Aggregate the values over one statistic, specified by a material.
+ * Query the value of a statistic, specified with a material.
  *
- * @param statistic the statistic to aggregate
+ * @param statistic the statistic to query
  * @param material the material to specify on
  *
- * @return the aggregated value
+ * @return the queried value
  */
 fun Player.queryStatistic(statistic: Statistic, material: Material) =
         transaction {

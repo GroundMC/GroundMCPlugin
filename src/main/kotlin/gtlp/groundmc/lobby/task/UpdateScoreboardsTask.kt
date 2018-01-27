@@ -1,7 +1,7 @@
 package gtlp.groundmc.lobby.task
 
 import gtlp.groundmc.lobby.database.table.Events
-import gtlp.groundmc.lobby.database.table.queryStatistic
+import gtlp.groundmc.lobby.database.table.Statistics
 import gtlp.groundmc.lobby.util.I18n
 import me.BukkitPVP.PointsAPI.PointsAPI
 import org.apache.commons.lang.time.DurationFormatUtils
@@ -39,7 +39,8 @@ object UpdateScoreboardsTask : ITask {
                 val lines = mutableListOf<String>()
                 lines += ChatColor.GOLD.toString() + I18n.getString("play_time", it.locale)
                 lines += ChatColor.WHITE.toString() + DurationFormatUtils.formatDuration(
-                        (it.queryStatistic(Statistic.PLAY_ONE_TICK) ?: 0) * 50L,
+                        (Statistics.getStatistic(it, Statistic.PLAY_ONE_TICK)
+                                ?: 0) * 50L,
                         "HH'h':mm'm'")
                 lines += ChatColor.YELLOW.toString() + I18n.getString("command.coins.currency", it.locale)
                 lines += ChatColor.WHITE.toString() + PointsAPI.getPoints(it)
