@@ -275,7 +275,7 @@ class NBTItemExt(item: ItemStack) : NBTItem(item), Cloneable {
      *
      * @return a clone of this item.
      */
-    override public fun clone(): NBTItemExt = NBTItemExt(item)
+    public override fun clone(): NBTItemExt = NBTItemExt(item)
 
     /**
      * Creates a string representation of this item.
