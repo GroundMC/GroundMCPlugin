@@ -27,6 +27,17 @@ internal object LobbyInventory {
     val TEMPLATE_INVENTORY: Inventory = Bukkit.createInventory(null, 6 * 9, "Template")
 
     /**
+     * Variable to hold the time the [TEMPLATE_INVENTORY] was updated last.
+     */
+    private var lastPull = 0
+
+    /**
+     * Constant to hold the time in milliseconds after which the
+     * [TEMPLATE_INVENTORY] is updated.
+     */
+    private const val updateTime = 2000
+
+    /**
      * Creates an inventory for teleporting around.
      * Clones the [TEMPLATE_INVENTORY]
      *
@@ -44,8 +55,13 @@ internal object LobbyInventory {
 
     /**
      * Pulls the [TEMPLATE_INVENTORY] from the config.
+     * Returns if less that [updateTime] milliseconds have passed since the
+     * last pull
      */
     private fun pullTemplate() {
+        if (System.currentTimeMillis() - lastPull < updateTime) {
+            return
+        }
         @Suppress("unchecked_cast")
         TEMPLATE_INVENTORY.contents = (Meta[Config.INVENTORY_CONTENT] as List<ItemStack?>).toTypedArray()
         (0 until TEMPLATE_INVENTORY.contents.size).forEach {
