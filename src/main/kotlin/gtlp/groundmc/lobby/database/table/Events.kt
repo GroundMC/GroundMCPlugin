@@ -107,7 +107,7 @@ object Events : Table() {
         LobbyMain.logger.entering(Events::class, "disable")
         return transaction {
             val events = getCurrentEvents()
-            LobbyMain.logger.info("Disabling ${events[0]}")
+            LobbyMain.logger.info("Disabling ${events[n]}")
             return@transaction events[n].also {
                 update({ id eq it[id] }, null, {
                     it[active] = false

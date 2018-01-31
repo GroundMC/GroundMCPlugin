@@ -8,7 +8,6 @@ import gtlp.groundmc.lobby.enums.Config
 import gtlp.groundmc.lobby.enums.NBTIdentifier
 import gtlp.groundmc.lobby.enums.Permission
 import gtlp.groundmc.lobby.enums.VisibilityStates
-import gtlp.groundmc.lobby.event.PlayerChangeLocaleEvent
 import gtlp.groundmc.lobby.util.*
 import kotlinx.coroutines.experimental.async
 import me.BukkitPVP.PointsAPI.PointsAPI
@@ -23,6 +22,7 @@ import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerChangedWorldEvent
 import org.bukkit.event.player.PlayerJoinEvent
+import org.bukkit.event.player.PlayerLocaleChangeEvent
 import org.bukkit.event.player.PlayerQuitEvent
 import org.bukkit.scoreboard.Team
 import org.jetbrains.exposed.sql.insert
@@ -97,9 +97,8 @@ object ServerStateListener : Listener {
      * @param event the event to handle
      */
     @EventHandler
-    fun onPlayerChangeLocale(event: PlayerChangeLocaleEvent) {
+    fun onPlayerChangeLocale(event: PlayerLocaleChangeEvent) {
         LobbyMain.logger.entering(ServerStateListener::class, "onPlayerChangeLocale")
-        LobbyMain.logger.fine("PlayerChangeLocaleEvent: $event")
         if (event.player.world == (Meta[Config.HUB_LOCATION] as Location).world) {
             addItemsToInventory(event.player)
         }

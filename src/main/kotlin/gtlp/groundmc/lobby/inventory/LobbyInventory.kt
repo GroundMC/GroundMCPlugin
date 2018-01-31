@@ -56,7 +56,7 @@ internal object LobbyInventory {
     /**
      * Pulls the [TEMPLATE_INVENTORY] from the config.
      * Returns if less that [updateTime] milliseconds have passed since the
-     * last pull
+     * last pull.
      */
     private fun pullTemplate() {
         if (System.currentTimeMillis() - lastPull < updateTime) {

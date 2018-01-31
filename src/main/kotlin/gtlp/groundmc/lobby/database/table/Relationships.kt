@@ -55,7 +55,7 @@ object Relationships : Table() {
     private fun addRelationship(relationship: Relationship) {
         LobbyMain.logger.entering(Relationships::class, "addRelationship")
         LobbyMain.logger.fine("Adding new relationship: $relationship")
-        return transaction {
+        transaction {
             if (!areFriends(relationship.user1, relationship.user2)) {
                 insert {
                     it[userId1] = relationship.user1.uniqueId
@@ -89,7 +89,7 @@ object Relationships : Table() {
         LobbyMain.logger.entering(Relationships::class, "areFriends")
         return transaction {
             return@transaction select {
-                userId1.eq(player.uniqueId).and(userId2.eq(friend.uniqueId))
+                (userId1 eq player.uniqueId) and (userId2 eq friend.uniqueId)
             }.any()
         }
     }
@@ -108,7 +108,7 @@ object Relationships : Table() {
         LobbyMain.logger.entering(Relationships::class, "areFriends")
         return transaction {
             return@transaction select {
-                userId1.eq(player).and(userId2.eq(friend))
+                (userId1 eq player) and (userId2 eq friend)
             }.any()
         }
     }
@@ -124,13 +124,8 @@ object Relationships : Table() {
         LobbyMain.logger.entering(Relationships::class, "getRelationships")
         LobbyMain.logger.finest("Getting relationships for ${player.name}...")
         return transaction {
-            val friendsField = select(userId1 eq player.uniqueId)
-            return@transaction mutableListOf<Relationship>().apply {
-                for (relationship in friendsField) {
-                    add(Relationship(relationship[userId1], relationship[userId2], relationship[since]))
-                }
-                LobbyMain.logger.exiting(Relationships::class, "getRelationships")
-            }
+            return@transaction select(userId1 eq player.uniqueId)
+                    .map { Relationship(it[userId1], it[userId2], it[since]) }
         }
     }
 
@@ -141,7 +136,8 @@ object Relationships : Table() {
      * @param player the player to query the relationship for
      * @param friend the friend to get the relationship for
      *
-     * @return a [Relationship] object holding the relationship between [player] and [friend], if any, otherwise null
+     * @return a [Relationship] object holding the relationship between
+     * [player] and [friend], if any, otherwise null
      */
     fun getRelationship(player: OfflinePlayer, friend: OfflinePlayer): Relationship? {
         LobbyMain.logger.entering(Relationships::class, "getRelationship")
@@ -160,7 +156,8 @@ object Relationships : Table() {
      * @param player the player to query the relationship for
      * @param friend the friend to get the relationship for
      *
-     * @return a [Relationship] object holding the relationship between [player] and [friend], if any, otherwise null
+     * @return a [Relationship] object holding the relationship between
+     * [player] and [friend], if any, otherwise null
      */
     fun getRelationship(player: UUID, friend: UUID): Relationship? {
         LobbyMain.logger.entering(Relationships::class, "getRelationship")
