@@ -138,10 +138,22 @@ object ServerStateListener : Listener {
         async {
             addDailyBonus(event.player)
         }
-        val oldBoard = event.player.scoreboard
-        event.player.scoreboard = Bukkit.getScoreboardManager().newScoreboard
+        createScoreboard(event.player)
+        LobbyMain.logger.exiting(ServerStateListener::class, "onPlayerLogin")
+    }
+
+    /**
+     * Copies the content, teams and options from the player's scoreboard
+     * to a new one.
+     * This is done, so that every player has its own scoreboard
+     *
+     * @param player the player to create the scoreboard for
+     */
+    private fun createScoreboard(player: Player) {
+        val oldBoard = player.scoreboard
+        player.scoreboard = Bukkit.getScoreboardManager().newScoreboard
         oldBoard.teams.forEach {
-            event.player.scoreboard.registerNewTeam(it.name).apply {
+            player.scoreboard.registerNewTeam(it.name).apply {
                 this.color = it.color
                 this.displayName = it.displayName
                 this.prefix = it.prefix
@@ -154,7 +166,6 @@ object ServerStateListener : Listener {
                 }
             }
         }
-        LobbyMain.logger.exiting(ServerStateListener::class, "onPlayerLogin")
     }
 
     /**
