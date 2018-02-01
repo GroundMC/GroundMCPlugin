@@ -147,8 +147,7 @@ object ServerStateListener : Listener {
      * to a new one.
      * This is done, so that every player has its own scoreboard
      *
-     * @param player the player to create the scoreboard for
-     */
+     * @param player the player to create the scoreboard for */
     private fun createScoreboard(player: Player) {
         val oldBoard = player.scoreboard
         player.scoreboard = Bukkit.getScoreboardManager().newScoreboard
