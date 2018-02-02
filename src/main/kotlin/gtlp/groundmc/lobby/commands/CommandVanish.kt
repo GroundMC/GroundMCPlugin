@@ -3,12 +3,10 @@ package gtlp.groundmc.lobby.commands
 import gtlp.groundmc.lobby.LobbyMain
 import gtlp.groundmc.lobby.database.table.Users
 import gtlp.groundmc.lobby.enums.Permission
-import gtlp.groundmc.lobby.event.LobbyPlayerVanishEvent
 import gtlp.groundmc.lobby.util.I18n
 import gtlp.groundmc.lobby.util.entering
 import gtlp.groundmc.lobby.util.hasPermission
 import kotlinx.coroutines.experimental.async
-import org.bukkit.Bukkit
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 import org.bukkit.command.ConsoleCommandSender
@@ -39,7 +37,6 @@ class CommandVanish : ILobbyCommand {
                             it[Users.vanishStatus] = newVanish
                         }
                         commit()
-                        Bukkit.getPluginManager().callEvent(LobbyPlayerVanishEvent(sender, newVanish))
                         when (newVanish) {
                             true -> sender.sendMessage(I18n.getString("vanish.on", sender.locale))
                             false -> sender.sendMessage(I18n.getString("vanish.off", sender.locale))
