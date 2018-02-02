@@ -1,6 +1,5 @@
 package gtlp.groundmc.lobby.task
 
-import com.google.common.collect.ImmutableList
 import gtlp.groundmc.lobby.LobbyMain
 import gtlp.groundmc.lobby.database.table.Relationships
 import gtlp.groundmc.lobby.database.table.Users
@@ -18,32 +17,32 @@ object HidePlayersTask : ITask {
 
     override fun run() {
         val onlinePlayers = transaction {
-            Users.select { Users.id inList ImmutableList.copyOf(Bukkit.getOnlinePlayers().map { it.uniqueId }) }.toList()
-        }
-        onlinePlayers.forEach { player ->
-            when (player[Users.hiddenStatus]) {
+            Users.select { Users.id inList Bukkit.getOnlinePlayers().map { it.uniqueId } }.toList()
+        }.associateBy { Bukkit.getPlayer(it[Users.id]) }
+        onlinePlayers.forEach { player, status ->
+            when (status[Users.hiddenStatus]) {
                 VisibilityStates.ALL -> {
-                    onlinePlayers.forEach { Bukkit.getPlayer(player[Users.id]).showPlayer(LobbyMain.instance, Bukkit.getPlayer(it[Users.id])) }
+                    Bukkit.getOnlinePlayers().forEach { player.showPlayer(LobbyMain.instance, it) }
                 }
                 VisibilityStates.NONE -> {
-                    onlinePlayers.forEach { Bukkit.getPlayer(player[Users.id]).hidePlayer(LobbyMain.instance, Bukkit.getPlayer(it[Users.id])) }
+                    Bukkit.getOnlinePlayers().forEach { player.hidePlayer(LobbyMain.instance, it) }
                 }
                 VisibilityStates.FRIENDS -> {
                     onlinePlayers.forEach {
-                        if (Relationships.areFriends(player[Users.id], it[Users.id])) {
-                            Bukkit.getPlayer(player[Users.id]).showPlayer(LobbyMain.instance, Bukkit.getPlayer(it[Users.id]))
+                        if (Relationships.areFriends(status[Users.id], it.value[Users.id])) {
+                            player.showPlayer(LobbyMain.instance, it.key)
                         } else {
-                            Bukkit.getPlayer(player[Users.id]).hidePlayer(LobbyMain.instance, Bukkit.getPlayer(it[Users.id]))
+                            player.hidePlayer(LobbyMain.instance, it.key)
                         }
                     }
                 }
             }
         }
 
-        val vanishedPlayers = onlinePlayers.filter { it[Users.vanishStatus] }
+        val vanishedPlayers = onlinePlayers.filter { it.value[Users.vanishStatus] }
         for (player in vanishedPlayers) {
             onlinePlayers.forEach {
-                Bukkit.getPlayer(it[Users.id])?.hidePlayer(LobbyMain.instance, Bukkit.getPlayer(player[Users.id]))
+                it.key.hidePlayer(LobbyMain.instance, player.key)
             }
         }
     }
