@@ -19,31 +19,33 @@ object HidePlayersTask : ITask {
         val onlinePlayers = transaction {
             Users.select { Users.id inList Bukkit.getOnlinePlayers().map { it.uniqueId } }.toList()
         }.associateBy { Bukkit.getPlayer(it[Users.id]) }
-        onlinePlayers.forEach { player, status ->
-            when (status[Users.hiddenStatus]) {
-                VisibilityStates.ALL -> {
-                    Bukkit.getOnlinePlayers().forEach { player.showPlayer(LobbyMain.instance, it) }
-                }
-                VisibilityStates.NONE -> {
-                    Bukkit.getOnlinePlayers().forEach { player.hidePlayer(LobbyMain.instance, it) }
-                }
-                VisibilityStates.FRIENDS -> {
-                    onlinePlayers.forEach {
-                        if (Relationships.areFriends(status[Users.id], it.value[Users.id])) {
-                            player.showPlayer(LobbyMain.instance, it.key)
-                        } else {
-                            player.hidePlayer(LobbyMain.instance, it.key)
+        onlinePlayers.filter { !it.value[Users.vanishStatus] }
+                .forEach { player, status ->
+                    when (status[Users.hiddenStatus]) {
+                        VisibilityStates.ALL -> {
+                            Bukkit.getOnlinePlayers().forEach { player.showPlayer(LobbyMain.instance, it) }
+                        }
+                        VisibilityStates.NONE -> {
+                            Bukkit.getOnlinePlayers().forEach { player.hidePlayer(LobbyMain.instance, it) }
+                        }
+                        VisibilityStates.FRIENDS -> {
+                            val friends = Relationships.getOnlineFriends(player)
+                            val nonFriends = Relationships.getOnlineNonFriends(player)
+                            friends.forEach {
+                                player.showPlayer(LobbyMain.instance, it)
+                            }
+                            nonFriends.forEach {
+                                player.hidePlayer(LobbyMain.instance, it)
+                            }
                         }
                     }
                 }
-            }
-        }
 
-        val vanishedPlayers = onlinePlayers.filter { it.value[Users.vanishStatus] }
-        for (player in vanishedPlayers) {
-            onlinePlayers.forEach {
-                it.key.hidePlayer(LobbyMain.instance, player.key)
-            }
-        }
+        onlinePlayers.filter { it.value[Users.vanishStatus] }
+                .forEach { player ->
+                    onlinePlayers.forEach {
+                        it.key.hidePlayer(LobbyMain.instance, player.key)
+                    }
+                }
     }
 }

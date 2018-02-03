@@ -5,6 +5,7 @@ import gtlp.groundmc.lobby.Relationship
 import gtlp.groundmc.lobby.util.I18n
 import gtlp.groundmc.lobby.util.entering
 import gtlp.groundmc.lobby.util.exiting
+import org.bukkit.Bukkit
 import org.bukkit.OfflinePlayer
 import org.bukkit.entity.Player
 import org.jetbrains.exposed.sql.*
@@ -185,5 +186,44 @@ object Relationships : Table() {
                 deleteWhere { (userId2 eq player.uniqueId) and (userId1 eq friend.uniqueId) }
             }
         }
+    }
+
+    /**
+     * Queries all online friends of the [player]
+     *
+     * @param player the player to query the friends for
+     *
+     * @return a collection of friends
+     */
+    fun getOnlineFriends(player: Player): List<Player> {
+        LobbyMain.logger.entering(Relationships::class, "getOnlineFriends")
+        return transaction {
+            return@transaction select {
+                (userId1 eq player.uniqueId) and (userId2 inList getOnlineUUIDs())
+            }
+        }.mapNotNull { Bukkit.getPlayer(it[userId2]) }
+    }
+
+    /**
+     * Queries all online players who are not a friend of the [player]
+     *
+     * @param player the player to query the non-friends for
+     *
+     * @return a collection of non-friends
+     */
+    fun getOnlineNonFriends(player: Player): List<Player> {
+        LobbyMain.logger.entering(Relationships::class, "getOnlineFriends")
+        return Bukkit.getOnlinePlayers().toMutableList().apply {
+            removeAll(getOnlineFriends(player))
+        }
+    }
+
+    /**
+     * Maps all the online players to their [java.util.UUID].
+     *
+     * @return the UUIDs of all the online players.
+     */
+    private fun getOnlineUUIDs(): List<UUID> {
+        return Bukkit.getServer().onlinePlayers.map { it.uniqueId }
     }
 }
