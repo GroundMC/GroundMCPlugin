@@ -54,9 +54,10 @@ object LobbyChooserListener : Listener {
         }
     }
 
+    private val bridge = PlayerExecutorBridge()
+
     private fun sendPlayerToServer(player: Player, server: String) {
-        PlayerExecutorBridge().sendPlayer(
-                CloudAPI.getInstance().getOnlinePlayer(player.uniqueId),
-                server)
+        bridge.sendPlayer(
+                CloudAPI.getInstance().getOnlinePlayer(player.uniqueId), server)
     }
 }
