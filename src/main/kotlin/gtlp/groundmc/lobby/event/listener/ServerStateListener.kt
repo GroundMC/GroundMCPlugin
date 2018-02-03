@@ -74,7 +74,7 @@ object ServerStateListener : Listener {
             inventory.setItem(2, nbtItem.item)
         }
         if (Bukkit.getPluginManager().isPluginEnabled("CloudNetAPI")) {
-            inventory.setItem(4, Items.LOBBY_CHOOSE_ITEM.item)
+            inventory.setItem(3, Items.LOBBY_CHOOSE_ITEM.item)
         }
     }
 
