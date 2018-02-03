@@ -267,6 +267,7 @@
                             </includes>
                         </filter>
                     </filters>
+                    <finalName>groundmc-plugin</finalName>
                 </configuration>
                 <executions>
                     <execution>

@@ -20,7 +20,7 @@ object LobbyChooser {
             .apply {
                 val servers =
                         CloudAPI.getInstance().getServers(CloudServer.getInstance().groupData.name)
-                servers.forEachIndexed { index, serverInfo ->
+                servers.sortedBy { it.serviceId.id }.forEachIndexed { index, serverInfo ->
                     setItem(index, NBTItemExt(ItemStack(Material.NETHER_STAR)).apply {
                         setBoolean(NBTIdentifier.PREFIX, true)
                         setInteger(NBTIdentifier.TYPE, GMCType.CHOOSE_LOBBY.ordinal)
