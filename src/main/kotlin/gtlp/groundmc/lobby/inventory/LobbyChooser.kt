@@ -2,6 +2,7 @@ package gtlp.groundmc.lobby.inventory
 
 import de.dytanic.cloudnet.api.CloudAPI
 import de.dytanic.cloudnet.bridge.CloudServer
+import gtlp.groundmc.lobby.enums.GMCType
 import gtlp.groundmc.lobby.enums.NBTIdentifier
 import gtlp.groundmc.lobby.util.NBTItemExt
 import org.bukkit.Bukkit
@@ -22,6 +23,9 @@ object LobbyChooser {
                 servers.forEachIndexed { index, serverInfo ->
                     setItem(index, NBTItemExt(ItemStack(Material.NETHER_STAR)).apply {
                         setBoolean(NBTIdentifier.PREFIX, true)
+                        setInteger(NBTIdentifier.TYPE, GMCType.CHOOSE_LOBBY.ordinal)
+                        setString(NBTIdentifier.TP_LOC, serverInfo.serviceId.serverId)
+                        lore += "Online: " + serverInfo.players.size
                         addEnchantment(Enchantment.LUCK)
                         addItemFlags(ItemFlag.HIDE_ENCHANTS)
                         displayName = serverInfo.serviceId.serverId
