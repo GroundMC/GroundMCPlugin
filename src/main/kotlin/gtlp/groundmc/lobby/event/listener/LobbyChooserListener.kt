@@ -6,7 +6,6 @@ import gtlp.groundmc.lobby.Items
 import gtlp.groundmc.lobby.enums.GMCType
 import gtlp.groundmc.lobby.enums.NBTIdentifier
 import gtlp.groundmc.lobby.inventory.LobbyChooser
-import gtlp.groundmc.lobby.inventory.LobbyInventory
 import gtlp.groundmc.lobby.util.NBTItemExt
 import org.bukkit.entity.Player
 import org.bukkit.event.Event
@@ -19,8 +18,6 @@ import org.bukkit.event.player.PlayerInteractEvent
 
 @Suppress("unused")
 object LobbyChooserListener : Listener {
-
-    private const val channel = "CloudNet"
 
     @EventHandler
     fun openLobbyChooser(event: InventoryClickEvent) {
@@ -43,7 +40,7 @@ object LobbyChooserListener : Listener {
     @EventHandler
     fun teleportPlayer(event: InventoryClickEvent) {
         val player = event.whoClicked as Player
-        if (event.clickedInventory != null && event.clickedInventory.title == LobbyInventory.TITLE) {
+        if (event.clickedInventory != null && event.clickedInventory.title == LobbyChooser.TITLE) {
             event.isCancelled = true
             if (event.currentItem == null) {
                 return
