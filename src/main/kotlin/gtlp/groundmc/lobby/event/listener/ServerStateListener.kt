@@ -51,7 +51,7 @@ object ServerStateListener : Listener {
         val inventory = player.inventory
         inventory.clear()
 
-        inventory.setItem(0, Items.COMPASS_ITEM.clone().item)
+        inventory.setItem(0, Items.COMPASS_ITEM.item)
 
         if (player.hasPermission(Permission.SILENT)) {
             val silentItem = Items.SILENT_ITEM
@@ -72,6 +72,9 @@ object ServerStateListener : Listener {
                 }, player.locale)
             }
             inventory.setItem(2, nbtItem.item)
+        }
+        if (Bukkit.getPluginManager().isPluginEnabled("CloudNetAPI")) {
+            inventory.setItem(4, Items.LOBBY_CHOOSE_ITEM.item)
         }
     }
 
