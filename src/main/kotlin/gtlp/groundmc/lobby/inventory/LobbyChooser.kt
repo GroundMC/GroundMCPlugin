@@ -21,7 +21,11 @@ object LobbyChooser {
                 val servers =
                         CloudAPI.getInstance().getServers(CloudServer.getInstance().groupData.name)
                 servers.sortedBy { it.serviceId.id }.forEachIndexed { index, serverInfo ->
-                    setItem(index, NBTItemExt(ItemStack(Material.NETHER_STAR)).apply {
+                    val material = when (serverInfo.serviceId.id) {
+                        CloudServer.getInstance().serverProcessMeta.serviceId.id -> Material.GLOWSTONE_DUST
+                        else -> Material.SUGAR
+                    }
+                    setItem(index, NBTItemExt(ItemStack(material)).apply {
                         setBoolean(NBTIdentifier.PREFIX, true)
                         setInteger(NBTIdentifier.TYPE, GMCType.CHOOSE_LOBBY.ordinal)
                         setString(NBTIdentifier.TP_LOC, serverInfo.serviceId.serverId)
