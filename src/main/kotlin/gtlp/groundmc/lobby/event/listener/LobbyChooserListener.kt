@@ -1,7 +1,6 @@
 package gtlp.groundmc.lobby.event.listener
 
 import de.dytanic.cloudnet.api.CloudAPI
-import de.dytanic.cloudnet.api.player.PlayerExecutorBridge
 import gtlp.groundmc.lobby.Items
 import gtlp.groundmc.lobby.enums.GMCType
 import gtlp.groundmc.lobby.enums.NBTIdentifier
@@ -48,16 +47,10 @@ object LobbyChooserListener : Listener {
             val nbtItem = NBTItemExt(event.currentItem)
             if (NBTIdentifier.itemHasPrefix(nbtItem.item) &&
                     nbtItem.getInteger(NBTIdentifier.TYPE) == GMCType.CHOOSE_LOBBY.ordinal) {
-                sendPlayerToServer(player,
-                        nbtItem.getString(NBTIdentifier.TP_LOC)!!)
+                CloudAPI.getInstance().getOnlinePlayer(player.uniqueId).apply {
+                    playerExecutor.sendPlayer(this, nbtItem.getString(NBTIdentifier.TP_LOC)!!)
+                }
             }
         }
-    }
-
-    private val bridge = PlayerExecutorBridge()
-
-    private fun sendPlayerToServer(player: Player, server: String) {
-        bridge.sendPlayer(
-                CloudAPI.getInstance().getOnlinePlayer(player.uniqueId), server)
     }
 }
