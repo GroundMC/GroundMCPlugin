@@ -62,7 +62,7 @@ object Items {
             setBoolean(NBTIdentifier.PREFIX, true)
             setInteger(NBTIdentifier.TYPE, GMCType.CHOOSE_LOBBY.ordinal)
 
-            displayName
+            displayName = "LobbySwitcher"
         }
 
     /**
