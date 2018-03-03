@@ -1,7 +1,7 @@
 # GroundMCPlugin
 Lobby plugin for the GroundMC Minecraft server.
 
-[![Build Status](http://giant.ddnss.de:8180/job/GroundMCLobbyPlugin/master/badge/icon)](http://giant.ddnss.de:8180/job/GroundMCLobbyPlugin/master)
+[![Build Status](http://giant.ddnss.de:8180/job/GroundMCLobbyPlugin/job/master/badge/icon)](http://giant.ddnss.de:8180/job/GroundMCLobbyPlugin/job/master)
 [![codebeat badge](https://codebeat.co/badges/c98cfb84-e95e-4283-bf4e-67efbebce776)](https://codebeat.co/projects/github-com-gianttreelp-groundmcplugin-master)
 
 Permissions:
