@@ -9,10 +9,9 @@
     <version>1.6.0-b${env.BUILD_NUMBER}</version>
 
     <properties>
-        <kotlin.version>1.2.21</kotlin.version>
-        <dokka.version>0.9.15</dokka.version>
+        <kotlin.version>1.2.30</kotlin.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.source>1.9</maven.compiler.source>
+        <maven.compiler.source>1.10</maven.compiler.source>
         <maven.compiler.target>1.9</maven.compiler.target>
         <kotlin.compiler.incremental>true</kotlin.compiler.incremental>
     </properties>
@@ -42,7 +41,7 @@
         </repository>
         <repository>
             <id>cloudnet</id>
-            <url>http://repo.dytanic.de/repositories/</url>
+            <url>https://klautnett.de/repositories/</url>
         </repository>
     </repositories>
 
@@ -58,7 +57,7 @@
         <dependency>
             <groupId>org.jetbrains.exposed</groupId>
             <artifactId>exposed</artifactId>
-            <version>0.9.1</version>
+            <version>0.10.1</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
@@ -76,7 +75,7 @@
         <dependency>
             <groupId>org.jetbrains.kotlinx</groupId>
             <artifactId>kotlinx-coroutines-core</artifactId>
-            <version>0.21</version>
+            <version>0.22.5</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -100,7 +99,7 @@
         <dependency>
             <groupId>com.zaxxer</groupId>
             <artifactId>HikariCP</artifactId>
-            <version>2.7.2</version>
+            <version>2.7.8</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
@@ -136,7 +135,7 @@
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-engine</artifactId>
-            <version>5.0.2</version>
+            <version>5.1.0</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -205,52 +204,6 @@
                         </goals>
                     </execution>
                 </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.jetbrains.dokka</groupId>
-                <artifactId>dokka-maven-plugin</artifactId>
-                <version>${dokka.version}</version>
-                <executions>
-                    <execution>
-                        <phase>pre-site</phase>
-                        <goals>
-                            <goal>dokka</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <outputFormat>jekyll</outputFormat>
-                    <outputDir>${project.basedir}/docs</outputDir>
-                    <sourceDirectories>
-                        <dir>src/main/kotlin</dir>
-                    </sourceDirectories>
-                    <sourceLinks>
-                        <link>
-                            <dir>${project.basedir}/src/main/kotlin</dir>
-                            <url>https://github.com/GiantTreeLP/GroundMCPlugin
-                            </url>
-                            <urlSuffix>#L</urlSuffix>
-                        </link>
-                    </sourceLinks>
-                    <externalDocumentationLinks>
-                        <link>
-                            <url>https://hub.spigotmc.org/javadocs/spigot/</url>
-                        </link>
-                        <link>
-                            <url>http://www.joda.org/joda-time/apidocs/</url>
-                        </link>
-                        <link>
-                            <url>https://google.github.io/gson/apidocs/</url>
-                        </link>
-                    </externalDocumentationLinks>
-                    <perPackageOptions>
-                        <packageOptions>
-                            <prefix>gtlp</prefix>
-                            <reportUndocumented>true</reportUndocumented>
-                            <includeNonPublic>true</includeNonPublic>
-                        </packageOptions>
-                    </perPackageOptions>
-                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
