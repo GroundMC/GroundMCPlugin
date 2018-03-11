@@ -1,6 +1,5 @@
 package gtlp.groundmc.lobby.util
 
-import gtlp.groundmc.lobby.LobbyMain
 import org.bukkit.ChatColor
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
@@ -18,7 +17,7 @@ object I18n {
      * The character used to mark styling codes
      * Hardcoded to the most common value
      */
-    val colorChar = '&'
+    private const val colorChar = '&'
 
     /**
      * Returns the localized string (if available) for a given key.
@@ -30,7 +29,6 @@ object I18n {
      * @return The localized and parsed string or null, if the key has no translation
      */
     fun getString(key: String, locale: Locale = Locale.US): String? {
-        LobbyMain.logger.entering(I18n::class, "getString")
         val s = bundleCache.get(key, locale) ?: return null
         return ChatColor.translateAlternateColorCodes(colorChar, s)
     }
@@ -46,9 +44,8 @@ object I18n {
      *
      * @see getString
      */
-    fun getStrings(vararg keys: String, locale: Locale = Locale.US): Array<String?> {
-        return keys.map { it -> getString(it, locale) }.toTypedArray()
-    }
+    fun getStrings(vararg keys: String, locale: Locale = Locale.US) =
+            keys.map { it -> getString(it, locale) }.toTypedArray()
 
     /**
      * Returns a list of localized strings (if available) for the given keys.
@@ -61,9 +58,8 @@ object I18n {
      *
      * @see getString
      */
-    fun getStrings(vararg keys: String, locale: String): Array<String?> {
-        return keys.map { it -> getString(it, locale) }.toTypedArray()
-    }
+    fun getStrings(vararg keys: String, locale: String) =
+            getStrings(*keys, locale = I18nUtils.getLocaleFromString(locale))
 
     /**
      * Returns the localized string (if available) for a given key.
@@ -75,16 +71,19 @@ object I18n {
      *
      * @return The localized and parsed string or null, if the key has no translation
      */
-    fun getString(key: String, locale: String): String? {
-        val s: String = bundleCache.get(key, I18nUtils.getLocaleFromString(locale)) ?: return null
-        return ChatColor.translateAlternateColorCodes(colorChar, s)
-    }
+    fun getString(key: String, locale: String) =
+            getString(key, I18nUtils.getLocaleFromString(locale))
 
     /**
      * A cache for dynamically loading and storing used resource bundles.
      * Does not implement removing items from the cache because of low memory impact
      */
-    internal class ResourceBundleCache(val name: String) {
+    private class ResourceBundleCache(
+            /**
+             * The name of this cache.
+             */
+            val name: String
+    ) {
         /**
          * A map holding resource bundles for locales
          */
@@ -100,7 +99,6 @@ object I18n {
          * @return The localized string or null, if the key has no translation
          */
         fun get(key: String, locale: Locale): String? {
-            LobbyMain.logger.entering(ResourceBundleCache::class, "get")
             if (!backingMap.containsKey(locale)) {
                 backingMap[locale] = ResourceBundle.getBundle(name, locale)
             }

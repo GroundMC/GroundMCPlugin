@@ -1,13 +1,21 @@
 package gtlp.groundmc.lobby.task
 
-import gtlp.groundmc.lobby.LobbyMain
+import gtlp.groundmc.lobby.database.table.Meta
+import gtlp.groundmc.lobby.enums.Config
+import org.bukkit.Difficulty
+import org.bukkit.Location
 
+/**
+ * Task to set the rules.
+ * Should only be executed once.
+ */
 object SetRulesTask : ITask {
     override val delay = 0L
     override val period = 0L
 
     override fun run() {
-        LobbyMain.hubLocation.get().world.apply {
+        (Meta[Config.HUB_LOCATION] as Location).world.apply {
+            difficulty = Difficulty.PEACEFUL
             setGameRuleValue("doDaylightCycle", "false")
             setGameRuleValue("doEntityDrops", "false")
             setGameRuleValue("doFireTick", "false")
@@ -19,6 +27,7 @@ object SetRulesTask : ITask {
             setGameRuleValue("randomTickSpeed", "0")
             setGameRuleValue("showDeathMessages", "false")
             setGameRuleValue("reducedDebugInfo", "true")
+            setGameRuleValue("doWeatherCycle", "false")
         }
 
     }

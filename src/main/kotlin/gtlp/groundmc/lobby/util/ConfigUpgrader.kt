@@ -5,10 +5,22 @@ import gtlp.groundmc.lobby.enums.GMCType
 import gtlp.groundmc.lobby.enums.NBTIdentifier
 import org.bukkit.Bukkit
 import org.bukkit.Location
+import org.bukkit.Material
 import org.bukkit.configuration.Configuration
 import org.bukkit.inventory.ItemStack
 
+/**
+ * Upgrader to modify the configuration according to changes needed to work with the new version.
+ */
 object ConfigUpgrader {
+
+    /**
+     * Upgrades items in the lobby inventory section of the [config] to use a
+     * [Location] object instead of a bunch of keys for storing the teleport
+     * destination.
+     *
+     * @param config the configuration to upgrade
+     */
     fun upgradeItemsToUseObject(config: Configuration) {
         LobbyMain.logger.entering(ConfigUpgrader::class, "upgradeItemsToUseObject")
         LobbyMain.logger.info("[Version 1] Upgrading items to use objects instead of separate keys")
@@ -17,7 +29,7 @@ object ConfigUpgrader {
             val contents = (config["inventory.content"] as List<ItemStack>).toTypedArray()
 
             contents.map(::NBTItemExt).forEachIndexed { index, it ->
-                if (it.hasKey(NBTIdentifier.PREFIX) && it.getInteger(NBTIdentifier.TYPE) == GMCType.TP.ordinal) {
+                if (it.hasKey(NBTIdentifier.PREFIX)!! && it.getInteger(NBTIdentifier.TYPE) == GMCType.TP.ordinal) {
                     LobbyMain.logger.fine("Upgrading ${it.displayName}...")
 
                     val location = Location(Bukkit.getServer().getWorld(it.getString("GMCw")),
@@ -40,6 +52,21 @@ object ConfigUpgrader {
             config["inventory.content"] = contents
         }
         LobbyMain.logger.exiting(ConfigUpgrader::class, "upgradeItemsToUseObject")
+    }
+
+    /**
+     * Add configuration options for the jump pads in the hub.
+     *
+     * @param config the configuration to upgrade
+     */
+    fun addJumpPadConfiguration(config: Configuration) {
+        LobbyMain.logger.entering(ConfigUpgrader::class, "addJumpPadConfiguration")
+        if ("jumppads" !in config) {
+            config["jumppads.material"] = listOf(Material.GOLD_PLATE.name)
+            config["jumppads.multiplier"] = 3.0
+            config["jumppads.y"] = 1
+        }
+        LobbyMain.logger.exiting(ConfigUpgrader::class, "addJumpPadConfiguration")
     }
 
 }

@@ -1,54 +1,53 @@
 package gtlp.groundmc.lobby.task
 
-import com.google.common.collect.ImmutableList
+import gtlp.groundmc.lobby.LobbyMain
 import gtlp.groundmc.lobby.database.table.Relationships
 import gtlp.groundmc.lobby.database.table.Users
 import gtlp.groundmc.lobby.enums.VisibilityStates
 import org.bukkit.Bukkit
-import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction
 
+/**
+ * Task to update players and their change in the visibility state.
+ */
 object HidePlayersTask : ITask {
     override val delay: Long = 20L
     override val period: Long = 40L
 
     override fun run() {
-        val onlinePlayers = transaction {
-            return@transaction mutableListOf<ResultRow>().apply {
-                addAll(Users.select { Users.id inList ImmutableList.copyOf(Bukkit.getOnlinePlayers().map { it.uniqueId }) }.groupBy(Users.id))
-            }
-        }
-        onlinePlayers.forEach { player ->
-            when (player[Users.hiddenStatus]) {
-                VisibilityStates.ALL -> {
-                    onlinePlayers.forEach { Bukkit.getPlayer(player[Users.id]).showPlayer(Bukkit.getPlayer(it[Users.id])) }
-                }
-
-                VisibilityStates.NONE -> {
-                    onlinePlayers.forEach { Bukkit.getPlayer(player[Users.id]).hidePlayer(Bukkit.getPlayer(it[Users.id])) }
-                }
-                VisibilityStates.FRIENDS -> {
-                    onlinePlayers.forEach {
-                        if (Relationships.areFriends(player[Users.id], it[Users.id])) {
-                            Bukkit.getPlayer(player[Users.id]).showPlayer(Bukkit.getPlayer(it[Users.id]))
-                        } else {
-                            Bukkit.getPlayer(player[Users.id]).hidePlayer(Bukkit.getPlayer(it[Users.id]))
+        transaction {
+            val onlinePlayers =
+                    Users.select { Users.id inList Bukkit.getOnlinePlayers().map { it.uniqueId } }.toList()
+                            .associateBy { Bukkit.getPlayer(it[Users.id]) }
+            onlinePlayers.filter { !it.value[Users.vanishStatus] }
+                    .forEach { player, status ->
+                        when (status[Users.hiddenStatus]) {
+                            VisibilityStates.ALL -> {
+                                Bukkit.getOnlinePlayers().forEach { player.showPlayer(LobbyMain.instance, it) }
+                            }
+                            VisibilityStates.NONE -> {
+                                Bukkit.getOnlinePlayers().forEach { player.hidePlayer(LobbyMain.instance, it) }
+                            }
+                            VisibilityStates.FRIENDS -> {
+                                val friends = Relationships.getOnlineFriends(player)
+                                val nonFriends = Relationships.getOnlineNonFriends(player)
+                                friends.forEach {
+                                    player.showPlayer(LobbyMain.instance, it)
+                                }
+                                nonFriends.forEach {
+                                    player.hidePlayer(LobbyMain.instance, it)
+                                }
+                            }
                         }
                     }
-                }
-            }
-        }
 
-        val vanishedPlayers = transaction {
-            return@transaction mutableListOf<ResultRow>().apply {
-                addAll(Users.select { Users.vanishStatus eq true })
-            }
-        }
-        for (player in vanishedPlayers) {
-            onlinePlayers.forEach {
-                Bukkit.getPlayer(it[Users.id]).hidePlayer(Bukkit.getPlayer(player[Users.id]))
-            }
+            onlinePlayers.filter { it.value[Users.vanishStatus] }
+                    .forEach { player ->
+                        onlinePlayers.forEach {
+                            it.key.hidePlayer(LobbyMain.instance, player.key)
+                        }
+                    }
         }
     }
 }

@@ -1,28 +1,52 @@
-name: GroundMC_Lobby_Plugin
-version: 1.4
+name: GroundMCLobbyPlugin
+version: 1.7
 author: GiantTreeLP
 main: gtlp.groundmc.lobby.LobbyMain
-depend: [BukkitDependencyLoader, ItemNBTAPI]
-softdepend: [Multiverse-Core]
+depend: [GroundMCKotlinLoader, ItemNBTAPI, PointsAPI, StatsDB]
+softdepend: [Multiverse-Core, CloudNetAPI]
 
 commands:
-   lobby:
+   globby:
       description: Lobby commands
-      usage: "Usage: /<command> [additem|help|maketp] [parameters]"
-      aliases: [lb, l, hub]
+      usage: "/<command> [additem|maketp|help|event|debug|set|config] <parameters>"
+      aliases: [glb, gl, ghub]
    friend:
       description: Friendship commands
-      usage: "Usage: /<command> <add|remove|status|online> <username> [relation]"
+      usage: "/<command> <add|remove|status|online> <username>"
       aliases: [fr]
    friends:
       description: Lists friends
-      usage: "Usage /<command>"
+      usage: "/<command>"
       aliases: [frs]
    vanish:
       description: Vanish yourself
-      usage: "Usage: /<command>"
+      usage: "/<command>"
       aliases: [v]
+      permission: groundmc.lobby.vanish
    coins:
       description: Information about your coins
-      usage: "Usage: /<command>"
+      usage: "/<command>"
       aliases: [money]
+
+permissions:
+  groundmc.lobby:
+    description: Grants access to all features
+    default: op
+    children:
+      groundmc.lobby.admin: true
+  groundmc.lobby.admin:
+    description: Grants administrative access to lobby features
+    default: op
+    children:
+      groundmc.lobby.hide_players: true
+      groundmc.lobby.silent: true
+      groundmc.lobby.vanish: true
+  groundmc.lobby.hide_players:
+    description: Allows players to hide other players
+    default: false
+  groundmc.lobby.silent:
+    description: Allows players to silence their chat from other players
+    default: false
+  groundmc.lobby.vanish:
+    description: Allows players to vanish out of sight
+    default: false

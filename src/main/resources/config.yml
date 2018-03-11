@@ -1,16 +1,3 @@
-# Hub world
-# The location and world this plugin should work in.
-hub:
-
-coins:
-  dailyAmount: 100
-
-# Slowchat configuration
-# Timeout is measured in milliseconds.
-slowchat:
-  enabled: false
-  timeout: 3000
-
 # The verbosity of the log that is created by this plugin.
 # The lower the number, the more verbose.
 # For the numbers to put here, see this: https://docs.oracle.com/javase/7/docs/api/java/util/logging/Level.html
@@ -24,15 +11,19 @@ log:
 # The following substitutions are available:
 #
 # $dataFolder     -     Is replaced with the absolute path of the data folder of this plugin at runtime
+#
+# The default driver is for the SQLite database file.
+# To use MySQL, use com.mysql.jdbc.Driver and fill in the url as described here:
+# https://dev.mysql.com/doc/connector-j/5.1/en/connector-j-reference-configuration-properties.html
 database:
   username:
-  driver: org.h2.Driver
+  driver: org.sqlite.JDBC
   password:
-  url: jdbc:h2:$dataFolder/database
+  url: jdbc:sqlite:$dataFolder/database
 
 # Version
 # The version of this config.
 # DON'T CHANGE THIS LINE UNLESS YOU KNOW WHAT YOU ARE DOING!
 # CHANGING THIS COULD CORRUPT YOUR CONFIG AND
 # PREVENT THE PLUGIN FROM WORKING!
-version: 1
+version: 3

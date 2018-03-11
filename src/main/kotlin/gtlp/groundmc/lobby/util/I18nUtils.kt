@@ -19,7 +19,6 @@ package gtlp.groundmc.lobby.util
  */
 
 
-import gtlp.groundmc.lobby.LobbyMain
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import java.util.*
@@ -28,7 +27,7 @@ import java.util.*
  * Utility class for internationalization. This class provides a
  * central location to do specialized formatting in both
  * a default and a locale specific manner.
-
+ *
  * @version $Revision: 1.2 $
  */
 object I18nUtils {
@@ -37,13 +36,12 @@ object I18nUtils {
      * Convert a string based locale into a Locale Object.
      * Assumes the string has form "{language}_{country}_{variant}".
      * Examples: "en", "de_DE", "_GB", "en_US_WIN", "de__POSIX", "fr_MAC"
-
+     *
      * @param localeString The String
-     * *
+     *
      * @return the Locale
      */
     fun getLocaleFromString(localeString: String): Locale {
-        LobbyMain.logger.entering(I18nUtils::class, "getLocaleFromString")
         @Suppress("NAME_SHADOWING")
         var localeString = localeString
         localeString = localeString.trim { it <= ' ' }
@@ -64,24 +62,31 @@ object I18nUtils {
         // Extract country
         val countryIndex = localeString.indexOf('_', languageIndex + 1)
         val country: String
-        if (countryIndex == -1) {
+        return if (countryIndex == -1) {
             // No further "_" so is "{language}_{country}"
             country = localeString.substring(languageIndex + 1)
-            return Locale(language, country)
+            Locale(language, country)
         } else {
             // Assume all remaining is the variant so is "{language}_{country}_{variant}"
             country = localeString.substring(languageIndex + 1, countryIndex)
             val variant = localeString.substring(countryIndex + 1)
-            return Locale(language, country, variant)
+            Locale(language, country, variant)
         }
     }
 
+    /**
+     * Parses the locale from a [CommandSender] to translate messages to the [sender]
+     *
+     * @param sender the sender of a command to translate messages for
+     *
+     * @return the locale that has been parsed or [Locale.getDefault],
+     * if the [sender] is not a player (e.g. the command has been sent from the console)
+     */
     fun getLocaleFromCommandSender(sender: CommandSender): Locale {
-        LobbyMain.logger.entering(I18nUtils::class, "getLocaleFromCommandSender")
-        if (sender is Player) {
-            return getLocaleFromString(sender.spigot().locale)
+        return if (sender is Player) {
+            getLocaleFromString(sender.locale)
         } else {
-            return Locale.getDefault()
+            Locale.getDefault()
         }
     }
 }

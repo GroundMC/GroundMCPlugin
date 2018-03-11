@@ -2,32 +2,35 @@ package gtlp.groundmc.lobby.registry
 
 import gtlp.groundmc.lobby.LobbyMain
 import gtlp.groundmc.lobby.commands.ILobbyCommand
+import gtlp.groundmc.lobby.util.I18nUtils
 import gtlp.groundmc.lobby.util.entering
 import gtlp.groundmc.lobby.util.exiting
+import org.bukkit.Bukkit
+import org.bukkit.command.CommandSender
+import org.bukkit.help.HelpTopic
 
 /**
  * Registry where all commands are saved.
  * Used by [LobbyMain]
  */
-class LobbyCommandRegistry {
-
-    companion object {
-        private val commands = mutableMapOf<String, ILobbyCommand>()
-
-        fun registerCommand(cmd: ILobbyCommand) {
-            LobbyMain.logger.entering(Companion::class, "registerCommand")
-            commands[cmd.name] = cmd
-            LobbyMain.logger.exiting(Companion::class, "registerCommand")
-        }
-
-        fun getCommand(name: String): ILobbyCommand? {
-            LobbyMain.logger.entering(Companion::class, "getCommand")
-            return commands[name]
-        }
-
-        fun hasCommand(name: String): Boolean {
-            LobbyMain.logger.entering(Companion::class, "hasCommand")
-            return commands.containsKey(name)
-        }
+object LobbyCommandRegistry {
+    /**
+     * Registers the [org.bukkit.command.CommandExecutor] and
+     * [org.bukkit.command.TabCompleter] for the given [ILobbyCommand]
+     *
+     * @param cmd the command to register
+     */
+    fun registerCommand(cmd: ILobbyCommand) {
+        LobbyMain.logger.entering(LobbyCommandRegistry::class, "registerCommand")
+        LobbyMain.logger.config("Registering command: ${cmd.name}")
+        Bukkit.getServer().getPluginCommand(cmd.name).executor = cmd
+        Bukkit.getServer().getPluginCommand(cmd.name).tabCompleter = cmd
+        Bukkit.getServer().helpMap.addTopic(object : HelpTopic() {
+            override fun canSee(player: CommandSender) = true
+            override fun getName() = cmd.name
+            override fun getFullText(forWho: CommandSender) =
+                    cmd.getCommandHelp(I18nUtils.getLocaleFromCommandSender(forWho))
+        })
+        LobbyMain.logger.exiting(LobbyCommandRegistry::class, "registerCommand")
     }
 }
