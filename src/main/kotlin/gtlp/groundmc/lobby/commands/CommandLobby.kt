@@ -50,11 +50,12 @@ class CommandLobby : ILobbyCommand {
                 }.filter { it.startsWith(args[0]) }.sorted()
                 2 -> when (args[0]) {
                     "maketp" -> return listOf("name")
-                    "config" -> return Config.values().map { it.key }.toList().filter { it.startsWith(args[1]) }.sorted()
+                    "config" -> return Config.values.map { it.key }.toList().filter { it.startsWith(args[1]) }.sorted()
                 }
                 3 -> when (args[0]) {
                     "config" -> {
-                        val config = Config.values().firstOrNull { it.key == args[1] } ?: return emptyList()
+                        val config = Config.values.firstOrNull { it.key == args[1] }
+                                ?: return emptyList()
                         return when (config.type) {
                             Boolean::class.javaObjectType -> listOf("true", "false")
                             Byte::class.javaObjectType, Short::class.javaObjectType, Int::class.javaObjectType, Long::class.javaObjectType -> listOf("0")
@@ -70,7 +71,8 @@ class CommandLobby : ILobbyCommand {
 
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<String>?): Boolean {
         LobbyMain.logger.entering(CommandLobby::class, "onCommand")
-        LobbyMain.logger.finest("${sender.name} issued $command - ${args?.joinToString() ?: "null"}")
+        LobbyMain.logger.finest("${sender.name} issued $command - ${args?.joinToString()
+                ?: "null"}")
         if (args != null && args.isNotEmpty()) {
             when (args[0]) {
                 "maketp" -> {
@@ -322,12 +324,12 @@ class CommandLobby : ILobbyCommand {
             return false
         }
         if (args.size == 1) {
-            val config = Config.values().firstOrNull { it.key == args[0] }
+            val config = Config.values.firstOrNull { it.key == args[0] }
             if (config != null) {
                 sender.sendMessage("%s: %s".format(config, Meta[config]))
             }
         } else if (args.size == 2) {
-            val config = Config.values().firstOrNull { it.key == args[0] }
+            val config = Config.values.firstOrNull { it.key == args[0] }
             if (config != null) {
                 Meta[config] = args[1]
                 sender.sendMessage("%s: %s".format(config, Meta[config]))

@@ -26,7 +26,7 @@ object Items {
         get() = NBTItemExt(ItemStack(Material.COMPASS)).apply {
             setBoolean(NBTIdentifier.PREFIX, true)
             addItemFlags(ItemFlag.HIDE_ENCHANTS)
-            displayName = ChatColor.RED.toString() + "Lobby"
+            displayName = "${ChatColor.RED}Lobby"
         }
 
     /**
@@ -61,7 +61,6 @@ object Items {
         get() = NBTItemExt(ItemStack(Material.NETHER_STAR)).apply {
             setBoolean(NBTIdentifier.PREFIX, true)
             setInteger(NBTIdentifier.TYPE, GMCType.CHOOSE_LOBBY.ordinal)
-
             displayName = "LobbySwitcher"
         }
 

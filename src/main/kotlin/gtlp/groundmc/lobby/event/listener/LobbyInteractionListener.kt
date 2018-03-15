@@ -42,8 +42,8 @@ object LobbyInteractionListener : Listener {
                 && event.clickedBlock.type.name in Meta[Config.JUMPPADS_MATERIAL] as List<*>
                 && event.player.world == (Meta[Config.HUB_LOCATION] as Location).world) {
             event.player.velocity = event.player.location.getDirectionXZ()
-                    .multiply(Meta[Config.JUMPPADS_MULTIPLIER] as Double)
-                    .setY(Meta[Config.JUMPPADS_Y] as Double)
+                    .multiply(Meta[Config.JUMPPADS_MULTIPLIER] ?: 1.0)
+                    .setY(Meta[Config.JUMPPADS_Y] ?: 0.0)
             event.player.playSound(event.player.location, Sound.ENTITY_ENDERDRAGON_FLAP, 10f, 1f)
             event.isCancelled = true
         }

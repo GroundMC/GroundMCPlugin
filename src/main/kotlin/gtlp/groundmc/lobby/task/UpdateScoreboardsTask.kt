@@ -20,8 +20,11 @@ object UpdateScoreboardsTask : ITask {
     override val period = 20L
 
     override fun run() {
+        if (Bukkit.getOnlinePlayers().isEmpty()) {
+            return
+        }
         val events = Events.getCurrentEventTitles()
-        Bukkit.getServer().onlinePlayers.forEach {
+        Bukkit.getOnlinePlayers().forEach {
             val scoreboard = it.scoreboard
             var objective = scoreboard.getObjective("1")
             if (objective == null) {

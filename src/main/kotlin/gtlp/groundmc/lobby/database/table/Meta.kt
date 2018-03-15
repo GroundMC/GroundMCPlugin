@@ -45,7 +45,7 @@ object Meta : Table() {
      */
     private val configCache = CacheBuilder.newBuilder()
             .refreshAfterWrite(5L, TimeUnit.SECONDS)
-            .build<Config, Any>(CacheLoader.asyncReloading(DatabaseCacheLoader(), Executors.newCachedThreadPool()))
+            .build<Config<*>, Any>(CacheLoader.asyncReloading(DatabaseCacheLoader(), Executors.newCachedThreadPool()))
 
     /**
      * Upgrades the database by performing the needed modifications to the database.
@@ -60,7 +60,7 @@ object Meta : Table() {
                     null
                 }
                 if (currentVersion == null) {
-                    currentVersion = get(Config.DATABASE_VERSION) as Int? ?: CURRENT_DB_VER
+                    currentVersion = get(Config.DATABASE_VERSION) ?: CURRENT_DB_VER
                 }
                 for (version in currentVersion..CURRENT_DB_VER) {
                     when (version) {
@@ -83,8 +83,8 @@ object Meta : Table() {
                             }
                             if ("slowchat.enabled" in LobbyMain.instance.config &&
                                     "slowchat.timeout" in LobbyMain.instance.config) {
-                                set(Config.SLOWCHAT_ENABLED, LobbyMain.instance.config.getBoolean("slowchat.enabled", false).toString())
-                                set(Config.SLOWCHAT_TIMEOUT, LobbyMain.instance.config.getLong("slowchat.timeout", 3000).toString())
+                                set(Config.SLOWCHAT_ENABLED, LobbyMain.instance.config.getBoolean("slowchat.enabled", false))
+                                set(Config.SLOWCHAT_TIMEOUT, LobbyMain.instance.config.getLong("slowchat.timeout", 3000))
                             }
                             if ("hub" in LobbyMain.instance.config) {
                                 set(Config.HUB_LOCATION, LobbyMain.instance.config.get("hub",
@@ -145,31 +145,32 @@ object Meta : Table() {
      *
      * @return the value associated with the [key] or `null`, if not present.
      */
-    operator fun get(key: Config): Any? {
+    @Suppress("UNCHECKED_CAST", "PlatformExtensionReceiverOfInline")
+    operator fun <T> get(key: Config<T>): T? {
         return try {
             with(configCache[key]) {
                 try {
-                    key.type.cast(this)
+                    key.type.cast(this) as T
                 } catch (e: ClassCastException) {
                     if (this is String) {
                         when (key.type) {
-                            Boolean::class.javaObjectType -> this.toBoolean()
-                            Byte::class.javaObjectType -> this.toByte()
-                            Short::class.javaObjectType -> this.toShort()
-                            Int::class.javaObjectType -> this.toInt()
-                            Long::class.javaObjectType -> this.toLong()
-                            Float::class.javaObjectType -> this.toFloat()
-                            Double::class.javaObjectType -> this.toDouble()
-                            else -> this
+                            Boolean::class.javaObjectType -> this.toBoolean() as T
+                            Byte::class.javaObjectType -> this.toByte() as T
+                            Short::class.javaObjectType -> this.toShort() as T
+                            Int::class.javaObjectType -> this.toInt() as T
+                            Long::class.javaObjectType -> this.toLong() as T
+                            Float::class.javaObjectType -> this.toFloat() as T
+                            Double::class.javaObjectType -> this.toDouble() as T
+                            else -> this as T
                         }
                     } else {
-                        this
+                        this as T
                     }
                 }
             }
         } catch (e: Exception) {
             LobbyMain.logger.throwing(this.javaClass.name, "get", e)
-            null
+            null as T
         }
     }
 
@@ -180,7 +181,7 @@ object Meta : Table() {
      * @param key the key to associate the value with
      * @param value the contents of this configuration item
      */
-    operator fun set(key: Config, value: Any) {
+    operator fun <T> set(key: Config<T>, value: Any) {
         LobbyMain.logger.fine("Setting value for ${key.key}")
         transaction {
             deleteWhere { Meta.key eq key.key }
@@ -199,8 +200,8 @@ object Meta : Table() {
     /**
      * Class to load config values for the cache.
      */
-    class DatabaseCacheLoader : CacheLoader<Config, Any>() {
-        override fun load(key: Config): Any {
+    class DatabaseCacheLoader : CacheLoader<Config<*>, Any>() {
+        override fun load(key: Config<*>): Any {
             LobbyMain.logger.finer("Getting value for ${key.key}")
             with(YamlConfiguration()) {
                 loadFromString(
