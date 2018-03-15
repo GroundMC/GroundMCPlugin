@@ -70,12 +70,14 @@ object Items {
      * An item to fill empty inventory slots.
      */
     @Suppress("DEPRECATION")
-
     val FILLER: NBTItemExt
         get() = NBTItemExt(ItemStack(Material.STAINED_GLASS_PANE, 1, DyeColor.SILVER.woolData.toShort())).apply {
             displayName = " "
         }
 
+    /**
+     * An item used to open the [gtlp.groundmc.lobby.inventory.FriendsOverviewInventory]
+     */
     val FRIENDS_ITEM: NBTItemExt
         get() {
             val nbtItem = NBTItemExt(ItemStack(Material.SKULL_ITEM, 1, SkullType.PLAYER.ordinal.toShort()))
