@@ -26,13 +26,11 @@ import org.bukkit.scheduler.BukkitScheduler
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils.createMissingTablesAndColumns
 import org.jetbrains.exposed.sql.exposedLogger
-import org.jetbrains.exposed.sql.transactions.TransactionManager
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.slf4j.impl.JDK14LoggerAdapter
 import java.io.File
 import java.lang.reflect.Field
 import java.lang.reflect.Modifier
-import java.sql.Connection
 import java.util.logging.FileHandler
 import java.util.logging.Level
 import java.util.logging.Logger
@@ -87,12 +85,8 @@ class LobbyMain : JavaPlugin() {
             username = config.getString("database.username", "")
             password = config.getString("database.password", "")
             addDataSourceProperty("journal_mode", "wal")
+            transactionIsolation = "TRANSACTION_SERIALIZABLE"
         })
-        if (config.getString("database.driver") == "org.sqlite.JDBC") {
-            logger.info("SQLite detected, setting default isolation level" +
-                    " to TransactionSerializable")
-            TransactionManager.manager.defaultIsolationLevel = Connection.TRANSACTION_SERIALIZABLE
-        }
         try {
             transaction {
                 createMissingTablesAndColumns(Meta, Users, Relationships, Events)
