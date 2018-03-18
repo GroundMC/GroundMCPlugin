@@ -1,7 +1,7 @@
 # GroundMCPlugin
 Lobby plugin for the GroundMC Minecraft server.
 
-[![Build Status](http://giant.ddnss.de:8180/buildStatus/icon?job=GroundMCPlugin/master)](http://giant.ddnss.de:8180/job/GroundMCPlugin/master)
+[![Build Status](https://ci.groundmc.net/buildStatus/icon?job=GroundMCPlugin/master)](https://ci.groundmc.net/job/GroundMCPlugin/master)
 
 
 Permissions:
