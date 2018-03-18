@@ -9,7 +9,7 @@ class Config<T>(val key: String, val type: Class<T>) {
     }
 
     companion object {
-        val values = mutableListOf<Config<*>>()
+        var values = mutableListOf<Config<*>>()
         val DATABASE_VERSION = Config("db.version", Int::class.javaObjectType)
         val COINS_DAILY = Config("coins.daily", Int::class.javaObjectType)
         val SLOWCHAT_ENABLED = Config("slowchat.enabled", Boolean::class.javaObjectType)
