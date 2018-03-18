@@ -37,11 +37,11 @@
         </repository>
         <repository>
             <id>local-jenkins</id>
-            <url>http://giant.ddnss.de:8180/plugin/repository/everything/</url>
+            <url>https://ci.groundmc.net/plugin/repository/everything/</url>
         </repository>
         <repository>
             <id>cloudnet</id>
-            <url>https://klautnett.de/repositories/</url>
+            <url>http://dytanic.de/repositories/</url>
         </repository>
     </repositories>
 
