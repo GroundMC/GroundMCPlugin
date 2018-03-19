@@ -39,7 +39,7 @@ class LogFormatter : Formatter() {
     override fun format(record: LogRecord): String {
         date.time = record.millis
 
-        val source = StringBuilder()
+        val source = StringBuffer()
         if (record.sourceClassName != null) {
             source.append(record.sourceClassName)
             if (record.sourceMethodName != null) {
@@ -50,7 +50,7 @@ class LogFormatter : Formatter() {
             source.append(record.loggerName)
         }
 
-        val throwable = StringBuilder()
+        val throwable = StringBuffer()
         if (record.thrown != null) {
             val sw = StringWriter()
             val pw = PrintWriter(sw)

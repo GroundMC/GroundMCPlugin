@@ -9,6 +9,7 @@ import gtlp.groundmc.lobby.util.NBTItemExt
 import org.bukkit.ChatColor
 import org.bukkit.DyeColor
 import org.bukkit.Material
+import org.bukkit.SkullType
 import org.bukkit.enchantments.Enchantment
 import org.bukkit.inventory.ItemFlag
 import org.bukkit.inventory.ItemStack
@@ -71,5 +72,18 @@ object Items {
     val FILLER: NBTItemExt
         get() = NBTItemExt(ItemStack(Material.STAINED_GLASS_PANE, 1, DyeColor.SILVER.woolData.toShort())).apply {
             displayName = " "
+        }
+
+    /**
+     * An item used to open the [gtlp.groundmc.lobby.inventory.FriendsOverviewInventory]
+     */
+    val FRIENDS_ITEM: NBTItemExt
+        get() {
+            val nbtItem = NBTItemExt(ItemStack(Material.SKULL_ITEM, 1, SkullType.PLAYER.ordinal.toShort()))
+            nbtItem.setBoolean(NBTIdentifier.PREFIX, true)
+            nbtItem.setInteger(NBTIdentifier.TYPE, GMCType.FRIENDS.ordinal)
+            nbtItem.addItemFlags(ItemFlag.HIDE_ENCHANTS)
+            nbtItem.displayName = I18n.getString("friendsitem.name")
+            return nbtItem
         }
 }
