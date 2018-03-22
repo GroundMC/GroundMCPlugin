@@ -25,7 +25,7 @@ object UpdateLobbyInventoryTask : ITask {
     override fun run() {
         if (!Bukkit.getPluginManager().isPluginEnabled("Multiverse-Core")) {
             LobbyMain.logger.config("Multiverse-Core not found or enabled, disabling interop.")
-            Bukkit.getServer().scheduler.cancelTask(LobbyMain.tasks[this]!!)
+            LobbyMain.tasks[this]?.cancel()
             return
         }
 

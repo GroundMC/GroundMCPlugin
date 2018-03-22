@@ -10,7 +10,7 @@ object Meta0 : Table("Meta") {
      * The latest version of the database.
      * Used to track the upgrade process and to determine what upgrades to do.
      */
-    private val CURRENT_TABLE_VER = 2
+    private const val CURRENT_TABLE_VER = 2
 
     /**
      * Column to hold the current database version.

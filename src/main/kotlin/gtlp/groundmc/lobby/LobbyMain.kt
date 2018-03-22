@@ -23,6 +23,7 @@ import org.bukkit.inventory.ItemStack
 import org.bukkit.plugin.PluginLogger
 import org.bukkit.plugin.java.JavaPlugin
 import org.bukkit.scheduler.BukkitScheduler
+import org.bukkit.scheduler.BukkitTask
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils.createMissingTablesAndColumns
 import org.jetbrains.exposed.sql.exposedLogger
@@ -72,7 +73,7 @@ class LobbyMain : JavaPlugin() {
      */
     override fun onEnable() {
         logger.entering(LobbyMain::class, "onEnable")
-        instance = this
+        backingInstance = this
         registerGsonHandlers()
         createDefaultConfig()
         upgradeConfig()
@@ -110,11 +111,11 @@ class LobbyMain : JavaPlugin() {
      */
     private fun scheduleTasks() {
         logger.config("Scheduling tasks...")
-        Bukkit.getServer().scheduler.scheduleSyncDelayedTask(SetRulesTask)
-        Bukkit.getServer().scheduler.runTaskTimerAsynchronously(ApplyPlayerEffectsTask)
-        Bukkit.getServer().scheduler.runTaskTimerAsynchronously(HidePlayersTask)
-        Bukkit.getServer().scheduler.runTaskTimerAsynchronously(UpdateLobbyInventoryTask)
-        Bukkit.getServer().scheduler.scheduleSyncRepeatingTask(UpdateScoreboardsTask)
+        Bukkit.getScheduler().scheduleSyncDelayedTask(SetRulesTask)
+        Bukkit.getScheduler().runTaskTimerAsynchronously(ApplyPlayerEffectsTask)
+        Bukkit.getScheduler().runTaskTimerAsynchronously(HidePlayersTask)
+        Bukkit.getScheduler().runTaskTimerAsynchronously(UpdateLobbyInventoryTask)
+        Bukkit.getScheduler().scheduleSyncRepeatingTask(UpdateScoreboardsTask)
     }
 
     /**
@@ -131,7 +132,7 @@ class LobbyMain : JavaPlugin() {
                 ServerStateListener,
                 SilentChatListener,
                 LobbyChooserListener
-        ).forEach { Bukkit.getServer().pluginManager.registerEvents(it, this) }
+        ).forEach { Bukkit.getPluginManager().registerEvents(it, this) }
     }
 
     /**
@@ -202,9 +203,9 @@ class LobbyMain : JavaPlugin() {
             @Suppress("unchecked_cast")
             LobbyInventory.TEMPLATE_INVENTORY.contents = (config["inventory.content"] as List<ItemStack?>).toTypedArray()
 
-            (0 until LobbyInventory.TEMPLATE_INVENTORY.contents.size).forEach { i ->
-                if (LobbyInventory.TEMPLATE_INVENTORY.getItem(i) == null) {
-                    LobbyInventory.TEMPLATE_INVENTORY.setItem(i, Items.FILLER.item)
+            (0 until LobbyInventory.TEMPLATE_INVENTORY.contents.size).forEach {
+                if (LobbyInventory.TEMPLATE_INVENTORY.getItem(it) == null) {
+                    LobbyInventory.TEMPLATE_INVENTORY.setItem(it, Items.FILLER.item)
                 }
             }
         }
@@ -254,7 +255,7 @@ class LobbyMain : JavaPlugin() {
     override fun onDisable() {
         logger.entering(LobbyMain::class, "onDisable")
         logger.info("Saving configuration and disabling...")
-        tasks.forEach { Bukkit.getServer().scheduler.cancelTask(it.value) }
+        tasks.forEach { it.value.cancel() }
         saveConfig()
         logger.exiting(LobbyMain::class, "onDisable")
     }
@@ -280,7 +281,7 @@ class LobbyMain : JavaPlugin() {
      */
     private fun BukkitScheduler.scheduleSyncRepeatingTask(task: ITask) {
         logger.entering(LobbyMain::class, "scheduleSyncRepeatingTask")
-        tasks[task] = scheduleSyncRepeatingTask(this@LobbyMain, task, task.delay, task.period)
+        tasks[task] = runTaskTimer(this@LobbyMain, task, task.delay, task.period)
     }
 
     /**
@@ -291,7 +292,7 @@ class LobbyMain : JavaPlugin() {
      */
     private fun BukkitScheduler.scheduleSyncDelayedTask(task: ITask) {
         logger.entering(LobbyMain::class, "scheduleSyncDelayedTask")
-        tasks[task] = scheduleSyncDelayedTask(this@LobbyMain, task, task.delay)
+        tasks[task] = runTaskLater(this@LobbyMain, task, task.delay)
     }
 
     /**
@@ -302,7 +303,7 @@ class LobbyMain : JavaPlugin() {
      */
     private fun BukkitScheduler.runTaskTimerAsynchronously(task: ITask) {
         logger.entering(LobbyMain::class, "runTaskTimerAsynchronously")
-        tasks[task] = runTaskTimerAsynchronously(this@LobbyMain, task, task.delay, task.period).taskId
+        tasks[task] = runTaskTimerAsynchronously(this@LobbyMain, task, task.delay, task.period)
     }
 
 
@@ -315,17 +316,19 @@ class LobbyMain : JavaPlugin() {
         /**
          * A map of tasks to their IDs
          */
-        val tasks = mutableMapOf<ITask, Int>()
+        val tasks = mutableMapOf<ITask, BukkitTask>()
 
         /**
          * Set holding players that want their chat to be silent
          */
         val SILENCED_PLAYERS: MutableSet<Player> = Sets.newConcurrentHashSet<Player>()
 
+        private lateinit var backingInstance: LobbyMain
         /**
          * Common instance of this [LobbyMain] plugin.
          */
-        lateinit var instance: LobbyMain
+        val instance: LobbyMain
+            get() = backingInstance
 
         /**
          * The [Logger] that is created in the init block.

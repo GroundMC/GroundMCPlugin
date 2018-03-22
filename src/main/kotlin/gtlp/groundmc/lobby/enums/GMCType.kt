@@ -25,7 +25,7 @@ enum class GMCType {
     HIDE_PLAYERS,
 
     /**
-     * Denotes that the item should open the [gtlp.groundmc.lobby.inventory.LobbyChooseInventory]
+     * Denotes that the item should open the [gtlp.groundmc.lobby.inventory.LobbyChooser]
      */
     CHOOSE_LOBBY,
 
