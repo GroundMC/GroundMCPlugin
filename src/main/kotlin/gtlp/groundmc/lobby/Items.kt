@@ -108,4 +108,3 @@ object Items {
             displayName = I18n.getString("friendsitem.name")
         }
 }
-}
