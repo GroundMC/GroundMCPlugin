@@ -32,7 +32,7 @@ import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.SkullMeta
 
 object FriendsOverviewInventory {
-    private const val TITLE = "Friends"
+    internal const val TITLE = "Friends"
 
     fun create(player: Player) = Bukkit.createInventory(player, 4 * 9, TITLE)
             .apply {
