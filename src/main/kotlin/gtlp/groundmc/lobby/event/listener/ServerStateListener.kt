@@ -47,6 +47,7 @@ import org.bukkit.event.player.PlayerChangedWorldEvent
 import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.event.player.PlayerLocaleChangeEvent
 import org.bukkit.event.player.PlayerQuitEvent
+import org.bukkit.inventory.meta.SkullMeta
 import org.bukkit.scoreboard.Team
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.select
@@ -96,6 +97,11 @@ object ServerStateListener : Listener {
             }
             inventory.setItem(2, nbtItem.item)
         }
+        inventory.setItem(4, Items.FRIENDS_ITEM.apply {
+            meta = (meta as SkullMeta).apply {
+                owningPlayer = player
+            }
+        }.item)
         if (Bukkit.getPluginManager().isPluginEnabled("CloudNetAPI")) {
             inventory.setItem(7, Items.LOBBY_CHOOSE_ITEM.item)
         }
