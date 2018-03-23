@@ -78,24 +78,23 @@ object ServerStateListener : Listener {
         inventory.setItem(0, Items.COMPASS_ITEM.item)
 
         if (player.hasPermission(Permission.SILENT)) {
-            val silentItem = Items.SILENT_ITEM
-            silentItem.displayName = I18n.getString(if (silent) "silentitem.on" else "silentitem.off", player.locale)
-            silentItem.setBoolean(NBTIdentifier.SILENT_STATE, silent)
-            if (silent) {
-                silentItem.addEnchantment(Enchantment.LUCK)
-            }
-            inventory.setItem(1, silentItem.item)
+            inventory.setItem(1, Items.SILENT_ITEM.apply {
+                displayName = I18n.getString(if (silent) "silentitem.on" else "silentitem.off", player.locale)
+                setBoolean(NBTIdentifier.SILENT_STATE, silent)
+                if (silent) {
+                    addEnchantment(Enchantment.LUCK)
+                }
+            }.item)
         }
 
         if (player.hasPermission(Permission.HIDE_PLAYERS)) {
-            val nbtItem = Items.HIDE_PLAYERS_ITEM.apply {
+            inventory.setItem(2, Items.HIDE_PLAYERS_ITEM.apply {
                 displayName = I18n.getString(when (hideState) {
                     VisibilityStates.ALL -> "visibility.all"
                     VisibilityStates.NONE -> "visibility.none"
                     VisibilityStates.FRIENDS -> "visibility.friends"
                 }, player.locale)
-            }
-            inventory.setItem(2, nbtItem.item)
+            }.item)
         }
         inventory.setItem(4, Items.FRIENDS_ITEM.apply {
             meta = (meta as SkullMeta).apply {
