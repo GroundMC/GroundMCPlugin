@@ -24,8 +24,6 @@ object LobbyInvincibilityListener : Listener {
      */
     @EventHandler
     fun removePotionEffects(event: PotionSplashEvent) {
-        if (event.isCancelled) return
-
         if (event.entity.world == (Meta[Config.HUB_LOCATION] as Location).world) {
             // Remove players from affectedEntities
             event.affectedEntities.filter { it is Player }.forEach { event.setIntensity(it, -1.0) }
@@ -39,8 +37,6 @@ object LobbyInvincibilityListener : Listener {
      */
     @EventHandler
     fun preventDamage(event: EntityDamageEvent) {
-        if (event.isCancelled) return
-
         if (event.entity.world == (Meta[Config.HUB_LOCATION] as Location).world
                 && event.cause !in arrayOf(SUICIDE, CUSTOM, VOID)) {
             event.isCancelled = true

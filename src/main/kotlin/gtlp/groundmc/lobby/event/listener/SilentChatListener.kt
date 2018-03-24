@@ -13,7 +13,6 @@ import org.bukkit.enchantments.Enchantment
 import org.bukkit.entity.Player
 import org.bukkit.event.Event
 import org.bukkit.event.EventHandler
-import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
 import org.bukkit.event.block.Action
 import org.bukkit.event.inventory.InventoryClickEvent
@@ -39,10 +38,8 @@ object SilentChatListener : Listener {
      *
      * @param event the event to handle
      */
-    @EventHandler(priority = EventPriority.LOWEST)
+    @EventHandler
     fun silentChat(event: PlayerInteractEvent) {
-        if (event.isCancelled) return
-
         if (event.item != null) {
             val nbtItem = NBTItemExt(event.item)
             if (NBTIdentifier.itemHasPrefix(event.item) && nbtItem.getInteger(NBTIdentifier.TYPE) == GMCType.SILENT.ordinal) {
@@ -59,12 +56,10 @@ object SilentChatListener : Listener {
      */
     @EventHandler
     fun silentChat(event: InventoryClickEvent) {
-        if (event.isCancelled || event.result == Event.Result.DENY) return
-
         if (event.action != Action.PHYSICAL && event.currentItem != null && event.whoClicked is Player) {
             val nbtItem = NBTItemExt(event.currentItem)
             if (NBTIdentifier.itemHasPrefix(event.currentItem) && nbtItem.getInteger(NBTIdentifier.TYPE) == GMCType.SILENT.ordinal) {
-                event.isCancelled = true
+                event.result = Event.Result.DENY
                 toggleSilentChat(nbtItem, event.whoClicked as Player)
             }
         }
@@ -117,8 +112,6 @@ object SilentChatListener : Listener {
      */
     @EventHandler
     fun filterChat(event: AsyncPlayerChatEvent) {
-        if (event.isCancelled) return
-
         event.recipients.removeAll(SILENCED_PLAYERS)
         event.recipients.add(event.player)
     }

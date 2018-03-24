@@ -33,8 +33,6 @@ object LobbyInventoryListener : Listener {
      */
     @EventHandler
     fun teleportPlayer(event: InventoryClickEvent) {
-        if (event.isCancelled || event.result == Event.Result.DENY) return
-
         val player = event.whoClicked as Player
         if (event.clickedInventory != null && event.clickedInventory.title == LobbyInventory.TITLE) {
             if (event.currentItem == null) {
@@ -59,8 +57,6 @@ object LobbyInventoryListener : Listener {
      */
     @EventHandler(priority = EventPriority.HIGH)
     fun cancelInventoryClick(event: InventoryClickEvent) {
-        if (event.isCancelled || event.result == Event.Result.DENY) return
-
         if (NBTIdentifier.itemHasPrefix(event.currentItem) &&
                 event.inventory.title != LobbyInventory.TEMPLATE_INVENTORY.title) {
             event.result = Event.Result.DENY
@@ -75,8 +71,6 @@ object LobbyInventoryListener : Listener {
      */
     @EventHandler
     fun openLobbyInventory(event: InventoryClickEvent) {
-        if (event.isCancelled || event.result == Event.Result.DENY) return
-
         if (event.currentItem == Items.COMPASS_ITEM.item) {
             event.result = Event.Result.DENY
             event.whoClicked.openInventory(LobbyInventory.create(event.whoClicked))
@@ -91,13 +85,10 @@ object LobbyInventoryListener : Listener {
      */
     @EventHandler
     fun openLobbyInventory(event: PlayerInteractEvent) {
-        if (event.isCancelled) return
-
-        if (event.action != Action.PHYSICAL && NBTIdentifier.itemHasPrefix(event.item)) {
-            if (event.item == Items.COMPASS_ITEM.item) {
-                event.isCancelled = true
-                event.player.openInventory(LobbyInventory.create(event.player))
-            }
+        if (event.action != Action.PHYSICAL && NBTIdentifier.itemHasPrefix(event.item)
+                && event.item == Items.COMPASS_ITEM.item) {
+            event.isCancelled = true
+            event.player.openInventory(LobbyInventory.create(event.player))
         }
     }
 }

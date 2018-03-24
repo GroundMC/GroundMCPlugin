@@ -29,7 +29,7 @@ object PreventWorldInteractionListener : Listener {
      *
      * @param event the event to handle
      */
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST)
     fun cancelBlockPlace(event: BlockPlaceEvent) {
         if (event.isCancelled) return
 
@@ -45,8 +45,6 @@ object PreventWorldInteractionListener : Listener {
      */
     @EventHandler(priority = EventPriority.LOWEST)
     fun cancelItemDrop(event: PlayerDropItemEvent) {
-        if (event.isCancelled) return
-
         if (NBTIdentifier.itemHasPrefix(event.itemDrop.itemStack)) {
             event.isCancelled = true
         }
@@ -59,8 +57,6 @@ object PreventWorldInteractionListener : Listener {
      */
     @EventHandler(priority = EventPriority.LOWEST)
     fun preventItemPickup(event: EntityPickupItemEvent) {
-        if (event.isCancelled) return
-
         if (event.entity.world == (Meta[Config.HUB_LOCATION] as Location).world
                 && !event.entity.hasPermission(Permission.ADMIN)) {
             event.isCancelled = true
@@ -74,8 +70,6 @@ object PreventWorldInteractionListener : Listener {
      */
     @EventHandler(priority = EventPriority.LOWEST)
     fun preventBlockBreaking(event: BlockBreakEvent) {
-        if (event.isCancelled) return
-
         if (event.player.world == (Meta[Config.HUB_LOCATION] as Location).world
                 && !event.player.hasPermission(Permission.ADMIN)) {
             event.isCancelled = true

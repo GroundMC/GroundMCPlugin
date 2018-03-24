@@ -1,5 +1,3 @@
-
-
 package gtlp.groundmc.lobby.event.listener
 
 import de.dytanic.cloudnet.api.CloudAPI
@@ -33,20 +31,15 @@ object LobbyChooserListener : Listener {
 
     @EventHandler
     fun openLobbyChooser(event: PlayerInteractEvent) {
-        if (event.isCancelled) return
-
-        if (event.action != Action.PHYSICAL && NBTIdentifier.itemHasPrefix(event.item)) {
-            if (event.item == Items.LOBBY_CHOOSE_ITEM.item) {
-                event.isCancelled = true
-                event.player.openInventory(LobbyChooser.create(event.player))
-            }
+        if (event.action != Action.PHYSICAL && NBTIdentifier.itemHasPrefix(event.item)
+                && event.item == Items.LOBBY_CHOOSE_ITEM.item) {
+            event.isCancelled = true
+            event.player.openInventory(LobbyChooser.create(event.player))
         }
     }
 
     @EventHandler
     fun teleportPlayer(event: InventoryClickEvent) {
-        if (event.isCancelled || event.result == Event.Result.DENY) return
-
         val player = event.whoClicked as Player
         if (event.clickedInventory != null && event.clickedInventory.title == LobbyChooser.TITLE) {
             if (event.currentItem == null) {

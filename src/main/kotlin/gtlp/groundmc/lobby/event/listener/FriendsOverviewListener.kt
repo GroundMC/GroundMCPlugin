@@ -1,10 +1,9 @@
-
-
 package gtlp.groundmc.lobby.event.listener
 
-import gtlp.groundmc.lobby.Items
+import gtlp.groundmc.lobby.enums.GMCType
 import gtlp.groundmc.lobby.enums.NBTIdentifier
 import gtlp.groundmc.lobby.inventory.FriendsOverviewInventory
+import gtlp.groundmc.lobby.util.NBTItemExt
 import org.bukkit.entity.Player
 import org.bukkit.event.Event
 import org.bukkit.event.EventHandler
@@ -19,9 +18,9 @@ object FriendsOverviewListener : Listener {
 
     @EventHandler
     fun openFriendsOverview(event: InventoryClickEvent) {
-        if (event.isCancelled || event.result == Event.Result.DENY) return
-
-        if (event.whoClicked is Player && event.currentItem == Items.FRIENDS_ITEM.item) {
+        if (event.whoClicked is Player
+                && NBTItemExt(event.currentItem)
+                        .getInteger(NBTIdentifier.TYPE) == GMCType.FRIENDS.ordinal) {
             event.result = Event.Result.DENY
             event.whoClicked.openInventory(FriendsOverviewInventory.create(event.whoClicked as Player))
         }
@@ -29,10 +28,9 @@ object FriendsOverviewListener : Listener {
 
     @EventHandler
     fun openFriendsOverview(event: PlayerInteractEvent) {
-        if (event.isCancelled) return
-
         if (event.action != Action.PHYSICAL && NBTIdentifier.itemHasPrefix(event.item)
-                && event.item == Items.FRIENDS_ITEM.item) {
+                && NBTItemExt(event.item)
+                        .getInteger(NBTIdentifier.TYPE) == GMCType.FRIENDS.ordinal) {
             event.isCancelled = true
             event.player.openInventory(FriendsOverviewInventory.create(event.player))
         }

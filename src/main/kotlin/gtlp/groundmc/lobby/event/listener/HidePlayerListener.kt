@@ -1,5 +1,3 @@
-
-
 package gtlp.groundmc.lobby.event.listener
 
 import gtlp.groundmc.lobby.database.table.Users
@@ -13,7 +11,6 @@ import org.bukkit.enchantments.Enchantment
 import org.bukkit.entity.Player
 import org.bukkit.event.Event
 import org.bukkit.event.EventHandler
-import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.player.PlayerInteractEvent
@@ -32,13 +29,12 @@ object HidePlayerListener : Listener {
      *
      * @param event the event to handle
      */
-    @EventHandler(priority = EventPriority.LOWEST)
+    @EventHandler
     fun openHidePlayerInventory(event: PlayerInteractEvent) {
-        if (event.isCancelled) return
-
         if (event.item != null) {
             val nbtItem = NBTItemExt(event.item)
-            if (NBTIdentifier.itemHasPrefix(nbtItem.item) && nbtItem.getInteger(NBTIdentifier.TYPE) == GMCType.HIDE_PLAYERS.ordinal) {
+            if (NBTIdentifier.itemHasPrefix(nbtItem.item)
+                    && nbtItem.getInteger(NBTIdentifier.TYPE) == GMCType.HIDE_PLAYERS.ordinal) {
                 event.isCancelled = true
                 event.player.openInventory(HidePlayerInventory.create(event.player))
             }
@@ -52,11 +48,10 @@ object HidePlayerListener : Listener {
      */
     @EventHandler
     fun openHidePlayInventory(event: InventoryClickEvent) {
-        if (event.isCancelled || event.result == Event.Result.DENY) return
-
         if (event.currentItem != null && event.whoClicked is Player) {
             val nbtItem = NBTItemExt(event.currentItem)
-            if (NBTIdentifier.itemHasPrefix(nbtItem.item) && nbtItem.getInteger(NBTIdentifier.TYPE) == GMCType.HIDE_PLAYERS.ordinal) {
+            if (NBTIdentifier.itemHasPrefix(nbtItem.item)
+                    && nbtItem.getInteger(NBTIdentifier.TYPE) == GMCType.HIDE_PLAYERS.ordinal) {
                 event.result = Event.Result.DENY
                 event.whoClicked.openInventory(HidePlayerInventory.create(event.whoClicked as Player))
             }
@@ -71,13 +66,11 @@ object HidePlayerListener : Listener {
      */
     @EventHandler
     fun selectHideState(event: InventoryClickEvent) {
-        if (event.isCancelled || event.result == Event.Result.DENY) return
-
         if (event.clickedInventory != null && event.clickedInventory.title == HidePlayerInventory.TITLE) {
-            event.result = Event.Result.DENY
             if (NBTIdentifier.itemHasPrefix(event.currentItem)) {
                 val nbtItem = NBTItemExt(event.currentItem)
                 if (nbtItem.getInteger(NBTIdentifier.TYPE) == GMCType.HIDE_PLAYERS.ordinal) {
+                    event.result = Event.Result.DENY
                     event.clickedInventory.contents.filterNotNull().forEach { itemStack -> itemStack.removeEnchantment(Enchantment.LUCK) }
                     nbtItem.addEnchantment(Enchantment.LUCK)
                     event.currentItem = nbtItem.item
@@ -86,7 +79,7 @@ object HidePlayerListener : Listener {
                     }.item)
                     async {
                         transaction {
-                            gtlp.groundmc.lobby.database.table.Users.update({ Users.id.eq(event.whoClicked.uniqueId) }) {
+                            Users.update({ Users.id.eq(event.whoClicked.uniqueId) }) {
                                 it[hiddenStatus] = VisibilityStates.values()[nbtItem.getInteger(NBTIdentifier.HIDE_STATE)!!]
                             }
                         }
