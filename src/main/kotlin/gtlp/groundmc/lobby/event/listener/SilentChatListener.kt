@@ -32,7 +32,7 @@ object SilentChatListener : Listener {
     /**
      * Set holding players that want their chat to be silent
      */
-    val SILENCED_PLAYERS = Sets.newConcurrentHashSet<Player>()
+    val SILENCED_PLAYERS: MutableSet<Player> = Sets.newConcurrentHashSet<Player>()
 
     /**
      * Updates the chat silence setting.
