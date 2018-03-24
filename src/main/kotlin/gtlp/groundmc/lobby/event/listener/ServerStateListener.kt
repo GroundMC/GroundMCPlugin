@@ -86,7 +86,6 @@ object ServerStateListener : Listener {
                 }
             }.item)
         }
-
         if (player.hasPermission(Permission.HIDE_PLAYERS)) {
             inventory.setItem(2, Items.HIDE_PLAYERS_ITEM.apply {
                 displayName = I18n.getString(when (hideState) {
@@ -97,9 +96,9 @@ object ServerStateListener : Listener {
             }.item)
         }
         inventory.setItem(4, Items.FRIENDS_ITEM.apply {
-            meta = (meta as SkullMeta).apply {
-                owningPlayer = player
-            }
+            val newMeta = (meta as SkullMeta)
+            newMeta.owningPlayer = player
+            meta = newMeta
         }.item)
         if (Bukkit.getPluginManager().isPluginEnabled("CloudNetAPI")) {
             inventory.setItem(7, Items.LOBBY_CHOOSE_ITEM.item)

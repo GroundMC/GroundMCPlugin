@@ -50,6 +50,8 @@ object ChatInteractionListener : Listener {
      */
     @EventHandler(priority = EventPriority.LOWEST)
     fun slowChat(event: AsyncPlayerChatEvent) {
+        if (event.isCancelled) return
+
         if (Meta[Config.SLOWCHAT_ENABLED] == true) {
             if (event.player.hasMetadata(key) &&
                     (Instant.now() - event.player.getMetadata(key).first { it.owningPlugin == LobbyMain.instance }.asLong())

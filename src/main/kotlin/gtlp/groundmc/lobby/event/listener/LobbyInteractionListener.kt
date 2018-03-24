@@ -61,6 +61,9 @@ object LobbyInteractionListener : Listener {
 
             return vector.normalize()
         }
+
+        if (event.isCancelled) return
+
         if (event.clickedBlock != null && event.action == Action.PHYSICAL
                 && event.clickedBlock.type.name in Meta[Config.JUMPPADS_MATERIAL] as List<*>
                 && event.player.world == (Meta[Config.HUB_LOCATION] as Location).world) {

@@ -55,6 +55,8 @@ object HidePlayerListener : Listener {
      */
     @EventHandler(priority = EventPriority.LOWEST)
     fun openHidePlayerInventory(event: PlayerInteractEvent) {
+        if (event.isCancelled) return
+
         if (event.item != null) {
             val nbtItem = NBTItemExt(event.item)
             if (NBTIdentifier.itemHasPrefix(nbtItem.item) && nbtItem.getInteger(NBTIdentifier.TYPE) == GMCType.HIDE_PLAYERS.ordinal) {
@@ -71,10 +73,12 @@ object HidePlayerListener : Listener {
      */
     @EventHandler
     fun openHidePlayInventory(event: InventoryClickEvent) {
+        if (event.isCancelled || event.result == Event.Result.DENY) return
+
         if (event.currentItem != null && event.whoClicked is Player) {
             val nbtItem = NBTItemExt(event.currentItem)
             if (NBTIdentifier.itemHasPrefix(nbtItem.item) && nbtItem.getInteger(NBTIdentifier.TYPE) == GMCType.HIDE_PLAYERS.ordinal) {
-                event.isCancelled = true
+                event.result = Event.Result.DENY
                 event.whoClicked.openInventory(HidePlayerInventory.create(event.whoClicked as Player))
             }
         }
@@ -88,6 +92,8 @@ object HidePlayerListener : Listener {
      */
     @EventHandler
     fun selectHideState(event: InventoryClickEvent) {
+        if (event.isCancelled || event.result == Event.Result.DENY) return
+
         if (event.clickedInventory != null && event.clickedInventory.title == HidePlayerInventory.TITLE) {
             event.result = Event.Result.DENY
             if (NBTIdentifier.itemHasPrefix(event.currentItem)) {

@@ -44,6 +44,8 @@ object LobbyChooserListener : Listener {
 
     @EventHandler
     fun openLobbyChooser(event: InventoryClickEvent) {
+        if (event.isCancelled || event.result == Event.Result.DENY) return
+
         if (event.currentItem == Items.LOBBY_CHOOSE_ITEM.item) {
             event.result = Event.Result.DENY
             event.whoClicked.openInventory(LobbyChooser.create(event.whoClicked as Player))
@@ -52,6 +54,8 @@ object LobbyChooserListener : Listener {
 
     @EventHandler
     fun openLobbyChooser(event: PlayerInteractEvent) {
+        if (event.isCancelled) return
+
         if (event.action != Action.PHYSICAL && NBTIdentifier.itemHasPrefix(event.item)) {
             event.isCancelled = true
             if (event.item == Items.LOBBY_CHOOSE_ITEM.item) {
@@ -62,9 +66,11 @@ object LobbyChooserListener : Listener {
 
     @EventHandler
     fun teleportPlayer(event: InventoryClickEvent) {
+        if (event.isCancelled || event.result == Event.Result.DENY) return
+
         val player = event.whoClicked as Player
         if (event.clickedInventory != null && event.clickedInventory.title == LobbyChooser.TITLE) {
-            event.isCancelled = true
+            event.result = Event.Result.DENY
             if (event.currentItem == null) {
                 return
             }

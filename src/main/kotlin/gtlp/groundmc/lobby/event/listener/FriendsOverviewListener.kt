@@ -40,7 +40,9 @@ object FriendsOverviewListener : Listener {
 
     @EventHandler
     fun openFriendsOverview(event: InventoryClickEvent) {
-        if (event.currentItem == Items.FRIENDS_ITEM.item) {
+        if (event.isCancelled || event.result == Event.Result.DENY) return
+
+        if (event.whoClicked is Player && event.currentItem == Items.FRIENDS_ITEM.item) {
             event.result = Event.Result.DENY
             event.whoClicked.openInventory(FriendsOverviewInventory.create(event.whoClicked as Player))
         }
@@ -48,6 +50,8 @@ object FriendsOverviewListener : Listener {
 
     @EventHandler
     fun openFriendsOverview(event: PlayerInteractEvent) {
+        if (event.isCancelled) return
+
         if (event.action != Action.PHYSICAL && NBTIdentifier.itemHasPrefix(event.item)) {
             event.isCancelled = true
             if (event.item == Items.FRIENDS_ITEM.item) {

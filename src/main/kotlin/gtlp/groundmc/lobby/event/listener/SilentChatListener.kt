@@ -32,6 +32,7 @@ import gtlp.groundmc.lobby.util.NBTItemExt
 import kotlinx.coroutines.experimental.async
 import org.bukkit.enchantments.Enchantment
 import org.bukkit.entity.Player
+import org.bukkit.event.Event
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
@@ -55,6 +56,8 @@ object SilentChatListener : Listener {
      */
     @EventHandler(priority = EventPriority.LOWEST)
     fun silentChat(event: PlayerInteractEvent) {
+        if (event.isCancelled) return
+
         if (event.item != null) {
             val nbtItem = NBTItemExt(event.item)
             if (NBTIdentifier.itemHasPrefix(event.item) && nbtItem.getInteger(NBTIdentifier.TYPE) == GMCType.SILENT.ordinal) {
@@ -71,6 +74,8 @@ object SilentChatListener : Listener {
      */
     @EventHandler
     fun silentChat(event: InventoryClickEvent) {
+        if (event.isCancelled || event.result == Event.Result.DENY) return
+
         if (event.action != Action.PHYSICAL && event.currentItem != null && event.whoClicked is Player) {
             val nbtItem = NBTItemExt(event.currentItem)
             if (NBTIdentifier.itemHasPrefix(event.currentItem) && nbtItem.getInteger(NBTIdentifier.TYPE) == GMCType.SILENT.ordinal) {
@@ -127,9 +132,8 @@ object SilentChatListener : Listener {
      */
     @EventHandler
     fun filterChat(event: AsyncPlayerChatEvent) {
-        if (event.isCancelled) {
-            return
-        }
+        if (event.isCancelled) return
+
         event.recipients.removeAll(LobbyMain.SILENCED_PLAYERS)
         event.recipients.add(event.player)
     }
