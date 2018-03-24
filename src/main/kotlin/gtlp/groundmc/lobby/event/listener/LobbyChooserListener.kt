@@ -36,8 +36,8 @@ object LobbyChooserListener : Listener {
         if (event.isCancelled) return
 
         if (event.action != Action.PHYSICAL && NBTIdentifier.itemHasPrefix(event.item)) {
-            event.isCancelled = true
             if (event.item == Items.LOBBY_CHOOSE_ITEM.item) {
+                event.isCancelled = true
                 event.player.openInventory(LobbyChooser.create(event.player))
             }
         }
@@ -49,13 +49,13 @@ object LobbyChooserListener : Listener {
 
         val player = event.whoClicked as Player
         if (event.clickedInventory != null && event.clickedInventory.title == LobbyChooser.TITLE) {
-            event.result = Event.Result.DENY
             if (event.currentItem == null) {
                 return
             }
             val nbtItem = NBTItemExt(event.currentItem)
             if (NBTIdentifier.itemHasPrefix(nbtItem.item) &&
                     nbtItem.getInteger(NBTIdentifier.TYPE) == GMCType.CHOOSE_LOBBY.ordinal) {
+                event.result = Event.Result.DENY
                 PlayerExecutorBridge.INSTANCE.sendPlayer(
                         CloudAPI.getInstance().getOnlinePlayer(player.uniqueId),
                         nbtItem.getString(NBTIdentifier.TP_LOC))

@@ -19,8 +19,6 @@ import java.util.concurrent.TimeUnit
  */
 object ChatInteractionListener : Listener {
 
-    private const val key = "lastChatMsg"
-
     private val nextMessage by lazy {
         CacheBuilder.newBuilder()
                 .expireAfterWrite(Meta[Config.SLOWCHAT_TIMEOUT]

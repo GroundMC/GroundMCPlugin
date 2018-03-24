@@ -211,7 +211,7 @@ object ServerStateListener : Listener {
             event.player.inventory.contents = LobbyMain.originalInventories[event.player]
         }
         LobbyMain.originalInventories.remove(event.player)
-        LobbyMain.SILENCED_PLAYERS.remove(event.player)
+        SilentChatListener.SILENCED_PLAYERS.remove(event.player)
         LobbyMain.logger.exiting(ServerStateListener::class, "onPlayerLogout")
     }
 }

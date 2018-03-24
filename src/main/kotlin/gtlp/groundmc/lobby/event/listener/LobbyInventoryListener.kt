@@ -13,6 +13,7 @@ import org.bukkit.Sound
 import org.bukkit.entity.Player
 import org.bukkit.event.Event
 import org.bukkit.event.EventHandler
+import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
 import org.bukkit.event.block.Action
 import org.bukkit.event.inventory.InventoryClickEvent
@@ -36,12 +37,12 @@ object LobbyInventoryListener : Listener {
 
         val player = event.whoClicked as Player
         if (event.clickedInventory != null && event.clickedInventory.title == LobbyInventory.TITLE) {
-            event.result = Event.Result.DENY
             if (event.currentItem == null) {
                 return
             }
             val nbtItem = NBTItemExt(event.currentItem)
             if (NBTIdentifier.itemHasPrefix(nbtItem.item) && nbtItem.getInteger(NBTIdentifier.TYPE) == GMCType.TP.ordinal) {
+                event.result = Event.Result.DENY
                 if (player.teleport(nbtItem.getObject(NBTIdentifier.TP_LOC, Location::class), PlayerTeleportEvent.TeleportCause.PLUGIN)) {
                     player.playSound(player.location, Sound.BLOCK_PORTAL_TRAVEL, 1.0f, 1.0f)
                     player.spawnParticle(Particle.PORTAL, player.location, 100)
@@ -56,7 +57,7 @@ object LobbyInventoryListener : Listener {
      *
      * @param event the event to handle.
      */
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGH)
     fun cancelInventoryClick(event: InventoryClickEvent) {
         if (event.isCancelled || event.result == Event.Result.DENY) return
 
@@ -93,8 +94,8 @@ object LobbyInventoryListener : Listener {
         if (event.isCancelled) return
 
         if (event.action != Action.PHYSICAL && NBTIdentifier.itemHasPrefix(event.item)) {
-            event.isCancelled = true
             if (event.item == Items.COMPASS_ITEM.item) {
+                event.isCancelled = true
                 event.player.openInventory(LobbyInventory.create(event.player))
             }
         }

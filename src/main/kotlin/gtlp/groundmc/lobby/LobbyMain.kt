@@ -2,7 +2,6 @@
 
 package gtlp.groundmc.lobby
 
-import com.google.common.collect.Sets
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.zaxxer.hikari.HikariDataSource
@@ -319,11 +318,6 @@ class LobbyMain : JavaPlugin() {
          * A map of tasks to their IDs
          */
         val tasks = mutableMapOf<ITask, BukkitTask>()
-
-        /**
-         * Set holding players that want their chat to be silent
-         */
-        val SILENCED_PLAYERS: MutableSet<Player> = Sets.newConcurrentHashSet<Player>()
 
         private lateinit var backingInstance: LobbyMain
         /**

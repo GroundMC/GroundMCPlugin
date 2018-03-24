@@ -2,7 +2,7 @@
 
 package gtlp.groundmc.lobby.event.listener
 
-import gtlp.groundmc.lobby.LobbyMain
+import com.google.common.collect.Sets
 import gtlp.groundmc.lobby.database.table.Users
 import gtlp.groundmc.lobby.enums.GMCType
 import gtlp.groundmc.lobby.enums.NBTIdentifier
@@ -28,6 +28,12 @@ import org.jetbrains.exposed.sql.update
  * It also filters the chat for those users that have enabled this feature.
  */
 object SilentChatListener : Listener {
+
+    /**
+     * Set holding players that want their chat to be silent
+     */
+    val SILENCED_PLAYERS = Sets.newConcurrentHashSet<Player>()
+
     /**
      * Updates the chat silence setting.
      *
@@ -76,7 +82,7 @@ object SilentChatListener : Listener {
         async {
             if (nbtItem.getBoolean(NBTIdentifier.SILENT_STATE)!!) {
                 // silent -> loud
-                LobbyMain.SILENCED_PLAYERS.remove(player)
+                SILENCED_PLAYERS.remove(player)
                 nbtItem.setBoolean(NBTIdentifier.SILENT_STATE, false)
                 nbtItem.displayName = I18n.getString("silentitem.off", player.locale)
                 nbtItem.removeEnchantment(Enchantment.LUCK)
@@ -88,7 +94,7 @@ object SilentChatListener : Listener {
                 }
             } else {
                 // loud -> silent
-                LobbyMain.SILENCED_PLAYERS.add(player)
+                SILENCED_PLAYERS.add(player)
                 nbtItem.setBoolean(NBTIdentifier.SILENT_STATE, true)
                 nbtItem.displayName = I18n.getString("silentitem.on", player.locale)
                 nbtItem.addEnchantment(Enchantment.LUCK)
@@ -113,7 +119,7 @@ object SilentChatListener : Listener {
     fun filterChat(event: AsyncPlayerChatEvent) {
         if (event.isCancelled) return
 
-        event.recipients.removeAll(LobbyMain.SILENCED_PLAYERS)
+        event.recipients.removeAll(SILENCED_PLAYERS)
         event.recipients.add(event.player)
     }
 
