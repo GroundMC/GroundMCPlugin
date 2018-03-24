@@ -31,11 +31,10 @@ object FriendsOverviewListener : Listener {
     fun openFriendsOverview(event: PlayerInteractEvent) {
         if (event.isCancelled) return
 
-        if (event.action != Action.PHYSICAL && NBTIdentifier.itemHasPrefix(event.item)) {
+        if (event.action != Action.PHYSICAL && NBTIdentifier.itemHasPrefix(event.item)
+                && event.item == Items.FRIENDS_ITEM.item) {
             event.isCancelled = true
-            if (event.item == Items.FRIENDS_ITEM.item) {
-                event.player.openInventory(FriendsOverviewInventory.create(event.player))
-            }
+            event.player.openInventory(FriendsOverviewInventory.create(event.player))
         }
     }
 }
