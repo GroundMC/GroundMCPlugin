@@ -71,6 +71,7 @@ object Items {
     @Suppress("DEPRECATION")
     val FILLER: NBTItemExt
         get() = NBTItemExt(ItemStack(Material.STAINED_GLASS_PANE, 1, DyeColor.SILVER.woolData.toShort())).apply {
+            setBoolean(NBTIdentifier.PREFIX, true)
             displayName = " "
         }
 
