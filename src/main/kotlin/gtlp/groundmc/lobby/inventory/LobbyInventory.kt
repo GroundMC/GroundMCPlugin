@@ -6,6 +6,8 @@ import gtlp.groundmc.lobby.Items
 import gtlp.groundmc.lobby.LobbyMain
 import gtlp.groundmc.lobby.database.table.Meta
 import gtlp.groundmc.lobby.enums.Config
+import gtlp.groundmc.lobby.enums.NBTIdentifier
+import gtlp.groundmc.lobby.util.NBTItemExt
 import gtlp.groundmc.lobby.util.entering
 import gtlp.groundmc.lobby.util.exiting
 import org.bukkit.Bukkit
@@ -67,8 +69,13 @@ internal object LobbyInventory {
         @Suppress("unchecked_cast")
         TEMPLATE_INVENTORY.contents = (Meta[Config.INVENTORY_CONTENT] as List<ItemStack?>).toTypedArray()
         (0 until TEMPLATE_INVENTORY.contents.size).forEach {
-            if (TEMPLATE_INVENTORY.getItem(it) == null) {
+            val item = TEMPLATE_INVENTORY.getItem(it)
+            if (item == null) {
                 TEMPLATE_INVENTORY.setItem(it, Items.FILLER.item)
+            } else if (!NBTItemExt(item).hasKey(NBTIdentifier.PREFIX)) {
+                TEMPLATE_INVENTORY.setItem(it, NBTItemExt(item).apply {
+                    setBoolean(NBTIdentifier.PREFIX, true)
+                }.item)
             }
         }
     }

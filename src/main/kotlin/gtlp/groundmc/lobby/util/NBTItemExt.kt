@@ -100,7 +100,7 @@ class NBTItemExt(item: ItemStack) : NBTItem(item), Cloneable {
      *
      * @return whether a key by [identifier] exists.
      */
-    fun hasKey(identifier: NBTIdentifier): Boolean? =
+    fun hasKey(identifier: NBTIdentifier): Boolean =
             super.hasKey(identifier.toString())
 
     /**
