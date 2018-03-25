@@ -71,16 +71,21 @@ object HidePlayerListener : Listener {
                 val nbtItem = NBTItemExt(event.currentItem)
                 if (nbtItem.getInteger(NBTIdentifier.TYPE) == GMCType.HIDE_PLAYERS.ordinal) {
                     event.result = Event.Result.DENY
+                    val player = event.whoClicked as Player
                     async {
                         transaction {
-                            Users.update({ Users.id eq event.whoClicked.uniqueId }) {
+                            Users.update({ Users.id eq player.uniqueId }) {
                                 it[hiddenStatus] = VisibilityStates.values()[nbtItem.getInteger(NBTIdentifier.HIDE_STATE)!!]
                             }
                             commit()
                         }
-                        Users.refresh(event.whoClicked.uniqueId)
+                        Users.refresh(player.uniqueId)
+                        player.inventory.setItem(2,
+                                NBTItemExt(player.inventory.getItem(2)).apply {
+                                    this.displayName = nbtItem.displayName
+                                }.item)
                     }
-                    event.whoClicked.sendMessage(nbtItem.displayName)
+                    player.sendMessage(nbtItem.displayName)
                     event.view.close()
                 }
             }
