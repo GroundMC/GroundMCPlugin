@@ -18,9 +18,8 @@ object FriendsOverviewListener : Listener {
 
     @EventHandler
     fun openFriendsOverview(event: InventoryClickEvent) {
-        if (event.whoClicked is Player
-                && NBTItemExt(event.currentItem)
-                        .getInteger(NBTIdentifier.TYPE) == GMCType.FRIENDS.ordinal) {
+        if (event.whoClicked is Player && NBTIdentifier.itemHasPrefix(event.currentItem)
+                && NBTItemExt(event.currentItem).getInteger(NBTIdentifier.TYPE) == GMCType.FRIENDS.ordinal) {
             event.result = Event.Result.DENY
             event.whoClicked.openInventory(FriendsOverviewInventory.create(event.whoClicked as Player))
         }
@@ -29,8 +28,7 @@ object FriendsOverviewListener : Listener {
     @EventHandler
     fun openFriendsOverview(event: PlayerInteractEvent) {
         if (event.action != Action.PHYSICAL && NBTIdentifier.itemHasPrefix(event.item)
-                && NBTItemExt(event.item)
-                        .getInteger(NBTIdentifier.TYPE) == GMCType.FRIENDS.ordinal) {
+                && NBTItemExt(event.item).getInteger(NBTIdentifier.TYPE) == GMCType.FRIENDS.ordinal) {
             event.isCancelled = true
             event.player.openInventory(FriendsOverviewInventory.create(event.player))
         }

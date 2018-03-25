@@ -67,11 +67,57 @@ object Users : Table() {
             }
         }
 
+        override fun loadAll(uuids: MutableIterable<UUID>): MutableMap<UUID, ResultRow> {
+            return transaction {
+                return@transaction Users.select { Users.id inList uuids }
+                        .associateBy { it[id] }.toMutableMap()
+            }
+        }
+
     }
 
+    /**
+     * @see com.google.common.cache.LoadingCache.get
+     */
     operator fun get(player: Player): ResultRow = userCache[player.uniqueId]
 
+    /**
+     * @see com.google.common.cache.LoadingCache.get
+     */
     operator fun get(uuid: UUID): ResultRow = userCache[uuid]
+
+    /**
+     * @see com.google.common.cache.LoadingCache.getAll
+     */
+    fun getAll(iterable: Iterable<UUID>): Map<UUID, ResultRow> = userCache.getAll(iterable)
+
+    /**
+     * @see com.google.common.cache.LoadingCache.invalidate
+     */
+    fun invalidate(player: Player) {
+        userCache.invalidate(player.uniqueId)
+    }
+
+    /**
+     * @see com.google.common.cache.LoadingCache.invalidate
+     */
+    fun invalidate(uuid: UUID) {
+        userCache.invalidate(uuid)
+    }
+
+    /**
+     * @see com.google.common.cache.LoadingCache.refresh
+     */
+    fun refresh(player: Player) {
+        userCache.refresh(player.uniqueId)
+    }
+
+    /**
+     * @see com.google.common.cache.LoadingCache.refresh
+     */
+    fun refresh(uuid: UUID) {
+        userCache.refresh(uuid)
+    }
 
     /**
      * Queries the database for a [ResultRow] by the last name of a player.

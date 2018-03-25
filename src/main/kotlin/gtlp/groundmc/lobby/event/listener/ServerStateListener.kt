@@ -48,8 +48,8 @@ object ServerStateListener : Listener {
         var silent = false
         var hideState = VisibilityStates.ALL
         transaction {
-            silent = Users.select { Users.id.eq(player.uniqueId) }.first()[Users.silentStatus]
-            hideState = Users.select { Users.id.eq(player.uniqueId) }.first()[Users.hiddenStatus]
+            silent = Users[player][Users.silentStatus]
+            hideState = Users[player][Users.hiddenStatus]
         }
         val inventory = player.inventory
         inventory.clear()
@@ -74,14 +74,14 @@ object ServerStateListener : Listener {
                 }, player.locale)
             }.item)
         }
-        inventory.setItem(4, Items.FRIENDS_ITEM.apply {
+        if (Bukkit.getPluginManager().isPluginEnabled("CloudNetAPI")) {
+            inventory.setItem(7, Items.LOBBY_CHOOSE_ITEM.item)
+        }
+        inventory.setItem(8, Items.FRIENDS_ITEM.apply {
             val newMeta = (meta as SkullMeta)
             newMeta.owningPlayer = player
             meta = newMeta
         }.item)
-        if (Bukkit.getPluginManager().isPluginEnabled("CloudNetAPI")) {
-            inventory.setItem(7, Items.LOBBY_CHOOSE_ITEM.item)
-        }
     }
 
     /**
@@ -132,8 +132,10 @@ object ServerStateListener : Listener {
                         it[id] = event.player.uniqueId
                         it[lastName] = event.player.name
                     }
+                    commit()
                 }
             }
+            Users.refresh(event.player)
         }
 
         LobbyMain.originalInventories[event.player] = event.player.inventory.copy()
@@ -182,8 +184,7 @@ object ServerStateListener : Listener {
      * @param player the player to add the bonus for
      */
     private fun addDailyBonus(player: Player) {
-        val playerRow = Users.getPlayer(player)
-        if (playerRow[Users.lastDailyCoinsDate].plusDays(1).isBeforeNow) {
+        if (Users[player][Users.lastDailyCoinsDate].plusDays(1).isBeforeNow) {
             player.sendMessage(I18n.getString("event.dailyCoins", player.locale)?.format(Meta[Config.COINS_DAILY]))
             player.playSound(player.location, Sound.ENTITY_PLAYER_LEVELUP, 1.0f, 1.0f)
             transaction {
@@ -192,6 +193,7 @@ object ServerStateListener : Listener {
                     PointsAPI.setPoints(player, PointsAPI.getPoints(player) + Meta[Config.COINS_DAILY] as Int)
                     it[lastDailyCoinsDate] = DateTime.now()
                 }
+                commit()
             }
         }
     }

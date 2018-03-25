@@ -82,11 +82,7 @@ object SilentChatListener : Listener {
                 nbtItem.displayName = I18n.getString("silentitem.off", player.locale)
                 nbtItem.removeEnchantment(Enchantment.LUCK)
                 player.sendMessage(I18n.getString("silentmsg.off", player.locale))
-                transaction {
-                    Users.update({ Users.id eq player.uniqueId }) {
-                        it[silentStatus] = false
-                    }
-                }
+                updateSilentStatus(player, false)
             } else {
                 // loud -> silent
                 SILENCED_PLAYERS.add(player)
@@ -94,14 +90,20 @@ object SilentChatListener : Listener {
                 nbtItem.displayName = I18n.getString("silentitem.on", player.locale)
                 nbtItem.addEnchantment(Enchantment.LUCK)
                 player.sendMessage(I18n.getString("silentmsg.on", player.locale))
-                transaction {
-                    Users.update({ Users.id eq player.uniqueId }) {
-                        it[silentStatus] = true
-                    }
-                }
+                updateSilentStatus(player, true)
             }
             player.inventory.setItem(1, nbtItem.item)
         }
+    }
+
+    private fun updateSilentStatus(player: Player, newStatus: Boolean) {
+        transaction {
+            Users.update({ Users.id eq player.uniqueId }) {
+                it[silentStatus] = newStatus
+            }
+            commit()
+        }
+        Users.refresh(player)
     }
 
     /**

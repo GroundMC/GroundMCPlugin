@@ -1,5 +1,3 @@
-
-
 package gtlp.groundmc.lobby.commands
 
 import gtlp.groundmc.lobby.LobbyMain
@@ -13,7 +11,6 @@ import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 import org.bukkit.command.ConsoleCommandSender
 import org.bukkit.entity.Player
-import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.jetbrains.exposed.sql.update
 import java.util.*
@@ -33,16 +30,17 @@ class CommandVanish : ILobbyCommand {
         if (sender is Player) {
             if (sender.hasPermission(Permission.VANISH)) {
                 async {
+                    val newVanish = !Users[sender][Users.vanishStatus]
                     transaction {
-                        val newVanish = !Users.select { Users.id eq sender.uniqueId }.first()[Users.vanishStatus]
                         Users.update({ Users.id eq sender.uniqueId }) {
                             it[Users.vanishStatus] = newVanish
                         }
                         commit()
-                        when (newVanish) {
-                            true -> sender.sendMessage(I18n.getString("vanish.on", sender.locale))
-                            false -> sender.sendMessage(I18n.getString("vanish.off", sender.locale))
-                        }
+                    }
+                    Users.refresh(sender)
+                    when (newVanish) {
+                        true -> sender.sendMessage(I18n.getString("vanish.on", sender.locale))
+                        false -> sender.sendMessage(I18n.getString("vanish.off", sender.locale))
                     }
                 }
                 return true
