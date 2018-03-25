@@ -25,9 +25,10 @@ pipeline {
         sh 'mvn package'
       }
     }
-    stage('Archive') {
-      steps {
-        archiveArtifacts artifacts: 'target/*.jar', excludes: 'target/original*'
+    post {
+      always {
+        archiveArtifacts artifacts: 'target/*.jar', excludes: 'target/original*', fingerprint: true
+        junit 'target/surefire-reports/*.xml'
       }
     }
   }
