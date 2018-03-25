@@ -56,4 +56,17 @@ object LobbyChooserListener : Listener {
             }
         }
     }
+
+    /**
+     * Denies default actions when clicking on items with the [NBTIdentifier.PREFIX].
+     *
+     * @param event the event to handle.
+     */
+    @EventHandler
+    fun cancelInventoryClick(event: InventoryClickEvent) {
+        if (NBTIdentifier.itemHasPrefix(event.currentItem) &&
+                event.inventory.title == LobbyChooser.TITLE) {
+            event.result = Event.Result.DENY
+        }
+    }
 }
