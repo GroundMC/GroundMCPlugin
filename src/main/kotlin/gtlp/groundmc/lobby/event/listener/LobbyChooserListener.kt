@@ -52,6 +52,7 @@ object LobbyChooserListener : Listener {
                 PlayerExecutorBridge.INSTANCE.sendPlayer(
                         CloudAPI.getInstance().getOnlinePlayer(player.uniqueId),
                         nbtItem.getString(NBTIdentifier.TP_LOC))
+                event.view.close()
             }
         }
     }
