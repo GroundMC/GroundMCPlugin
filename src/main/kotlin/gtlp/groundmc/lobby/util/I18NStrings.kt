@@ -61,9 +61,9 @@ enum class I18NStrings(val id: String) {
     EVENT_CREATE("event.create"),
     ;
 
-    fun format(locale: Locale, vararg obj: Any) = I18n.getString(id, locale)?.format(obj)
+    fun format(locale: Locale, vararg obj: Any?) = I18n.getString(id, locale)?.format(*obj)
 
-    fun format(locale: String, vararg obj: Any) = I18n.getString(id, locale)?.format(obj)
+    fun format(locale: String, vararg obj: Any?) = I18n.getString(id, locale)?.format(*obj)
 
     fun get(locale: Locale) = I18n.getString(id, locale)
 
