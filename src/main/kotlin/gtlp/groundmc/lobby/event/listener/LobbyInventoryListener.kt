@@ -41,7 +41,7 @@ object LobbyInventoryListener : Listener {
             if (NBTIdentifier.itemHasPrefix(nbtItem.item) && nbtItem.getInteger(NBTIdentifier.TYPE) == GMCType.TP.ordinal) {
                 event.result = Event.Result.DENY
                 if (player.teleport(nbtItem.getObject(NBTIdentifier.TP_LOC, Location::class), PlayerTeleportEvent.TeleportCause.PLUGIN)) {
-                    player.playSound(player.location, Sound.BLOCK_PORTAL_TRAVEL, 1.0f, 1.0f)
+                    player.playSound(player.location, Sound.BLOCK_PORTAL_TRAVEL, 0.5f, 1.0f)
                     player.spawnParticle(Particle.PORTAL, player.location, 100)
                     player.spawnParticle(Particle.SMOKE_LARGE, player.location, 1000, 0.1, 0.1, 0.1)
                 }
