@@ -36,7 +36,9 @@ object HidePlayerInventory {
             Bukkit.createInventory(player, 9, TITLE).apply {
                 val hideState = Users[player][Users.hiddenStatus]
 
-                contents.fill(Items.FILLER.item)
+                (0 until size).forEach {
+                    setItem(it, Items.FILLER.item)
+                }
                 setItem(0, NBTItemExt(Dye(DyeColor.LIME).toItemStack(1)).apply {
                     setBoolean(NBTIdentifier.PREFIX, true)
                     setInteger(NBTIdentifier.TYPE, GMCType.HIDE_PLAYERS.ordinal)

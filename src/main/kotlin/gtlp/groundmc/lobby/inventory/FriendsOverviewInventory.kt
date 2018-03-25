@@ -16,7 +16,9 @@ object FriendsOverviewInventory {
     fun create(player: Player): Inventory =
             Bukkit.createInventory(player, 4 * 9, TITLE)
                     .apply {
-                        contents.fill(Items.FILLER.item)
+                        (0 until size).forEach {
+                            setItem(it, Items.FILLER.item)
+                        }
                         Relationships.getRelationships(player).forEach {
                             addItem(ItemStack(Material.SKULL_ITEM, 1, SkullType.PLAYER.ordinal.toShort()).apply {
                                 itemMeta = (itemMeta as SkullMeta).apply { owningPlayer = it.user2 }

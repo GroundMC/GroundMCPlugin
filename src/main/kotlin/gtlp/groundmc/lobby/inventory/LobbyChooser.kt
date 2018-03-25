@@ -21,8 +21,10 @@ object LobbyChooser {
 
     fun create(player: Player) = Bukkit.createInventory(player, 3 * 9, TITLE)
             .apply {
-                contents.fill(Items.FILLER.item)
 
+                (0 until size).forEach {
+                    setItem(it, Items.FILLER.item)
+                }
                 val servers =
                         CloudAPI.getInstance().getServers(CloudServer.getInstance().groupData.name)
                 servers.sortedBy { it.serviceId.id }.forEachIndexed { index, serverInfo ->
