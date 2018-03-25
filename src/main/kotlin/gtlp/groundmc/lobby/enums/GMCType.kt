@@ -31,5 +31,8 @@ enum class GMCType {
      */
     CHOOSE_LOBBY,
 
+    /**
+     * Denotes that the item should open the [gtlp.groundmc.lobby.inventory.FriendsOverviewInventory]
+     */
     FRIENDS;
 }
