@@ -116,7 +116,7 @@ class LobbyMain : JavaPlugin() {
         Bukkit.getScheduler().runTaskTimerAsynchronously(ApplyPlayerEffectsTask)
         Bukkit.getScheduler().runTaskTimerAsynchronously(HidePlayersTask)
         Bukkit.getScheduler().runTaskTimerAsynchronously(UpdateLobbyInventoryTask)
-        Bukkit.getScheduler().scheduleSyncRepeatingTask(UpdateScoreboardsTask)
+        Bukkit.getScheduler().runTaskTimerAsynchronously(UpdateScoreboardsTask)
     }
 
     /**
