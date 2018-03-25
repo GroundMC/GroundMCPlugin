@@ -1,5 +1,5 @@
 name: GroundMCLobbyPlugin
-version: 1.7
+version: 1.8
 author: GiantTreeLP
 main: gtlp.groundmc.lobby.LobbyMain
 depend: [GroundMCKotlinLoader, ItemNBTAPI, PointsAPI, StatsDB]
