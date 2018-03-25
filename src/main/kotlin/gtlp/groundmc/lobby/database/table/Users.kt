@@ -1,7 +1,7 @@
-
-
 package gtlp.groundmc.lobby.database.table
 
+import com.google.common.cache.CacheBuilder
+import com.google.common.cache.CacheLoader
 import gtlp.groundmc.lobby.enums.VisibilityStates
 import org.bukkit.entity.Player
 import org.jetbrains.exposed.sql.ResultRow
@@ -11,6 +11,8 @@ import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.joda.time.DateTime
 import java.util.*
+import java.util.concurrent.Executors
+import java.util.concurrent.TimeUnit
 
 /**
  * Table to hold players' settings and more data
@@ -24,7 +26,7 @@ object Users : Table() {
     /**
      * The last name with which this player has been seen
      */
-    val lastName = text("last_name")
+    val lastName = text("last_name").index()
 
     /**
      * Whether the chat is silent for this player or not
@@ -47,37 +49,47 @@ object Users : Table() {
     val lastDailyCoinsDate = date("lastDailyCoins").default(DateTime.parse("1970-01-01"))
 
     /**
-     * Queries the database for the [ResultRow] of the [player] based on [Player.getUniqueId]
-     *
-     * @param player the player to query the database for
-     * @return a row that contains all the columns defined in this class
+     * Cache for the players which are currently on the server.
+     * Improves overall performance and responsiveness.
      */
-    fun getPlayer(player: Player) = transaction {
-        return@transaction Users.select(Users.id eq player.uniqueId).first()
-    }
+    private val userCache = CacheBuilder.newBuilder()
+            .expireAfterAccess(3, TimeUnit.SECONDS)
+            .build<UUID, ResultRow>(CacheLoader.asyncReloading(UserCacheLoader(), Executors.newCachedThreadPool()))
 
     /**
-     * Queries the database for the [ResultRow] of a player based on the [UUID]
-     *
-     * @param uuid the id to query the database for
-     * @return a row that contains all the columns defined in this class
+     * Loader that simply loads the first user with the corresponding UID
+     * into the cache.
      */
-    fun getPlayer(uuid: UUID) = transaction {
-        return@transaction Users.select(Users.id eq uuid).first()
+    class UserCacheLoader : CacheLoader<UUID, ResultRow>() {
+        override fun load(uuid: UUID): ResultRow {
+            return transaction {
+                return@transaction Users.select(Users.id eq uuid).first()
+            }
+        }
+
     }
 
+    operator fun get(player: Player): ResultRow = userCache[player.uniqueId]
+
+    operator fun get(uuid: UUID): ResultRow = userCache[uuid]
+
     /**
-     * Queries the database for a [ResultRow] by the last name of a player
+     * Queries the database for a [ResultRow] by the last name of a player.
+     * Additionally stores the row in the cache.
      *
      * @param name the name to query the database for
      * @return the row that contains all the columns defined in this class or
      * `null`, if there is no player with the given [name]
      */
-    fun byName(name: String) = try {
-        transaction {
-            return@transaction select { lastName eq name }.first()
+    fun byName(name: String): ResultRow? {
+        return try {
+            val row = transaction {
+                return@transaction select { lastName eq name }.first()
+            }
+            userCache.put(row[id], row)
+            row
+        } catch (ex: NoSuchElementException) {
+            null
         }
-    } catch (ex: NoSuchElementException) {
-        null
     }
 }
