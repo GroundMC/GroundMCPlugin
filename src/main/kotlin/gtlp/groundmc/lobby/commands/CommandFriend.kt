@@ -1,5 +1,3 @@
-
-
 package gtlp.groundmc.lobby.commands
 
 import gtlp.groundmc.lobby.LobbyMain
@@ -83,7 +81,7 @@ class CommandFriend : ILobbyCommand {
         LobbyMain.logger.entering(CommandFriend::class, "sendOnlineFriends")
         val friendsList = Relationships.getRelationships(sender)
         val onlinePlayers = Bukkit.getOnlinePlayers()
-        val onlineFriends = friendsList.filter { it.user2 in onlinePlayers }
+        val onlineFriends = friendsList.filter { it.user2.toOfflinePlayer() in onlinePlayers }
         if (onlineFriends.isEmpty()) {
             sender.sendMessage(I18n.getString("command.friend.no_friends_online", sender.locale))
             return true

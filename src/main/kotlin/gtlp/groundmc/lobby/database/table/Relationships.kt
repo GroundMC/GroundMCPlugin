@@ -44,22 +44,23 @@ object Relationships : Table() {
      *
      * @see addRelationship
      */
-    fun addRelationship(player: Player, friend: Player) {
-        addRelationship(Relationship(player, friend))
+    fun addRelationship(player: Player, friend: OfflinePlayer) {
+        addRelationship(player, Relationship(player.uniqueId, friend.uniqueId))
     }
 
     /**
      * Adds a relationship between [Relationship.user1] and [Relationship.user2]
      *
+     * @param player the initiator of the relationship
      * @param relationship the relationship to add
      *
      * @see addRelationship
      */
-    private fun addRelationship(relationship: Relationship) {
+    private fun addRelationship(player: Player, relationship: Relationship) {
         LobbyMain.logger.entering(Relationships::class, "addRelationship")
         LobbyMain.logger.fine("Adding new relationship: $relationship")
         transaction {
-            if (!areFriends(relationship.user1, relationship.user2)) {
+            if (!areFriends(relationship.user1.uniqueId, relationship.user2.uniqueId)) {
                 insert {
                     it[userId1] = relationship.user1.uniqueId
                     it[userId2] = relationship.user2.uniqueId
@@ -70,11 +71,9 @@ object Relationships : Table() {
                     it[userId2] = relationship.user1.uniqueId
                     it[since] = relationship.since
                 }
-                if (relationship.user1 is Player) {
-                    relationship.user1.sendMessage(I18n.getString("relationship.success", relationship.user1.locale))
-                }
-            } else if (relationship.user1 is Player) {
-                relationship.user1.sendMessage(I18n.getString("relationship.exists", relationship.user1.locale))
+                player.sendMessage(I18n.getString("relationship.success", player.locale))
+            } else {
+                player.sendMessage(I18n.getString("relationship.exists", player.locale))
             }
             LobbyMain.logger.exiting(Relationships::class, "addRelationship")
         }
@@ -145,9 +144,9 @@ object Relationships : Table() {
     fun getRelationship(player: OfflinePlayer, friend: OfflinePlayer): Relationship? {
         LobbyMain.logger.entering(Relationships::class, "getRelationship")
         return transaction {
-            val relationship = select((userId1 eq player.uniqueId) and (userId2 eq friend.uniqueId))
-            if (relationship.any()) {
-                return@transaction Relationship(player, friend, relationship.first()[since])
+            val relationship = select((userId1 eq player.uniqueId) and (userId2 eq friend.uniqueId)).firstOrNull()
+            if (relationship != null) {
+                return@transaction Relationship(player.uniqueId, friend.uniqueId, relationship[since])
             }
             return@transaction null
         }
