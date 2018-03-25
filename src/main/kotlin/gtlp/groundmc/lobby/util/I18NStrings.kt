@@ -65,13 +65,13 @@ enum class I18NStrings(val id: String) {
 
     fun format(locale: String, vararg obj: Any?) = I18n.getString(id, locale)?.format(*obj)
 
+    fun format(player: Player, vararg obj: Any?) = I18n.getString(id, I18nUtils.getLocaleFromCommandSender(player))?.format(*obj)
+
     fun get(locale: Locale) = I18n.getString(id, locale)
 
     fun get(locale: String) = I18n.getString(id, locale)
 
-    fun get(player: Player) = I18n.getString(id, I18nUtils.getLocaleFromCommandSender(player))
+    fun get() = I18n.getString(id)
 
-    override fun toString(): String {
-        return id
-    }
+    fun get(player: Player) = I18n.getString(id, I18nUtils.getLocaleFromCommandSender(player))
 }

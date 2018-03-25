@@ -3,7 +3,7 @@ package gtlp.groundmc.lobby.commands
 import gtlp.groundmc.lobby.LobbyMain
 import gtlp.groundmc.lobby.database.table.Relationships
 import gtlp.groundmc.lobby.database.table.Users
-import gtlp.groundmc.lobby.util.I18n
+import gtlp.groundmc.lobby.util.I18NStrings
 import gtlp.groundmc.lobby.util.I18nUtils
 import gtlp.groundmc.lobby.util.entering
 import org.bukkit.Bukkit
@@ -19,7 +19,7 @@ import java.util.*
 class CommandFriend : ILobbyCommand {
     override val name = "friend"
 
-    override fun getCommandHelp(locale: Locale) = I18n.getString("command.friend.help", locale = locale)
+    override fun getCommandHelp(locale: Locale) = I18NStrings.COMMAND_FRIEND_HELP.get(locale)
 
     override fun onTabComplete(sender: CommandSender, command: Command, alias: String?, args: Array<out String>?): List<String>? {
         if (args != null) {
@@ -55,7 +55,7 @@ class CommandFriend : ILobbyCommand {
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<String>?): Boolean {
         LobbyMain.logger.entering(CommandFriend::class, "onCommand")
         if (sender !is Player) {
-            sender.sendMessage(I18n.getString("command.playeronly"))
+            sender.sendMessage(I18NStrings.COMMAND_PLAYERONLY.get())
             return true
         }
         if (args != null && args.isNotEmpty()) {
@@ -83,11 +83,11 @@ class CommandFriend : ILobbyCommand {
         val onlinePlayers = Bukkit.getOnlinePlayers()
         val onlineFriends = friendsList.filter { it.user2.toOfflinePlayer() in onlinePlayers }
         if (onlineFriends.isEmpty()) {
-            sender.sendMessage(I18n.getString("command.friend.no_friends_online", sender.locale))
+            sender.sendMessage(I18NStrings.COMMAND_FRIEND_NO_FRIENDS_ONLINE.get(sender))
             return true
         }
         with(onlineFriends) {
-            sender.sendMessage(joinToString(prefix = I18n.getString("relationship.friend", sender.locale) + ": ", transform = { if (it.user1.uniqueId != sender.uniqueId) it.user1.name else it.user2.name }))
+            sender.sendMessage(joinToString(prefix = I18NStrings.RELATIONSHIP_FRIEND.get(sender) + ": ", transform = { it.user2.name }))
         }
         return true
     }
@@ -103,21 +103,21 @@ class CommandFriend : ILobbyCommand {
     private fun sendStatusMessage(sender: Player, args: Array<String>): Boolean {
         LobbyMain.logger.entering(CommandFriend::class, "sendStatusMessage")
         if (args.size < 2) {
-            sender.sendMessage(I18n.getString("command.friend.specify_player_status"))
+            sender.sendMessage(I18NStrings.COMMAND_FRIEND_SPECIFY_PLAYER_STATUS.get(sender))
             return false
         } else {
             val friend = Users.byName(args[1])
             if (friend == null) {
-                sender.sendMessage(I18n.getString("command.friend.not_found"))
+                sender.sendMessage(I18NStrings.COMMAND_FRIEND_NOT_FOUND.get(sender))
                 return true
             }
             val relationship = Relationships.getRelationship(sender.uniqueId, friend[Users.id])
             if (relationship != null) {
-                sender.sendMessage(I18n.getString("relationship.status", sender.locale)!!.format(args[1],
+                sender.sendMessage(I18NStrings.RELATIONSHIP_STATUS.format(sender, args[1],
                         relationship.since.toString(DateTimeFormat.mediumDate().withLocale(I18nUtils.getLocaleFromCommandSender(sender)))))
                 return true
             } else {
-                sender.sendMessage(I18n.getString("relationship.not_related", sender.locale)!!.format(args[1]))
+                sender.sendMessage(I18NStrings.RELATIONSHIP_NOT_RELATED.format(sender, args[1]))
                 return true
             }
         }
@@ -134,20 +134,20 @@ class CommandFriend : ILobbyCommand {
     private fun removeFriend(sender: Player, args: Array<String>): Boolean {
         LobbyMain.logger.entering(CommandFriend::class, "removeFriend")
         if (args.size < 2) {
-            sender.sendMessage(I18n.getString("command.friend.specify_player", sender.locale))
+            sender.sendMessage(I18NStrings.COMMAND_FRIEND_SPECIFY_PLAYER.get(sender))
             return false
         }
         val friend = Bukkit.getPlayer(args[1])
         if (friend == null) {
-            sender.sendMessage(I18n.getString("command.friend.player_not_found", sender.locale)!!.format(args[1]))
+            sender.sendMessage(I18NStrings.COMMAND_FRIEND_PLAYER_NOT_FOUND.format(sender, args[1]))
             return true
         }
         if (Relationships.areFriends(sender, friend)) {
             Relationships.removeRelationship(sender, friend)
-            sender.sendMessage(I18n.getString("command.friend.no_longer_related")!!.format(friend.name))
+            sender.sendMessage(I18NStrings.COMMAND_FRIEND_NO_LONGER_RELATED.format(sender, friend.name))
             return true
         } else {
-            sender.sendMessage(I18n.getString("command.friend.no_friends")!!.format(friend.name))
+            sender.sendMessage(I18NStrings.COMMAND_FRIENDS_NO_FRIENDS.format(sender, friend.name))
             return true
         }
     }
@@ -163,25 +163,25 @@ class CommandFriend : ILobbyCommand {
     private fun addFriend(sender: Player, args: Array<String>): Boolean {
         LobbyMain.logger.entering(CommandFriend::class, "addFriend")
         if (args.size == 1) {
-            sender.sendMessage(I18n.getString("command.friend.specify_player", sender.locale))
+            sender.sendMessage(I18NStrings.COMMAND_FRIEND_SPECIFY_PLAYER.get(sender))
             return false
         }
         val friend = Bukkit.getPlayer(args[1])
         if (friend == null) {
-            sender.sendMessage(I18n.getString("command.friend.player_not_found", sender.locale)!!.format(args[1]))
+            sender.sendMessage(I18NStrings.COMMAND_FRIEND_PLAYER_NOT_FOUND.format(sender, args[1]))
             return true
         }
         if (sender.name == args[1]) {
-            sender.sendMessage(I18n.getString("command.friend.cant_add_yourself", sender.locale))
+            sender.sendMessage(I18NStrings.COMMAND_FRIEND_CANT_ADD_YOURSELF.get(sender))
             return true
         }
         if (Relationships.areFriends(sender, friend)) {
-            sender.sendMessage(I18n.getString("command.friend.already_friends", sender.locale)!!.format(args[1]))
+            sender.sendMessage(I18NStrings.COMMAND_FRIEND_ALREADY_FRIENDS.format(sender, args[1]))
             return true
         } else {
             LobbyMain.logger.fine("${sender.name} tried to add ${friend.name} as a friend")
             Relationships.addRelationship(sender, friend)
-            sender.sendMessage(I18n.getString("command.friend.successfully_added", sender.locale)!!.format(args[1]))
+            sender.sendMessage(I18NStrings.COMMAND_FRIEND_SUCCESSFULLY_ADDED.format(sender, args[1]))
             return true
         }
     }
