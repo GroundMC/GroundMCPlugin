@@ -54,7 +54,7 @@ object UpdateLobbyInventoryTask : ITask {
                         else -> ChatColor.BLACK.toString()
                     }
 
-                    nbtItem.lore = listOf("$color$nPlayers/$playerLimit")
+                    nbtItem.lore = mutableListOf("$color$nPlayers/$playerLimit")
                 }
             }
         }

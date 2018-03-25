@@ -36,7 +36,7 @@ object LobbyChooser {
                         setBoolean(NBTIdentifier.PREFIX, true)
                         setInteger(NBTIdentifier.TYPE, GMCType.CHOOSE_LOBBY.ordinal)
                         setString(NBTIdentifier.TP_LOC, serverInfo.serviceId.serverId)
-                        lore = listOf("Online: ${serverInfo.players.size}/${serverInfo.maxPlayers}")
+                        lore = mutableListOf("Online: ${serverInfo.players.size}/${serverInfo.maxPlayers}")
                         addEnchantment(Enchantment.LUCK)
                         addItemFlags(ItemFlag.HIDE_ENCHANTS)
                         displayName = serverInfo.serviceId.serverId

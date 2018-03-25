@@ -1,5 +1,3 @@
-
-
 package gtlp.groundmc.lobby.util
 
 import com.google.common.base.MoreObjects
@@ -198,13 +196,13 @@ class NBTItemExt(item: ItemStack) : NBTItem(item), Cloneable {
      * The lore of this item.
      * This member allow easy read and write access.
      */
-    var lore: List<String>
+    var lore: MutableList<String>
         set(lore) {
             val meta = item.itemMeta
             meta.lore = lore
             item.itemMeta = meta
         }
-        get() = item.itemMeta.lore
+        get() = if (meta.hasLore()) item.itemMeta.lore else mutableListOf()
 
 
     /**
