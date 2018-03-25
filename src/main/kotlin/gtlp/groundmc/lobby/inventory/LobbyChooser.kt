@@ -4,6 +4,7 @@ package gtlp.groundmc.lobby.inventory
 
 import de.dytanic.cloudnet.api.CloudAPI
 import de.dytanic.cloudnet.bridge.CloudServer
+import gtlp.groundmc.lobby.Items
 import gtlp.groundmc.lobby.enums.GMCType
 import gtlp.groundmc.lobby.enums.NBTIdentifier
 import gtlp.groundmc.lobby.util.NBTItemExt
@@ -20,6 +21,8 @@ object LobbyChooser {
 
     fun create(player: Player) = Bukkit.createInventory(player, 3 * 9, TITLE)
             .apply {
+                contents.fill(Items.FILLER.item)
+
                 val servers =
                         CloudAPI.getInstance().getServers(CloudServer.getInstance().groupData.name)
                 servers.sortedBy { it.serviceId.id }.forEachIndexed { index, serverInfo ->
