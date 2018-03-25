@@ -4,6 +4,7 @@ import de.dytanic.cloudnet.api.CloudAPI
 import gtlp.groundmc.lobby.Items
 import gtlp.groundmc.lobby.database.table.Relationships
 import gtlp.groundmc.lobby.enums.NBTIdentifier
+import gtlp.groundmc.lobby.util.I18NStrings
 import gtlp.groundmc.lobby.util.I18nUtils
 import gtlp.groundmc.lobby.util.NBTItemExt
 import org.bukkit.Bukkit
@@ -32,7 +33,10 @@ object FriendsOverviewInventory {
                         newLore += (if (
                                 CloudAPI.getInstance().getOnlinePlayer(it.user2.uniqueId) != null
                         ) "${ChatColor.GREEN}Online" else "${ChatColor.RED}Offline")
-                        newLore += "Since ${it.since.toString(DateTimeFormat.mediumDate().withLocale(I18nUtils.getLocaleFromCommandSender(player)))}"
+                        newLore += I18NStrings.RELATIONSHIP_SINCE.format(player.locale,
+                                it.since.toString(DateTimeFormat.mediumDate()
+                                        .withLocale(I18nUtils.getLocaleFromCommandSender(player))))
+                                ?: ""
                         lore = newLore
                     }.item)
                 }
