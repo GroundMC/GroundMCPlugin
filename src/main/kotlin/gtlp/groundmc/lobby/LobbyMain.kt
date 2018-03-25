@@ -132,7 +132,8 @@ class LobbyMain : JavaPlugin() {
                 PreventWorldInteractionListener,
                 ServerStateListener,
                 SilentChatListener,
-                LobbyChooserListener
+                LobbyChooserListener,
+                FriendsOverviewListener
         ).forEach { Bukkit.getPluginManager().registerEvents(it, this) }
     }
 
