@@ -18,7 +18,7 @@ class I18NStringsTest {
     fun getGerman() {
         I18NStrings.values().forEach {
             assertNotNull(it.get(Locale.GERMAN))
-            assertNotEquals(it.get(Locale.ROOT), it.get(Locale.GERMAN))
+            assertNotEquals(it.get(Locale.US), it.get(Locale.GERMAN))
         }
     }
 }
