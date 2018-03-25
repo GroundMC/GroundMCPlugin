@@ -7,7 +7,6 @@ import gtlp.groundmc.lobby.enums.VisibilityStates
 import gtlp.groundmc.lobby.inventory.HidePlayerInventory
 import gtlp.groundmc.lobby.util.NBTItemExt
 import kotlinx.coroutines.experimental.async
-import org.bukkit.enchantments.Enchantment
 import org.bukkit.entity.Player
 import org.bukkit.event.Event
 import org.bukkit.event.EventHandler
@@ -71,18 +70,14 @@ object HidePlayerListener : Listener {
                 val nbtItem = NBTItemExt(event.currentItem)
                 if (nbtItem.getInteger(NBTIdentifier.TYPE) == GMCType.HIDE_PLAYERS.ordinal) {
                     event.result = Event.Result.DENY
-                    event.clickedInventory.contents.filterNotNull().forEach { itemStack -> itemStack.removeEnchantment(Enchantment.LUCK) }
-                    nbtItem.addEnchantment(Enchantment.LUCK)
-                    event.currentItem = nbtItem.item
-                    event.whoClicked.inventory.setItem(2, NBTItemExt(event.whoClicked.inventory.getItem(2)).apply {
-                        this.displayName = nbtItem.displayName
-                    }.item)
                     async {
                         transaction {
-                            Users.update({ Users.id.eq(event.whoClicked.uniqueId) }) {
+                            Users.update({ Users.id eq event.whoClicked.uniqueId }) {
                                 it[hiddenStatus] = VisibilityStates.values()[nbtItem.getInteger(NBTIdentifier.HIDE_STATE)!!]
                             }
+                            commit()
                         }
+                        Users.refresh(event.whoClicked.uniqueId)
                     }
                     event.whoClicked.sendMessage(nbtItem.displayName)
                     event.view.close()
