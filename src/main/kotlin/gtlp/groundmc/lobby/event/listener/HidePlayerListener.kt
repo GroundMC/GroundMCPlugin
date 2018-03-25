@@ -50,7 +50,8 @@ object HidePlayerListener : Listener {
         if (event.currentItem != null && event.whoClicked is Player) {
             val nbtItem = NBTItemExt(event.currentItem)
             if (NBTIdentifier.itemHasPrefix(nbtItem.item)
-                    && nbtItem.getInteger(NBTIdentifier.TYPE) == GMCType.HIDE_PLAYERS.ordinal) {
+                    && nbtItem.getInteger(NBTIdentifier.TYPE) == GMCType.HIDE_PLAYERS.ordinal
+                    && event.clickedInventory.title != HidePlayerInventory.TITLE) {
                 event.result = Event.Result.DENY
                 event.whoClicked.openInventory(HidePlayerInventory.create(event.whoClicked as Player))
             }
