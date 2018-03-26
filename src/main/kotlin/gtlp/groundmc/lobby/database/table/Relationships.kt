@@ -2,6 +2,7 @@
 
 package gtlp.groundmc.lobby.database.table
 
+import de.dytanic.cloudnet.api.CloudAPI
 import gtlp.groundmc.lobby.LobbyMain
 import gtlp.groundmc.lobby.Relationship
 import gtlp.groundmc.lobby.util.I18n
@@ -225,6 +226,6 @@ object Relationships : Table() {
      * @return the UUIDs of all the online players.
      */
     private fun getOnlineUUIDs(): List<UUID> {
-        return Bukkit.getServer().onlinePlayers.map { it.uniqueId }
+        return CloudAPI.getInstance().onlinePlayers.map { it.uniqueId }
     }
 }
