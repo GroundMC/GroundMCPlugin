@@ -3,6 +3,7 @@ package gtlp.groundmc.lobby.util
 import com.google.common.base.MoreObjects
 import de.tr7zw.itemnbtapi.NBTItem
 import gtlp.groundmc.lobby.enums.NBTIdentifier
+import org.bukkit.Material
 import org.bukkit.enchantments.Enchantment
 import org.bukkit.inventory.ItemFlag
 import org.bukkit.inventory.ItemStack
@@ -15,6 +16,8 @@ import kotlin.reflect.KClass
  */
 @Suppress("unused")
 class NBTItemExt(item: ItemStack) : NBTItem(item), Cloneable {
+
+    constructor(material: Material) : this(ItemStack(material))
 
     /**
      * Sets an integer value for a key.
