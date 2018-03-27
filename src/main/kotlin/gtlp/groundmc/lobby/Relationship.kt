@@ -5,7 +5,6 @@ import org.bukkit.Bukkit
 import org.bukkit.OfflinePlayer
 import org.bukkit.entity.Player
 import org.joda.time.DateTime
-import java.io.Serializable
 import java.util.*
 
 /**
@@ -27,7 +26,7 @@ data class Relationship constructor(
          * The time at which this relationship was created.
          */
         val since: DateTime = DateTime.now()
-) : Serializable {
+) {
 
     /**
      * The constructor to create a [Relationship] out of two usernames.
