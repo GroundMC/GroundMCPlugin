@@ -3,6 +3,7 @@ package gtlp.groundmc.lobby
 import gtlp.groundmc.lobby.database.table.Users
 import org.bukkit.Bukkit
 import org.bukkit.OfflinePlayer
+import org.bukkit.entity.Player
 import org.joda.time.DateTime
 import java.io.Serializable
 import java.util.*
@@ -42,7 +43,11 @@ data class Relationship constructor(
 
 class Friend(val name: String, val uniqueId: UUID) {
 
-    fun toOfflinePlayer() = Bukkit.getOfflinePlayer(uniqueId)
+    val offlinePlayer: OfflinePlayer
+        get() = Bukkit.getOfflinePlayer(uniqueId)
+
+    val player: Player
+        get() = Bukkit.getPlayer(uniqueId)
 
     companion object {
         fun fromPlayer(player: OfflinePlayer) = Friend(player.name, player.uniqueId)

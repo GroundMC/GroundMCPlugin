@@ -81,7 +81,7 @@ class CommandFriend : ILobbyCommand {
         LobbyMain.logger.entering(CommandFriend::class, "sendOnlineFriends")
         val friendsList = Relationships.getRelationships(sender)
         val onlinePlayers = Bukkit.getOnlinePlayers()
-        val onlineFriends = friendsList.filter { it.user2.toOfflinePlayer() in onlinePlayers }
+        val onlineFriends = friendsList.filter { it.user2.offlinePlayer in onlinePlayers }
         if (onlineFriends.isEmpty()) {
             sender.sendMessage(I18NStrings.COMMAND_FRIEND_NO_FRIENDS_ONLINE.get(sender))
             return true

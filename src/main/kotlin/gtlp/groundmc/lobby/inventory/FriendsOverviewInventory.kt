@@ -30,7 +30,7 @@ object FriendsOverviewInventory {
                     addItem(NBTItemExt(ItemStack(Material.SKULL_ITEM, 1, SkullType.PLAYER.ordinal.toShort())).apply {
                         setBoolean(NBTIdentifier.PREFIX, true)
                         val newMeta = meta as SkullMeta
-                        newMeta.owningPlayer = it.user2.toOfflinePlayer()
+                        newMeta.owningPlayer = it.user2.offlinePlayer
                         meta = newMeta
                         displayName = it.user2.name
                         val newLore = lore

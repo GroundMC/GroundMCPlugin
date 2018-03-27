@@ -1,7 +1,7 @@
-
-
 package gtlp.groundmc.lobby.database.table
 
+import com.google.common.cache.CacheBuilder
+import com.google.common.cache.CacheLoader
 import de.dytanic.cloudnet.api.CloudAPI
 import gtlp.groundmc.lobby.LobbyMain
 import gtlp.groundmc.lobby.Relationship
@@ -12,9 +12,10 @@ import org.bukkit.Bukkit
 import org.bukkit.OfflinePlayer
 import org.bukkit.entity.Player
 import org.jetbrains.exposed.sql.*
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.util.*
+import java.util.concurrent.Executors
+import java.util.concurrent.TimeUnit
 
 /**
  * Table holding relationships between players, including more information
@@ -36,6 +37,35 @@ object Relationships : Table() {
      * The timestamp at which the relationship was created.
      */
     private val since = datetime("since")
+
+    private val relationshipCache = CacheBuilder.newBuilder()
+            .expireAfterAccess(5, TimeUnit.SECONDS).build(
+                    CacheLoader.asyncReloading(RelationshipCacheLoader(), Executors.newCachedThreadPool())
+            )
+
+    class RelationshipCacheLoader : CacheLoader<UUID, List<Relationship>>() {
+        override fun load(key: UUID): List<Relationship> {
+            return transaction {
+                return@transaction select { userId1 eq key }
+                        .map {
+                            Relationship(it[userId1], it[userId2], it[since])
+                        }
+            }
+        }
+
+        override fun loadAll(keys: MutableIterable<UUID>): MutableMap<UUID, List<Relationship>> {
+            return transaction {
+                return@transaction select { userId1 inList keys }
+                        .groupBy { it[userId1] }
+                        .mapValues {
+                            it.value.map {
+                                Relationship(it[userId1], it[userId2], it[since])
+                            }
+                        }
+                        .toMutableMap()
+            }
+        }
+    }
 
     /**
      * Adds a relationship between [player] and [friend]
@@ -60,8 +90,8 @@ object Relationships : Table() {
     private fun addRelationship(player: Player, relationship: Relationship) {
         LobbyMain.logger.entering(Relationships::class, "addRelationship")
         LobbyMain.logger.fine("Adding new relationship: $relationship")
-        transaction {
-            if (!areFriends(relationship.user1.uniqueId, relationship.user2.uniqueId)) {
+        if (!areFriends(relationship.user1.uniqueId, relationship.user2.uniqueId)) {
+            transaction {
                 insert {
                     it[userId1] = relationship.user1.uniqueId
                     it[userId2] = relationship.user2.uniqueId
@@ -72,12 +102,14 @@ object Relationships : Table() {
                     it[userId2] = relationship.user1.uniqueId
                     it[since] = relationship.since
                 }
-                player.sendMessage(I18n.getString("relationship.success", player.locale))
-            } else {
-                player.sendMessage(I18n.getString("relationship.exists", player.locale))
             }
-            LobbyMain.logger.exiting(Relationships::class, "addRelationship")
+            relationshipCache.refresh(relationship.user1.uniqueId)
+            relationshipCache.refresh(relationship.user2.uniqueId)
+            player.sendMessage(I18n.getString("relationship.success", player.locale))
+        } else {
+            player.sendMessage(I18n.getString("relationship.exists", player.locale))
         }
+        LobbyMain.logger.exiting(Relationships::class, "addRelationship")
     }
 
     /**
@@ -90,11 +122,7 @@ object Relationships : Table() {
      */
     fun areFriends(player: OfflinePlayer, friend: OfflinePlayer): Boolean {
         LobbyMain.logger.entering(Relationships::class, "areFriends")
-        return transaction {
-            return@transaction select {
-                (userId1 eq player.uniqueId) and (userId2 eq friend.uniqueId)
-            }.any()
-        }
+        return areFriends(player.uniqueId, friend.uniqueId)
     }
 
     /**
@@ -109,15 +137,12 @@ object Relationships : Table() {
      */
     fun areFriends(player: UUID, friend: UUID): Boolean {
         LobbyMain.logger.entering(Relationships::class, "areFriends")
-        return transaction {
-            return@transaction select {
-                (userId1 eq player) and (userId2 eq friend)
-            }.any()
-        }
+        return relationshipCache[player]
+                .any { it.user2.uniqueId == friend }
     }
 
     /**
-     * Queries the database for a relationships of [player]
+     * Queries the database for a list of relationships of [player]
      *
      * @param player the player to query the relationships for
      *
@@ -125,11 +150,7 @@ object Relationships : Table() {
      */
     fun getRelationships(player: Player): List<Relationship> {
         LobbyMain.logger.entering(Relationships::class, "getRelationships")
-        LobbyMain.logger.finest("Getting relationships for ${player.name}...")
-        return transaction {
-            return@transaction select(userId1 eq player.uniqueId)
-                    .map { Relationship(it[userId1], it[userId2], it[since]) }
-        }
+        return relationshipCache[player.uniqueId]
     }
 
 
@@ -144,13 +165,7 @@ object Relationships : Table() {
      */
     fun getRelationship(player: OfflinePlayer, friend: OfflinePlayer): Relationship? {
         LobbyMain.logger.entering(Relationships::class, "getRelationship")
-        return transaction {
-            val relationship = select((userId1 eq player.uniqueId) and (userId2 eq friend.uniqueId)).firstOrNull()
-            if (relationship != null) {
-                return@transaction Relationship(player.uniqueId, friend.uniqueId, relationship[since])
-            }
-            return@transaction null
-        }
+        return getRelationship(player.uniqueId, friend.uniqueId)
     }
 
     /**
@@ -164,13 +179,7 @@ object Relationships : Table() {
      */
     fun getRelationship(player: UUID, friend: UUID): Relationship? {
         LobbyMain.logger.entering(Relationships::class, "getRelationship")
-        return transaction {
-            val relationship = select((userId1 eq player) and (userId2 eq friend))
-            if (relationship.any()) {
-                return@transaction Relationship(player, friend, relationship.first()[since])
-            }
-            return@transaction null
-        }
+        return relationshipCache[player].firstOrNull { it.user2.uniqueId == friend }
     }
 
     /**
@@ -181,12 +190,15 @@ object Relationships : Table() {
      */
     fun removeRelationship(player: Player, friend: OfflinePlayer) {
         LobbyMain.logger.entering(Relationships::class, "removeRelationship")
-        transaction {
-            val relationship = select((userId1 eq player.uniqueId) and (userId2 eq friend.uniqueId))
-            if (relationship.any()) {
+        val relationship = getRelationship(player, friend)
+        if (relationship != null) {
+            transaction {
                 deleteWhere { (userId1 eq player.uniqueId) and (userId2 eq friend.uniqueId) }
                 deleteWhere { (userId2 eq player.uniqueId) and (userId1 eq friend.uniqueId) }
+                commit()
             }
+            relationshipCache.refresh(player.uniqueId)
+            relationshipCache.refresh(friend.uniqueId)
         }
     }
 
@@ -199,11 +211,10 @@ object Relationships : Table() {
      */
     fun getOnlineFriends(player: Player): List<Player> {
         LobbyMain.logger.entering(Relationships::class, "getOnlineFriends")
-        return transaction {
-            return@transaction select {
-                (userId1 eq player.uniqueId) and (userId2 inList getOnlineUUIDs())
-            }
-        }.mapNotNull { Bukkit.getPlayer(it[userId2]) }
+        val onlineUUIDs = getOnlineUUIDs()
+        return relationshipCache[player.uniqueId].filter {
+            it.user2.uniqueId in onlineUUIDs
+        }.map { it.user2.player }
     }
 
     /**
@@ -215,8 +226,9 @@ object Relationships : Table() {
      */
     fun getOnlineNonFriends(player: Player): List<Player> {
         LobbyMain.logger.entering(Relationships::class, "getOnlineFriends")
-        return Bukkit.getOnlinePlayers().toMutableList().apply {
-            removeAll(getOnlineFriends(player))
+        val onlineFriends = getOnlineFriends(player)
+        return Bukkit.getOnlinePlayers().filter {
+            it in onlineFriends
         }
     }
 
