@@ -17,10 +17,24 @@ import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.SkullMeta
 import org.joda.time.format.DateTimeFormat
 
+/**
+ * Layout:
+ *
+ * F F F F F F F F F
+ * F F F F F F F F F
+ * F F F F F F F F F
+ * x x x < H > x x x
+ *
+ * F = Friend or placeholder
+ * x = placeholder
+ * H = info item
+ * < = previous page (where applicable)
+ * > = next page (where applicable)
+ */
 object FriendsOverviewInventory {
 
     private const val PAGE_SIZE = 3 * 9
-    private const val INFO_ITEM_INDEX = PAGE_SIZE + 5
+    private const val INFO_ITEM_INDEX = PAGE_SIZE + 4
 
     internal const val TITLE = "Friends"
 
