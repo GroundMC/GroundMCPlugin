@@ -7,6 +7,7 @@ import com.google.gson.TypeAdapter
 import com.google.gson.stream.JsonReader
 import com.google.gson.stream.JsonWriter
 import org.bukkit.Location
+import org.joda.time.DateTime
 
 /**
  * An adapter to serialize and deserialize a [Location] object
@@ -39,6 +40,22 @@ object LocationTypeAdapter : TypeAdapter<Location>() {
 
         @Suppress("unchecked_cast")
         return Location.deserialize(Gson().fromJson(read, Map::class.java) as Map<String, Any>)
+    }
+
+}
+
+object DateTimeAdapter : TypeAdapter<DateTime>() {
+
+    override fun write(writer: JsonWriter, dateTime: DateTime?) {
+        if (dateTime != null) {
+            writer.value(dateTime.toString())
+        } else {
+            writer.nullValue()
+        }
+    }
+
+    override fun read(reader: JsonReader): DateTime {
+        return DateTime(reader.nextString())
     }
 
 }

@@ -29,6 +29,7 @@ import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils.createMissingTablesAndColumns
 import org.jetbrains.exposed.sql.exposedLogger
 import org.jetbrains.exposed.sql.transactions.transaction
+import org.joda.time.DateTime
 import org.slf4j.impl.JDK14LoggerAdapter
 import java.io.File
 import java.lang.reflect.Field
@@ -158,6 +159,7 @@ class LobbyMain : JavaPlugin() {
         // Sets private static final Gson gson
         fGson.set(null, GsonBuilder().apply {
             registerTypeAdapter(Location::class.java, LocationTypeAdapter)
+            registerTypeAdapter(DateTime::class.java, DateTimeAdapter)
             factories.forEach { this::registerTypeAdapterFactory }
         }.create())
         logger.exiting(LobbyMain::class, "registerGsonHandlers")
