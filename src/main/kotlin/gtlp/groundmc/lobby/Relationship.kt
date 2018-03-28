@@ -45,7 +45,7 @@ class Friend(val name: String, val uniqueId: UUID) {
     val offlinePlayer: OfflinePlayer
         get() = Bukkit.getOfflinePlayer(uniqueId)
 
-    val player: Player
+    val player: Player?
         get() = Bukkit.getPlayer(uniqueId)
 
     companion object {
