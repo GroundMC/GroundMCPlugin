@@ -64,7 +64,7 @@ object FriendsOverviewInventory {
                     val newLore = lore
                     newLore += "Online: ${Relationships.getOnlineFriends(player).size}"
                     newLore += I18NStrings.FRIENDS_PAGE.format(player, 1,
-                            relationships.size / PAGE_SIZE)
+                            (relationships.size / PAGE_SIZE) + 1)
                             ?: ""
                     lore = newLore
                 }.item)
