@@ -233,9 +233,9 @@ object Relationships : Table() {
     }
 
     /**
-     * Maps all the online players to their [java.util.UUID].
+     * Maps all the online players on the network to their [java.util.UUID].
      *
-     * @return the UUIDs of all the online players.
+     * @return the UUIDs of all the online players on the network.
      */
     private fun getOnlineUUIDs(): List<UUID> {
         return CloudAPI.getInstance().onlinePlayers.map { it.uniqueId }
