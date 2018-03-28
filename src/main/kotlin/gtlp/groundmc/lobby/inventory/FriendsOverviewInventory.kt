@@ -44,7 +44,7 @@ object FriendsOverviewInventory {
                 fillFriendInventory(player)
             }
 
-    fun friendInfo(player: Player, item: NBTItemExt): Inventory? {
+    fun friendDetails(player: Player, item: NBTItemExt): Inventory? {
         val relationship = item.getObject(NBTIdentifier.RELATIONSHIP,
                 Relationship::class) ?: return null
         return Bukkit.createInventory(player, 2 * 9, relationship.user2.name)

@@ -1,5 +1,3 @@
-
-
 package gtlp.groundmc.lobby.event.listener
 
 import gtlp.groundmc.lobby.Items

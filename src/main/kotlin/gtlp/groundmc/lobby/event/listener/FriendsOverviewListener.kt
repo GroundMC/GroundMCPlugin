@@ -65,10 +65,8 @@ object FriendsOverviewListener : Listener {
             val item = NBTItemExt(event.currentItem)
             if (item.hasKey(NBTIdentifier.RELATIONSHIP)) {
                 event.result = Event.Result.DENY
-                async {
-                    event.whoClicked.openInventory(FriendsOverviewInventory.friendInfo(
-                            event.whoClicked as Player, item))
-                }
+                event.whoClicked.openInventory(FriendsOverviewInventory.friendDetails(
+                        event.whoClicked as Player, item))
             }
         }
     }
@@ -81,10 +79,10 @@ object FriendsOverviewListener : Listener {
             if (item.hasKey(NBTIdentifier.TYPE)
                     && item.getInteger(NBTIdentifier.TYPE) == GMCType.REMOVE_FRIEND.ordinal) {
                 event.result = Event.Result.DENY
+                event.view.close()
                 async {
                     Relationships.removeRelationship(event.whoClicked as Player,
                             item.getObject(NBTIdentifier.RELATIONSHIP, Relationship::class)!!.user2.offlinePlayer)
-                    event.whoClicked.openInventory(FriendsOverviewInventory.create(event.whoClicked as Player))
                 }
             }
         }
