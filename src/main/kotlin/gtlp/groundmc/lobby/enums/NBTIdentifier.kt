@@ -37,7 +37,12 @@ enum class NBTIdentifier(
     /**
      * The identifier to go with [gtlp.groundmc.lobby.enums.VisibilityStates]
      */
-    HIDE_STATE("hide");
+    HIDE_STATE("hide"),
+
+    /**
+     * The identifier that stores the current open page
+     */
+    PAGE("page");
 
     /**
      * Returns the prefix concatenated with the internal identifier.
