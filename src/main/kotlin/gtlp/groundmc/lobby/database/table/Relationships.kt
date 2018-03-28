@@ -213,7 +213,7 @@ object Relationships : Table() {
         val onlineUUIDs = getOnlineUUIDs()
         return relationshipCache[player.uniqueId].filter {
             it.user2.uniqueId in onlineUUIDs
-        }.map { it.user2.player }
+        }.map { it.user2.player!! }
     }
 
     /**
