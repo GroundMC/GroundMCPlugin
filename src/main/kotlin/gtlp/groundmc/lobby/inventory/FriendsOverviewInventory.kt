@@ -26,7 +26,8 @@ object FriendsOverviewInventory {
 
     fun create(player: Player): Inventory = Bukkit.createInventory(player, 4 * 9, TITLE)
             .apply {
-                Relationships.getRelationships(player).subList(0, PAGE_SIZE).forEach {
+                val relationships = Relationships.getRelationships(player)
+                relationships.subList(0, Math.min(relationships.size, PAGE_SIZE)).forEach {
                     addItem(NBTItemExt(ItemStack(Material.SKULL_ITEM, 1, SkullType.PLAYER.ordinal.toShort())).apply {
                         setBoolean(NBTIdentifier.PREFIX, true)
                         val newMeta = meta as SkullMeta
@@ -47,10 +48,9 @@ object FriendsOverviewInventory {
                 setItem(INFO_ITEM_INDEX, NBTItemExt(Material.COMPASS).apply {
                     setBoolean(NBTIdentifier.PREFIX, true)
                     val newLore = lore
-                    newLore += "Page: 1/${Relationships.getRelationships(player).size / PAGE_SIZE}"
                     newLore += "Online: ${Relationships.getOnlineFriends(player).size}"
                     newLore += I18NStrings.FRIENDS_PAGE.format(player, 1,
-                            Relationships.getRelationships(player).size / PAGE_SIZE)
+                            relationships.size / PAGE_SIZE)
                             ?: ""
                     lore = newLore
                 }.item)
