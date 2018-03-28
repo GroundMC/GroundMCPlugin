@@ -42,7 +42,12 @@ enum class NBTIdentifier(
     /**
      * The identifier that stores the current open page
      */
-    PAGE("page");
+    PAGE("page"),
+
+    /**
+     * Identifier for the friend that is clicked at.
+     */
+    FRIEND("friend");
 
     /**
      * Returns the prefix concatenated with the internal identifier.

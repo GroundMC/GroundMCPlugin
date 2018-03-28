@@ -1,6 +1,7 @@
 package gtlp.groundmc.lobby.inventory
 
 import de.dytanic.cloudnet.api.CloudAPI
+import gtlp.groundmc.lobby.Friend
 import gtlp.groundmc.lobby.Items
 import gtlp.groundmc.lobby.database.table.Relationships
 import gtlp.groundmc.lobby.enums.NBTIdentifier
@@ -43,6 +44,11 @@ object FriendsOverviewInventory {
                 fillFriendInventory(player)
             }
 
+    fun friendInfo(player: Player, friend: Friend) = Bukkit.createInventory(player, 2 * 9, friend.name)
+            .apply {
+
+            }
+
     private fun Inventory.fillFriendInventory(player: Player) {
         val relationships = Relationships.getRelationships(player)
         val page = if (NBTIdentifier.itemHasPrefix(getItem(INFO_ITEM_INDEX))) {
@@ -55,6 +61,7 @@ object FriendsOverviewInventory {
         relationships.chunked(PAGE_SIZE)[page].forEach {
             addItem(NBTItemExt(ItemStack(Material.SKULL_ITEM, 1, SkullType.PLAYER.ordinal.toShort())).apply {
                 setBoolean(NBTIdentifier.PREFIX, true)
+                setObject(NBTIdentifier.FRIEND, it.user2)
                 val newMeta = meta as SkullMeta
                 newMeta.owningPlayer = it.user2.offlinePlayer
                 meta = newMeta
