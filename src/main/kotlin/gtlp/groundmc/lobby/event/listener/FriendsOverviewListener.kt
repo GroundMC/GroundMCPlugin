@@ -1,6 +1,5 @@
 package gtlp.groundmc.lobby.event.listener
 
-import gtlp.groundmc.lobby.Friend
 import gtlp.groundmc.lobby.enums.GMCType
 import gtlp.groundmc.lobby.enums.NBTIdentifier
 import gtlp.groundmc.lobby.inventory.FriendsOverviewInventory
@@ -45,6 +44,9 @@ object FriendsOverviewListener : Listener {
         if (NBTIdentifier.itemHasPrefix(event.currentItem)
                 && event.inventory.title == FriendsOverviewInventory.TITLE) {
             event.result = Event.Result.DENY
+        } else if (NBTIdentifier.itemHasPrefix(event.currentItem)
+                && NBTItemExt(event.currentItem).hasKey(NBTIdentifier.RELATIONSHIP)) {
+            event.result = Event.Result.DENY
         }
     }
 
@@ -54,11 +56,9 @@ object FriendsOverviewListener : Listener {
                 && event.inventory.title == FriendsOverviewInventory.TITLE
                 && event.whoClicked is Player) {
             val item = NBTItemExt(event.currentItem)
-            if (item.hasKey(NBTIdentifier.FRIEND)) {
+            if (item.hasKey(NBTIdentifier.RELATIONSHIP)) {
                 event.whoClicked.openInventory(FriendsOverviewInventory.friendInfo(
-                        event.whoClicked as Player,
-                        item.getObject(NBTIdentifier.FRIEND, Friend::class)!!
-                ))
+                        event.whoClicked as Player, item))
             }
         }
     }

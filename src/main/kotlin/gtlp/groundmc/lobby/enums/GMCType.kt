@@ -34,5 +34,7 @@ enum class GMCType {
     /**
      * Denotes that the item should open the [gtlp.groundmc.lobby.inventory.FriendsOverviewInventory]
      */
-    FRIENDS;
+    FRIENDS,
+
+    REMOVE_FRIEND;
 }

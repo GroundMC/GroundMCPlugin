@@ -1,9 +1,10 @@
 package gtlp.groundmc.lobby.inventory
 
 import de.dytanic.cloudnet.api.CloudAPI
-import gtlp.groundmc.lobby.Friend
 import gtlp.groundmc.lobby.Items
+import gtlp.groundmc.lobby.Relationship
 import gtlp.groundmc.lobby.database.table.Relationships
+import gtlp.groundmc.lobby.enums.GMCType
 import gtlp.groundmc.lobby.enums.NBTIdentifier
 import gtlp.groundmc.lobby.util.I18NStrings
 import gtlp.groundmc.lobby.util.I18nUtils
@@ -44,10 +45,44 @@ object FriendsOverviewInventory {
                 fillFriendInventory(player)
             }
 
-    fun friendInfo(player: Player, friend: Friend) = Bukkit.createInventory(player, 2 * 9, friend.name)
-            .apply {
+    fun friendInfo(player: Player, item: NBTItemExt): Inventory? {
+        val relationship = item.getObject(NBTIdentifier.RELATIONSHIP,
+                Relationship::class) ?: return null
+        return Bukkit.createInventory(player, 2 * 9, relationship.user2.name)
+                .apply {
+                    setItem(4, NBTItemExt(ItemStack(Material.SKULL_ITEM, 1,
+                            SkullType.PLAYER.ordinal.toShort())).apply {
+                        setBoolean(NBTIdentifier.PREFIX, true)
+                        val newMeta = meta as SkullMeta
+                        newMeta.owningPlayer = relationship.user2.offlinePlayer
+                        meta = newMeta
+                        displayName = relationship.user2.name
+                        val newLore = lore
+                        newLore += (if (
+                                CloudAPI.getInstance().getOnlinePlayer(relationship.user2.uniqueId) != null
+                        ) "${ChatColor.GREEN}Online" else "${ChatColor.RED}Offline")
+                        newLore += I18NStrings.RELATIONSHIP_SINCE.format(player.locale,
+                                relationship.since.toString(DateTimeFormat.mediumDate()
+                                        .withLocale(I18nUtils.getLocaleFromCommandSender(player))))
+                                ?: ""
+                        lore = newLore
+                    }.item)
 
-            }
+                    setItem(15, NBTItemExt(Material.BARRIER).apply {
+                        setBoolean(NBTIdentifier.PREFIX, true)
+                        setObject(NBTIdentifier.RELATIONSHIP, relationship)
+                        setInteger(NBTIdentifier.TYPE, GMCType.REMOVE_FRIEND.ordinal)
+
+                        displayName = I18NStrings.RELATIONSHIP_REMOVE.get(player)
+                    }.item)
+
+                    contents.forEachIndexed { index, itemStack ->
+                        if (itemStack == null) {
+                            setItem(index, Items.FILLER.item)
+                        }
+                    }
+                }
+    }
 
     private fun Inventory.fillFriendInventory(player: Player) {
         val relationships = Relationships.getRelationships(player)
@@ -61,7 +96,7 @@ object FriendsOverviewInventory {
         relationships.chunked(PAGE_SIZE)[page].forEach {
             addItem(NBTItemExt(ItemStack(Material.SKULL_ITEM, 1, SkullType.PLAYER.ordinal.toShort())).apply {
                 setBoolean(NBTIdentifier.PREFIX, true)
-                setObject(NBTIdentifier.FRIEND, it.user2)
+                setObject(NBTIdentifier.RELATIONSHIP, it)
                 val newMeta = meta as SkullMeta
                 newMeta.owningPlayer = it.user2.offlinePlayer
                 meta = newMeta

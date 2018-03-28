@@ -45,9 +45,9 @@ enum class NBTIdentifier(
     PAGE("page"),
 
     /**
-     * Identifier for the friend that is clicked at.
+     * Identifier for the relationship that is saved temporarily.
      */
-    FRIEND("friend");
+    RELATIONSHIP("friend");
 
     /**
      * Returns the prefix concatenated with the internal identifier.
