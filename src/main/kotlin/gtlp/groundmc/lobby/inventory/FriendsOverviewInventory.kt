@@ -41,6 +41,9 @@ object FriendsOverviewInventory {
                                 it.since.toString(DateTimeFormat.mediumDate()
                                         .withLocale(I18nUtils.getLocaleFromCommandSender(player))))
                                 ?: ""
+                        newLore += I18NStrings.FRIENDS_PAGE.format(player, 1,
+                                Relationships.getRelationships(player).size / PAGE_SIZE)
+                                ?: ""
                         lore = newLore
                     }.item)
                 }
@@ -51,8 +54,11 @@ object FriendsOverviewInventory {
                     newLore += "Online: ${Relationships.getOnlineFriends(player).size}"
                     lore = newLore
                 }.item)
-                while (firstEmpty() != -1) {
-                    setItem(firstEmpty(), Items.FILLER.item)
+
+                contents.forEachIndexed { index, itemStack ->
+                    if (itemStack == null) {
+                        setItem(index, Items.FILLER.item)
+                    }
                 }
             }
 }
