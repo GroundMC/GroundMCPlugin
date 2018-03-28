@@ -1,9 +1,12 @@
 package gtlp.groundmc.lobby.event.listener
 
+import gtlp.groundmc.lobby.Relationship
+import gtlp.groundmc.lobby.database.table.Relationships
 import gtlp.groundmc.lobby.enums.GMCType
 import gtlp.groundmc.lobby.enums.NBTIdentifier
 import gtlp.groundmc.lobby.inventory.FriendsOverviewInventory
 import gtlp.groundmc.lobby.util.NBTItemExt
+import kotlinx.coroutines.experimental.async
 import org.bukkit.entity.Player
 import org.bukkit.event.Event
 import org.bukkit.event.EventHandler
@@ -21,7 +24,9 @@ object FriendsOverviewListener : Listener {
         if (event.whoClicked is Player && NBTIdentifier.itemHasPrefix(event.currentItem)
                 && NBTItemExt(event.currentItem).getInteger(NBTIdentifier.TYPE) == GMCType.FRIENDS.ordinal) {
             event.result = Event.Result.DENY
-            event.whoClicked.openInventory(FriendsOverviewInventory.create(event.whoClicked as Player))
+            async {
+                event.whoClicked.openInventory(FriendsOverviewInventory.create(event.whoClicked as Player))
+            }
         }
     }
 
@@ -30,7 +35,9 @@ object FriendsOverviewListener : Listener {
         if (event.action != Action.PHYSICAL && NBTIdentifier.itemHasPrefix(event.item)
                 && NBTItemExt(event.item).getInteger(NBTIdentifier.TYPE) == GMCType.FRIENDS.ordinal) {
             event.isCancelled = true
-            event.player.openInventory(FriendsOverviewInventory.create(event.player))
+            async {
+                event.player.openInventory(FriendsOverviewInventory.create(event.player))
+            }
         }
     }
 
@@ -57,8 +64,28 @@ object FriendsOverviewListener : Listener {
                 && event.whoClicked is Player) {
             val item = NBTItemExt(event.currentItem)
             if (item.hasKey(NBTIdentifier.RELATIONSHIP)) {
-                event.whoClicked.openInventory(FriendsOverviewInventory.friendInfo(
-                        event.whoClicked as Player, item))
+                event.result = Event.Result.DENY
+                async {
+                    event.whoClicked.openInventory(FriendsOverviewInventory.friendInfo(
+                            event.whoClicked as Player, item))
+                }
+            }
+        }
+    }
+
+    @EventHandler
+    fun removeFriend(event: InventoryClickEvent) {
+        if (NBTIdentifier.itemHasPrefix(event.currentItem)
+                && event.whoClicked is Player) {
+            val item = NBTItemExt(event.currentItem)
+            if (item.hasKey(NBTIdentifier.TYPE)
+                    && item.getInteger(NBTIdentifier.TYPE) == GMCType.REMOVE_FRIEND.ordinal) {
+                event.result = Event.Result.DENY
+                async {
+                    Relationships.removeRelationship(event.whoClicked as Player,
+                            item.getObject(NBTIdentifier.RELATIONSHIP, Relationship::class)!!.user2.offlinePlayer)
+                    event.whoClicked.openInventory(FriendsOverviewInventory.create(event.whoClicked as Player))
+                }
             }
         }
     }

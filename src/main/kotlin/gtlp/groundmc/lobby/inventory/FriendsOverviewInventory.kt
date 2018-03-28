@@ -1,7 +1,6 @@
 package gtlp.groundmc.lobby.inventory
 
 import de.dytanic.cloudnet.api.CloudAPI
-import gtlp.groundmc.lobby.Items
 import gtlp.groundmc.lobby.Relationship
 import gtlp.groundmc.lobby.database.table.Relationships
 import gtlp.groundmc.lobby.enums.GMCType
@@ -53,6 +52,7 @@ object FriendsOverviewInventory {
                     setItem(4, NBTItemExt(ItemStack(Material.SKULL_ITEM, 1,
                             SkullType.PLAYER.ordinal.toShort())).apply {
                         setBoolean(NBTIdentifier.PREFIX, true)
+                        setObject(NBTIdentifier.RELATIONSHIP, relationship)
                         val newMeta = meta as SkullMeta
                         newMeta.owningPlayer = relationship.user2.offlinePlayer
                         meta = newMeta
@@ -75,12 +75,6 @@ object FriendsOverviewInventory {
 
                         displayName = I18NStrings.RELATIONSHIP_REMOVE.get(player)
                     }.item)
-
-                    contents.forEachIndexed { index, itemStack ->
-                        if (itemStack == null) {
-                            setItem(index, Items.FILLER.item)
-                        }
-                    }
                 }
     }
 
@@ -123,11 +117,5 @@ object FriendsOverviewInventory {
                     ?: ""
             lore = newLore
         }.item)
-
-        contents.forEachIndexed { index, itemStack ->
-            if (itemStack == null) {
-                setItem(index, Items.FILLER.item)
-            }
-        }
     }
 }

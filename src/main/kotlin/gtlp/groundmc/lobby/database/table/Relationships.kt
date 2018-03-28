@@ -190,8 +190,7 @@ object Relationships : Table() {
      */
     fun removeRelationship(player: Player, friend: OfflinePlayer) {
         LobbyMain.logger.entering(Relationships::class, "removeRelationship")
-        val relationship = getRelationship(player, friend)
-        if (relationship != null) {
+        if (areFriends(player, friend)) {
             transaction {
                 deleteWhere { (userId1 eq player.uniqueId) and (userId2 eq friend.uniqueId) }
                 deleteWhere { (userId2 eq player.uniqueId) and (userId1 eq friend.uniqueId) }
