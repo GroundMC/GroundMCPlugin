@@ -80,6 +80,16 @@ object FriendsOverviewInventory {
 
     private fun Inventory.fillFriendInventory(player: Player) {
         val relationships = Relationships.getRelationships(player)
+                .sortedWith(Comparator { o1, o2 ->
+                    val player1 = o1.user2.player
+                    val player2 = o2.user2.player
+                    when {
+                        player1 != null && player2 != null -> return@Comparator o1.user2.name.compareTo(o2.user2.name)
+                        player1 != null && player2 == null -> return@Comparator -1
+                        player1 == null && player2 != null -> return@Comparator 1
+                        else -> return@Comparator o1.user2.name.compareTo(o2.user2.name)
+                    }
+                })
         val page = if (NBTIdentifier.itemHasPrefix(getItem(INFO_ITEM_INDEX))) {
             val infoItem = NBTItemExt(getItem(INFO_ITEM_INDEX))
             if (infoItem.hasKey(NBTIdentifier.PAGE)) {
