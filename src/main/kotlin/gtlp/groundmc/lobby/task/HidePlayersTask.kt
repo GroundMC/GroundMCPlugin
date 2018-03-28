@@ -18,9 +18,9 @@ object HidePlayersTask : ITask {
         transaction {
             val onlinePlayers =
                     Users.getAll(Bukkit.getOnlinePlayers().map { it.uniqueId })
-            onlinePlayers.filter { !it.value[Users.vanishStatus] }
-                    .forEach { uuid, status ->
-                        val player = Bukkit.getPlayer(uuid)
+                            .mapKeys { Bukkit.getPlayer(it.key) }
+            onlinePlayers.filterNot { it.value[Users.vanishStatus] }
+                    .forEach { player, status ->
                         when (status[Users.hiddenStatus]) {
                             VisibilityStates.ALL -> {
                                 Bukkit.getOnlinePlayers().forEach { player.showPlayer(LobbyMain.instance, it) }
@@ -42,9 +42,9 @@ object HidePlayersTask : ITask {
                     }
 
             onlinePlayers.filter { it.value[Users.vanishStatus] }
-                    .forEach { uuid, _ ->
+                    .forEach { player, _ ->
                         onlinePlayers.forEach {
-                            Bukkit.getPlayer(it.key).hidePlayer(LobbyMain.instance, Bukkit.getPlayer(uuid))
+                            it.key.hidePlayer(LobbyMain.instance, player)
                         }
                     }
         }

@@ -227,9 +227,7 @@ object Relationships : Table() {
     fun getOnlineNonFriends(player: Player): List<Player> {
         LobbyMain.logger.entering(Relationships::class, "getOnlineFriends")
         val onlineFriends = getOnlineFriends(player)
-        return Bukkit.getOnlinePlayers().filter {
-            it in onlineFriends
-        }
+        return Bukkit.getOnlinePlayers().filter { it in onlineFriends }
     }
 
     /**

@@ -54,6 +54,7 @@ object Users : Table() {
      */
     private val userCache = CacheBuilder.newBuilder()
             .expireAfterAccess(3, TimeUnit.SECONDS)
+            .refreshAfterWrite(2, TimeUnit.SECONDS)
             .build<UUID, ResultRow>(CacheLoader.asyncReloading(UserCacheLoader(), Executors.newCachedThreadPool()))
 
     /**
