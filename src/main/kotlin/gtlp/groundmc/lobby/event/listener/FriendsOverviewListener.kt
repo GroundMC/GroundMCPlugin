@@ -9,6 +9,7 @@ import gtlp.groundmc.lobby.database.table.Relationships
 import gtlp.groundmc.lobby.enums.GMCType
 import gtlp.groundmc.lobby.enums.NBTIdentifier
 import gtlp.groundmc.lobby.inventory.FriendsOverviewInventory
+import gtlp.groundmc.lobby.util.I18NStrings
 import gtlp.groundmc.lobby.util.NBTItemExt
 import kotlinx.coroutines.experimental.async
 import org.bukkit.Bukkit
@@ -29,7 +30,9 @@ object FriendsOverviewListener : Listener {
         if (event.whoClicked is Player && NBTIdentifier.itemHasPrefix(event.currentItem)
                 && NBTItemExt(event.currentItem).getInteger(NBTIdentifier.TYPE) == GMCType.FRIENDS.ordinal) {
             event.result = Event.Result.DENY
-            event.whoClicked.openInventory(FriendsOverviewInventory.create(event.whoClicked as Player))
+            Bukkit.getScheduler().runTask(LobbyMain.instance, {
+                event.whoClicked.openInventory(FriendsOverviewInventory.create(event.whoClicked as Player))
+            })
         }
     }
 
@@ -38,7 +41,9 @@ object FriendsOverviewListener : Listener {
         if (event.action != Action.PHYSICAL && NBTIdentifier.itemHasPrefix(event.item)
                 && NBTItemExt(event.item).getInteger(NBTIdentifier.TYPE) == GMCType.FRIENDS.ordinal) {
             event.isCancelled = true
-            event.player.openInventory(FriendsOverviewInventory.create(event.player))
+            Bukkit.getScheduler().runTask(LobbyMain.instance, {
+                event.player.openInventory(FriendsOverviewInventory.create(event.player))
+            })
         }
     }
 
@@ -66,8 +71,10 @@ object FriendsOverviewListener : Listener {
             val item = NBTItemExt(event.currentItem)
             if (item.hasKey(NBTIdentifier.RELATIONSHIP)) {
                 event.result = Event.Result.DENY
-                event.whoClicked.openInventory(FriendsOverviewInventory.friendDetails(
-                        event.whoClicked as Player, item))
+                Bukkit.getScheduler().runTask(LobbyMain.instance, {
+                    event.whoClicked.openInventory(FriendsOverviewInventory.friendDetails(
+                            event.whoClicked as Player, item))
+                })
             }
         }
     }
@@ -99,17 +106,24 @@ object FriendsOverviewListener : Listener {
                     && item.hasKey(NBTIdentifier.RELATIONSHIP)) {
                 event.result = Event.Result.DENY
                 event.view.close()
+                val friend = item.getObject(NBTIdentifier.RELATIONSHIP, Relationship::class)?.user2
+                        ?: return
+                val cloudFriend = CloudAPI.getInstance().getOnlinePlayer(friend.uniqueId)
+                if (cloudFriend == null) {
+                    event.whoClicked.sendMessage(
+                            I18NStrings.FRIENDS_OFFLINE.format(event.whoClicked as Player, friend.name))
+                    return
+                }
                 async {
-                    val friend = item.getObject(NBTIdentifier.RELATIONSHIP, Relationship::class)?.user2
-                            ?: return@async
-                    val cloudFriend = CloudAPI.getInstance().getOnlinePlayer(friend.uniqueId)
-                            ?: return@async
+
                     if (cloudFriend.server
                             == CloudServer.getInstance().serverProcessMeta.serviceId.serverId) {
+                        event.view.close()
                         Bukkit.getScheduler().runTask(LobbyMain.instance, {
                             event.whoClicked.teleport(friend.player)
                         })
                     } else {
+                        event.view.close()
                         PlayerExecutorBridge.INSTANCE.sendPlayer(
                                 CloudServer.getInstance().getCachedPlayer(event.whoClicked.uniqueId)
                                 , cloudFriend.server)
