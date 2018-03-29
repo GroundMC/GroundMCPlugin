@@ -29,9 +29,7 @@ object FriendsOverviewListener : Listener {
         if (event.whoClicked is Player && NBTIdentifier.itemHasPrefix(event.currentItem)
                 && NBTItemExt(event.currentItem).getInteger(NBTIdentifier.TYPE) == GMCType.FRIENDS.ordinal) {
             event.result = Event.Result.DENY
-            async {
-                event.whoClicked.openInventory(FriendsOverviewInventory.create(event.whoClicked as Player))
-            }
+            event.whoClicked.openInventory(FriendsOverviewInventory.create(event.whoClicked as Player))
         }
     }
 
@@ -40,9 +38,7 @@ object FriendsOverviewListener : Listener {
         if (event.action != Action.PHYSICAL && NBTIdentifier.itemHasPrefix(event.item)
                 && NBTItemExt(event.item).getInteger(NBTIdentifier.TYPE) == GMCType.FRIENDS.ordinal) {
             event.isCancelled = true
-            async {
-                event.player.openInventory(FriendsOverviewInventory.create(event.player))
-            }
+            event.player.openInventory(FriendsOverviewInventory.create(event.player))
         }
     }
 
