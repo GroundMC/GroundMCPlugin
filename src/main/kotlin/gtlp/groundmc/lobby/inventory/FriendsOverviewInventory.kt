@@ -49,6 +49,8 @@ object FriendsOverviewInventory {
                 Relationship::class) ?: return null
         return Bukkit.createInventory(player, 2 * 9, relationship.user2.name)
                 .apply {
+                    // Skull
+                    val friendOnline = CloudAPI.getInstance().getOnlinePlayer(relationship.user2.uniqueId) != null
                     setItem(4, NBTItemExt(ItemStack(Material.SKULL_ITEM, 1,
                             SkullType.PLAYER.ordinal.toShort())).apply {
                         setBoolean(NBTIdentifier.PREFIX, true)
@@ -58,9 +60,7 @@ object FriendsOverviewInventory {
                         meta = newMeta
                         displayName = relationship.user2.name
                         val newLore = lore
-                        newLore += (if (
-                                CloudAPI.getInstance().getOnlinePlayer(relationship.user2.uniqueId) != null
-                        ) "${ChatColor.GREEN}Online" else "${ChatColor.RED}Offline")
+                        newLore += if (friendOnline) "${ChatColor.GREEN}Online" else "${ChatColor.RED}Offline"
                         newLore += I18NStrings.RELATIONSHIP_SINCE.format(player.locale,
                                 relationship.since.toString(DateTimeFormat.mediumDate()
                                         .withLocale(I18nUtils.getLocaleFromCommandSender(player))))
@@ -68,6 +68,19 @@ object FriendsOverviewInventory {
                         lore = newLore
                     }.item)
 
+                    // Teleport if online
+                    setItem(11,
+                            (if (friendOnline) NBTItemExt(Material.EYE_OF_ENDER)
+                            else NBTItemExt(Material.ENDER_PEARL))
+                                    .apply {
+                                        setBoolean(NBTIdentifier.PREFIX, true)
+                                        setObject(NBTIdentifier.RELATIONSHIP, relationship)
+                                        setInteger(NBTIdentifier.TYPE, GMCType.TP.ordinal)
+
+                                        displayName = I18NStrings.FRIENDS_JUMP.format(player, relationship.user2.name)
+                                    }.item)
+
+                    // Delete item
                     setItem(15, NBTItemExt(Material.BARRIER).apply {
                         setBoolean(NBTIdentifier.PREFIX, true)
                         setObject(NBTIdentifier.RELATIONSHIP, relationship)
