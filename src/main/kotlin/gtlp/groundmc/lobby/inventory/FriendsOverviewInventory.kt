@@ -112,24 +112,26 @@ object FriendsOverviewInventory {
             } else 0
         } else 0
 
-        relationships.chunked(PAGE_SIZE)[page].forEach {
-            addItem(NBTItemExt(ItemStack(Material.SKULL_ITEM, 1, SkullType.PLAYER.ordinal.toShort())).apply {
-                setBoolean(NBTIdentifier.PREFIX, true)
-                setObject(NBTIdentifier.RELATIONSHIP, it)
-                val newMeta = meta as SkullMeta
-                newMeta.owningPlayer = it.user2.offlinePlayer
-                meta = newMeta
-                displayName = it.user2.name
-                val newLore = lore
-                newLore += (if (
-                        CloudAPI.getInstance().getOnlinePlayer(it.user2.uniqueId) != null
-                ) "${ChatColor.GREEN}Online" else "${ChatColor.RED}Offline")
-                newLore += I18NStrings.RELATIONSHIP_SINCE.format(player.locale,
-                        it.since.toString(DateTimeFormat.mediumDate()
-                                .withLocale(I18nUtils.getLocaleFromCommandSender(player))))
-                        ?: ""
-                lore = newLore
-            }.item)
+        if (relationships.isNotEmpty()) {
+            relationships.chunked(PAGE_SIZE)[page].forEach {
+                addItem(NBTItemExt(ItemStack(Material.SKULL_ITEM, 1, SkullType.PLAYER.ordinal.toShort())).apply {
+                    setBoolean(NBTIdentifier.PREFIX, true)
+                    setObject(NBTIdentifier.RELATIONSHIP, it)
+                    val newMeta = meta as SkullMeta
+                    newMeta.owningPlayer = it.user2.offlinePlayer
+                    meta = newMeta
+                    displayName = it.user2.name
+                    val newLore = lore
+                    newLore += (if (
+                            CloudAPI.getInstance().getOnlinePlayer(it.user2.uniqueId) != null
+                    ) "${ChatColor.GREEN}Online" else "${ChatColor.RED}Offline")
+                    newLore += I18NStrings.RELATIONSHIP_SINCE.format(player.locale,
+                            it.since.toString(DateTimeFormat.mediumDate()
+                                    .withLocale(I18nUtils.getLocaleFromCommandSender(player))))
+                            ?: ""
+                    lore = newLore
+                }.item)
+            }
         }
 
         setItem(INFO_ITEM_INDEX, NBTItemExt(Material.COMPASS).apply {

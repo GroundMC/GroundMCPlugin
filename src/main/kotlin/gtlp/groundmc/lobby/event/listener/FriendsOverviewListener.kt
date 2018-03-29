@@ -1,5 +1,9 @@
 package gtlp.groundmc.lobby.event.listener
 
+import de.dytanic.cloudnet.api.CloudAPI
+import de.dytanic.cloudnet.api.player.PlayerExecutorBridge
+import de.dytanic.cloudnet.bridge.CloudServer
+import gtlp.groundmc.lobby.LobbyMain
 import gtlp.groundmc.lobby.Relationship
 import gtlp.groundmc.lobby.database.table.Relationships
 import gtlp.groundmc.lobby.enums.GMCType
@@ -7,6 +11,7 @@ import gtlp.groundmc.lobby.enums.NBTIdentifier
 import gtlp.groundmc.lobby.inventory.FriendsOverviewInventory
 import gtlp.groundmc.lobby.util.NBTItemExt
 import kotlinx.coroutines.experimental.async
+import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import org.bukkit.event.Event
 import org.bukkit.event.EventHandler
@@ -83,6 +88,36 @@ object FriendsOverviewListener : Listener {
                 async {
                     Relationships.removeRelationship(event.whoClicked as Player,
                             item.getObject(NBTIdentifier.RELATIONSHIP, Relationship::class)!!.user2.offlinePlayer)
+                }
+            }
+        }
+    }
+
+    @EventHandler
+    fun jumpToFriend(event: InventoryClickEvent) {
+        if (NBTIdentifier.itemHasPrefix(event.currentItem)
+                && event.whoClicked is Player) {
+            val item = NBTItemExt(event.currentItem)
+            if (item.hasKey(NBTIdentifier.TYPE)
+                    && item.getInteger(NBTIdentifier.TYPE) == GMCType.TP.ordinal
+                    && item.hasKey(NBTIdentifier.RELATIONSHIP)) {
+                event.result = Event.Result.DENY
+                event.view.close()
+                async {
+                    val friend = item.getObject(NBTIdentifier.RELATIONSHIP, Relationship::class)?.user2
+                            ?: return@async
+                    val cloudFriend = CloudAPI.getInstance().getOnlinePlayer(friend.uniqueId)
+                            ?: return@async
+                    if (cloudFriend.server
+                            == CloudServer.getInstance().serverProcessMeta.serviceId.serverId) {
+                        Bukkit.getScheduler().runTask(LobbyMain.instance, {
+                            event.whoClicked.teleport(friend.player)
+                        })
+                    } else {
+                        PlayerExecutorBridge.INSTANCE.sendPlayer(
+                                CloudServer.getInstance().getCachedPlayer(event.whoClicked.uniqueId)
+                                , cloudFriend.server)
+                    }
                 }
             }
         }
