@@ -77,7 +77,9 @@ object FriendsOverviewInventory {
                                         setObject(NBTIdentifier.RELATIONSHIP, relationship)
                                         setInteger(NBTIdentifier.TYPE, GMCType.TP.ordinal)
 
-                                        displayName = I18NStrings.FRIENDS_JUMP.format(player, relationship.user2.name)
+                                        displayName = I18NStrings.FRIENDS_JUMP.format(player,
+                                                (if (friendOnline) ChatColor.GREEN.toString() + relationship.user2.name
+                                                else ChatColor.RED.toString() + relationship.user2.name))
                                     }.item)
 
                     // Delete item
