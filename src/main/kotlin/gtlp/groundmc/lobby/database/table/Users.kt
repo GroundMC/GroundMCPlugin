@@ -125,18 +125,19 @@ object Users : Table() {
      * Additionally stores the row in the cache.
      *
      * @param name the name to query the database for
-     * @return the row that contains all the columns defined in this class or
+     * @return the UUID that identifies the searched player or
      * `null`, if there is no player with the given [name]
      */
-    fun byName(name: String): ResultRow? {
-        return try {
-            val row = transaction {
-                return@transaction select { lastName eq name }.first()
-            }
-            userCache.put(row[id], row)
-            row
-        } catch (ex: NoSuchElementException) {
-            null
-        }
+    fun byName(name: String): UUID? {
+        return userCache.asMap().entries.firstOrNull { it.value[lastName] == name }?.key
+                ?: run {
+                    val row = transaction {
+                        return@transaction select { lastName eq name }.firstOrNull()
+                    }
+                    if (row != null) {
+                        userCache.put(row[id], row)
+                    }
+                    return@run row?.get(id)
+                }
     }
 }

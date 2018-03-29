@@ -1,5 +1,6 @@
 package gtlp.groundmc.lobby.commands
 
+import gtlp.groundmc.lobby.Friend
 import gtlp.groundmc.lobby.LobbyMain
 import gtlp.groundmc.lobby.database.table.Relationships
 import gtlp.groundmc.lobby.database.table.Users
@@ -111,7 +112,7 @@ class CommandFriend : ILobbyCommand {
                 sender.sendMessage(I18NStrings.COMMAND_FRIEND_NOT_FOUND.get(sender))
                 return true
             }
-            val relationship = Relationships.getRelationship(sender.uniqueId, friend[Users.id])
+            val relationship = Relationships.getRelationship(sender.uniqueId, friend)
             if (relationship != null) {
                 sender.sendMessage(I18NStrings.RELATIONSHIP_STATUS.format(sender, args[1],
                         relationship.since.toString(DateTimeFormat.mediumDate().withLocale(I18nUtils.getLocaleFromCommandSender(sender)))))
@@ -137,13 +138,13 @@ class CommandFriend : ILobbyCommand {
             sender.sendMessage(I18NStrings.COMMAND_FRIEND_SPECIFY_PLAYER.get(sender))
             return false
         }
-        val friend = Bukkit.getPlayer(args[1])
+        val friend = Users.byName(args[0])?.let { Friend.fromUniqueId(it) }
         if (friend == null) {
             sender.sendMessage(I18NStrings.COMMAND_FRIEND_PLAYER_NOT_FOUND.format(sender, args[1]))
             return true
         }
-        if (Relationships.areFriends(sender, friend)) {
-            Relationships.removeRelationship(sender, friend)
+        if (Relationships.areFriends(sender.uniqueId, friend.uniqueId)) {
+            Relationships.removeRelationship(sender.uniqueId, friend.uniqueId)
             sender.sendMessage(I18NStrings.COMMAND_FRIEND_NO_LONGER_RELATED.format(sender, friend.name))
             return true
         } else {

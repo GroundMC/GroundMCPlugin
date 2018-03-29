@@ -31,7 +31,7 @@ data class Relationship constructor(
     /**
      * The constructor to create a [Relationship] out of two usernames.
      */
-    constructor(user1Name: String, user2Name: String, since: DateTime = DateTime.now()) : this(Users.byName(user1Name)!![Users.id], Users.byName(user2Name)!![Users.id], since)
+    constructor(user1Name: String, user2Name: String, since: DateTime = DateTime.now()) : this(Users.byName(user1Name)!!, Users.byName(user2Name)!!, since)
 
     /**
      * The constructor to create a [Relationship] out of two users' [UUID]s.

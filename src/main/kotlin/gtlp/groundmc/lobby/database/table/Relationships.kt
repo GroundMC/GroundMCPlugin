@@ -188,16 +188,16 @@ object Relationships : Table() {
      * @param player the player that initiated the relationship removal
      * @param friend the friend to remove the relationship of
      */
-    fun removeRelationship(player: Player, friend: OfflinePlayer) {
+    fun removeRelationship(player: UUID, friend: UUID) {
         LobbyMain.logger.entering(Relationships::class, "removeRelationship")
         if (areFriends(player, friend)) {
             transaction {
-                deleteWhere { (userId1 eq player.uniqueId) and (userId2 eq friend.uniqueId) }
-                deleteWhere { (userId2 eq player.uniqueId) and (userId1 eq friend.uniqueId) }
+                deleteWhere { (userId1 eq player) and (userId2 eq friend) }
+                deleteWhere { (userId2 eq player) and (userId1 eq friend) }
                 commit()
             }
-            relationshipCache.refresh(player.uniqueId)
-            relationshipCache.refresh(friend.uniqueId)
+            relationshipCache.refresh(player)
+            relationshipCache.refresh(friend)
         }
     }
 
