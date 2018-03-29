@@ -6,6 +6,7 @@ import de.dytanic.cloudnet.bridge.CloudServer
 import gtlp.groundmc.lobby.LobbyMain
 import gtlp.groundmc.lobby.Relationship
 import gtlp.groundmc.lobby.database.table.Relationships
+import gtlp.groundmc.lobby.database.table.Users
 import gtlp.groundmc.lobby.enums.GMCType
 import gtlp.groundmc.lobby.enums.NBTIdentifier
 import gtlp.groundmc.lobby.inventory.FriendsOverviewInventory
@@ -89,8 +90,10 @@ object FriendsOverviewListener : Listener {
                 event.result = Event.Result.DENY
                 event.view.close()
                 async {
-                    Relationships.removeRelationship(event.whoClicked as Player,
-                            item.getObject(NBTIdentifier.RELATIONSHIP, Relationship::class)!!.user2.offlinePlayer)
+                    val friend = item.getObject(NBTIdentifier.RELATIONSHIP, Relationship::class)!!.user2.uniqueId
+                    Relationships.removeRelationship(event.whoClicked.uniqueId, friend)
+                    event.whoClicked.sendMessage(
+                            I18NStrings.COMMAND_FRIEND_NO_LONGER_RELATED.format(event.whoClicked as Player, Users[friend][Users.lastName]))
                 }
             }
         }
