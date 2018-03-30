@@ -63,6 +63,8 @@ enum class I18NStrings(val id: String) {
     RELATIONSHIP_REMOVE("relationship.remove"),
     FRIENDS_JUMP("friends.jump"),
     FRIENDS_OFFLINE("friends.offline"),
+    FRIENDS_NEXT_PAGE("friends.next_page"),
+    FRIENDS_PREVIOUS_PAGE("friends.previous_page")
     ;
 
     fun format(locale: Locale, vararg obj: Any?) = I18n.getString(id, locale)?.format(*obj)

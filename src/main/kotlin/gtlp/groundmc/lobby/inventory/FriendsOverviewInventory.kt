@@ -1,12 +1,14 @@
 package gtlp.groundmc.lobby.inventory
 
 import de.dytanic.cloudnet.api.CloudAPI
-import gtlp.groundmc.lobby.LobbyMain
 import gtlp.groundmc.lobby.Relationship
 import gtlp.groundmc.lobby.database.table.Relationships
 import gtlp.groundmc.lobby.enums.GMCType
 import gtlp.groundmc.lobby.enums.NBTIdentifier
-import gtlp.groundmc.lobby.util.*
+import gtlp.groundmc.lobby.util.I18NStrings
+import gtlp.groundmc.lobby.util.I18nUtils
+import gtlp.groundmc.lobby.util.NBTItemExt
+import gtlp.groundmc.lobby.util.OnlineOfflinePlayerComparator
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor
 import org.bukkit.Material
@@ -39,7 +41,9 @@ object FriendsOverviewInventory {
 
     internal const val TITLE = "Friends"
 
-    fun create(player: Player): Inventory = Bukkit.createInventory(player, 4 * 9, TITLE)
+    private const val INVENTORY_SIZE = 4 * 9
+
+    fun create(player: Player): Inventory = Bukkit.createInventory(player, INVENTORY_SIZE, TITLE)
             .apply {
                 fillFriendInventory(this, player)
             }
@@ -116,15 +120,41 @@ object FriendsOverviewInventory {
             }
         }
 
+        val pages = (relationships.size / PAGE_SIZE)
         inventory.setItem(INFO_ITEM_INDEX, NBTItemExt(Material.COMPASS).apply {
             setBoolean(NBTIdentifier.PREFIX, true)
             setInteger(NBTIdentifier.PAGE, page + 1)
             val newLore = lore
             newLore += "Online: ${Relationships.getOnlineFriends(player).size}"
-            newLore += I18NStrings.FRIENDS_PAGE.format(player, page + 1,
-                    (relationships.size / PAGE_SIZE) + 1)
+            newLore += I18NStrings.FRIENDS_PAGE.format(player, page + 1, pages + 1)
                     ?: ""
             this.lore = newLore
         }.item)
+
+        // Next page
+        if (page < pages) {
+            inventory.setItem(INFO_ITEM_INDEX + 1, NBTItemExt(Material.ARROW).apply {
+                setBoolean(NBTIdentifier.PREFIX, true)
+                setInteger(NBTIdentifier.PAGE, page + 1)
+                displayName = I18NStrings.FRIENDS_NEXT_PAGE.get(player)
+            }.item)
+        }
+
+        // Previous page
+        if (page > 0) {
+            inventory.setItem(INFO_ITEM_INDEX - 1, NBTItemExt(Material.ARROW).apply {
+                setBoolean(NBTIdentifier.PREFIX, true)
+                setInteger(NBTIdentifier.PAGE, page - 1)
+                displayName = I18NStrings.FRIENDS_PREVIOUS_PAGE.get(player)
+            }.item)
+        }
+    }
+
+    fun openPage(player: Player, item: ItemStack): Inventory = Bukkit.createInventory(player, INVENTORY_SIZE, TITLE).apply {
+        setItem(INFO_ITEM_INDEX, NBTItemExt(Material.COMPASS).apply {
+            setBoolean(NBTIdentifier.PREFIX, true)
+            setInteger(NBTIdentifier.PAGE, NBTItemExt(item).getInteger(NBTIdentifier.PAGE)!!)
+        }.item)
+        fillFriendInventory(this, player)
     }
 }

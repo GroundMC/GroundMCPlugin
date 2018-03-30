@@ -112,6 +112,23 @@ object FriendsOverviewListener : Listener {
     }
 
     @EventHandler
+    fun switchPage(event: InventoryClickEvent) {
+        if (event.whoClicked is Player
+                && event.inventory.title == FriendsOverviewInventory.TITLE
+                && NBTIdentifier.itemHasPrefix(event.currentItem)
+                && event.currentItem.type == Material.ARROW) {
+            event.result = Event.Result.DENY
+            async {
+                val inventory = FriendsOverviewInventory.openPage(
+                        event.whoClicked as Player, event.currentItem)
+                Bukkit.getScheduler().runTask(LobbyMain.instance, {
+                    event.whoClicked.openInventory(inventory)
+                })
+            }
+        }
+    }
+
+    @EventHandler
     fun removeFriend(event: InventoryClickEvent) {
         if (NBTIdentifier.itemHasPrefix(event.currentItem)
                 && event.whoClicked is Player) {
