@@ -68,10 +68,10 @@ object Users : Table() {
             }
         }
 
-        override fun loadAll(uuids: MutableIterable<UUID>): MutableMap<UUID, ResultRow> {
+        override fun loadAll(uuids: Iterable<UUID>): Map<UUID, ResultRow> {
             return transaction {
                 return@transaction Users.select { Users.id inList uuids }
-                        .associateBy { it[id] }.toMutableMap()
+                        .associateBy { it[id] }
             }
         }
 

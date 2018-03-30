@@ -1,14 +1,12 @@
 package gtlp.groundmc.lobby.inventory
 
 import de.dytanic.cloudnet.api.CloudAPI
+import gtlp.groundmc.lobby.LobbyMain
 import gtlp.groundmc.lobby.Relationship
 import gtlp.groundmc.lobby.database.table.Relationships
 import gtlp.groundmc.lobby.enums.GMCType
 import gtlp.groundmc.lobby.enums.NBTIdentifier
-import gtlp.groundmc.lobby.util.I18NStrings
-import gtlp.groundmc.lobby.util.I18nUtils
-import gtlp.groundmc.lobby.util.NBTItemExt
-import gtlp.groundmc.lobby.util.OnlineOfflinePlayerComparator
+import gtlp.groundmc.lobby.util.*
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor
 import org.bukkit.Material
@@ -18,6 +16,7 @@ import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.SkullMeta
 import org.joda.time.format.DateTimeFormat
+import java.util.*
 
 /**
  * Layout:
@@ -99,8 +98,11 @@ object FriendsOverviewInventory {
     }
 
     private fun fillFriendInventory(inventory: Inventory, player: Player) {
+        val onlinePlayers = CloudAPI.getInstance().onlinePlayers.associate { it.uniqueId to it }
         val relationships = Relationships.getRelationships(player)
-                .sortedWith(OnlineOfflinePlayerComparator())
+        Collections.sort(
+                relationships,
+                OnlineOfflinePlayerComparator(onlinePlayers))
         val page = if (NBTIdentifier.itemHasPrefix(inventory.getItem(INFO_ITEM_INDEX))) {
             val infoItem = NBTItemExt(inventory.getItem(INFO_ITEM_INDEX))
             if (infoItem.hasKey(NBTIdentifier.PAGE)) {
@@ -110,14 +112,14 @@ object FriendsOverviewInventory {
 
         if (relationships.isNotEmpty()) {
             relationships.chunked(PAGE_SIZE)[page].forEach {
-                inventory.addItem(this.getFriendSkull(it, player, CloudAPI.getInstance().getOnlinePlayer(it.user2.uniqueId) != null))
+                inventory.addItem(getFriendSkull(it, player, CloudAPI.getInstance().getOnlinePlayer(it.user2.uniqueId) != null))
             }
         }
 
         inventory.setItem(INFO_ITEM_INDEX, NBTItemExt(Material.COMPASS).apply {
-            this.setBoolean(NBTIdentifier.PREFIX, true)
-            this.setInteger(NBTIdentifier.PAGE, page + 1)
-            val newLore = this.lore
+            setBoolean(NBTIdentifier.PREFIX, true)
+            setInteger(NBTIdentifier.PAGE, page + 1)
+            val newLore = lore
             newLore += "Online: ${Relationships.getOnlineFriends(player).size}"
             newLore += I18NStrings.FRIENDS_PAGE.format(player, page + 1,
                     (relationships.size / PAGE_SIZE) + 1)

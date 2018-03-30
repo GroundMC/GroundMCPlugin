@@ -26,12 +26,12 @@ object Relationships : Table() {
      * The [UUID] of the first player in the relationship.
      * Usually the initiator.
      */
-    private val userId1 = uuid("user1").references(Users.id).primaryKey()
+    private val userId1 = uuid("user1").references(Users.id).primaryKey().index()
 
     /**
      * The [UUID] of the second player in the relationship.
      */
-    private val userId2 = uuid("user2").references(Users.id).primaryKey()
+    private val userId2 = uuid("user2").references(Users.id).primaryKey().index()
 
     /**
      * The timestamp at which the relationship was created.
@@ -46,14 +46,15 @@ object Relationships : Table() {
     class RelationshipCacheLoader : CacheLoader<UUID, List<Relationship>>() {
         override fun load(key: UUID): List<Relationship> {
             return transaction {
-                return@transaction select { userId1 eq key }
-                        .map {
-                            Relationship(it[userId1], it[userId2], it[since])
-                        }
+                return@transaction select { userId1 eq key }.also {
+                    Users.getAll(it.map { it[userId2] })
+                }.map {
+                    Relationship(it[userId1], it[userId2], it[since])
+                }
             }
         }
 
-        override fun loadAll(keys: MutableIterable<UUID>): MutableMap<UUID, List<Relationship>> {
+        override fun loadAll(keys: MutableIterable<UUID>): Map<UUID, List<Relationship>> {
             return transaction {
                 return@transaction select { userId1 inList keys }
                         .groupBy { it[userId1] }
@@ -62,7 +63,6 @@ object Relationships : Table() {
                                 Relationship(it[userId1], it[userId2], it[since])
                             }
                         }
-                        .toMutableMap()
             }
         }
     }
