@@ -32,9 +32,13 @@ object FriendsOverviewListener : Listener {
         if (event.whoClicked is Player && NBTIdentifier.itemHasPrefix(event.currentItem)
                 && NBTItemExt(event.currentItem).getInteger(NBTIdentifier.TYPE) == GMCType.FRIENDS.ordinal) {
             event.result = Event.Result.DENY
-            Bukkit.getScheduler().runTask(LobbyMain.instance, {
-                event.whoClicked.openInventory(FriendsOverviewInventory.create(event.whoClicked as Player))
-            })
+            async {
+                val inventory = FriendsOverviewInventory.create(
+                        event.whoClicked as Player)
+                Bukkit.getScheduler().runTask(LobbyMain.instance, {
+                    event.whoClicked.openInventory(inventory)
+                })
+            }
         }
     }
 
@@ -43,9 +47,13 @@ object FriendsOverviewListener : Listener {
         if (event.action != Action.PHYSICAL && NBTIdentifier.itemHasPrefix(event.item)
                 && NBTItemExt(event.item).getInteger(NBTIdentifier.TYPE) == GMCType.FRIENDS.ordinal) {
             event.isCancelled = true
-            Bukkit.getScheduler().runTask(LobbyMain.instance, {
-                event.player.openInventory(FriendsOverviewInventory.create(event.player))
-            })
+            async {
+                val inventory = FriendsOverviewInventory.create(
+                        event.player)
+                Bukkit.getScheduler().runTask(LobbyMain.instance, {
+                    event.player.openInventory(inventory)
+                })
+            }
         }
     }
 
@@ -73,10 +81,13 @@ object FriendsOverviewListener : Listener {
             val item = NBTItemExt(event.currentItem)
             if (item.hasKey(NBTIdentifier.RELATIONSHIP)) {
                 event.result = Event.Result.DENY
-                Bukkit.getScheduler().runTask(LobbyMain.instance, {
-                    event.whoClicked.openInventory(FriendsOverviewInventory.friendDetails(
-                            event.whoClicked as Player, item))
-                })
+                async {
+                    val inventory = FriendsOverviewInventory.friendDetails(
+                            event.whoClicked as Player, item)
+                    Bukkit.getScheduler().runTask(LobbyMain.instance, {
+                        event.whoClicked.openInventory(inventory)
+                    })
+                }
             }
         }
     }
@@ -89,10 +100,13 @@ object FriendsOverviewListener : Listener {
                 && event.whoClicked is Player) {
             val item = NBTItemExt(event.currentItem)
             if (item.hasKey(NBTIdentifier.PAGE)) {
-                Bukkit.getScheduler().runTask(LobbyMain.instance, {
-                    event.whoClicked.openInventory(FriendsOverviewInventory.friendDetails(
-                            event.whoClicked as Player, item))
-                })
+                async {
+                    val inventory = FriendsOverviewInventory.create(
+                            event.whoClicked as Player)
+                    Bukkit.getScheduler().runTask(LobbyMain.instance, {
+                        event.whoClicked.openInventory(inventory)
+                    })
+                }
             }
         }
     }
