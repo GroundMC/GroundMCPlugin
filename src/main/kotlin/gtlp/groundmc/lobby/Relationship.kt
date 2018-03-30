@@ -1,5 +1,7 @@
 package gtlp.groundmc.lobby
 
+import de.dytanic.cloudnet.api.CloudAPI
+import de.dytanic.cloudnet.lib.player.CloudPlayer
 import gtlp.groundmc.lobby.database.table.Users
 import org.bukkit.Bukkit
 import org.bukkit.OfflinePlayer
@@ -47,6 +49,9 @@ class Friend(val name: String, val uniqueId: UUID) {
 
     val player: Player?
         get() = Bukkit.getPlayer(uniqueId)
+
+    val cloudPlayer: CloudPlayer?
+        get() = CloudAPI.getInstance().getOnlinePlayer(uniqueId)
 
     companion object {
         fun fromPlayer(player: OfflinePlayer) = Friend(player.name, player.uniqueId)
