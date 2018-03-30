@@ -101,8 +101,8 @@ object FriendsOverviewInventory {
     private fun fillFriendInventory(inventory: Inventory, player: Player) {
         val relationships = Relationships.getRelationships(player)
                 .sortedWith(OnlineOfflinePlayerComparator())
-        val page = if (NBTIdentifier.itemHasPrefix(inventory.getItem(this.INFO_ITEM_INDEX))) {
-            val infoItem = NBTItemExt(inventory.getItem(this.INFO_ITEM_INDEX))
+        val page = if (NBTIdentifier.itemHasPrefix(inventory.getItem(INFO_ITEM_INDEX))) {
+            val infoItem = NBTItemExt(inventory.getItem(INFO_ITEM_INDEX))
             if (infoItem.hasKey(NBTIdentifier.PAGE)) {
                 (infoItem.getInteger(NBTIdentifier.PAGE) ?: 0)
             } else 0
@@ -114,13 +114,13 @@ object FriendsOverviewInventory {
             }
         }
 
-        inventory.setItem(this.INFO_ITEM_INDEX, NBTItemExt(Material.COMPASS).apply {
+        inventory.setItem(INFO_ITEM_INDEX, NBTItemExt(Material.COMPASS).apply {
             this.setBoolean(NBTIdentifier.PREFIX, true)
             this.setInteger(NBTIdentifier.PAGE, page + 1)
             val newLore = this.lore
             newLore += "Online: ${Relationships.getOnlineFriends(player).size}"
             newLore += I18NStrings.FRIENDS_PAGE.format(player, page + 1,
-                    (relationships.size / this@FriendsOverviewInventory.PAGE_SIZE) + 1)
+                    (relationships.size / PAGE_SIZE) + 1)
                     ?: ""
             this.lore = newLore
         }.item)

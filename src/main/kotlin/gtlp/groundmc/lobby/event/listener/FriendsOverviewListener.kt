@@ -14,6 +14,7 @@ import gtlp.groundmc.lobby.util.I18NStrings
 import gtlp.groundmc.lobby.util.NBTItemExt
 import kotlinx.coroutines.experimental.async
 import org.bukkit.Bukkit
+import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.event.Event
 import org.bukkit.event.EventHandler
@@ -72,6 +73,22 @@ object FriendsOverviewListener : Listener {
             val item = NBTItemExt(event.currentItem)
             if (item.hasKey(NBTIdentifier.RELATIONSHIP)) {
                 event.result = Event.Result.DENY
+                Bukkit.getScheduler().runTask(LobbyMain.instance, {
+                    event.whoClicked.openInventory(FriendsOverviewInventory.friendDetails(
+                            event.whoClicked as Player, item))
+                })
+            }
+        }
+    }
+
+    @EventHandler
+    fun jumpToFirstPage(event: InventoryClickEvent) {
+        if (NBTIdentifier.itemHasPrefix(event.currentItem)
+                && event.currentItem.type == Material.COMPASS
+                && event.inventory.title == FriendsOverviewInventory.TITLE
+                && event.whoClicked is Player) {
+            val item = NBTItemExt(event.currentItem)
+            if (item.hasKey(NBTIdentifier.PAGE)) {
                 Bukkit.getScheduler().runTask(LobbyMain.instance, {
                     event.whoClicked.openInventory(FriendsOverviewInventory.friendDetails(
                             event.whoClicked as Player, item))
