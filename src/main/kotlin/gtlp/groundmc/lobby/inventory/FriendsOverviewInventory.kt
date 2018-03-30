@@ -128,7 +128,8 @@ object FriendsOverviewInventory {
             newLore += "Online: ${Relationships.getOnlineFriends(player).size}"
             newLore += I18NStrings.FRIENDS_PAGE.format(player, page + 1, pages + 1)
                     ?: ""
-            this.lore = newLore
+            lore = newLore
+            displayName = " "
         }.item)
 
         // Next page
