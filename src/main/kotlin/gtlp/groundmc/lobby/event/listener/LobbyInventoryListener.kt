@@ -1,10 +1,12 @@
 package gtlp.groundmc.lobby.event.listener
 
 import gtlp.groundmc.lobby.Items
+import gtlp.groundmc.lobby.LobbyMain
 import gtlp.groundmc.lobby.enums.GMCType
 import gtlp.groundmc.lobby.enums.NBTIdentifier
 import gtlp.groundmc.lobby.inventory.LobbyInventory
 import gtlp.groundmc.lobby.util.NBTItemExt
+import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.Particle
 import org.bukkit.Sound
@@ -31,10 +33,9 @@ object LobbyInventoryListener : Listener {
     @EventHandler
     fun teleportPlayer(event: InventoryClickEvent) {
         val player = event.whoClicked as Player
-        if (event.clickedInventory != null && event.clickedInventory.title == LobbyInventory.TITLE) {
-            if (event.currentItem == null) {
-                return
-            }
+        if (event.currentItem != null
+                && event.clickedInventory != null
+                && event.clickedInventory.title == LobbyInventory.TITLE) {
             val nbtItem = NBTItemExt(event.currentItem)
             if (NBTIdentifier.itemHasPrefix(nbtItem.item) && nbtItem.getInteger(NBTIdentifier.TYPE) == GMCType.TP.ordinal) {
                 event.result = Event.Result.DENY
@@ -70,7 +71,9 @@ object LobbyInventoryListener : Listener {
     fun openLobbyInventory(event: InventoryClickEvent) {
         if (event.currentItem == Items.COMPASS_ITEM.item) {
             event.result = Event.Result.DENY
-            event.whoClicked.openInventory(LobbyInventory.create(event.whoClicked))
+            Bukkit.getScheduler().runTask(LobbyMain.instance, {
+                event.whoClicked.openInventory(LobbyInventory.create(event.whoClicked))
+            })
         }
     }
 
@@ -85,7 +88,9 @@ object LobbyInventoryListener : Listener {
         if (event.action != Action.PHYSICAL && NBTIdentifier.itemHasPrefix(event.item)
                 && event.item == Items.COMPASS_ITEM.item) {
             event.isCancelled = true
-            event.player.openInventory(LobbyInventory.create(event.player))
+            Bukkit.getScheduler().runTask(LobbyMain.instance, {
+                event.player.openInventory(LobbyInventory.create(event.player))
+            })
         }
     }
 }

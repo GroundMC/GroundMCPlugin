@@ -3,10 +3,12 @@ package gtlp.groundmc.lobby.event.listener
 import de.dytanic.cloudnet.api.CloudAPI
 import de.dytanic.cloudnet.api.player.PlayerExecutorBridge
 import gtlp.groundmc.lobby.Items
+import gtlp.groundmc.lobby.LobbyMain
 import gtlp.groundmc.lobby.enums.GMCType
 import gtlp.groundmc.lobby.enums.NBTIdentifier
 import gtlp.groundmc.lobby.inventory.LobbyChooser
 import gtlp.groundmc.lobby.util.NBTItemExt
+import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import org.bukkit.event.Event
 import org.bukkit.event.EventHandler
@@ -25,7 +27,9 @@ object LobbyChooserListener : Listener {
 
         if (event.currentItem == Items.LOBBY_CHOOSE_ITEM.item) {
             event.result = Event.Result.DENY
-            event.whoClicked.openInventory(LobbyChooser.create(event.whoClicked as Player))
+            Bukkit.getScheduler().runTask(LobbyMain.instance, {
+                event.whoClicked.openInventory(LobbyChooser.create(event.whoClicked as Player))
+            })
         }
     }
 
@@ -34,7 +38,9 @@ object LobbyChooserListener : Listener {
         if (event.action != Action.PHYSICAL && NBTIdentifier.itemHasPrefix(event.item)
                 && event.item == Items.LOBBY_CHOOSE_ITEM.item) {
             event.isCancelled = true
-            event.player.openInventory(LobbyChooser.create(event.player))
+            Bukkit.getScheduler().runTask(LobbyMain.instance, {
+                event.player.openInventory(LobbyChooser.create(event.player))
+            })
         }
     }
 
@@ -52,7 +58,9 @@ object LobbyChooserListener : Listener {
                 PlayerExecutorBridge.INSTANCE.sendPlayer(
                         CloudAPI.getInstance().getOnlinePlayer(player.uniqueId),
                         nbtItem.getString(NBTIdentifier.TP_LOC))
-                event.view.close()
+                Bukkit.getScheduler().runTask(LobbyMain.instance, {
+                    event.view.close()
+                })
             }
         }
     }

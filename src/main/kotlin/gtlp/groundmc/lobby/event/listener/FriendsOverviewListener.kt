@@ -93,7 +93,8 @@ object FriendsOverviewListener : Listener {
                     val friend = item.getObject(NBTIdentifier.RELATIONSHIP, Relationship::class)!!.user2.uniqueId
                     Relationships.removeRelationship(event.whoClicked.uniqueId, friend)
                     event.whoClicked.sendMessage(
-                            I18NStrings.COMMAND_FRIEND_NO_LONGER_RELATED.format(event.whoClicked as Player, Users[friend][Users.lastName]))
+                            I18NStrings.COMMAND_FRIEND_NO_LONGER_RELATED
+                                    .format(event.whoClicked as Player, Users[friend][Users.lastName]))
                 }
             }
         }
@@ -118,15 +119,16 @@ object FriendsOverviewListener : Listener {
                     return
                 }
                 async {
-
                     if (cloudFriend.server
                             == CloudServer.getInstance().serverProcessMeta.serviceId.serverId) {
-                        event.view.close()
                         Bukkit.getScheduler().runTask(LobbyMain.instance, {
+                            event.view.close()
                             event.whoClicked.teleport(friend.player)
                         })
                     } else {
-                        event.view.close()
+                        Bukkit.getScheduler().runTask(LobbyMain.instance, {
+                            event.view.close()
+                        })
                         PlayerExecutorBridge.INSTANCE.sendPlayer(
                                 CloudServer.getInstance().getCachedPlayer(event.whoClicked.uniqueId)
                                 , cloudFriend.server)
