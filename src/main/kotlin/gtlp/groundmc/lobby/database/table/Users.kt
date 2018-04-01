@@ -26,7 +26,7 @@ object Users : Table() {
     /**
      * The last name with which this player has been seen
      */
-    val lastName = text("last_name").index()
+    val lastName = varchar("last_name", 16).index()
 
     /**
      * Whether the chat is silent for this player or not
