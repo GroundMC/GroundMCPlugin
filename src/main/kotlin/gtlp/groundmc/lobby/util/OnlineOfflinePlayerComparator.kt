@@ -24,7 +24,7 @@ class OnlineOfflinePlayerComparator(private val onlinePlayers: Map<UUID, CloudPl
             player1 != null && player2 != null -> o1.user2.name.compareTo(o2.user2.name)
             player1 != null && player2 == null -> -1
             player1 == null && player2 != null -> 1
-            else -> o1.user2.name.compareTo(o2.user2.name)
+            else -> o1.user2.name.compareTo(o2.user2.name, true)
         }
     }
 }
