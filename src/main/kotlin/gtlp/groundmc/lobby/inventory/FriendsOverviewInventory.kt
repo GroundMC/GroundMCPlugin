@@ -88,7 +88,9 @@ object FriendsOverviewInventory {
             setBoolean(NBTIdentifier.PREFIX, true)
             setObject(NBTIdentifier.RELATIONSHIP, relationship)
             val newMeta = meta as SkullMeta
-            newMeta.playerProfile = Bukkit.createProfile(relationship.user2.name).also { it.complete(true) }
+            val profile = Bukkit.createProfile(relationship.user2.uniqueId, relationship.user2.name)
+            profile.complete(true)
+            newMeta.playerProfile = profile
             meta = newMeta
             displayName = relationship.user2.name
             val newLore = lore
