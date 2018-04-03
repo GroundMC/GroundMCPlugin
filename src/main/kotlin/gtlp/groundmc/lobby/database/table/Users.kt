@@ -53,8 +53,8 @@ object Users : Table() {
      * Improves overall performance and responsiveness.
      */
     private val userCache = CacheBuilder.newBuilder()
-            .expireAfterAccess(3, TimeUnit.SECONDS)
-            .refreshAfterWrite(2, TimeUnit.SECONDS)
+            .expireAfterAccess(1, TimeUnit.MINUTES)
+            .refreshAfterWrite(10, TimeUnit.SECONDS)
             .build<UUID, ResultRow>(CacheLoader.asyncReloading(UserCacheLoader(), Executors.newCachedThreadPool()))
 
     /**

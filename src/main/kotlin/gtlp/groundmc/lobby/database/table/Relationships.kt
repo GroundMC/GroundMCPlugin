@@ -39,7 +39,8 @@ object Relationships : Table() {
     private val since = datetime("since")
 
     private val relationshipCache = CacheBuilder.newBuilder()
-            .expireAfterAccess(5, TimeUnit.SECONDS).build(
+            .expireAfterAccess(1, TimeUnit.MINUTES)
+            .build(
                     CacheLoader.asyncReloading(RelationshipCacheLoader(), Executors.newCachedThreadPool())
             )
 

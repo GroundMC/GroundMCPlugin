@@ -49,7 +49,8 @@ object Statistics : Table() {
      * Cache to store the statistics of a player in for 10 seconds.
      */
     private val statisticsCache = CacheBuilder.newBuilder()
-            .refreshAfterWrite(10L, TimeUnit.SECONDS)
+            .expireAfterAccess(10, TimeUnit.SECONDS)
+            .refreshAfterWrite(10, TimeUnit.SECONDS)
             .build<StatisticsObject, Int?>(CacheLoader.asyncReloading(StatisticsCacheLoader(), Executors.newCachedThreadPool()))
 
     /**

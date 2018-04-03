@@ -57,7 +57,10 @@ object Events : Table() {
      */
     private val active = bool("active").default(true)
 
-    private val eventCache = CacheBuilder.newBuilder().refreshAfterWrite(5L, TimeUnit.SECONDS).build(CacheLoader.asyncReloading(
+    private val eventCache = CacheBuilder.newBuilder()
+            .refreshAfterWrite(5, TimeUnit.SECONDS)
+            .expireAfterAccess(5, TimeUnit.SECONDS)
+            .build(CacheLoader.asyncReloading(
             EventCacheLoader(), Executors.newCachedThreadPool()))
 
     class EventCacheLoader : CacheLoader<Unit, List<ResultRow>>() {

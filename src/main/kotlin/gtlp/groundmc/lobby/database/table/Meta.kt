@@ -43,10 +43,10 @@ object Meta : Table() {
 
     /**
      * The cache that is used to store configuration objects.
-     * Refreshes every 5 seconds.
+     * Refreshes every 10 seconds.
      */
     private val configCache = CacheBuilder.newBuilder()
-            .refreshAfterWrite(5L, TimeUnit.SECONDS)
+            .refreshAfterWrite(10, TimeUnit.SECONDS)
             .build<Config<*>, Any>(CacheLoader.asyncReloading(DatabaseCacheLoader(), Executors.newCachedThreadPool()))
 
     /**
