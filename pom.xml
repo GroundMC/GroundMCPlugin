@@ -9,9 +9,9 @@
     <version>1.8.0-b${env.BUILD_NUMBER}</version>
 
     <properties>
-        <kotlin.version>1.2.30</kotlin.version>
+        <kotlin.version>1.2.31</kotlin.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.source>1.10</maven.compiler.source>
+        <maven.compiler.source>1.9</maven.compiler.source>
         <maven.compiler.target>1.9</maven.compiler.target>
         <kotlin.compiler.incremental>true</kotlin.compiler.incremental>
     </properties>
@@ -28,10 +28,6 @@
         <repository>
             <id>destroystokyo-repo</id>
             <url>https://repo.destroystokyo.com/repository/maven-public/</url>
-        </repository>
-        <repository>
-            <id>local-system</id>
-            <url>http://127.0.0.1:8080/plugin/repository/everything/</url>
         </repository>
         <repository>
             <id>local-jenkins</id>
