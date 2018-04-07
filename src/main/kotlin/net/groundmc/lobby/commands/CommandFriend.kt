@@ -1,11 +1,11 @@
 package net.groundmc.lobby.commands
 
-import net.groundmc.lobby.Friend
 import net.groundmc.lobby.LobbyMain
 import net.groundmc.lobby.database.table.Relationships
 import net.groundmc.lobby.database.table.Users
 import net.groundmc.lobby.i18n.I18NStrings
 import net.groundmc.lobby.i18n.I18nUtils
+import net.groundmc.lobby.objects.Friend
 import net.groundmc.lobby.util.entering
 import org.bukkit.Bukkit
 import org.bukkit.command.Command

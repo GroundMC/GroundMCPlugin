@@ -1,7 +1,7 @@
 package net.groundmc.lobby.util
 
 import de.dytanic.cloudnet.lib.player.CloudPlayer
-import net.groundmc.lobby.Relationship
+import net.groundmc.lobby.objects.Relationship
 import java.util.*
 
 /**
@@ -11,7 +11,7 @@ import java.util.*
  *
  * `null` objects are sorted after non-null objects.
  */
-class OnlineOfflinePlayerComparator(private val onlinePlayers: Map<UUID, CloudPlayer?>) : Comparator<net.groundmc.lobby.Relationship> {
+class OnlineOfflinePlayerComparator(private val onlinePlayers: Map<UUID, CloudPlayer?>) : Comparator<Relationship> {
     override fun compare(o1: Relationship?, o2: Relationship?): Int {
         when {
             o1 == null && o2 == null -> return 0

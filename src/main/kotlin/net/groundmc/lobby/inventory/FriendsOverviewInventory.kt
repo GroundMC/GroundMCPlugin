@@ -1,13 +1,13 @@
 package net.groundmc.lobby.inventory
 
 import de.dytanic.cloudnet.api.CloudAPI
-import net.groundmc.lobby.Relationship
 import net.groundmc.lobby.database.table.Relationships
 import net.groundmc.lobby.enums.GMCType
 import net.groundmc.lobby.enums.NBTIdentifier
 import net.groundmc.lobby.i18n.I18NStrings
 import net.groundmc.lobby.i18n.I18nUtils
 import net.groundmc.lobby.objects.NBTItemExt
+import net.groundmc.lobby.objects.Relationship
 import net.groundmc.lobby.util.OnlineOfflinePlayerComparator
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor

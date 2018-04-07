@@ -5,7 +5,6 @@ import de.dytanic.cloudnet.api.player.PlayerExecutorBridge
 import de.dytanic.cloudnet.bridge.CloudServer
 import kotlinx.coroutines.experimental.async
 import net.groundmc.lobby.LobbyMain
-import net.groundmc.lobby.Relationship
 import net.groundmc.lobby.database.table.Relationships
 import net.groundmc.lobby.database.table.Users
 import net.groundmc.lobby.enums.GMCType
@@ -13,6 +12,7 @@ import net.groundmc.lobby.enums.NBTIdentifier
 import net.groundmc.lobby.i18n.I18NStrings
 import net.groundmc.lobby.inventory.FriendsOverviewInventory
 import net.groundmc.lobby.objects.NBTItemExt
+import net.groundmc.lobby.objects.Relationship
 import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.entity.Player

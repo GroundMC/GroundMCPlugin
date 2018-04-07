@@ -4,8 +4,8 @@ import com.google.common.cache.CacheBuilder
 import com.google.common.cache.CacheLoader
 import de.dytanic.cloudnet.api.CloudAPI
 import net.groundmc.lobby.LobbyMain
-import net.groundmc.lobby.Relationship
 import net.groundmc.lobby.i18n.I18n
+import net.groundmc.lobby.objects.Relationship
 import net.groundmc.lobby.util.entering
 import net.groundmc.lobby.util.exiting
 import org.bukkit.Bukkit
