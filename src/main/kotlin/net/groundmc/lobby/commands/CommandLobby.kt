@@ -55,11 +55,11 @@ class CommandLobby : ILobbyCommand {
                 }.filter { it.startsWith(args[0]) }.sorted()
                 2 -> when (args[0]) {
                     "maketp" -> return listOf("name")
-                    "config" -> return Config.values.map { it.key }.toList().filter { it.startsWith(args[1]) }.sorted()
+                    "config" -> return Config.keys.map { it.key }.toList().filter { it.startsWith(args[1]) }.sorted()
                 }
                 3 -> when (args[0]) {
                     "config" -> {
-                        val config = Config.values.firstOrNull { it.key == args[1] }
+                        val config = Config.keys.firstOrNull { it.key == args[1] }
                                 ?: return emptyList()
                         return when (config.type) {
                             Boolean::class.javaObjectType -> listOf("true", "false")
@@ -329,12 +329,12 @@ class CommandLobby : ILobbyCommand {
             return false
         }
         if (args.size == 1) {
-            val config = Config.values.firstOrNull { it.key == args[0] }
+            val config = Config.keys.firstOrNull { it.key == args[0] }
             if (config != null) {
                 sender.sendMessage("%s: %s".format(config, Meta[config]))
             }
         } else if (args.size == 2) {
-            val config = Config.values.firstOrNull { it.key == args[0] }
+            val config = Config.keys.firstOrNull { it.key == args[0] }
             if (config != null) {
                 Meta[config] = args[1]
                 sender.sendMessage("%s: %s".format(config, Meta[config]))

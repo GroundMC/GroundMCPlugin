@@ -5,11 +5,11 @@ import org.bukkit.Location
 class Config<T>(val key: String, val type: Class<T>) {
 
     init {
-        values.add(this)
+        keys.add(this)
     }
 
     companion object {
-        var values = mutableListOf<Config<*>>()
+        var keys = mutableListOf<Config<*>>()
         val DATABASE_VERSION = Config("db.version", Int::class.javaObjectType)
         val COINS_DAILY = Config("coins.daily", Int::class.javaObjectType)
         val SLOWCHAT_ENABLED = Config("slowchat.enabled", Boolean::class.javaObjectType)
