@@ -3,7 +3,6 @@ package net.groundmc.lobby.database.table
 import com.google.common.cache.CacheBuilder
 import com.google.common.cache.CacheLoader
 import kotlinx.coroutines.experimental.async
-import org.bukkit.OfflinePlayer
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.joda.time.DateTime
@@ -39,30 +38,30 @@ object FriendRequests : Table("FriendRequests") {
         }
     }
 
-    fun getRequestsFor(player: OfflinePlayer) = requestsFor[player.uniqueId]
+    fun getRequestsFor(player: UUID) = requestsFor[player]
 
-    fun getRequestsFrom(player: OfflinePlayer) = requestsFrom[player.uniqueId]
+    fun getRequestsFrom(player: UUID) = requestsFrom[player]
 
-    fun newRequest(requestPlayer: OfflinePlayer, requestedPlayer: OfflinePlayer) {
+    fun newRequest(requestPlayer: UUID, requestedPlayer: UUID) {
         async {
             transaction {
                 insert {
-                    it[requester] = requestedPlayer.uniqueId
-                    it[requested] = requestedPlayer.uniqueId
+                    it[requester] = requestedPlayer
+                    it[requested] = requestedPlayer
                 }
             }
-            requestsFor.refresh(requestedPlayer.uniqueId)
-            requestsFrom.refresh(requestPlayer.uniqueId)
+            requestsFor.refresh(requestedPlayer)
+            requestsFrom.refresh(requestPlayer)
         }
     }
 
-    fun removeRequest(requestPlayer: OfflinePlayer, requestedPlayer: OfflinePlayer) {
+    fun removeRequest(requestPlayer: UUID, requestedPlayer: UUID) {
         async {
             transaction {
-                deleteWhere { (requester eq requestPlayer.uniqueId) and (requested eq requestedPlayer.uniqueId) }
+                deleteWhere { (requester eq requestPlayer) and (requested eq requestedPlayer) }
             }
-            requestsFor.refresh(requestedPlayer.uniqueId)
-            requestsFrom.refresh(requestPlayer.uniqueId)
+            requestsFor.refresh(requestedPlayer)
+            requestsFrom.refresh(requestPlayer)
         }
     }
 
