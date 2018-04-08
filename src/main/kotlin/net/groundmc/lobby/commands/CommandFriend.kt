@@ -212,8 +212,9 @@ class CommandFriend : ILobbyCommand {
                             RequestListener.CHANNEL,
                             RequestListener.CHAT_COMPONENT,
                             Document("receiver", friend.uniqueId.toString())
+                                    .append("sender", sender.uniqueId.toString())
                                     .append("message", I18NStrings.FRIENDREQUEST_RECEIVED.id)
-                                    .append("sender", sender.uniqueId.toString()))
+                    )
                 }
                 sender.sendMessage(I18NStrings.FRIENDREQUEST_SENT.format(sender, onlineFriend.name))
             }
