@@ -64,7 +64,11 @@ enum class I18NStrings(val id: String) {
     FRIENDS_JUMP("friends.jump"),
     FRIENDS_OFFLINE("friends.offline"),
     FRIENDS_NEXT_PAGE("friends.next_page"),
-    FRIENDS_PREVIOUS_PAGE("friends.previous_page")
+    FRIENDS_PREVIOUS_PAGE("friends.previous_page"),
+    FRIENDREQUEST_SENT("friendrequest.sent"),
+    FRIENDREQUEST_RECEIVED("friendrequest.received"),
+    FRIENDREQUEST_ACCEPT("friendrequest.accept"),
+    FRIENDREQUEST_DENY("friendrequest.deny")
     ;
 
     fun format(locale: Locale, vararg obj: Any?) = I18n.getString(id, locale)?.format(*obj)
