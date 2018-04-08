@@ -9,7 +9,6 @@ import net.groundmc.lobby.objects.Relationship
 import net.groundmc.lobby.util.entering
 import net.groundmc.lobby.util.exiting
 import org.bukkit.Bukkit
-import org.bukkit.OfflinePlayer
 import org.bukkit.entity.Player
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
@@ -69,26 +68,13 @@ object Relationships : Table() {
     }
 
     /**
-     * Adds a relationship between [player] and [friend]
-     *
-     * @param player the player that initiated the relationship
-     * @param friend the friend to add the relationship to
-     *
-     * @see addRelationship
-     */
-    fun addRelationship(player: Player, friend: OfflinePlayer) {
-        addRelationship(player, Relationship(player.uniqueId, friend.uniqueId))
-    }
-
-    /**
      * Adds a relationship between [Relationship.user1] and [Relationship.user2]
      *
      * @param player the initiator of the relationship
      * @param relationship the relationship to add
      *
-     * @see addRelationship
      */
-    private fun addRelationship(player: Player, relationship: Relationship) {
+    fun addRelationship(player: Player, relationship: Relationship) {
         LobbyMain.logger.entering(Relationships::class, "addRelationship")
         LobbyMain.logger.fine("Adding new relationship: $relationship")
         if (!areFriends(relationship.user1.uniqueId, relationship.user2.uniqueId)) {
@@ -121,21 +107,6 @@ object Relationships : Table() {
      *
      * @return whether there exists a relationship between [player] and [friend]
      */
-    fun areFriends(player: OfflinePlayer, friend: OfflinePlayer): Boolean {
-        LobbyMain.logger.entering(Relationships::class, "areFriends")
-        return areFriends(player.uniqueId, friend.uniqueId)
-    }
-
-    /**
-     * Queries the database for a relationship between [player] and [friend]
-     *
-     * @param player the player to query the relationship for
-     * @param friend the possible friend of [player]
-     *
-     * @return whether there exists a relationship between [player] and [friend]
-     *
-     * @see areFriends
-     */
     fun areFriends(player: UUID, friend: UUID): Boolean {
         LobbyMain.logger.entering(Relationships::class, "areFriends")
         return relationshipCache[player]
@@ -154,20 +125,6 @@ object Relationships : Table() {
         return relationshipCache[player.uniqueId]
     }
 
-
-    /**
-     * Gets the relationship between [player]  and [friend]
-     *
-     * @param player the player to query the relationship for
-     * @param friend the friend to get the relationship for
-     *
-     * @return a [Relationship] object holding the relationship between
-     * [player] and [friend], if any, otherwise null
-     */
-    fun getRelationship(player: OfflinePlayer, friend: OfflinePlayer): Relationship? {
-        LobbyMain.logger.entering(Relationships::class, "getRelationship")
-        return getRelationship(player.uniqueId, friend.uniqueId)
-    }
 
     /**
      * Gets the relationship between [player]  and [friend]

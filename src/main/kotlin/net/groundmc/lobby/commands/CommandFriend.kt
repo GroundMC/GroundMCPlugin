@@ -11,6 +11,7 @@ import net.groundmc.lobby.event.listener.RequestListener
 import net.groundmc.lobby.i18n.I18NStrings
 import net.groundmc.lobby.i18n.I18nUtils
 import net.groundmc.lobby.objects.Friend
+import net.groundmc.lobby.objects.Relationship
 import net.groundmc.lobby.util.entering
 import org.bukkit.Bukkit
 import org.bukkit.command.Command
@@ -192,6 +193,7 @@ class CommandFriend : ILobbyCommand {
         async {
             if (uuid != null) {
                 FriendRequests.removeRequest(uuid, sender.uniqueId)
+                Relationships.addRelationship(sender, Relationship(sender.uniqueId, uuid))
                 return@async
             }
             val friend = CloudAPI.getInstance().getOfflinePlayer(args[1])
