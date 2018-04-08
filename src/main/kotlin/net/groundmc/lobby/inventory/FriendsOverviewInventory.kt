@@ -1,6 +1,8 @@
 package net.groundmc.lobby.inventory
 
 import de.dytanic.cloudnet.api.CloudAPI
+import de.dytanic.cloudnet.bridge.CloudServer
+import de.dytanic.cloudnet.lib.player.CloudPlayer
 import net.groundmc.lobby.database.table.Relationships
 import net.groundmc.lobby.enums.GMCType
 import net.groundmc.lobby.enums.NBTIdentifier
@@ -54,12 +56,12 @@ object FriendsOverviewInventory {
         return Bukkit.createInventory(player, 2 * 9, relationship.user2.name)
                 .apply {
                     // Skull
-                    val friendOnline = CloudAPI.getInstance().getOnlinePlayer(relationship.user2.uniqueId) != null
+                    val friendOnline = CloudAPI.getInstance().getOnlinePlayer(relationship.user2.uniqueId)
                     setItem(4, getFriendSkull(relationship, player, friendOnline))
 
                     // Teleport if online
                     setItem(11,
-                            (if (friendOnline) NBTItemExt(Material.EYE_OF_ENDER)
+                            (if (friendOnline != null) NBTItemExt(Material.EYE_OF_ENDER)
                             else NBTItemExt(Material.ENDER_PEARL))
                                     .apply {
                                         setBoolean(NBTIdentifier.PREFIX, true)
@@ -67,7 +69,7 @@ object FriendsOverviewInventory {
                                         setInteger(NBTIdentifier.TYPE, GMCType.TP.ordinal)
 
                                         displayName = I18NStrings.FRIENDS_JUMP.format(player,
-                                                (if (friendOnline) ChatColor.GREEN.toString() + relationship.user2.name
+                                                (if (friendOnline != null) ChatColor.GREEN.toString() + relationship.user2.name
                                                 else ChatColor.RED.toString() + relationship.user2.name))
                                     }.item)
 
@@ -82,7 +84,7 @@ object FriendsOverviewInventory {
                 }
     }
 
-    private fun getFriendSkull(relationship: Relationship, player: Player, friendOnline: Boolean): ItemStack {
+    private fun getFriendSkull(relationship: Relationship, player: Player, friendOnline: CloudPlayer?): ItemStack {
         return NBTItemExt(ItemStack(Material.SKULL_ITEM, 1,
                 SkullType.PLAYER.ordinal.toShort())).apply {
             setBoolean(NBTIdentifier.PREFIX, true)
@@ -94,7 +96,14 @@ object FriendsOverviewInventory {
             meta = newMeta
             displayName = relationship.user2.name
             val newLore = lore
-            newLore += if (friendOnline) "${ChatColor.GREEN}Online" else "${ChatColor.RED}Offline"
+            if (friendOnline != null) {
+                newLore += "${ChatColor.GREEN}Online"
+                newLore += if (CloudServer.getInstance().groupData.name == CloudAPI.getInstance().getServerGroup(friendOnline.server).name) {
+                    "${ChatColor.GREEN}${friendOnline.server}"
+                } else {
+                    "${ChatColor.RED}${friendOnline.server}"
+                }
+            } else newLore += "${ChatColor.RED}Offline"
             newLore += I18NStrings.RELATIONSHIP_SINCE.format(player.locale,
                     relationship.since.toString(DateTimeFormat.mediumDate()
                             .withLocale(I18nUtils.getLocaleFromCommandSender(player))))
@@ -118,7 +127,7 @@ object FriendsOverviewInventory {
 
         if (relationships.isNotEmpty()) {
             relationships.chunked(PAGE_SIZE)[page].forEach {
-                inventory.addItem(getFriendSkull(it, player, CloudAPI.getInstance().getOnlinePlayer(it.user2.uniqueId) != null))
+                inventory.addItem(getFriendSkull(it, player, CloudAPI.getInstance().getOnlinePlayer(it.user2.uniqueId)))
             }
         }
 
