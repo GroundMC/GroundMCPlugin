@@ -1,12 +1,20 @@
 package net.groundmc.lobby.commands
 
+import de.dytanic.cloudnet.api.CloudAPI
+import de.dytanic.cloudnet.lib.utility.document.Document
+import kotlinx.coroutines.experimental.async
 import net.groundmc.lobby.LobbyMain
+import net.groundmc.lobby.database.table.FriendRequests
 import net.groundmc.lobby.database.table.Relationships
 import net.groundmc.lobby.database.table.Users
+import net.groundmc.lobby.event.listener.RequestListener
 import net.groundmc.lobby.i18n.I18NStrings
 import net.groundmc.lobby.i18n.I18nUtils
 import net.groundmc.lobby.objects.Friend
 import net.groundmc.lobby.util.entering
+import net.md_5.bungee.api.chat.ClickEvent
+import net.md_5.bungee.api.chat.ComponentBuilder
+import net.md_5.bungee.api.chat.TextComponent
 import org.bukkit.Bukkit
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
@@ -136,6 +144,17 @@ class CommandFriend : ILobbyCommand {
             sender.sendMessage(I18NStrings.COMMAND_FRIEND_SPECIFY_PLAYER.get(sender))
             return false
         }
+
+        val uuid = try {
+            UUID.fromString(args[0])
+        } catch (e: IllegalArgumentException) {
+            null
+        }
+        if (uuid != null) {
+            FriendRequests.removeRequest(uuid, sender.uniqueId)
+            return true
+        }
+
         val friend = Users.byName(args[0])?.let { Friend.fromUniqueId(it) }
         if (friend == null) {
             sender.sendMessage(I18NStrings.COMMAND_FRIEND_PLAYER_NOT_FOUND.format(sender, args[1]))
@@ -156,6 +175,7 @@ class CommandFriend : ILobbyCommand {
      *
      * @param sender the initiator of the relationship addition
      * @param args the arguments passed to this command, requires 2 to be successful ("add" and the name of the friend).
+     *             Substitute the name for the UUID to accept a friend request
      *
      * @return whether the command executed successfully.
      */
@@ -165,23 +185,56 @@ class CommandFriend : ILobbyCommand {
             sender.sendMessage(I18NStrings.COMMAND_FRIEND_SPECIFY_PLAYER.get(sender))
             return false
         }
-        val friend = Bukkit.getPlayer(args[1])
-        if (friend == null) {
-            sender.sendMessage(I18NStrings.COMMAND_FRIEND_PLAYER_NOT_FOUND.format(sender, args[1]))
-            return true
+
+        val uuid = try {
+            UUID.fromString(args[1])
+        } catch (e: IllegalArgumentException) {
+            null
         }
-        if (sender.name == args[1]) {
-            sender.sendMessage(I18NStrings.COMMAND_FRIEND_CANT_ADD_YOURSELF.get(sender))
-            return true
+
+        async {
+            if (uuid != null) {
+                FriendRequests.removeRequest(uuid, sender.uniqueId)
+                return@async
+            }
+            val friend = CloudAPI.getInstance().getOfflinePlayer(args[1])
+            if (friend == null) {
+                sender.sendMessage(I18NStrings.COMMAND_FRIEND_PLAYER_NOT_FOUND.format(sender, args[1]))
+            }
+            if (sender.name == args[1]) {
+                sender.sendMessage(I18NStrings.COMMAND_FRIEND_CANT_ADD_YOURSELF.get(sender))
+            }
+            if (Relationships.areFriends(sender.uniqueId, friend.uniqueId)) {
+                sender.sendMessage(I18NStrings.COMMAND_FRIEND_ALREADY_FRIENDS.format(sender, args[1]))
+            } else {
+                LobbyMain.logger.fine("${sender.name} tried to add ${friend.name} as a friend")
+                FriendRequests.newRequest(sender.uniqueId, friend.uniqueId)
+                val onlineFriend = CloudAPI.getInstance().getOnlinePlayer(friend.uniqueId)
+                if (onlineFriend != null) {
+                    CloudAPI.getInstance().sendCustomSubServerMessage(
+                            RequestListener.CHANNEL,
+                            RequestListener.CHAT_COMPONENT,
+                            Document("receiver", friend.uniqueId.toString()).append(
+                                    "message",
+                                    Document.GSON.toJson(ComponentBuilder("")
+                                            .append(TextComponent.fromLegacyText(I18NStrings.FRIENDREQUEST_RECEIVED.id))
+                                            .append(
+                                                    TextComponent.fromLegacyText(I18NStrings.FRIENDREQUEST_ACCEPT.id).apply {
+                                                        this.forEach {
+                                                            it.clickEvent = ClickEvent(ClickEvent.Action.RUN_COMMAND, "/friend add ${sender.uniqueId}")
+                                                        }
+                                                    })
+                                            .append(" | ")
+                                            .append(TextComponent.fromLegacyText(I18NStrings.FRIENDREQUEST_DENY.id).apply {
+                                                this.forEach {
+                                                    it.clickEvent = ClickEvent(ClickEvent.Action.RUN_COMMAND, "/friend remove ${sender.uniqueId}")
+                                                }
+                                            }).create()
+                                    )))
+                }
+                sender.sendMessage(I18NStrings.FRIENDREQUEST_SENT.format(sender, onlineFriend.name))
+            }
         }
-        if (Relationships.areFriends(sender, friend)) {
-            sender.sendMessage(I18NStrings.COMMAND_FRIEND_ALREADY_FRIENDS.format(sender, args[1]))
-            return true
-        } else {
-            LobbyMain.logger.fine("${sender.name} tried to add ${friend.name} as a friend")
-            Relationships.addRelationship(sender, friend)
-            sender.sendMessage(I18NStrings.COMMAND_FRIEND_SUCCESSFULLY_ADDED.format(sender, args[1]))
-            return true
-        }
+        return true
     }
 }

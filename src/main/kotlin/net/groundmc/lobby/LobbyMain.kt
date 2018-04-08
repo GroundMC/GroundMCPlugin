@@ -2,12 +2,10 @@ package net.groundmc.lobby
 
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
+import com.google.gson.TypeAdapterFactory
 import com.zaxxer.hikari.HikariDataSource
 import de.tr7zw.itemnbtapi.utils.GsonWrapper
-import net.groundmc.lobby.database.table.Events
-import net.groundmc.lobby.database.table.Meta
-import net.groundmc.lobby.database.table.Relationships
-import net.groundmc.lobby.database.table.Users
+import net.groundmc.lobby.database.table.*
 import net.groundmc.lobby.event.listener.*
 import net.groundmc.lobby.inventory.LobbyInventory
 import net.groundmc.lobby.objects.Items
@@ -90,7 +88,7 @@ class LobbyMain : JavaPlugin() {
         })
         try {
             transaction {
-                createMissingTablesAndColumns(net.groundmc.lobby.database.table.Meta, Users, Relationships, Events)
+                createMissingTablesAndColumns(Meta, Users, Relationships, Events, FriendRequests)
             }
         } catch (e: Exception) {
             logger.warning("Error in first database update pass. If you are updating the database from version " +
@@ -158,7 +156,7 @@ class LobbyMain : JavaPlugin() {
         fGson.set(null, GsonBuilder().apply {
             registerTypeAdapter(Location::class.java, LocationTypeAdapter)
             registerTypeAdapter(DateTime::class.java, DateTimeAdapter)
-            factories.forEach { this::registerTypeAdapterFactory }
+            factories.forEach { registerTypeAdapterFactory(it as TypeAdapterFactory) }
         }.create())
         logger.exiting(LobbyMain::class, "registerGsonHandlers")
     }
