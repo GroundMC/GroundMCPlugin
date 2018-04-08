@@ -12,9 +12,6 @@ import net.groundmc.lobby.i18n.I18NStrings
 import net.groundmc.lobby.i18n.I18nUtils
 import net.groundmc.lobby.objects.Friend
 import net.groundmc.lobby.util.entering
-import net.md_5.bungee.api.chat.ClickEvent
-import net.md_5.bungee.api.chat.ComponentBuilder
-import net.md_5.bungee.api.chat.TextComponent
 import org.bukkit.Bukkit
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
@@ -214,23 +211,9 @@ class CommandFriend : ILobbyCommand {
                     CloudAPI.getInstance().sendCustomSubServerMessage(
                             RequestListener.CHANNEL,
                             RequestListener.CHAT_COMPONENT,
-                            Document("receiver", friend.uniqueId.toString()).append(
-                                    "message",
-                                    Document.GSON.toJson(ComponentBuilder("")
-                                            .append(TextComponent.fromLegacyText(I18NStrings.FRIENDREQUEST_RECEIVED.id))
-                                            .append(
-                                                    TextComponent.fromLegacyText(I18NStrings.FRIENDREQUEST_ACCEPT.id).apply {
-                                                        this.forEach {
-                                                            it.clickEvent = ClickEvent(ClickEvent.Action.RUN_COMMAND, "/friend add ${sender.uniqueId}")
-                                                        }
-                                                    })
-                                            .append(" | ")
-                                            .append(TextComponent.fromLegacyText(I18NStrings.FRIENDREQUEST_DENY.id).apply {
-                                                this.forEach {
-                                                    it.clickEvent = ClickEvent(ClickEvent.Action.RUN_COMMAND, "/friend remove ${sender.uniqueId}")
-                                                }
-                                            }).create()
-                                    )))
+                            Document("receiver", friend.uniqueId.toString())
+                                    .append("message", I18NStrings.FRIENDREQUEST_RECEIVED.id)
+                                    .append("sender", sender.uniqueId.toString()))
                 }
                 sender.sendMessage(I18NStrings.FRIENDREQUEST_SENT.format(sender, onlineFriend.name))
             }
