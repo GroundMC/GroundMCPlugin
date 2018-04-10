@@ -13,7 +13,7 @@ import java.util.*
 /**
  * Command to manage coins, a virtual currency of literally no value
  */
-class CommandCoins : ILobbyCommand {
+object CommandCoins : ILobbyCommand {
     override val name: String = "coins"
 
     override fun getCommandHelp(locale: Locale) = I18NStrings.COMMAND_COINS_HELP.get(locale)

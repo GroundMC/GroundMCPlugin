@@ -13,7 +13,7 @@ import java.util.*
 /**
  * Command to list friends
  */
-class CommandFriends : ILobbyCommand {
+object CommandFriends : ILobbyCommand {
     override val name: String = "friends"
 
     override fun getCommandHelp(locale: Locale) = I18n.getString("command.friends.help", locale)

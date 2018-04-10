@@ -38,7 +38,7 @@ import kotlin.concurrent.thread
  * This also allows administrators to add more teleport destinations.
  * Additionally, events can be added to the scoreboard as well.
  */
-class CommandLobby : ILobbyCommand {
+object CommandLobby : ILobbyCommand {
 
     override val name = "globby"
 

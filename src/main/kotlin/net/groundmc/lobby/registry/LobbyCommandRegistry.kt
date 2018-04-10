@@ -8,17 +8,12 @@ import net.groundmc.lobby.util.exiting
 import org.bukkit.Bukkit
 import org.bukkit.command.CommandSender
 import org.bukkit.help.HelpTopic
-import kotlin.reflect.KClass
-import kotlin.reflect.full.cast
 
 /**
  * Registry where all commands are saved.
  * Used by [LobbyMain]
  */
 object LobbyCommandRegistry {
-
-    val commands = mutableMapOf<KClass<out ILobbyCommand>, ILobbyCommand>()
-
     /**
      * Registers the [org.bukkit.command.CommandExecutor] and
      * [org.bukkit.command.TabCompleter] for the given [ILobbyCommand]
@@ -36,7 +31,6 @@ object LobbyCommandRegistry {
             override fun getFullText(forWho: CommandSender) =
                     cmd.getCommandHelp(I18nUtils.getLocaleFromCommandSender(forWho))
         })
-        commands[cmd::class] = cmd
         LobbyMain.logger.exiting(LobbyCommandRegistry::class, "registerCommand")
     }
 }

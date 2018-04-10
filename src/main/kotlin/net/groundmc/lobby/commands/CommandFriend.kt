@@ -1,7 +1,6 @@
 package net.groundmc.lobby.commands
 
 import de.dytanic.cloudnet.api.CloudAPI
-import de.dytanic.cloudnet.lib.player.OfflinePlayer
 import de.dytanic.cloudnet.lib.utility.document.Document
 import kotlinx.coroutines.experimental.async
 import net.groundmc.lobby.LobbyMain
@@ -24,7 +23,7 @@ import java.util.*
 /**
  * Collection of commands related to friends management
  */
-class CommandFriend : ILobbyCommand {
+object CommandFriend : ILobbyCommand {
     override val name = "friend"
 
     override fun getCommandHelp(locale: Locale) = I18NStrings.COMMAND_FRIEND_HELP.get(locale)

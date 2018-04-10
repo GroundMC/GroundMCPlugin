@@ -5,11 +5,13 @@ import com.google.gson.GsonBuilder
 import com.google.gson.TypeAdapterFactory
 import com.zaxxer.hikari.HikariDataSource
 import de.tr7zw.itemnbtapi.utils.GsonWrapper
+import net.groundmc.lobby.commands.*
 import net.groundmc.lobby.database.table.*
 import net.groundmc.lobby.event.listener.*
 import net.groundmc.lobby.inventory.LobbyInventory
 import net.groundmc.lobby.objects.Items
 import net.groundmc.lobby.registry.LobbyCommandRegistry
+import net.groundmc.lobby.registry.LobbyCommandRegistry.registerCommand
 import net.groundmc.lobby.task.*
 import net.groundmc.lobby.util.*
 import org.bukkit.Bukkit
@@ -241,11 +243,12 @@ class LobbyMain : JavaPlugin() {
     private fun registerCommands() {
         logger.entering(LobbyMain::class, "registerCommands")
         logger.config("Registering commands...")
-        LobbyCommandRegistry.registerCommand(net.groundmc.lobby.commands.CommandLobby())
-        LobbyCommandRegistry.registerCommand(net.groundmc.lobby.commands.CommandVanish())
-        LobbyCommandRegistry.registerCommand(net.groundmc.lobby.commands.CommandCoins())
-        LobbyCommandRegistry.registerCommand(net.groundmc.lobby.commands.CommandFriend())
-        LobbyCommandRegistry.registerCommand(net.groundmc.lobby.commands.CommandFriends())
+        arrayOf(CommandLobby,
+                CommandVanish,
+                CommandCoins,
+                CommandFriend,
+                CommandFriends
+        ).forEach(LobbyCommandRegistry::registerCommand)
         logger.exiting(LobbyMain::class, "registerCommands")
     }
 

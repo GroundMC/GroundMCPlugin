@@ -18,7 +18,7 @@ import java.util.*
 /**
  * Command to let player's vanish from the sight of other players
  */
-class CommandVanish : ILobbyCommand {
+object CommandVanish : ILobbyCommand {
     override val name = "vanish"
 
     override fun getCommandHelp(locale: Locale) = "Vanishes"

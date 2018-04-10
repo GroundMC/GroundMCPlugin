@@ -6,7 +6,6 @@ import net.groundmc.lobby.enums.Config
 import net.groundmc.lobby.enums.GMCType
 import net.groundmc.lobby.enums.NBTIdentifier
 import net.groundmc.lobby.objects.NBTItemExt
-import net.groundmc.lobby.registry.LobbyCommandRegistry
 import org.bukkit.Location
 import org.bukkit.Sound
 import org.bukkit.entity.Player
@@ -71,7 +70,7 @@ object LobbyInteractionListener : Listener {
             if (NBTIdentifier.itemHasPrefix(damager.inventory.itemInMainHand)) {
                 val item = NBTItemExt(damager.inventory.itemInMainHand)
                 if (item.getInteger(NBTIdentifier.TYPE) == GMCType.FRIENDS.ordinal) {
-                    (LobbyCommandRegistry.commands[CommandFriend::class] as CommandFriend).addFriendRequest(damager, event.entity.uniqueId)
+                    CommandFriend.addFriendRequest(damager, event.entity.uniqueId)
                 }
             }
         }
