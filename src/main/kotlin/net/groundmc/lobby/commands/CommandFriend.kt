@@ -1,6 +1,7 @@
 package net.groundmc.lobby.commands
 
 import de.dytanic.cloudnet.api.CloudAPI
+import de.dytanic.cloudnet.lib.player.OfflinePlayer
 import de.dytanic.cloudnet.lib.utility.document.Document
 import kotlinx.coroutines.experimental.async
 import net.groundmc.lobby.LobbyMain
@@ -207,20 +208,24 @@ class CommandFriend : ILobbyCommand {
                 sender.sendMessage(I18NStrings.COMMAND_FRIEND_ALREADY_FRIENDS.format(sender, args[1]))
             } else {
                 LobbyMain.logger.fine("${sender.name} tried to add ${friend.name} as a friend")
-                FriendRequests.newRequest(sender.uniqueId, friend.uniqueId)
-                val onlineFriend = CloudAPI.getInstance().getOnlinePlayer(friend.uniqueId)
-                if (onlineFriend != null) {
-                    CloudAPI.getInstance().sendCustomSubServerMessage(
-                            RequestListener.CHANNEL,
-                            RequestListener.CHAT_COMPONENT,
-                            Document("receiver", friend.uniqueId.toString())
-                                    .append("sender", sender.uniqueId.toString())
-                                    .append("message", I18NStrings.FRIENDREQUEST_RECEIVED.id)
-                    )
-                }
-                sender.sendMessage(I18NStrings.FRIENDREQUEST_SENT.format(sender, onlineFriend.name))
+                addFriendRequest(sender, friend.uniqueId)
             }
         }
         return true
+    }
+
+    fun addFriendRequest(sender: Player, friend: UUID) {
+        FriendRequests.newRequest(sender.uniqueId, friend)
+        val onlineFriend = CloudAPI.getInstance().getOnlinePlayer(friend)
+        if (onlineFriend != null) {
+            CloudAPI.getInstance().sendCustomSubServerMessage(
+                    RequestListener.CHANNEL,
+                    RequestListener.CHAT_COMPONENT,
+                    Document("receiver", friend.toString())
+                            .append("sender", sender.uniqueId.toString())
+                            .append("message", I18NStrings.FRIENDREQUEST_RECEIVED.id)
+            )
+        }
+        sender.sendMessage(I18NStrings.FRIENDREQUEST_SENT.format(sender, onlineFriend.name))
     }
 }
