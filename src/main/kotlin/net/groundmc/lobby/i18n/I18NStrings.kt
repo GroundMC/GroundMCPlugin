@@ -68,20 +68,23 @@ enum class I18NStrings(val id: String) {
     FRIENDREQUEST_SENT("friendrequest.sent"),
     FRIENDREQUEST_RECEIVED("friendrequest.received"),
     FRIENDREQUEST_ACCEPT("friendrequest.accept"),
-    FRIENDREQUEST_DENY("friendrequest.deny")
+    FRIENDREQUEST_DENY("friendrequest.deny"),
+    FRIENDREQUEST_TITLE("friendrequest.title"),
+    ONLINE("online"),
+    OFFLINE("offline"),
     ;
 
-    fun format(locale: Locale, vararg obj: Any?) = I18n.getString(id, locale)?.format(*obj)
+    fun format(locale: Locale, vararg obj: Any?) = I18n.getString(id, locale)?.format(*obj)!!
 
-    fun format(locale: String, vararg obj: Any?) = I18n.getString(id, locale)?.format(*obj)
+    fun format(locale: String, vararg obj: Any?) = I18n.getString(id, locale)?.format(*obj)!!
 
-    fun format(player: Player, vararg obj: Any?) = I18n.getString(id, I18nUtils.getLocaleFromCommandSender(player))?.format(*obj)
+    fun format(player: Player, vararg obj: Any?) = I18n.getString(id, I18nUtils.getLocaleFromCommandSender(player))?.format(*obj)!!
 
-    fun get(locale: Locale) = I18n.getString(id, locale)
+    fun get(locale: Locale) = I18n.getString(id, locale)!!
 
-    fun get(locale: String) = I18n.getString(id, locale)
+    fun get(locale: String) = I18n.getString(id, locale)!!
 
-    fun get() = I18n.getString(id)
+    fun get() = I18n.getString(id)!!
 
-    fun get(player: Player) = I18n.getString(id, I18nUtils.getLocaleFromCommandSender(player))
+    fun get(player: Player) = I18n.getString(id, I18nUtils.getLocaleFromCommandSender(player))!!
 }
