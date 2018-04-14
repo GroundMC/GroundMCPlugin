@@ -30,10 +30,6 @@
             <url>https://repo.destroystokyo.com/repository/maven-public/</url>
         </repository>
         <repository>
-            <id>local-jenkins</id>
-            <url>https://ci.groundmc.net/plugin/repository/everything/</url>
-        </repository>
-        <repository>
             <id>cloudnet</id>
             <url>http://dytanic.de/repositories/</url>
         </repository>
