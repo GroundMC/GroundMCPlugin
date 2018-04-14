@@ -41,12 +41,15 @@ enum class GMCType {
 
     companion object {
 
+        val BY_ID = mutableMapOf<Int, GMCType>()
+
+        // Put after all needed values and variables, otherwise they will be null
+        // (no idea why, though)
         init {
             values().forEach {
                 BY_ID[it.ordinal] = it
             }
         }
 
-        val BY_ID = mutableMapOf<Int, GMCType>()
     }
 }
