@@ -98,7 +98,9 @@ object FriendsOverviewInventory {
                         } else {
                             "${ChatColor.RED}${friendOnline.server}"
                         }
-                    } else it += "${ChatColor.RED}Offline"
+                    } else {
+                        it += I18NStrings.OFFLINE.get(player)
+                    }
                     it += I18NStrings.RELATIONSHIP_SINCE.format(player.locale,
                             relationship.since.toString(DateTimeFormat.mediumDate()
                                     .withLocale(I18nUtils.getLocaleFromCommandSender(player))))
