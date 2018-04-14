@@ -1,7 +1,7 @@
 package net.groundmc.lobby.objects
 
-import com.google.common.base.MoreObjects
 import de.tr7zw.itemnbtapi.NBTItem
+import net.groundmc.lobby.enums.GMCType
 import net.groundmc.lobby.enums.NBTIdentifier
 import org.bukkit.Material
 import org.bukkit.enchantments.Enchantment
@@ -185,6 +185,11 @@ class NBTItemExt(item: ItemStack) : NBTItem(item), Cloneable {
         }
         get() = item.itemMeta.displayName
 
+    fun setDisplayName(name: String?): NBTItemExt {
+        displayName = name
+        return this
+    }
+
     /**
      * The metadata of this item.
      * This member allows easy read and write access.
@@ -194,6 +199,18 @@ class NBTItemExt(item: ItemStack) : NBTItem(item), Cloneable {
             item.itemMeta = itemMeta
         }
         get() = item.itemMeta
+
+    fun setMeta(newMeta: ItemMeta): NBTItemExt {
+        meta = newMeta
+        return this
+    }
+
+    fun setMeta(block: (ItemMeta) -> Unit): NBTItemExt {
+        val oldMeta = meta
+        block(oldMeta)
+        meta = oldMeta
+        return this
+    }
 
     /**
      * The lore of this item.
@@ -206,6 +223,11 @@ class NBTItemExt(item: ItemStack) : NBTItem(item), Cloneable {
             item.itemMeta = meta
         }
         get() = if (meta.hasLore()) item.itemMeta.lore else mutableListOf()
+
+    fun setLore(loreList: MutableList<String>): NBTItemExt {
+        lore = loreList
+        return this
+    }
 
 
     /**
@@ -258,7 +280,7 @@ class NBTItemExt(item: ItemStack) : NBTItem(item), Cloneable {
     }
 
     /**
-     * Removes flags to this item.
+     * Removes flags on this item.
      *
      * @param flags the flags to remove
      *
@@ -273,23 +295,27 @@ class NBTItemExt(item: ItemStack) : NBTItem(item), Cloneable {
         return this
     }
 
+    fun setType(gmcType: GMCType): NBTItemExt {
+        setInteger(NBTIdentifier.TYPE, gmcType.ordinal)
+        return this
+    }
+
+    fun getType() = if (hasKey(NBTIdentifier.TYPE)) {
+        GMCType.BY_ID[getInteger(NBTIdentifier.TYPE)!!]
+    } else {
+        null
+    }
+
+    fun removeType(): NBTItemExt {
+        removeKey(NBTIdentifier.TYPE)
+        return this
+    }
+
     /**
      * Clones this item by creating a new instance of this item.
      *
      * @return a clone of this item.
      */
     public override fun clone(): NBTItemExt = NBTItemExt(item)
-
-    /**
-     * Creates a string representation of this item.
-     *
-     * @return the string representation of this item.
-     */
-    override fun toString(): String {
-        return MoreObjects.toStringHelper(this)
-                .add("bukkitItem", item)
-                .add("parent", parent)
-                .toString()
-    }
 
 }

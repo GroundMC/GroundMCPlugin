@@ -4,6 +4,7 @@ package net.groundmc.lobby.enums
  * Enum to determine the type of a lobby item.
  */
 enum class GMCType {
+
     /**
      * Denotes no special type
      */
@@ -34,5 +35,18 @@ enum class GMCType {
      */
     FRIENDS,
 
-    REMOVE_FRIEND;
+    REMOVE_FRIEND,
+
+    FRIENDREQUESTS;
+
+    companion object {
+
+        init {
+            values().forEach {
+                BY_ID[it.ordinal] = it
+            }
+        }
+
+        val BY_ID = mutableMapOf<Int, GMCType>()
+    }
 }

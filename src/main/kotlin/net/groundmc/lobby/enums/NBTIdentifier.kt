@@ -1,5 +1,6 @@
 package net.groundmc.lobby.enums
 
+import de.tr7zw.itemnbtapi.NBTItem
 import net.groundmc.lobby.objects.NBTItemExt
 import org.bukkit.inventory.ItemStack
 
@@ -69,5 +70,14 @@ enum class NBTIdentifier(
          *          and is true.
          */
         fun itemHasPrefix(item: ItemStack?): Boolean = item != null && NBTItemExt(item).getBoolean(PREFIX) == true
+
+        /**
+         * Checks whether an item fulfills the constraint of being not-null and having
+         * an element of type [Boolean] with key [PREFIX] and that that element is true.
+         *
+         * @return whether the [item] has an element with key [PREFIX] of type [Boolean]
+         *          and is true.
+         */
+        fun itemHasPrefix(item: NBTItem?): Boolean = item != null && item.getBoolean(PREFIX.toString()) == true
     }
 }
