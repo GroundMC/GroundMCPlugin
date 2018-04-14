@@ -1,10 +1,10 @@
 package net.groundmc.lobby.inventory
 
-import net.groundmc.lobby.LobbyMain
 import net.groundmc.lobby.enums.Config
 import net.groundmc.lobby.enums.NBTIdentifier
 import net.groundmc.lobby.objects.Items
 import net.groundmc.lobby.objects.NBTItemExt
+import net.groundmc.lobby.util.LOGGER
 import net.groundmc.lobby.util.entering
 import net.groundmc.lobby.util.exiting
 import org.bukkit.Bukkit
@@ -46,11 +46,9 @@ internal object LobbyInventory {
      * @return the cloned inventory, for use by [inventoryHolder]
      */
     fun create(inventoryHolder: InventoryHolder): Inventory {
-        LobbyMain.logger.entering(LobbyInventory::class, "create")
         pullTemplate()
         val clone = Bukkit.createInventory(inventoryHolder, TEMPLATE_INVENTORY.size, TITLE)
         clone.contents = TEMPLATE_INVENTORY.contents
-        LobbyMain.logger.exiting(LobbyInventory::class, "create")
         return clone
     }
 
@@ -60,6 +58,7 @@ internal object LobbyInventory {
      * last pull.
      */
     private fun pullTemplate() {
+        LOGGER.entering(LobbyInventory::class, "pullTemplate")
         if (System.currentTimeMillis() - lastPull < updateTime) {
             return
         }
@@ -75,5 +74,6 @@ internal object LobbyInventory {
                 }.item)
             }
         }
+        LOGGER.exiting(LobbyInventory::class, "pullTemplate")
     }
 }

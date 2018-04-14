@@ -1,10 +1,10 @@
 package net.groundmc.lobby.event.listener
 
 import com.google.common.cache.CacheBuilder
-import net.groundmc.lobby.LobbyMain
 import net.groundmc.lobby.database.table.Meta
 import net.groundmc.lobby.enums.Config
 import net.groundmc.lobby.i18n.I18n
+import net.groundmc.lobby.util.LOGGER
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
@@ -39,7 +39,7 @@ object ChatInteractionListener : Listener {
             if (nextMessage.getIfPresent(event.player) != null) {
                 event.isCancelled = true
                 event.player.sendMessage(I18n.getString("too_many_messages", event.player.locale))
-                LobbyMain.logger.finest("${event.player} sent messages too quickly!")
+                LOGGER.finest("${event.player} sent messages too quickly!")
             } else {
                 nextMessage.put(event.player, Unit)
             }

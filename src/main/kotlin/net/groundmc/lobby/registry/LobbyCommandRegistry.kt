@@ -3,6 +3,7 @@ package net.groundmc.lobby.registry
 import net.groundmc.lobby.LobbyMain
 import net.groundmc.lobby.commands.ILobbyCommand
 import net.groundmc.lobby.i18n.I18nUtils
+import net.groundmc.lobby.util.LOGGER
 import net.groundmc.lobby.util.entering
 import net.groundmc.lobby.util.exiting
 import org.bukkit.Bukkit
@@ -21,8 +22,8 @@ object LobbyCommandRegistry {
      * @param cmd the command to register
      */
     fun registerCommand(cmd: ILobbyCommand) {
-        LobbyMain.logger.entering(LobbyCommandRegistry::class, "registerCommand")
-        LobbyMain.logger.config("Registering command: ${cmd.name}")
+        LOGGER.entering(LobbyCommandRegistry::class, "registerCommand", cmd)
+        LOGGER.config("Registering command: ${cmd.name}")
         Bukkit.getServer().getPluginCommand(cmd.name).executor = cmd
         Bukkit.getServer().getPluginCommand(cmd.name).tabCompleter = cmd
         Bukkit.getServer().helpMap.addTopic(object : HelpTopic() {
@@ -31,6 +32,6 @@ object LobbyCommandRegistry {
             override fun getFullText(forWho: CommandSender) =
                     cmd.getCommandHelp(I18nUtils.getLocaleFromCommandSender(forWho))
         })
-        LobbyMain.logger.exiting(LobbyCommandRegistry::class, "registerCommand")
+        LOGGER.exiting(LobbyCommandRegistry::class, "registerCommand")
     }
 }

@@ -2,7 +2,8 @@ package net.groundmc.lobby.database.table
 
 import com.google.common.cache.CacheBuilder
 import com.google.common.cache.CacheLoader
-import net.groundmc.lobby.LobbyMain
+import kotlinx.coroutines.experimental.async
+import net.groundmc.lobby.util.LOGGER
 import net.groundmc.lobby.util.entering
 import net.groundmc.lobby.util.exiting
 import org.bukkit.command.CommandSender
@@ -105,10 +106,10 @@ object Events : Table() {
      * @see getCurrentEvents
      */
     fun disable(n: Int): ResultRow {
-        LobbyMain.logger.entering(Events::class, "disable")
+        LOGGER.entering(Events::class, "disable", n)
         return transaction {
             val events = getCurrentEvents()
-            LobbyMain.logger.info("Disabling ${events[n]}")
+            LOGGER.info("Disabling ${events[n]}")
             return@transaction events[n].also {
                 update({ id eq it[id] }, null, {
                     it[active] = false
@@ -131,18 +132,21 @@ object Events : Table() {
      * @return the success of this insert call
      */
     fun newEvent(eventTitle: String, sender: CommandSender, beginDate: DateTime, endDate: DateTime): Boolean {
-        LobbyMain.logger.entering(Events::class, "newEvent")
-        LobbyMain.logger.info("Creating new event: $eventTitle, $sender, $beginDate, $endDate")
-        transaction {
-            insert {
-                it[title] = eventTitle
-                it[creator] = (sender as? Player)?.uniqueId
-                it[creationTime] = DateTime.now()
-                it[beginTime] = beginDate
-                it[endTime] = endDate
+        LOGGER.entering(Events::class, "newEvent", eventTitle, sender, beginDate, endDate)
+        async {
+            transaction {
+                insert {
+                    it[title] = eventTitle
+                    it[creator] = (sender as? Player)?.uniqueId
+                    it[creationTime] = DateTime.now()
+                    it[beginTime] = beginDate
+                    it[endTime] = endDate
+                }
+                commit()
+                eventCache.refresh(Unit)
             }
         }
-        LobbyMain.logger.exiting(Events::class, "newEvent")
+        LOGGER.exiting(Events::class, "newEvent")
         return true
     }
 }

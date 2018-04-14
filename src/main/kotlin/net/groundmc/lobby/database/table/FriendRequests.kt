@@ -3,6 +3,9 @@ package net.groundmc.lobby.database.table
 import com.google.common.cache.CacheBuilder
 import com.google.common.cache.CacheLoader
 import kotlinx.coroutines.experimental.async
+import net.groundmc.lobby.util.LOGGER
+import net.groundmc.lobby.util.entering
+import net.groundmc.lobby.util.exiting
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.joda.time.DateTime
@@ -43,6 +46,7 @@ object FriendRequests : Table("FriendRequests") {
     fun getRequestsFrom(player: UUID) = requestsFrom[player]
 
     fun newRequest(requestPlayer: UUID, requestedPlayer: UUID) {
+        LOGGER.entering(FriendRequests::class, "newRequest", requestPlayer, requestedPlayer)
         async {
             transaction {
                 insert {
@@ -52,16 +56,19 @@ object FriendRequests : Table("FriendRequests") {
             }
             requestsFor.refresh(requestedPlayer)
             requestsFrom.refresh(requestPlayer)
+            LOGGER.exiting(FriendRequests::class, "newRequest")
         }
     }
 
     fun removeRequest(requestPlayer: UUID, requestedPlayer: UUID) {
+        LOGGER.entering(FriendRequests::class, "removeRequest", requestPlayer, requestedPlayer)
         async {
             transaction {
                 deleteWhere { (requester eq requestPlayer) and (requested eq requestedPlayer) }
             }
             requestsFor.refresh(requestedPlayer)
             requestsFrom.refresh(requestPlayer)
+            LOGGER.exiting(FriendRequests::class, "removeRequest")
         }
     }
 

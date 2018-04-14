@@ -27,6 +27,10 @@ fun Logger.entering(kClass: KClass<*>, sourceMethod: String) {
     entering(kClass.qualifiedName, sourceMethod)
 }
 
+fun Logger.entering(kClass: KClass<*>, sourceMethod: String, vararg params: Any?) {
+    entering(kClass.qualifiedName, sourceMethod, params)
+}
+
 /**
  * Extension to [MutableList].
  *
@@ -85,3 +89,5 @@ inline val Int.megabytes: Int
  */
 inline val Int.kilobytes: Int
     get() = this * 1024
+
+lateinit var LOGGER: Logger

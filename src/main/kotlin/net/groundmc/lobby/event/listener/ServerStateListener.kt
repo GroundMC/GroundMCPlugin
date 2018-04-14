@@ -11,10 +11,7 @@ import net.groundmc.lobby.enums.Permission
 import net.groundmc.lobby.enums.VisibilityStates
 import net.groundmc.lobby.i18n.I18n
 import net.groundmc.lobby.objects.Items
-import net.groundmc.lobby.util.copy
-import net.groundmc.lobby.util.entering
-import net.groundmc.lobby.util.exiting
-import net.groundmc.lobby.util.hasPermission
+import net.groundmc.lobby.util.*
 import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.Sound
@@ -109,11 +106,11 @@ object ServerStateListener : Listener {
      */
     @EventHandler
     fun onPlayerChangeLocale(event: PlayerLocaleChangeEvent) {
-        LobbyMain.logger.entering(ServerStateListener::class, "onPlayerChangeLocale")
+        LOGGER.entering(ServerStateListener::class, "onPlayerChangeLocale", event)
         if (event.player.world == (net.groundmc.lobby.database.table.Meta[Config.HUB_LOCATION] as Location).world) {
             addItemsToInventory(event.player)
         }
-        LobbyMain.logger.exiting(ServerStateListener::class, "onPlayerChangeLocale")
+        LOGGER.exiting(ServerStateListener::class, "onPlayerChangeLocale")
     }
 
     /**
@@ -124,8 +121,7 @@ object ServerStateListener : Listener {
      */
     @EventHandler(priority = EventPriority.LOWEST)
     fun onPlayerLogin(event: PlayerJoinEvent) {
-        LobbyMain.logger.entering(ServerStateListener::class, "onPlayerLogin")
-        LobbyMain.logger.fine("Player joined: $event")
+        LOGGER.entering(ServerStateListener::class, "onPlayerLogin", event)
         event.joinMessage = null
         async {
             transaction {
@@ -152,7 +148,7 @@ object ServerStateListener : Listener {
             addDailyBonus(event.player)
         }
         createScoreboard(event.player)
-        LobbyMain.logger.exiting(ServerStateListener::class, "onPlayerLogin")
+        LOGGER.exiting(ServerStateListener::class, "onPlayerLogin")
     }
 
     /**
@@ -208,14 +204,13 @@ object ServerStateListener : Listener {
      */
     @EventHandler(priority = EventPriority.LOWEST)
     fun onPlayerLogout(event: PlayerQuitEvent) {
-        LobbyMain.logger.entering(ServerStateListener::class, "onPlayerLogout")
-        LobbyMain.logger.fine("Player left: $event")
+        LOGGER.entering(ServerStateListener::class, "onPlayerLogout", event)
         event.quitMessage = null
         if (event.player.world == (net.groundmc.lobby.database.table.Meta[Config.HUB_LOCATION] as Location).world) {
             event.player.inventory.contents = LobbyMain.originalInventories[event.player]
         }
         LobbyMain.originalInventories.remove(event.player)
         SilentChatListener.SILENCED_PLAYERS.remove(event.player)
-        LobbyMain.logger.exiting(ServerStateListener::class, "onPlayerLogout")
+        LOGGER.exiting(ServerStateListener::class, "onPlayerLogout")
     }
 }

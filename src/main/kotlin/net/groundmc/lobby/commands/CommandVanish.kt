@@ -1,10 +1,10 @@
 package net.groundmc.lobby.commands
 
 import kotlinx.coroutines.experimental.async
-import net.groundmc.lobby.LobbyMain
 import net.groundmc.lobby.database.table.Users
 import net.groundmc.lobby.enums.Permission
 import net.groundmc.lobby.i18n.I18n
+import net.groundmc.lobby.util.LOGGER
 import net.groundmc.lobby.util.entering
 import net.groundmc.lobby.util.hasPermission
 import org.bukkit.command.Command
@@ -26,7 +26,7 @@ object CommandVanish : ILobbyCommand {
     override fun onTabComplete(sender: CommandSender, command: Command, alias: String?, args: Array<out String>?): List<String>? = null
 
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<String>?): Boolean {
-        LobbyMain.logger.entering(CommandVanish::class, "onCommand")
+        LOGGER.entering(CommandVanish::class, "onCommand", sender, command, label, args?.joinToString())
         if (sender is Player) {
             if (sender.hasPermission(Permission.VANISH)) {
                 async {

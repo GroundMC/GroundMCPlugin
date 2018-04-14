@@ -7,6 +7,7 @@ import net.groundmc.lobby.enums.GMCType
 import net.groundmc.lobby.enums.NBTIdentifier
 import net.groundmc.lobby.inventory.LobbyInventory
 import net.groundmc.lobby.objects.NBTItemExt
+import net.groundmc.lobby.util.LOGGER
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor
 import org.bukkit.Location
@@ -23,7 +24,7 @@ object UpdateLobbyInventoryTask : ITask {
 
     override fun run() {
         if (!Bukkit.getPluginManager().isPluginEnabled("Multiverse-Core")) {
-            LobbyMain.logger.config("Multiverse-Core not found or enabled, disabling interop.")
+            LOGGER.config("Multiverse-Core not found or enabled, disabling interop.")
             LobbyMain.tasks[this]?.cancel()
             return
         }
@@ -43,7 +44,7 @@ object UpdateLobbyInventoryTask : ITask {
                         return
                     }
 
-                    val color = when (Math.floor((nPlayers.toDouble() / playerLimit))) {
+                    val color = when (Math.floor((nPlayers.toDouble() / playerLimit.toDouble()))) {
                         0.0 -> ChatColor.WHITE.toString()
                         0.3 -> ChatColor.GREEN.toString()
                         0.6 -> ChatColor.GOLD.toString()

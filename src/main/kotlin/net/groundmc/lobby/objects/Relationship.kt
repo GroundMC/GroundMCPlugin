@@ -1,5 +1,6 @@
 package net.groundmc.lobby.objects
 
+import com.google.common.base.MoreObjects
 import de.dytanic.cloudnet.api.CloudAPI
 import de.dytanic.cloudnet.lib.player.CloudPlayer
 import net.groundmc.lobby.database.table.Users
@@ -40,6 +41,11 @@ data class Relationship constructor(
      */
     constructor(user1Id: UUID, user2Id: UUID, since: DateTime = DateTime.now()) : this(Friend.fromUniqueId(user1Id), Friend.fromUniqueId(user2Id), since)
 
+    override fun toString() = MoreObjects.toStringHelper(this)
+            .add("user1", user1)
+            .add("user2", user2)
+            .add("since", since)
+            .toString()
 }
 
 class Friend(val name: String, val uniqueId: UUID) {
@@ -52,6 +58,11 @@ class Friend(val name: String, val uniqueId: UUID) {
 
     val cloudPlayer: CloudPlayer?
         get() = CloudAPI.getInstance().getOnlinePlayer(uniqueId)
+
+    override fun toString() = MoreObjects.toStringHelper(this)
+            .add("name", name)
+            .add("uniqueId", uniqueId)
+            .toString()
 
     companion object {
         fun fromPlayer(player: OfflinePlayer) = Friend(player.name, player.uniqueId)

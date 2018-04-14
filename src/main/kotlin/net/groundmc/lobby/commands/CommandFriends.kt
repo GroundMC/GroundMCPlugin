@@ -1,8 +1,8 @@
 package net.groundmc.lobby.commands
 
-import net.groundmc.lobby.LobbyMain
 import net.groundmc.lobby.database.table.Relationships
 import net.groundmc.lobby.i18n.I18n
+import net.groundmc.lobby.util.LOGGER
 import net.groundmc.lobby.util.entering
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
@@ -21,8 +21,8 @@ object CommandFriends : ILobbyCommand {
     override fun onTabComplete(sender: CommandSender, command: Command, alias: String?, args: Array<out String>?): List<String>? = null
 
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<String>?): Boolean {
-        LobbyMain.logger.entering(CommandFriends::class, "onCommand")
-        LobbyMain.logger.finest("Getting friends of ${sender.name}")
+        LOGGER.entering(CommandFriends::class, "onCommand", sender, command, label, args?.joinToString())
+        LOGGER.finest("Getting friends of ${sender.name}")
         if (sender is Player) {
             val friends = Relationships.getRelationships(sender)
             if (friends.isEmpty()) {

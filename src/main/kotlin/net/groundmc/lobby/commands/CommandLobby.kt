@@ -13,6 +13,7 @@ import net.groundmc.lobby.i18n.I18nUtils
 import net.groundmc.lobby.inventory.LobbyInventory
 import net.groundmc.lobby.objects.NBTItemExt
 import net.groundmc.lobby.task.SetRulesTask
+import net.groundmc.lobby.util.LOGGER
 import net.groundmc.lobby.util.entering
 import net.groundmc.lobby.util.exiting
 import net.groundmc.lobby.util.hasPermission
@@ -45,6 +46,7 @@ object CommandLobby : ILobbyCommand {
     override fun getCommandHelp(locale: Locale) = I18n.getString("command.lobby.help", locale = locale)
 
     override fun onTabComplete(sender: CommandSender, command: Command, alias: String?, args: Array<out String>?): List<String>? {
+        LOGGER.entering(CommandLobby::class, "onTabComplete", sender, command, alias, args?.joinToString())
         if (args != null) {
             when (args.size) {
                 1 -> return mutableListOf("", "additem", "maketp", "help", "debug", "event").apply {
@@ -75,8 +77,8 @@ object CommandLobby : ILobbyCommand {
     }
 
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<String>?): Boolean {
-        LobbyMain.logger.entering(CommandLobby::class, "onCommand")
-        LobbyMain.logger.finest("${sender.name} issued $command - ${args?.joinToString()
+        LOGGER.entering(CommandLobby::class, "onCommand", sender, command, label, args?.joinToString())
+        LOGGER.finest("${sender.name} issued $command - ${args?.joinToString()
                 ?: "null"}")
         if (args != null && args.isNotEmpty()) {
             when (args[0]) {
@@ -121,7 +123,7 @@ object CommandLobby : ILobbyCommand {
      * @return is always true to not trigger the command help of Spigot.
      */
     private fun setLobby(sender: CommandSender): Boolean {
-        LobbyMain.logger.entering(CommandLobby::class, "setLobby")
+        LOGGER.entering(CommandLobby::class, "setLobby", sender)
         if (sender.hasPermission(Permission.ADMIN) && sender is Player) {
             Meta[Config.HUB_LOCATION] = sender.location
             Bukkit.getServer().scheduler.scheduleSyncDelayedTask(LobbyMain.instance, SetRulesTask)
@@ -131,7 +133,7 @@ object CommandLobby : ILobbyCommand {
         } else if (sender is ConsoleCommandSender) {
             sender.sendMessage(I18n.getString("command.playeronly", Locale.getDefault()))
         }
-        LobbyMain.logger.exiting(CommandLobby::class, "setLobby")
+        LOGGER.exiting(CommandLobby::class, "setLobby")
         return true
     }
 
@@ -144,8 +146,9 @@ object CommandLobby : ILobbyCommand {
      * @return is always true to not trigger the command help of Spigot.
      */
     private fun debug(sender: CommandSender): Boolean {
+        LOGGER.entering(CommandLobby::class, "debug", sender)
         if (sender.hasPermission(Permission.ADMIN)) {
-            LobbyMain.instance.logger.info("Flushing log and forcing a rotate...")
+            LOGGER.info("Flushing log and forcing a rotate...")
 
             val handler = LobbyMain.instance.logger.handlers.first {
                 it is FileHandler
@@ -157,7 +160,7 @@ object CommandLobby : ILobbyCommand {
             val file = clazz.getDeclaredField("files").apply { isAccessible = true }.get(handler) as Array<File>
 
             sender.sendMessage("See the log file ${file[1].canonicalPath}")
-            LobbyMain.instance.logger.info("Log finished.")
+            LOGGER.info("Log finished.")
         } else if (sender is Player) {
             sender.sendMessage(I18n.getString("lobby.nopermission", sender.locale))
         }
@@ -172,7 +175,7 @@ object CommandLobby : ILobbyCommand {
      * @return `true` when the items have been successfully, `false` otherwise.
      */
     private fun addItem(sender: CommandSender): Boolean {
-        LobbyMain.logger.entering(CommandLobby::class, "addItem")
+        LOGGER.entering(CommandLobby::class, "addItem", sender)
         if (sender is Player) {
             if (sender.hasPermission(Permission.ADMIN)) {
                 thread {
@@ -211,7 +214,7 @@ object CommandLobby : ILobbyCommand {
      * @return `true` when the item has successfully been modified, `false` otherwise.
      */
     private fun makeTp(args: Array<String>, sender: CommandSender): Boolean {
-        LobbyMain.logger.entering(CommandLobby::class, "makeTp")
+        LOGGER.entering(CommandLobby::class, "makeTp", args.joinToString(), sender)
         if (sender is Player) {
             if (sender.hasPermission(Permission.ADMIN) && args.size >= 2) {
                 val nbtItem = NBTItemExt(sender.inventory.itemInMainHand)
@@ -229,8 +232,8 @@ object CommandLobby : ILobbyCommand {
                 clickComponent.clickEvent = ClickEvent(ClickEvent.Action.RUN_COMMAND, "/$name additem")
                 msg.addExtra(clickComponent)
                 msg.addExtra(strList[2])
-                sender.spigot().sendMessage(msg)
-                LobbyMain.logger.finest("${sender.name} created a teleport item: $nbtItem")
+                sender.sendMessage(msg)
+                LOGGER.finest("${sender.name} created a teleport item: $nbtItem")
                 return true
             } else if (!sender.hasPermission("groundmc.lobby.admin")) {
                 sender.sendMessage(I18n.getString("nopermission", sender.locale))
@@ -261,7 +264,7 @@ object CommandLobby : ILobbyCommand {
      * @return `true` when the command has been handled successfully, `false` otherwise.
      */
     private fun handleEvent(sender: CommandSender, args: Array<String>): Boolean {
-        LobbyMain.logger.entering(CommandLobby::class, "handleEvent")
+        LOGGER.entering(CommandLobby::class, "handleEvent", sender, args.joinToString())
         if (args.isEmpty()) {
             Events.getCurrentEventTitles().forEach {
                 sender.sendMessage(it)
@@ -275,7 +278,9 @@ object CommandLobby : ILobbyCommand {
             when (args[0]) {
                 "disable" -> {
                     val index = args[1].toIntOrNull() ?: return false
-                    sender.sendMessage(I18n.getString("event.unset")?.format(Events.disable(index)[Events.title]))
+                    val event = Events.disable(index)
+                    sender.sendMessage(I18n.getString("event.unset")?.format(event[Events.title]))
+                    LOGGER.fine("Disabled event $event")
                     return true
                 }
                 "add" -> {
@@ -324,6 +329,7 @@ object CommandLobby : ILobbyCommand {
      * @return `true` when the command has been handled successfully, `false` otherwise.
      */
     private fun handleConfig(sender: CommandSender, args: Array<String>): Boolean {
+        LOGGER.entering(CommandLobby::class, "handleConfig", sender, args)
         if (!sender.hasPermission(Permission.ADMIN)) {
             sender.sendMessage(I18n.getString("nopermission", I18nUtils.getLocaleFromCommandSender(sender)))
             return false
@@ -347,9 +353,9 @@ object CommandLobby : ILobbyCommand {
      * Saves the template in the plugin-wide configuration
      */
     private fun saveTemplate() {
-        LobbyMain.logger.entering(CommandLobby::class, "saveTemplate")
+        LOGGER.entering(CommandLobby::class, "saveTemplate")
         Meta[Config.INVENTORY_CONTENT] = LobbyInventory.TEMPLATE_INVENTORY.contents
-        LobbyMain.logger.exiting(CommandLobby::class, "saveTemplate")
+        LOGGER.exiting(CommandLobby::class, "saveTemplate")
     }
 
 }

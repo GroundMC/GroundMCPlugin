@@ -34,7 +34,6 @@ import java.lang.reflect.Field
 import java.lang.reflect.Modifier
 import java.util.logging.FileHandler
 import java.util.logging.Level
-import java.util.logging.Logger
 
 /**
  * The main class for this plugin.
@@ -47,7 +46,8 @@ class LobbyMain : JavaPlugin() {
      * Sets up the logging before the plugin executes.
      */
     init {
-        logger.entering(LobbyMain::class, "init")
+        LOGGER = logger
+        LOGGER.entering(LobbyMain::class, "init")
         val logFileDirectory = File("${dataFolder.absolutePath}/logs")
         if (!logFileDirectory.exists()) {
             logFileDirectory.mkdirs()
@@ -56,7 +56,7 @@ class LobbyMain : JavaPlugin() {
             level = Level.FINEST
             formatter = LogFormatter()
         }
-        logger.addHandler(logHandler)
+        LOGGER.addHandler(logHandler)
         if (exposedLogger is JDK14LoggerAdapter) {
             val fLogger = JDK14LoggerAdapter::class.java.getDeclaredField("logger")
             fLogger.isAccessible = true
@@ -65,14 +65,14 @@ class LobbyMain : JavaPlugin() {
                 level = Level.ALL
             })
         }
-        logger.exiting(LobbyMain::class, "init")
+        LOGGER.exiting(LobbyMain::class, "init")
     }
 
     /**
      * Called when this plugin is enabled
      */
     override fun onEnable() {
-        logger.entering(LobbyMain::class, "onEnable")
+        LOGGER.entering(LobbyMain::class, "onEnable")
         backingInstance = this
         registerGsonHandlers()
         createDefaultConfig()
@@ -103,7 +103,7 @@ class LobbyMain : JavaPlugin() {
 
         scheduleTasks()
 
-        logger.exiting(LobbyMain::class, "onEnable")
+        LOGGER.exiting(LobbyMain::class, "onEnable")
     }
 
     /**
@@ -122,7 +122,8 @@ class LobbyMain : JavaPlugin() {
      * Registers all [org.bukkit.event.Listener]s that are used by this plugin.
      */
     private fun registerListeners() {
-        logger.config("Registering event listeners...")
+        LOGGER.entering(LobbyMain::class, "registerListeners")
+        LOGGER.config("Registering event listeners...")
         arrayOf(ChatInteractionListener,
                 HidePlayerListener,
                 LobbyInteractionListener,
@@ -134,13 +135,14 @@ class LobbyMain : JavaPlugin() {
                 LobbyChooserListener,
                 FriendsOverviewListener
         ).forEach { Bukkit.getPluginManager().registerEvents(it, this) }
+        LOGGER.exiting(LobbyMain::class, "registerListeners")
     }
 
     /**
      * Registers a custom GSON handler to handle the [Location] class.
      */
     private fun registerGsonHandlers() {
-        logger.entering(LobbyMain::class, "registerGsonHandlers")
+        LOGGER.entering(LobbyMain::class, "registerGsonHandlers")
         // Gets private static final Gson gson = new Gson();
         val fGson = GsonWrapper::class.java.getDeclaredField("gson")
         fGson.isAccessible = true
@@ -160,21 +162,21 @@ class LobbyMain : JavaPlugin() {
             registerTypeAdapter(DateTime::class.java, DateTimeAdapter)
             factories.forEach { registerTypeAdapterFactory(it as TypeAdapterFactory) }
         }.create())
-        logger.exiting(LobbyMain::class, "registerGsonHandlers")
+        LOGGER.exiting(LobbyMain::class, "registerGsonHandlers")
     }
 
     /**
      * Upgrades the config file using the [ConfigUpgrader].
      */
     private fun upgradeConfig() {
-        logger.entering(LobbyMain::class, "upgradeConfig")
-        logger.info("Upgrading configuration...")
-        logger.info("Current version is ${config["version"]}.")
-        logger.info("New version is $configVersion")
-        logger.finest("Config before:")
-        logger.finest(config.saveToString().replace(Regex("""\r?\n"""), "\r\n"))
+        LOGGER.entering(LobbyMain::class, "upgradeConfig")
+        LOGGER.info("Upgrading configuration...")
+        LOGGER.info("Current version is ${config["version"]}.")
+        LOGGER.info("New version is $configVersion")
+        LOGGER.finest("Config before:")
+        LOGGER.finest(config.saveToString().replace(Regex("""\r?\n"""), "\r\n"))
         if (config["hub"] is MemorySection) {
-            logger.warning("Upgraded 'hub', please set new hub location!")
+            LOGGER.warning("Upgraded 'hub', please set new hub location!")
             config["hub"] = Bukkit.getWorlds().first().spawnLocation
         }
         for (currentVersion in config.getInt("version", 1)..configVersion) {
@@ -189,18 +191,18 @@ class LobbyMain : JavaPlugin() {
         saveConfig()
         reloadConfig()
 
-        logger.finest("Config after:")
-        logger.finest(config.saveToString().replace(Regex("""\r?\n"""), "\r\n"))
+        LOGGER.finest("Config after:")
+        LOGGER.finest(config.saveToString().replace(Regex("""\r?\n"""), "\r\n"))
 
-        logger.info("Configuration upgrade complete.")
-        logger.exiting(LobbyMain::class, "upgradeConfig")
+        LOGGER.info("Configuration upgrade complete.")
+        LOGGER.exiting(LobbyMain::class, "upgradeConfig")
     }
 
     /**
      * Loads the config and sanitizes certain fields.
      */
     private fun loadConfig() {
-        logger.entering(LobbyMain::class, "loadConfig")
+        LOGGER.entering(LobbyMain::class, "loadConfig")
         if ("inventory.content" in config && config["inventory.content"] is List<*>) {
             @Suppress("unchecked_cast")
             LobbyInventory.TEMPLATE_INVENTORY.contents = (config["inventory.content"] as List<ItemStack?>).toTypedArray()
@@ -211,17 +213,17 @@ class LobbyMain : JavaPlugin() {
                 }
             }
         }
-        logger.info("Setting logger verbosity to ${config.getString("log.verbosity", "FINEST")}")
-        logger.level = Level.parse(config.getString("log.verbosity", "FINEST"))
-        logger.info("Loaded config.")
-        logger.exiting(LobbyMain::class, "loadConfig")
+        LOGGER.info("Setting logger verbosity to ${config.getString("log.verbosity", "FINEST")}")
+        LOGGER.level = Level.parse(config.getString("log.verbosity", "FINEST"))
+        LOGGER.info("Loaded config.")
+        LOGGER.exiting(LobbyMain::class, "loadConfig")
     }
 
     /**
      * Initializes the config file for first use.
      */
     private fun createDefaultConfig() {
-        logger.entering(LobbyMain::class, "createDefaultConfig")
+        LOGGER.entering(LobbyMain::class, "createDefaultConfig")
 
         config.addDefault("log.verbosity", "FINEST")
 
@@ -234,46 +236,46 @@ class LobbyMain : JavaPlugin() {
 
         config.options().copyDefaults(true)
         saveDefaultConfig()
-        logger.exiting(LobbyMain::class, "createDefaultConfig")
+        LOGGER.exiting(LobbyMain::class, "createDefaultConfig")
     }
 
     /**
      * Registers all commands into the [LobbyCommandRegistry].
      */
     private fun registerCommands() {
-        logger.entering(LobbyMain::class, "registerCommands")
-        logger.config("Registering commands...")
+        LOGGER.entering(LobbyMain::class, "registerCommands")
+        LOGGER.config("Registering commands...")
         arrayOf(CommandLobby,
                 CommandVanish,
                 CommandCoins,
                 CommandFriend,
                 CommandFriends
         ).forEach(LobbyCommandRegistry::registerCommand)
-        logger.exiting(LobbyMain::class, "registerCommands")
+        LOGGER.exiting(LobbyMain::class, "registerCommands")
     }
 
     /**
      * Called when this plugin is disabled
      */
     override fun onDisable() {
-        logger.entering(LobbyMain::class, "onDisable")
-        logger.info("Saving configuration and disabling...")
+        LOGGER.entering(LobbyMain::class, "onDisable")
+        LOGGER.info("Saving configuration and disabling...")
         tasks.forEach { it.value.cancel() }
         saveConfig()
-        logger.exiting(LobbyMain::class, "onDisable")
+        LOGGER.exiting(LobbyMain::class, "onDisable")
     }
 
     /**
      * Saves the [org.bukkit.configuration.file.FileConfiguration] retrievable by [getConfig].
      */
     override fun saveConfig() {
-        logger.entering(LobbyMain::class, "saveConfig")
+        LOGGER.entering(LobbyMain::class, "saveConfig")
         when (config["inventory.content"]) {
             is List<*> -> config["inventory.content"] = (config["inventory.content"] as List<*>).map { if (it != Items.FILLER.item) it else null }
             is Array<*> -> config["inventory.content"] = (config["inventory.content"] as Array<*>).map { if (it != Items.FILLER.item) it else null }.toTypedArray()
         }
         super.saveConfig()
-        logger.exiting(LobbyMain::class, "saveConfig")
+        LOGGER.exiting(LobbyMain::class, "saveConfig")
     }
 
     /**
@@ -283,8 +285,9 @@ class LobbyMain : JavaPlugin() {
      * @see BukkitScheduler.scheduleSyncRepeatingTask
      */
     private fun BukkitScheduler.scheduleSyncRepeatingTask(task: ITask) {
-        logger.entering(LobbyMain::class, "scheduleSyncRepeatingTask")
+        LOGGER.entering(LobbyMain::class, "scheduleSyncRepeatingTask", task)
         tasks[task] = runTaskTimer(this@LobbyMain, task, task.delay, task.period)
+        LOGGER.exiting(LobbyMain::class, "scheduleSyncRepeatingTask")
     }
 
     /**
@@ -294,8 +297,9 @@ class LobbyMain : JavaPlugin() {
      * @see BukkitScheduler.scheduleSyncDelayedTask
      */
     private fun BukkitScheduler.scheduleSyncDelayedTask(task: ITask) {
-        logger.entering(LobbyMain::class, "scheduleSyncDelayedTask")
+        LOGGER.entering(LobbyMain::class, "scheduleSyncDelayedTask", task)
         tasks[task] = runTaskLater(this@LobbyMain, task, task.delay)
+        LOGGER.exiting(LobbyMain::class, "scheduleSyncDelayedTask")
     }
 
     /**
@@ -305,8 +309,9 @@ class LobbyMain : JavaPlugin() {
      * @see BukkitScheduler.runTaskTimerAsynchronously
      */
     private fun BukkitScheduler.runTaskTimerAsynchronously(task: ITask) {
-        logger.entering(LobbyMain::class, "runTaskTimerAsynchronously")
+        LOGGER.entering(LobbyMain::class, "runTaskTimerAsynchronously", task)
         tasks[task] = runTaskTimerAsynchronously(this@LobbyMain, task, task.delay, task.period)
+        LOGGER.exiting(LobbyMain::class, "runTaskTimerAsynchronously")
     }
 
 
@@ -327,12 +332,6 @@ class LobbyMain : JavaPlugin() {
          */
         val instance: LobbyMain
             get() = backingInstance
-
-        /**
-         * The [Logger] that is created in the init block.
-         */
-        val logger: Logger
-            get() = instance.logger
 
         /**
          * The latest version of the configuration.

@@ -7,6 +7,7 @@ import net.groundmc.lobby.LobbyMain
 import net.groundmc.lobby.database.table.legacy.Meta0
 import net.groundmc.lobby.database.table.legacy.Users0
 import net.groundmc.lobby.enums.Config
+import net.groundmc.lobby.util.LOGGER
 import net.groundmc.lobby.util.entering
 import net.groundmc.lobby.util.exiting
 import org.bukkit.Bukkit
@@ -51,7 +52,7 @@ object Meta : Table() {
      * Upgrades the database by performing the needed modifications to the database.
      */
     fun upgradeDatabase() {
-        LobbyMain.logger.entering(Meta::class, "upgradeDatabase")
+        LOGGER.entering(Meta::class, "upgradeDatabase")
         try {
             transaction {
                 var currentVersion = try {
@@ -132,9 +133,9 @@ object Meta : Table() {
                 set(Config.DATABASE_VERSION, CURRENT_DB_VER)
                 commit()
             }
-            LobbyMain.logger.info("Database newly created, no update necessary")
+            LOGGER.info("Database newly created, no update necessary")
         }
-        LobbyMain.logger.exiting(Meta::class, "upgradeDatabase")
+        LOGGER.exiting(Meta::class, "upgradeDatabase")
     }
 
     /**
@@ -147,6 +148,7 @@ object Meta : Table() {
      */
     @Suppress("UNCHECKED_CAST", "PlatformExtensionReceiverOfInline")
     operator fun <T> get(key: Config<T>): T? {
+        LOGGER.entering(Meta::class, "get", key)
         return try {
             with(configCache[key]) {
                 try {
@@ -169,7 +171,7 @@ object Meta : Table() {
                 }
             }
         } catch (e: Exception) {
-            LobbyMain.logger.throwing(this.javaClass.name, "get", e)
+            LOGGER.throwing(this.javaClass.name, "get", e)
             null as T
         }
     }
@@ -182,7 +184,7 @@ object Meta : Table() {
      * @param value the contents of this configuration item
      */
     operator fun <T> set(key: Config<T>, value: Any) {
-        LobbyMain.logger.fine("Setting value for ${key.key}")
+        LOGGER.entering(Meta::class, "set", key, value)
         transaction {
             deleteWhere { Meta.key eq key.key }
             insert {
@@ -195,6 +197,7 @@ object Meta : Table() {
             commit()
         }
         configCache.invalidate(key)
+        LOGGER.exiting(Meta::class, "set")
     }
 
     /**
@@ -202,7 +205,7 @@ object Meta : Table() {
      */
     class DatabaseCacheLoader : CacheLoader<Config<*>, Any>() {
         override fun load(key: Config<*>): Any {
-            LobbyMain.logger.finer("Getting value for ${key.key}")
+            LOGGER.entering(DatabaseCacheLoader::class, "load", key)
             with(YamlConfiguration()) {
                 loadFromString(
                         transaction {

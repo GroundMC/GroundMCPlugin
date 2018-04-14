@@ -10,7 +10,10 @@ import net.groundmc.lobby.i18n.I18NStrings
 import net.groundmc.lobby.i18n.I18nUtils
 import net.groundmc.lobby.objects.NBTItemExt
 import net.groundmc.lobby.objects.Relationship
+import net.groundmc.lobby.util.LOGGER
 import net.groundmc.lobby.util.OnlineOfflinePlayerComparator
+import net.groundmc.lobby.util.entering
+import net.groundmc.lobby.util.exiting
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor
 import org.bukkit.Material
@@ -113,6 +116,7 @@ object FriendsOverviewInventory {
     }
 
     private fun fillFriendInventory(inventory: Inventory, player: Player) {
+        LOGGER.entering(FriendsOverviewInventory::class, "fillFriendInventory", inventory, player)
         val onlinePlayers = CloudAPI.getInstance().onlinePlayers.associate { it.uniqueId to it }
         val relationships = Relationships.getRelationships(player)
         Collections.sort(
@@ -161,6 +165,7 @@ object FriendsOverviewInventory {
                     .setDisplayName(I18NStrings.FRIENDS_PREVIOUS_PAGE.get(player))
                     .item)
         }
+        LOGGER.exiting(FriendsOverviewInventory::class, "fillFriendInventory")
     }
 
     fun openPage(player: Player, item: ItemStack): Inventory = Bukkit.createInventory(player, INVENTORY_SIZE, TITLE).apply {
