@@ -28,22 +28,24 @@ import java.util.*
  * F F F F F F F F F
  * F F F F F F F F F
  * F F F F F F F F F
- * x x x < H > x x x
+ * R x x < H > x x x
  *
  * F = Friend or placeholder
  * x = placeholder
  * H = info item
+ * R = friend request item
  * < = previous page (where applicable)
  * > = next page (where applicable)
  */
 object FriendsOverviewInventory {
 
-    private const val PAGE_SIZE = 3 * 9
+    private const val INVENTORY_SIZE = 4 * 9
+    private const val PAGE_SIZE = INVENTORY_SIZE - 9
     private const val INFO_ITEM_INDEX = PAGE_SIZE + 4
+    private const val REQUEST_ITEM_INDEX = PAGE_SIZE + 1
 
     internal const val TITLE = "Friends"
 
-    private const val INVENTORY_SIZE = 4 * 9
 
     fun create(player: Player): Inventory = Bukkit.createInventory(player, INVENTORY_SIZE, TITLE)
             .apply {
@@ -63,53 +65,49 @@ object FriendsOverviewInventory {
                     setItem(11,
                             (if (friendOnline != null) NBTItemExt(Material.EYE_OF_ENDER)
                             else NBTItemExt(Material.ENDER_PEARL))
-                                    .apply {
-                                        setBoolean(NBTIdentifier.PREFIX, true)
-                                        setObject(NBTIdentifier.RELATIONSHIP, relationship)
-                                        setInteger(NBTIdentifier.TYPE, GMCType.TP.ordinal)
+                                    .setBoolean(NBTIdentifier.PREFIX, true)
+                                    .setObject(NBTIdentifier.RELATIONSHIP, relationship)
+                                    .setInteger(NBTIdentifier.TYPE, GMCType.TP.ordinal)
 
-                                        displayName = I18NStrings.FRIENDS_JUMP.format(player,
-                                                (if (friendOnline != null) ChatColor.GREEN.toString() + relationship.user2.name
-                                                else ChatColor.RED.toString() + relationship.user2.name))
-                                    }.item)
+                                    .setDisplayName(I18NStrings.FRIENDS_JUMP.format(player,
+                                            (if (friendOnline != null) ChatColor.GREEN.toString() + relationship.user2.name
+                                            else ChatColor.RED.toString() + relationship.user2.name)))
+                                    .item)
 
                     // Delete item
-                    setItem(15, NBTItemExt(Material.BARRIER).apply {
-                        setBoolean(NBTIdentifier.PREFIX, true)
-                        setObject(NBTIdentifier.RELATIONSHIP, relationship)
-                        setInteger(NBTIdentifier.TYPE, GMCType.REMOVE_FRIEND.ordinal)
-
-                        displayName = I18NStrings.RELATIONSHIP_REMOVE.get(player)
-                    }.item)
+                    setItem(15, NBTItemExt(Material.BARRIER)
+                            .setBoolean(NBTIdentifier.PREFIX, true)
+                            .setObject(NBTIdentifier.RELATIONSHIP, relationship)
+                            .setInteger(NBTIdentifier.TYPE, GMCType.REMOVE_FRIEND.ordinal)
+                            .setDisplayName(I18NStrings.RELATIONSHIP_REMOVE.get(player))
+                            .item)
                 }
     }
 
     private fun getFriendSkull(relationship: Relationship, player: Player, friendOnline: CloudPlayer?): ItemStack {
         return NBTItemExt(ItemStack(Material.SKULL_ITEM, 1,
-                SkullType.PLAYER.ordinal.toShort())).apply {
-            setBoolean(NBTIdentifier.PREFIX, true)
-            setObject(NBTIdentifier.RELATIONSHIP, relationship)
-            val newMeta = meta as SkullMeta
-            val profile = Bukkit.createProfile(relationship.user2.uniqueId, relationship.user2.name)
-            profile.complete(true)
-            newMeta.playerProfile = profile
-            meta = newMeta
-            displayName = relationship.user2.name
-            val newLore = lore
-            if (friendOnline != null) {
-                newLore += "${ChatColor.GREEN}Online"
-                newLore += if (CloudServer.getInstance().groupData.name == CloudAPI.getInstance().getServerGroup(friendOnline.server).name) {
-                    "${ChatColor.GREEN}${friendOnline.server}"
-                } else {
-                    "${ChatColor.RED}${friendOnline.server}"
-                }
-            } else newLore += "${ChatColor.RED}Offline"
-            newLore += I18NStrings.RELATIONSHIP_SINCE.format(player.locale,
-                    relationship.since.toString(DateTimeFormat.mediumDate()
-                            .withLocale(I18nUtils.getLocaleFromCommandSender(player))))
-                    ?: ""
-            lore = newLore
-        }.item
+                SkullType.PLAYER.ordinal.toShort()))
+                .setBoolean(NBTIdentifier.PREFIX, true)
+                .setObject(NBTIdentifier.RELATIONSHIP, relationship)
+                .setDisplayName(relationship.user2.name)
+                .setLore(mutableListOf<String>().apply {
+                    if (friendOnline != null) {
+                        this += I18NStrings.ONLINE.get(player)
+                        this += if (CloudServer.getInstance().groupData.name == CloudAPI.getInstance().getServerGroup(friendOnline.server).name) {
+                            "${ChatColor.GREEN}${friendOnline.server}"
+                        } else {
+                            "${ChatColor.RED}${friendOnline.server}"
+                        }
+                    } else this += "${ChatColor.RED}Offline"
+                    this += I18NStrings.RELATIONSHIP_SINCE.format(player.locale,
+                            relationship.since.toString(DateTimeFormat.mediumDate()
+                                    .withLocale(I18nUtils.getLocaleFromCommandSender(player))))
+                }).setMeta {
+                    val newMeta = it as SkullMeta
+                    val profile = Bukkit.createProfile(relationship.user2.uniqueId, relationship.user2.name)
+                    profile.complete(true)
+                    newMeta.playerProfile = profile
+                }.item
     }
 
     private fun fillFriendInventory(inventory: Inventory, player: Player) {
@@ -118,11 +116,9 @@ object FriendsOverviewInventory {
         Collections.sort(
                 relationships,
                 OnlineOfflinePlayerComparator(onlinePlayers))
-        val page = if (NBTIdentifier.itemHasPrefix(inventory.getItem(INFO_ITEM_INDEX))) {
-            val infoItem = NBTItemExt(inventory.getItem(INFO_ITEM_INDEX))
-            if (infoItem.hasKey(NBTIdentifier.PAGE)) {
-                (infoItem.getInteger(NBTIdentifier.PAGE) ?: 0)
-            } else 0
+        val infoItem = NBTItemExt(inventory.getItem(INFO_ITEM_INDEX))
+        val page = if (NBTIdentifier.itemHasPrefix(infoItem) && infoItem.hasKey(NBTIdentifier.PAGE)) {
+            infoItem.getInteger(NBTIdentifier.PAGE) ?: 0
         } else 0
 
         if (relationships.isNotEmpty()) {
@@ -132,41 +128,44 @@ object FriendsOverviewInventory {
         }
 
         val pages = (relationships.size / PAGE_SIZE)
-        inventory.setItem(INFO_ITEM_INDEX, NBTItemExt(Material.COMPASS).apply {
-            setBoolean(NBTIdentifier.PREFIX, true)
-            setInteger(NBTIdentifier.PAGE, page + 1)
-            val newLore = lore
-            newLore += "Online: ${net.groundmc.lobby.database.table.Relationships.getOnlineFriends(player).size}"
-            newLore += I18NStrings.FRIENDS_PAGE.format(player, page + 1, pages + 1)
-                    ?: ""
-            lore = newLore
-            displayName = " "
-        }.item)
+        inventory.setItem(INFO_ITEM_INDEX, NBTItemExt(Material.COMPASS)
+                .setBoolean(NBTIdentifier.PREFIX, true)
+                .setInteger(NBTIdentifier.PAGE, page + 1)
+                .setDisplayName(" ")
+                .setLore(mutableListOf("Online: ${net.groundmc.lobby.database.table.Relationships.getOnlineFriends(player).size}",
+                        I18NStrings.FRIENDS_PAGE.format(player, page + 1, pages + 1)))
+                .item)
+
+        inventory.setItem(REQUEST_ITEM_INDEX, NBTItemExt(Material.PAPER)
+                .setBoolean(NBTIdentifier.PREFIX, true)
+                .setType(GMCType.FRIENDREQUESTS)
+                .setDisplayName(I18NStrings.FRIENDREQUEST_TITLE.get(player))
+                .item)
 
         // Next page
         if (page < pages) {
-            inventory.setItem(INFO_ITEM_INDEX + 1, NBTItemExt(Material.ARROW).apply {
-                setBoolean(NBTIdentifier.PREFIX, true)
-                setInteger(NBTIdentifier.PAGE, page + 1)
-                displayName = I18NStrings.FRIENDS_NEXT_PAGE.get(player)
-            }.item)
+            inventory.setItem(INFO_ITEM_INDEX + 1, NBTItemExt(Material.ARROW)
+                    .setBoolean(NBTIdentifier.PREFIX, true)
+                    .setInteger(NBTIdentifier.PAGE, page + 1)
+                    .setDisplayName(I18NStrings.FRIENDS_NEXT_PAGE.get(player))
+                    .item)
         }
 
         // Previous page
         if (page > 0) {
-            inventory.setItem(INFO_ITEM_INDEX - 1, NBTItemExt(Material.ARROW).apply {
-                setBoolean(NBTIdentifier.PREFIX, true)
-                setInteger(NBTIdentifier.PAGE, page - 1)
-                displayName = I18NStrings.FRIENDS_PREVIOUS_PAGE.get(player)
-            }.item)
+            inventory.setItem(INFO_ITEM_INDEX - 1, NBTItemExt(Material.ARROW)
+                    .setBoolean(NBTIdentifier.PREFIX, true)
+                    .setInteger(NBTIdentifier.PAGE, page - 1)
+                    .setDisplayName(I18NStrings.FRIENDS_PREVIOUS_PAGE.get(player))
+                    .item)
         }
     }
 
     fun openPage(player: Player, item: ItemStack): Inventory = Bukkit.createInventory(player, INVENTORY_SIZE, TITLE).apply {
-        setItem(INFO_ITEM_INDEX, NBTItemExt(Material.COMPASS).apply {
-            setBoolean(NBTIdentifier.PREFIX, true)
-            setInteger(NBTIdentifier.PAGE, NBTItemExt(item).getInteger(NBTIdentifier.PAGE)!!)
-        }.item)
+        setItem(INFO_ITEM_INDEX, NBTItemExt(Material.COMPASS)
+                .setBoolean(NBTIdentifier.PREFIX, true)
+                .setInteger(NBTIdentifier.PAGE, NBTItemExt(item).getInteger(NBTIdentifier.PAGE)!!)
+                .item)
         fillFriendInventory(this, player)
     }
 }
