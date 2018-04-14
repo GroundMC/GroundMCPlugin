@@ -90,16 +90,16 @@ object FriendsOverviewInventory {
                 .setBoolean(NBTIdentifier.PREFIX, true)
                 .setObject(NBTIdentifier.RELATIONSHIP, relationship)
                 .setDisplayName(relationship.user2.name)
-                .setLore(mutableListOf<String>().apply {
+                .setLore({
                     if (friendOnline != null) {
-                        this += I18NStrings.ONLINE.get(player)
-                        this += if (CloudServer.getInstance().groupData.name == CloudAPI.getInstance().getServerGroup(friendOnline.server).name) {
+                        it += I18NStrings.ONLINE.get(player)
+                        it += if (CloudServer.getInstance().groupData.name == CloudAPI.getInstance().getServerGroup(friendOnline.server).name) {
                             "${ChatColor.GREEN}${friendOnline.server}"
                         } else {
                             "${ChatColor.RED}${friendOnline.server}"
                         }
-                    } else this += "${ChatColor.RED}Offline"
-                    this += I18NStrings.RELATIONSHIP_SINCE.format(player.locale,
+                    } else it += "${ChatColor.RED}Offline"
+                    it += I18NStrings.RELATIONSHIP_SINCE.format(player.locale,
                             relationship.since.toString(DateTimeFormat.mediumDate()
                                     .withLocale(I18nUtils.getLocaleFromCommandSender(player))))
                 }).setMeta {

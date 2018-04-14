@@ -205,10 +205,8 @@ class NBTItemExt(item: ItemStack) : NBTItem(item), Cloneable {
         return this
     }
 
-    fun setMeta(block: (ItemMeta) -> Unit): NBTItemExt {
-        val oldMeta = meta
-        block(oldMeta)
-        meta = oldMeta
+    fun setMeta(metaGenerator: (ItemMeta) -> Unit): NBTItemExt {
+        meta = meta.apply(metaGenerator)
         return this
     }
 
@@ -226,6 +224,11 @@ class NBTItemExt(item: ItemStack) : NBTItem(item), Cloneable {
 
     fun setLore(loreList: MutableList<String>): NBTItemExt {
         lore = loreList
+        return this
+    }
+
+    fun setLore(loreGenerator: (MutableList<String>) -> Unit): NBTItemExt {
+        lore = lore.apply(loreGenerator)
         return this
     }
 
