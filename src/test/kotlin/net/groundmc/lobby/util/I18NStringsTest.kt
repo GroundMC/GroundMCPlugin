@@ -4,22 +4,22 @@ import net.groundmc.lobby.i18n.I18NStrings
 import org.junit.jupiter.api.Assertions.assertNotNull
 import java.util.*
 import kotlin.test.Test
-import kotlin.test.assertNotEquals
 
 class I18NStringsTest {
 
     @Test
     fun getEnglish() {
+        val bundle = ResourceBundle.getBundle("lang.lobby", Locale.US)
         I18NStrings.values().forEach {
-            assertNotNull(it.get(Locale.US))
+            assertNotNull(bundle.getString(it.id))
         }
     }
 
     @Test
     fun getGerman() {
+        val bundle = ResourceBundle.getBundle("lang.lobby", Locale.GERMAN)
         I18NStrings.values().forEach {
-            assertNotNull(it.get(Locale.GERMAN))
-            assertNotEquals(it.get(Locale.US), it.get(Locale.GERMAN))
+            assertNotNull(bundle.getString(it.id))
         }
     }
 }
