@@ -26,7 +26,7 @@ import java.util.*
 object FriendRequestsInventory {
 
     private const val INVENTORY_SIZE = 4 * 9
-    private const val PAGE_SIZE = 3 * 9
+    private const val PAGE_SIZE = INVENTORY_SIZE - 9
     private const val INFO_ITEM_INDEX = PAGE_SIZE + 4
 
     internal const val TITLE = "Friend requests"
@@ -97,9 +97,8 @@ object FriendRequestsInventory {
                         } else {
                             I18NStrings.OFFLINE.get(player)
                         }
-                        it += I18NStrings.RELATIONSHIP_SINCE.format(player.locale,
-                                request[FriendRequests.requestTime].toString(DateTimeFormat.mediumDate()
-                                        .withLocale(I18nUtils.getLocaleFromCommandSender(player))))
+                        it += request[FriendRequests.requestTime].toString(DateTimeFormat.mediumDate()
+                                .withLocale(I18nUtils.getLocaleFromCommandSender(player)))
                     }).setMeta {
                         val newMeta = it as SkullMeta
                         val profile = Bukkit.createProfile(request[FriendRequests.requester], Users[request[FriendRequests.requester]][Users.lastName])
