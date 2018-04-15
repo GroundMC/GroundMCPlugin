@@ -2,10 +2,13 @@ package net.groundmc.lobby.event.listener
 
 import kotlinx.coroutines.experimental.async
 import net.groundmc.lobby.LobbyMain
+import net.groundmc.lobby.database.table.FriendRequests
+import net.groundmc.lobby.database.table.Relationships
 import net.groundmc.lobby.enums.GMCType
 import net.groundmc.lobby.enums.NBTIdentifier
 import net.groundmc.lobby.inventory.FriendRequestsInventory
 import net.groundmc.lobby.objects.NBTItemExt
+import net.groundmc.lobby.objects.Relationship
 import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.entity.Player
@@ -93,6 +96,44 @@ object FriendRequestsListener : Listener {
                     Bukkit.getScheduler().runTask(LobbyMain.instance, {
                         event.whoClicked.openInventory(inventory)
                     })
+                }
+            }
+        }
+    }
+
+    @EventHandler
+    fun handleRequest(event: InventoryClickEvent) {
+        if (NBTIdentifier.itemHasPrefix(event.currentItem)
+                && event.whoClicked is Player) {
+            val item = NBTItemExt(event.currentItem)
+            when (item.getType()) {
+                GMCType.FRIEND_REQUEST_ACCEPT -> {
+                    if (item.hasKey(NBTIdentifier.RELATIONSHIP)) {
+                        val request = item.getObject(NBTIdentifier.RELATIONSHIP, FriendRequests.FriendRequest::class)
+                        if (request != null) {
+                            FriendRequests.removeRequest(request.requester, request.requested)
+                            Relationships.addRelationship(event.whoClicked as Player,
+                                    Relationship(request.requester, request.requested))
+                        }
+                    }
+                    event.isCancelled = true
+                    Bukkit.getScheduler().runTask(LobbyMain.instance) {
+                        event.view.close()
+                    }
+                }
+                GMCType.FRIEND_REQUEST_DENY -> {
+                    if (item.hasKey(NBTIdentifier.RELATIONSHIP)) {
+                        val request = item.getObject(NBTIdentifier.RELATIONSHIP, FriendRequests.FriendRequest::class)
+                        if (request != null) {
+                            FriendRequests.removeRequest(request.requester, request.requested)
+                        }
+                    }
+                    event.isCancelled = true
+                    Bukkit.getScheduler().runTask(LobbyMain.instance) {
+                        event.view.close()
+                    }
+                }
+                else -> {
                 }
             }
         }
