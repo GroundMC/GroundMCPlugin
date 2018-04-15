@@ -11,6 +11,7 @@ import org.jetbrains.exposed.sql.transactions.transaction
 import org.joda.time.DateTime
 import java.util.*
 import java.util.concurrent.Executors
+import java.util.concurrent.TimeUnit
 
 object FriendRequests : Table("FriendRequests") {
 
@@ -21,9 +22,13 @@ object FriendRequests : Table("FriendRequests") {
     val requestTime = datetime("requestTime").clientDefault { DateTime.now() }.index()
 
     private val requestsFrom = CacheBuilder.newBuilder()
+            .expireAfterAccess(20, TimeUnit.SECONDS)
+            .refreshAfterWrite(10, TimeUnit.SECONDS)
             .build(CacheLoader.asyncReloading(RequestLoader(requester), Executors.newCachedThreadPool()))
 
     private val requestsFor = CacheBuilder.newBuilder()
+            .expireAfterAccess(20, TimeUnit.SECONDS)
+            .refreshAfterWrite(10, TimeUnit.SECONDS)
             .build(CacheLoader.asyncReloading(RequestLoader(requested), Executors.newCachedThreadPool()))
 
 
