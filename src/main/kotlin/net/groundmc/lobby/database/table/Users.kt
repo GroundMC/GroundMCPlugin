@@ -3,6 +3,8 @@ package net.groundmc.lobby.database.table
 import com.google.common.cache.CacheBuilder
 import com.google.common.cache.CacheLoader
 import net.groundmc.lobby.enums.VisibilityStates
+import net.groundmc.lobby.util.LOGGER
+import net.groundmc.lobby.util.entering
 import org.bukkit.entity.Player
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
@@ -129,6 +131,7 @@ object Users : Table() {
      * `null`, if there is no player with the given [name]
      */
     fun byName(name: String): UUID? {
+        LOGGER.entering(Users::class, "byName", name)
         return userCache.asMap().entries.firstOrNull { it.value[lastName] == name }?.key
                 ?: run {
                     val row = transaction {

@@ -148,7 +148,7 @@ object CommandFriend : ILobbyCommand {
         }
 
         val uuid = try {
-            UUID.fromString(args[0])
+            UUID.fromString(args[1])
         } catch (e: IllegalArgumentException) {
             null
         }
@@ -157,7 +157,7 @@ object CommandFriend : ILobbyCommand {
             return true
         }
 
-        val friend = Users.byName(args[0])?.let { Friend.fromUniqueId(it) }
+        val friend = Users.byName(args[1])?.let { Friend.fromUniqueId(it) }
         if (friend == null) {
             sender.sendMessage(I18NStrings.COMMAND_FRIEND_PLAYER_NOT_FOUND.format(sender, args[1]))
             return true
@@ -167,7 +167,7 @@ object CommandFriend : ILobbyCommand {
             sender.sendMessage(I18NStrings.COMMAND_FRIEND_NO_LONGER_RELATED.format(sender, friend.name))
             return true
         } else {
-            sender.sendMessage(I18NStrings.COMMAND_FRIENDS_NO_FRIENDS.format(sender, friend.name))
+            sender.sendMessage(I18NStrings.COMMAND_FRIEND_NO_FRIENDS.format(sender, friend.name))
             return true
         }
     }
@@ -201,17 +201,14 @@ object CommandFriend : ILobbyCommand {
                 return@async
             }
             val friend = CloudAPI.getInstance().getOfflinePlayer(args[1])
-            if (friend == null) {
-                sender.sendMessage(I18NStrings.COMMAND_FRIEND_PLAYER_NOT_FOUND.format(sender, args[1]))
-            }
-            if (sender.name == args[1]) {
-                sender.sendMessage(I18NStrings.COMMAND_FRIEND_CANT_ADD_YOURSELF.get(sender))
-            }
-            if (Relationships.areFriends(sender.uniqueId, friend.uniqueId)) {
-                sender.sendMessage(I18NStrings.COMMAND_FRIEND_ALREADY_FRIENDS.format(sender, args[1]))
-            } else {
-                LOGGER.fine("${sender.name} tried to add ${friend.name} as a friend")
-                addFriendRequest(sender, friend.uniqueId)
+            when {
+                friend == null -> sender.sendMessage(I18NStrings.COMMAND_FRIEND_PLAYER_NOT_FOUND.format(sender, args[1]))
+                sender.name == args[1] -> sender.sendMessage(I18NStrings.COMMAND_FRIEND_CANT_ADD_YOURSELF.get(sender))
+                Relationships.areFriends(sender.uniqueId, friend.uniqueId) -> sender.sendMessage(I18NStrings.COMMAND_FRIEND_ALREADY_FRIENDS.format(sender, args[1]))
+                else -> {
+                    LOGGER.fine("${sender.name} tried to add ${friend.name} as a friend")
+                    addFriendRequest(sender, friend.uniqueId)
+                }
             }
         }
         return true
