@@ -122,7 +122,6 @@ object FriendRequestsInventory {
         LOGGER.entering(FriendRequestsInventory::class, "requestDetails", player, item)
         val request = item.getObject(NBTIdentifier.RELATIONSHIP,
                 FriendRequests.FriendRequest::class) ?: return null
-        LOGGER.finest("Got request")
         return Bukkit.createInventory(player, REQUEST_INVENTORY_SIZE, Users[request.requester][Users.lastName])
                 .apply {
                     // Skull
