@@ -78,4 +78,23 @@ object FriendRequestsListener : Listener {
             }
         }
     }
+
+    @EventHandler
+    fun openRequestDetails(event: InventoryClickEvent) {
+        if (NBTIdentifier.itemHasPrefix(event.currentItem)
+                && event.inventory.title == FriendRequestsInventory.TITLE
+                && event.whoClicked is Player) {
+            val item = NBTItemExt(event.currentItem)
+            if (item.hasKey(NBTIdentifier.RELATIONSHIP)) {
+                event.result = Event.Result.DENY
+                async {
+                    val inventory = FriendRequestsInventory.requestDetails(
+                            event.whoClicked as Player, item)
+                    Bukkit.getScheduler().runTask(LobbyMain.instance, {
+                        event.whoClicked.openInventory(inventory)
+                    })
+                }
+            }
+        }
+    }
 }

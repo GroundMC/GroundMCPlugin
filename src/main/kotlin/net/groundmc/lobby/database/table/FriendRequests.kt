@@ -41,9 +41,13 @@ object FriendRequests : Table("FriendRequests") {
         }
     }
 
-    fun getRequestsFor(player: UUID) = requestsFor[player]
+    fun getRequestsFor(player: UUID) = requestsFor[player].map {
+        FriendRequest(it[requester], it[requested], it[requestTime])
+    }
 
-    fun getRequestsFrom(player: UUID) = requestsFrom[player]
+    fun getRequestsFrom(player: UUID) = requestsFrom[player].map {
+        FriendRequest(it[requester], it[requested], it[requestTime])
+    }
 
     fun newRequest(requestPlayer: UUID, requestedPlayer: UUID) {
         LOGGER.entering(FriendRequests::class, "newRequest", requestPlayer, requestedPlayer)
@@ -71,5 +75,7 @@ object FriendRequests : Table("FriendRequests") {
             LOGGER.exiting(FriendRequests::class, "removeRequest")
         }
     }
+
+    class FriendRequest(val requester: UUID, val requested: UUID, val requestTime: DateTime)
 
 }

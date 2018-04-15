@@ -5,6 +5,7 @@ import de.dytanic.cloudnet.lib.player.CloudPlayer
 import net.groundmc.lobby.database.table.FriendRequests
 import net.groundmc.lobby.database.table.Relationships
 import net.groundmc.lobby.database.table.Users
+import net.groundmc.lobby.enums.GMCType
 import net.groundmc.lobby.enums.NBTIdentifier
 import net.groundmc.lobby.i18n.I18NStrings
 import net.groundmc.lobby.i18n.I18nUtils
@@ -13,13 +14,13 @@ import net.groundmc.lobby.util.LOGGER
 import net.groundmc.lobby.util.entering
 import net.groundmc.lobby.util.exiting
 import org.bukkit.Bukkit
+import org.bukkit.DyeColor
 import org.bukkit.Material
 import org.bukkit.SkullType
 import org.bukkit.entity.Player
 import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.SkullMeta
-import org.jetbrains.exposed.sql.ResultRow
 import org.joda.time.format.DateTimeFormat
 import java.util.*
 
@@ -28,6 +29,8 @@ object FriendRequestsInventory {
     private const val INVENTORY_SIZE = 4 * 9
     private const val PAGE_SIZE = INVENTORY_SIZE - 9
     private const val INFO_ITEM_INDEX = PAGE_SIZE + 4
+
+    private const val REQUEST_INVENTORY_SIZE = 2 * 9
 
     internal const val TITLE = "Friend requests"
 
@@ -42,7 +45,7 @@ object FriendRequestsInventory {
         Collections.sort(
                 friendRequests,
                 { o1, o2 ->
-                    o1[FriendRequests.requestTime].compareTo(o2[FriendRequests.requestTime])
+                    o1.requestTime.compareTo(o2.requestTime)
                 })
         val page = if (NBTIdentifier.itemHasPrefix(inventory.getItem(INFO_ITEM_INDEX))) {
             val infoItem = NBTItemExt(inventory.getItem(INFO_ITEM_INDEX))
@@ -53,7 +56,7 @@ object FriendRequestsInventory {
 
         if (friendRequests.isNotEmpty()) {
             friendRequests.chunked(PAGE_SIZE)[page].forEach {
-                inventory.addItem(getRequestSkull(it, player, CloudAPI.getInstance().getOnlinePlayer(it[FriendRequests.requester])))
+                inventory.addItem(getRequestSkull(it, player, CloudAPI.getInstance().getOnlinePlayer(it.requester)))
             }
         }
 
@@ -86,22 +89,23 @@ object FriendRequestsInventory {
         LOGGER.exiting(FriendRequestsInventory::class, "fillRequestInventory")
     }
 
-    private fun getRequestSkull(request: ResultRow, player: Player, requester: CloudPlayer?) =
+    private fun getRequestSkull(request: FriendRequests.FriendRequest, player: Player, requester: CloudPlayer?) =
             NBTItemExt(ItemStack(Material.SKULL_ITEM, 1,
                     SkullType.PLAYER.ordinal.toShort()))
                     .setBoolean(NBTIdentifier.PREFIX, true)
-                    .setDisplayName(Users[request[FriendRequests.requester]][Users.lastName])
+                    .setDisplayName(Users[request.requester][Users.lastName])
+                    .setObject(NBTIdentifier.RELATIONSHIP, request)
                     .setLore({
                         it += if (requester != null) {
                             I18NStrings.ONLINE.get(player)
                         } else {
                             I18NStrings.OFFLINE.get(player)
                         }
-                        it += request[FriendRequests.requestTime].toString(DateTimeFormat.mediumDate()
+                        it += request.requestTime.toString(DateTimeFormat.mediumDate()
                                 .withLocale(I18nUtils.getLocaleFromCommandSender(player)))
                     }).setMeta {
                         val newMeta = it as SkullMeta
-                        val profile = Bukkit.createProfile(request[FriendRequests.requester], Users[request[FriendRequests.requester]][Users.lastName])
+                        val profile = Bukkit.createProfile(request.requester, Users[request.requester][Users.lastName])
                         profile.complete(true)
                         newMeta.playerProfile = profile
                     }.item
@@ -112,5 +116,32 @@ object FriendRequestsInventory {
                 .setInteger(NBTIdentifier.PAGE, NBTItemExt(item).getInteger(NBTIdentifier.PAGE)!!)
                 .item)
         fillRequestInventory(this, player)
+    }
+
+    fun requestDetails(player: Player, item: NBTItemExt): Inventory? {
+        LOGGER.entering(FriendRequestsInventory::class, "requestDetails", player, item)
+        val request = item.getObject(NBTIdentifier.RELATIONSHIP,
+                FriendRequests.FriendRequest::class) ?: return null
+        LOGGER.finest("Got request")
+        return Bukkit.createInventory(player, 2 * 9, Users[request.requester][Users.lastName])
+                .apply {
+                    // Skull
+                    val friendOnline = CloudAPI.getInstance().getOnlinePlayer(request.requester)
+                    setItem(4, getRequestSkull(request, player, friendOnline))
+
+                    // Accept
+                    setItem(11,
+                            NBTItemExt(ItemStack(Material.WOOL, 1, DyeColor.LIME.ordinal.toShort()))
+                                    .setBoolean(NBTIdentifier.PREFIX, true)
+
+                                    .item)
+
+                    // Deny
+                    setItem(15, NBTItemExt(ItemStack(Material.WOOL, 1, DyeColor.RED.ordinal.toShort()))
+                            .setBoolean(NBTIdentifier.PREFIX, true)
+                            .setInteger(NBTIdentifier.TYPE, GMCType.REMOVE_FRIEND.ordinal)
+                            .setDisplayName(I18NStrings.RELATIONSHIP_REMOVE.get(player))
+                            .item)
+                }
     }
 }
