@@ -123,24 +123,26 @@ object FriendRequestsInventory {
         val request = item.getObject(NBTIdentifier.RELATIONSHIP,
                 FriendRequests.FriendRequest::class) ?: return null
         LOGGER.finest("Got request")
-        return Bukkit.createInventory(player, 2 * 9, Users[request.requester][Users.lastName])
+        return Bukkit.createInventory(player, REQUEST_INVENTORY_SIZE, Users[request.requester][Users.lastName])
                 .apply {
                     // Skull
                     val friendOnline = CloudAPI.getInstance().getOnlinePlayer(request.requester)
                     setItem(4, getRequestSkull(request, player, friendOnline))
 
                     // Accept
-                    setItem(11,
-                            NBTItemExt(ItemStack(Material.WOOL, 1, DyeColor.LIME.ordinal.toShort()))
-                                    .setBoolean(NBTIdentifier.PREFIX, true)
-
-                                    .item)
+                    setItem(11, NBTItemExt(ItemStack(Material.WOOL, 1, DyeColor.LIME.ordinal.toShort()))
+                            .setBoolean(NBTIdentifier.PREFIX, true)
+                            .setObject(NBTIdentifier.RELATIONSHIP, request)
+                            .setType(GMCType.FRIEND_REQUEST_ACCEPT)
+                            .setDisplayName(I18NStrings.FRIENDREQUEST_ACCEPT.get(player))
+                            .item)
 
                     // Deny
                     setItem(15, NBTItemExt(ItemStack(Material.WOOL, 1, DyeColor.RED.ordinal.toShort()))
                             .setBoolean(NBTIdentifier.PREFIX, true)
-                            .setInteger(NBTIdentifier.TYPE, GMCType.REMOVE_FRIEND.ordinal)
-                            .setDisplayName(I18NStrings.RELATIONSHIP_REMOVE.get(player))
+                            .setType(GMCType.FRIEND_REQUEST_DENY)
+                            .setObject(NBTIdentifier.RELATIONSHIP, request)
+                            .setDisplayName(I18NStrings.FRIENDREQUEST_DENY.get(player))
                             .item)
                 }
     }
