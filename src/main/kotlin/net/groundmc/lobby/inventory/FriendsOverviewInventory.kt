@@ -45,7 +45,7 @@ object FriendsOverviewInventory {
     private const val INVENTORY_SIZE = 4 * 9
     private const val PAGE_SIZE = INVENTORY_SIZE - 9
     private const val INFO_ITEM_INDEX = PAGE_SIZE + 4
-    private const val REQUEST_ITEM_INDEX = PAGE_SIZE + 1
+    private const val REQUEST_ITEM_INDEX = PAGE_SIZE // Zero based
 
     internal const val TITLE = "Friends"
 
@@ -122,9 +122,11 @@ object FriendsOverviewInventory {
         Collections.sort(
                 relationships,
                 OnlineOfflinePlayerComparator(onlinePlayers))
-        val infoItem = NBTItemExt(inventory.getItem(INFO_ITEM_INDEX))
-        val page = if (NBTIdentifier.itemHasPrefix(infoItem) && infoItem.hasKey(NBTIdentifier.PAGE)) {
-            infoItem.getInteger(NBTIdentifier.PAGE) ?: 0
+        val page = if (NBTIdentifier.itemHasPrefix(inventory.getItem(INFO_ITEM_INDEX))) {
+            val infoItem = NBTItemExt(inventory.getItem(INFO_ITEM_INDEX))
+            if (infoItem.hasKey(NBTIdentifier.PAGE)) {
+                (infoItem.getInteger(NBTIdentifier.PAGE) ?: 0)
+            } else 0
         } else 0
 
         if (relationships.isNotEmpty()) {
