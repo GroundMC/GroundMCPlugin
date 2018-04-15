@@ -2,7 +2,6 @@ package net.groundmc.lobby
 
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
-import com.google.gson.TypeAdapterFactory
 import com.zaxxer.hikari.HikariDataSource
 import de.tr7zw.itemnbtapi.utils.GsonWrapper
 import net.groundmc.lobby.commands.*
@@ -161,7 +160,7 @@ class LobbyMain : JavaPlugin() {
         fGson.set(null, GsonBuilder().apply {
             registerTypeAdapter(Location::class.java, LocationTypeAdapter)
             registerTypeAdapter(DateTime::class.java, DateTimeAdapter)
-            factories.forEach { registerTypeAdapterFactory(it as TypeAdapterFactory) }
+            factories.forEach { this::registerTypeAdapterFactory }
         }.create())
         LOGGER.exiting(LobbyMain::class, "registerGsonHandlers")
     }
