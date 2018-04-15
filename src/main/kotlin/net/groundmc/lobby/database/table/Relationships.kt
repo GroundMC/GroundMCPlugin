@@ -2,6 +2,7 @@ package net.groundmc.lobby.database.table
 
 import com.google.common.cache.CacheBuilder
 import com.google.common.cache.CacheLoader
+import kotlinx.coroutines.experimental.async
 import net.groundmc.lobby.i18n.I18n
 import net.groundmc.lobby.objects.Relationship
 import net.groundmc.lobby.util.LOGGER
@@ -76,26 +77,29 @@ object Relationships : Table() {
     fun addRelationship(player: Player, relationship: Relationship) {
         LOGGER.entering(Relationships::class, "addRelationship", player, relationship)
         LOGGER.fine("Adding new relationship: $relationship")
-        if (!areFriends(relationship.user1.uniqueId, relationship.user2.uniqueId)) {
-            transaction {
-                insert {
-                    it[userId1] = relationship.user1.uniqueId
-                    it[userId2] = relationship.user2.uniqueId
-                    it[since] = relationship.since
+        async {
+            if (!areFriends(relationship.user1.uniqueId, relationship.user2.uniqueId)) {
+                transaction {
+                    insert {
+                        it[userId1] = relationship.user1.uniqueId
+                        it[userId2] = relationship.user2.uniqueId
+                        it[since] = relationship.since
+                    }
+                    insert {
+                        it[userId1] = relationship.user2.uniqueId
+                        it[userId2] = relationship.user1.uniqueId
+                        it[since] = relationship.since
+                    }
+                    commit()
                 }
-                insert {
-                    it[userId1] = relationship.user2.uniqueId
-                    it[userId2] = relationship.user1.uniqueId
-                    it[since] = relationship.since
-                }
+                relationshipCache.refresh(relationship.user1.uniqueId)
+                relationshipCache.refresh(relationship.user2.uniqueId)
+                player.sendMessage(I18n.getString("relationship.success", player.locale))
+            } else {
+                player.sendMessage(I18n.getString("relationship.exists", player.locale))
             }
-            relationshipCache.refresh(relationship.user1.uniqueId)
-            relationshipCache.refresh(relationship.user2.uniqueId)
-            player.sendMessage(I18n.getString("relationship.success", player.locale))
-        } else {
-            player.sendMessage(I18n.getString("relationship.exists", player.locale))
+            LOGGER.exiting(Relationships::class, "addRelationship")
         }
-        LOGGER.exiting(Relationships::class, "addRelationship")
     }
 
     /**
