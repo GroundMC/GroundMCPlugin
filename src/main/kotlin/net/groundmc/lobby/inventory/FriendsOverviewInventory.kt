@@ -71,7 +71,6 @@ object FriendsOverviewInventory {
                                     .setBoolean(NBTIdentifier.PREFIX, true)
                                     .setObject(NBTIdentifier.RELATIONSHIP, relationship)
                                     .setInteger(NBTIdentifier.TYPE, GMCType.TP.ordinal)
-
                                     .setDisplayName(I18NStrings.FRIENDS_JUMP.format(player,
                                             (if (friendOnline != null) ChatColor.GREEN.toString() + relationship.user2.name
                                             else ChatColor.RED.toString() + relationship.user2.name)))
@@ -87,33 +86,32 @@ object FriendsOverviewInventory {
                 }
     }
 
-    private fun getFriendSkull(relationship: Relationship, player: Player, friendOnline: CloudPlayer?): ItemStack {
-        return NBTItemExt(ItemStack(Material.SKULL_ITEM, 1,
-                SkullType.PLAYER.ordinal.toShort()))
-                .setBoolean(NBTIdentifier.PREFIX, true)
-                .setObject(NBTIdentifier.RELATIONSHIP, relationship)
-                .setDisplayName(relationship.user2.name)
-                .setLore({
-                    if (friendOnline != null) {
-                        it += I18NStrings.ONLINE.get(player)
-                        it += if (CloudServer.getInstance().groupData.name == CloudAPI.getInstance().getServerGroup(friendOnline.server).name) {
-                            "${ChatColor.GREEN}${friendOnline.server}"
+    private fun getFriendSkull(relationship: Relationship, player: Player, friendOnline: CloudPlayer?) =
+            NBTItemExt(ItemStack(Material.SKULL_ITEM, 1,
+                    SkullType.PLAYER.ordinal.toShort()))
+                    .setBoolean(NBTIdentifier.PREFIX, true)
+                    .setObject(NBTIdentifier.RELATIONSHIP, relationship)
+                    .setDisplayName(relationship.user2.name)
+                    .setLore({
+                        if (friendOnline != null) {
+                            it += I18NStrings.ONLINE.get(player)
+                            it += if (CloudServer.getInstance().groupData.name == CloudAPI.getInstance().getServerGroup(friendOnline.server).name) {
+                                "${ChatColor.GREEN}${friendOnline.server}"
+                            } else {
+                                "${ChatColor.RED}${friendOnline.server}"
+                            }
                         } else {
-                            "${ChatColor.RED}${friendOnline.server}"
+                            it += I18NStrings.OFFLINE.get(player)
                         }
-                    } else {
-                        it += I18NStrings.OFFLINE.get(player)
-                    }
-                    it += I18NStrings.RELATIONSHIP_SINCE.format(player.locale,
-                            relationship.since.toString(DateTimeFormat.mediumDate()
-                                    .withLocale(I18nUtils.getLocaleFromCommandSender(player))))
-                }).setMeta {
-                    val newMeta = it as SkullMeta
-                    val profile = Bukkit.createProfile(relationship.user2.uniqueId, relationship.user2.name)
-                    profile.complete(true)
-                    newMeta.playerProfile = profile
-                }.item
-    }
+                        it += I18NStrings.RELATIONSHIP_SINCE.format(player.locale,
+                                relationship.since.toString(DateTimeFormat.mediumDate()
+                                        .withLocale(I18nUtils.getLocaleFromCommandSender(player))))
+                    }).setMeta {
+                        val newMeta = it as SkullMeta
+                        val profile = Bukkit.createProfile(relationship.user2.uniqueId, relationship.user2.name)
+                        profile.complete(true)
+                        newMeta.playerProfile = profile
+                    }.item
 
     private fun fillFriendInventory(inventory: Inventory, player: Player) {
         LOGGER.entering(FriendsOverviewInventory::class, "fillFriendInventory", inventory, player)
@@ -140,13 +138,13 @@ object FriendsOverviewInventory {
                 .setBoolean(NBTIdentifier.PREFIX, true)
                 .setInteger(NBTIdentifier.PAGE, page + 1)
                 .setDisplayName(" ")
-                .setLore(mutableListOf("Online: ${net.groundmc.lobby.database.table.Relationships.getOnlineFriends(player).size}",
+                .setLore(mutableListOf("${I18NStrings.ONLINE.get(player)}: ${Relationships.getOnlineFriends(player).size}",
                         I18NStrings.FRIENDS_PAGE.format(player, page + 1, pages + 1)))
                 .item)
 
         inventory.setItem(REQUEST_ITEM_INDEX, NBTItemExt(Material.PAPER)
                 .setBoolean(NBTIdentifier.PREFIX, true)
-                .setType(GMCType.FRIENDREQUESTS)
+                .setType(GMCType.FRIEND_REQUESTS)
                 .setDisplayName(I18NStrings.FRIENDREQUEST_TITLE.get(player))
                 .item)
 

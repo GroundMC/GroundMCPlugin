@@ -133,7 +133,8 @@ class LobbyMain : JavaPlugin() {
                 ServerStateListener,
                 SilentChatListener,
                 LobbyChooserListener,
-                FriendsOverviewListener
+                FriendsOverviewListener,
+                FriendRequestsListener
         ).forEach { Bukkit.getPluginManager().registerEvents(it, this) }
         LOGGER.exiting(LobbyMain::class, "registerListeners")
     }

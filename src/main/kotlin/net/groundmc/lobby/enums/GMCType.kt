@@ -37,7 +37,7 @@ enum class GMCType {
 
     REMOVE_FRIEND,
 
-    FRIENDREQUESTS;
+    FRIEND_REQUESTS;
 
     companion object {
 
