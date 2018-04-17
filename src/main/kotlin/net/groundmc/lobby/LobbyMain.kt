@@ -58,13 +58,19 @@ class LobbyMain : JavaPlugin() {
             formatter = LogFormatter()
         }
         LOGGER.addHandler(logHandler)
-        if (exposedLogger is JDK14LoggerAdapter) {
-            val fLogger = JDK14LoggerAdapter::class.java.getDeclaredField("logger")
-            fLogger.isAccessible = true
-            fLogger.set(exposedLogger, PluginLogger(this).apply {
-                addHandler(logHandler)
-                level = Level.ALL
-            })
+        when (exposedLogger) {
+            is JDK14LoggerAdapter -> {
+                val fLogger = JDK14LoggerAdapter::class.java.getDeclaredField("logger")
+                fLogger.isAccessible = true
+                fLogger.set(exposedLogger, PluginLogger(this).apply {
+                    addHandler(logHandler)
+                    level = Level.ALL
+                })
+            }
+            is SubstituteLogger -> {
+                val wrappedLoggerAdapter = JDK14LoggerAdapter::class.java.getDeclaredConstructor(Logger::class.java).newInstance(LOGGER)
+                (exposedLogger as SubstituteLogger).setDelegate(wrappedLoggerAdapter)
+            }
         }
         LOGGER.exiting(LobbyMain::class, "init")
     }
