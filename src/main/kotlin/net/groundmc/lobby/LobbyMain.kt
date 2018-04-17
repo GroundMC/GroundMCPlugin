@@ -27,12 +27,14 @@ import org.jetbrains.exposed.sql.SchemaUtils.createMissingTablesAndColumns
 import org.jetbrains.exposed.sql.exposedLogger
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.joda.time.DateTime
+import org.slf4j.helpers.SubstituteLogger
 import org.slf4j.impl.JDK14LoggerAdapter
 import java.io.File
 import java.lang.reflect.Field
 import java.lang.reflect.Modifier
 import java.util.logging.FileHandler
 import java.util.logging.Level
+import java.util.logging.Logger
 
 /**
  * The main class for this plugin.
@@ -133,7 +135,8 @@ class LobbyMain : JavaPlugin() {
                 SilentChatListener,
                 LobbyChooserListener,
                 FriendsOverviewListener,
-                FriendRequestsListener
+                FriendRequestsListener,
+                RequestListener
         ).forEach { Bukkit.getPluginManager().registerEvents(it, this) }
         LOGGER.exiting(LobbyMain::class, "registerListeners")
     }
