@@ -148,7 +148,6 @@ object Meta : Table() {
      */
     @Suppress("UNCHECKED_CAST", "PlatformExtensionReceiverOfInline")
     operator fun <T> get(key: Config<T>): T? {
-        LOGGER.entering(Meta::class, "get", key)
         return try {
             with(configCache[key]) {
                 try {
