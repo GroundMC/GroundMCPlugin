@@ -15,14 +15,15 @@ import org.bukkit.inventory.ItemStack
 
 object LobbyChooser {
 
-    const val TITLE = "Running lobbies"
+    const val TITLE = "Lobbies online:"
+    private const val chooserSize = 3 * 9
 
-    fun create(player: Player) = Bukkit.createInventory(player, 3 * 9, TITLE)
+    private val fillContents = Array<ItemStack>(chooserSize) { Items.FILLER.item }
+
+
+    fun create(player: Player) = Bukkit.createInventory(player, chooserSize, TITLE)
             .apply {
-
-                (0 until size).forEach {
-                    setItem(it, Items.FILLER.item)
-                }
+                this.contents = fillContents
                 val servers =
                         CloudAPI.getInstance().getServers(CloudServer.getInstance().groupData.name)
                 servers.sortedBy { it.serviceId.id }.forEachIndexed { index, serverInfo ->
