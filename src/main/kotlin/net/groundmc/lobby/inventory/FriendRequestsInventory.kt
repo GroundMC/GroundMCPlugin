@@ -22,7 +22,6 @@ import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.SkullMeta
 import org.joda.time.format.DateTimeFormat
-import java.util.*
 
 object FriendRequestsInventory {
 
@@ -35,18 +34,16 @@ object FriendRequestsInventory {
     internal const val TITLE = "Friend requests"
 
     fun create(player: Player): Inventory = Bukkit.createInventory(player, INVENTORY_SIZE, TITLE).apply {
-
         fillRequestInventory(this, player)
     }
 
     private fun fillRequestInventory(inventory: Inventory, player: Player) {
         LOGGER.entering(FriendRequestsInventory::class, "fillRequestInventory", inventory, player)
-        val friendRequests = FriendRequests.getRequestsFor(player.uniqueId)
-        Collections.sort(
-                friendRequests,
-                { o1, o2 ->
+        val friendRequests = FriendRequests.getRequestsFor(player.uniqueId).sortedWith(
+                Comparator { o1, o2 ->
                     o1.requestTime.compareTo(o2.requestTime)
-                })
+                }
+        )
         val page = if (NBTIdentifier.itemHasPrefix(inventory.getItem(INFO_ITEM_INDEX))) {
             val infoItem = NBTItemExt(inventory.getItem(INFO_ITEM_INDEX))
             if (infoItem.hasKey(NBTIdentifier.PAGE)) {
