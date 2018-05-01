@@ -1,5 +1,6 @@
 package net.groundmc.lobby.inventory
 
+import net.groundmc.lobby.database.table.Meta
 import net.groundmc.lobby.enums.Config
 import net.groundmc.lobby.enums.NBTIdentifier
 import net.groundmc.lobby.objects.Items
@@ -63,15 +64,13 @@ internal object LobbyInventory {
             return
         }
         @Suppress("unchecked_cast")
-        TEMPLATE_INVENTORY.contents = (net.groundmc.lobby.database.table.Meta[Config.INVENTORY_CONTENT] as List<ItemStack?>).toTypedArray()
+        TEMPLATE_INVENTORY.contents = (Meta[Config.INVENTORY_CONTENT] as List<ItemStack?>).toTypedArray()
         (0 until TEMPLATE_INVENTORY.contents.size).forEach {
             val item = TEMPLATE_INVENTORY.getItem(it)
             if (item == null) {
                 TEMPLATE_INVENTORY.setItem(it, Items.FILLER.item)
-            } else if (!NBTItemExt(item).hasKey(NBTIdentifier.PREFIX)) {
-                TEMPLATE_INVENTORY.setItem(it, NBTItemExt(item).apply {
-                    setBoolean(NBTIdentifier.PREFIX, true)
-                }.item)
+            } else if (!NBTIdentifier.itemHasPrefix(item)) {
+                TEMPLATE_INVENTORY.setItem(it, NBTItemExt(item).setBoolean(NBTIdentifier.PREFIX, true).item)
             }
         }
         LOGGER.exiting(LobbyInventory::class, "pullTemplate")
