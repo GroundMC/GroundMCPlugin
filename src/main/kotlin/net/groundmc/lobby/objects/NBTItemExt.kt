@@ -19,6 +19,8 @@ class NBTItemExt(item: ItemStack) : NBTItem(item), Cloneable {
 
     constructor(material: Material) : this(ItemStack(material))
 
+    constructor(material: Material, amount: Int, data: Number) : this(ItemStack(material, amount, data.toShort()))
+
     /**
      * Sets an integer value for a key.
      *
