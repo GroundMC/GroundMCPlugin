@@ -13,6 +13,7 @@ import org.bukkit.enchantments.Enchantment
 import org.bukkit.entity.Player
 import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemFlag
+import org.bukkit.inventory.ItemStack
 import org.bukkit.material.Dye
 
 /**
@@ -25,6 +26,10 @@ object HidePlayerInventory {
      */
     const val TITLE = "Hide"
 
+    private const val size = 9
+
+    private val fillContents = Array<ItemStack>(size) { Items.FILLER.item }
+
     /**
      * Creates an inventory for a player that is used to select the visibility
      * state of other players.
@@ -33,12 +38,11 @@ object HidePlayerInventory {
      * @return the created inventory
      */
     fun create(player: Player): Inventory =
-            Bukkit.createInventory(player, 9, TITLE).apply {
+            Bukkit.createInventory(player, size, TITLE).apply {
                 val hideState = Users[player][Users.hiddenStatus]
 
-                (0 until size).forEach {
-                    setItem(it, Items.FILLER.item)
-                }
+                contents = fillContents
+
                 setItem(0, NBTItemExt(Dye(DyeColor.LIME).toItemStack(1)).apply {
                     setBoolean(NBTIdentifier.PREFIX, true)
                     setInteger(NBTIdentifier.TYPE, GMCType.HIDE_PLAYERS.ordinal)
