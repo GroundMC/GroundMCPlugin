@@ -116,7 +116,7 @@ object FriendsOverviewInventory {
     private fun fillFriendInventory(inventory: Inventory, player: Player) {
         LOGGER.entering(FriendsOverviewInventory::class, "fillFriendInventory", inventory, player)
         val onlinePlayers = CloudAPI.getInstance().onlinePlayers.associate { it.uniqueId to it }
-        val relationships = Relationships.getRelationships(player)
+        val relationships = Relationships.getRelationships(player.uniqueId)
         Collections.sort(
                 relationships,
                 OnlineOfflinePlayerComparator(onlinePlayers))

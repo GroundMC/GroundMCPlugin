@@ -24,7 +24,7 @@ object CommandFriends : ILobbyCommand {
         LOGGER.entering(CommandFriends::class, "onCommand", sender, command, label, args?.joinToString())
         LOGGER.finest("Getting friends of ${sender.name}")
         if (sender is Player) {
-            val friends = Relationships.getRelationships(sender)
+            val friends = Relationships.getRelationships(sender.uniqueId)
             if (friends.isEmpty()) {
                 sender.sendMessage(I18n.getString("command.friends.no_friends", sender.locale))
                 return true

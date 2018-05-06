@@ -2,13 +2,15 @@ package net.groundmc.lobby.database.table
 
 import com.google.common.cache.CacheBuilder
 import com.google.common.cache.CacheLoader
+import de.dytanic.cloudnet.api.CloudAPI
 import kotlinx.coroutines.experimental.async
 import net.groundmc.lobby.i18n.I18n
+import net.groundmc.lobby.objects.Friend
 import net.groundmc.lobby.objects.Relationship
 import net.groundmc.lobby.util.LOGGER
 import net.groundmc.lobby.util.entering
 import net.groundmc.lobby.util.exiting
-import org.bukkit.Bukkit
+import org.bukkit.OfflinePlayer
 import org.bukkit.entity.Player
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
@@ -102,30 +104,20 @@ object Relationships : Table() {
         }
     }
 
-    /**
-     * Queries the database for a relationship between [player] and [friend]
-     *
-     * @param player the player to query the relationship for
-     * @param friend the possible friend of [player]
-     *
-     * @return whether there exists a relationship between [player] and [friend]
-     */
     fun areFriends(player: UUID, friend: UUID): Boolean {
         LOGGER.entering(Relationships::class, "areFriends", player, friend)
         return relationshipCache[player]
                 .any { it.user2.uniqueId == friend }
     }
 
-    /**
-     * Queries the database for a list of relationships of [player]
-     *
-     * @param player the player to query the relationships for
-     *
-     * @return a list of relationships of [player]
-     */
-    fun getRelationships(player: Player): List<Relationship> {
-        LOGGER.entering(Relationships::class, "getRelationships", player)
-        return relationshipCache[player.uniqueId]
+    fun areFriends(player: OfflinePlayer, friend: OfflinePlayer): Boolean {
+        LOGGER.entering(Relationships::class, "areFriends", player, friend)
+        return areFriends(player.uniqueId, friend.uniqueId)
+    }
+
+    fun getRelationships(uuid: UUID): List<Relationship> {
+        LOGGER.entering(Relationships::class, "getRelationships", uuid)
+        return relationshipCache[uuid]
     }
 
 
@@ -163,40 +155,15 @@ object Relationships : Table() {
         LOGGER.exiting(Relationships::class, "removeRelationship")
     }
 
-    /**
-     * Queries all online friends of the [player]
-     *
-     * @param player the player to query the friends for
-     *
-     * @return a collection of friends
-     */
-    fun getOnlineFriends(player: Player): List<Player> {
+    fun getOnlineFriends(player: OfflinePlayer): List<Friend> {
         LOGGER.entering(Relationships::class, "getOnlineFriends", player)
-        val onlineUUIDs = getOnlineUUIDs()
-        return getRelationships(player).filter {
-            it.user2.uniqueId in onlineUUIDs
-        }.mapNotNull { it.user2.player }
+        val networkPlayers = getOnlineUUIDs()
+        return getRelationships(player.uniqueId)
+                .filter { it.user2.uniqueId in networkPlayers }
+                .map { it.user2 }
     }
 
-    /**
-     * Queries all online players who are not a friend of the [player]
-     *
-     * @param player the player to query the non-friends for
-     *
-     * @return a collection of non-friends
-     */
-    fun getOnlineNonFriends(player: Player): List<Player> {
-        LOGGER.entering(Relationships::class, "getOnlineNonFriends", player)
-        val onlineFriends = getOnlineFriends(player)
-        return Bukkit.getOnlinePlayers().filter { it in onlineFriends }
-    }
-
-    /**
-     * Maps all the online players on the network to their [java.util.UUID].
-     *
-     * @return the UUIDs of all the online players on the network.
-     */
     private fun getOnlineUUIDs(): List<UUID> {
-        return Bukkit.getOnlinePlayers().map { it.uniqueId }
+        return CloudAPI.getInstance().onlinePlayers.map { it.uniqueId }
     }
 }

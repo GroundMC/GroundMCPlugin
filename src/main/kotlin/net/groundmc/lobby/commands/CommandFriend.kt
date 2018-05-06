@@ -56,7 +56,7 @@ object CommandFriend : ILobbyCommand {
     private fun friendsStartWith(sender: CommandSender, args: Array<out String>): List<String>? {
         LOGGER.entering(CommandFriend::class, "friendsStartWith", sender, args.joinToString())
         if (sender is Player) {
-            val friendsList = Relationships.getRelationships(sender)
+            val friendsList = Relationships.getRelationships(sender.uniqueId)
             return friendsList.map { it -> it.user2.name }.filter { it.startsWith(args.last()) }
         }
         return null
@@ -124,11 +124,10 @@ object CommandFriend : ILobbyCommand {
             if (relationship != null) {
                 sender.sendMessage(I18NStrings.RELATIONSHIP_STATUS.format(sender, args[1],
                         relationship.since.toString(DateTimeFormat.mediumDate().withLocale(I18nUtils.getLocaleFromCommandSender(sender)))))
-                return true
             } else {
                 sender.sendMessage(I18NStrings.RELATIONSHIP_NOT_RELATED.format(sender, args[1]))
-                return true
             }
+            return true
         }
     }
 
@@ -165,11 +164,10 @@ object CommandFriend : ILobbyCommand {
         if (Relationships.areFriends(sender.uniqueId, friend.uniqueId)) {
             Relationships.removeRelationship(sender.uniqueId, friend.uniqueId)
             sender.sendMessage(I18NStrings.COMMAND_FRIEND_NO_LONGER_RELATED.format(sender, friend.name))
-            return true
         } else {
             sender.sendMessage(I18NStrings.COMMAND_FRIEND_NO_FRIENDS.format(sender, friend.name))
-            return true
         }
+        return true
     }
 
     /**
