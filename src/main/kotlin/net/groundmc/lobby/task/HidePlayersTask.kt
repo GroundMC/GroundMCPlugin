@@ -1,5 +1,6 @@
 package net.groundmc.lobby.task
 
+import net.groundmc.lobby.LobbyMain
 import net.groundmc.lobby.database.table.Relationships
 import net.groundmc.lobby.database.table.Users
 import net.groundmc.lobby.enums.VisibilityStates
@@ -15,37 +16,33 @@ object HidePlayersTask : ITask {
 
     override fun run() {
         transaction {
+            val players = Bukkit.getOnlinePlayers()
             val onlinePlayers =
-                    Users.getAll(Bukkit.getOnlinePlayers().map { it.uniqueId })
+                    Users.getAll(players.map { it.uniqueId })
                             .mapKeys { Bukkit.getPlayer(it.key) }
-            onlinePlayers.filterNot { it.value[Users.vanishStatus] }
-                    .forEach { player, status ->
-                        when (status[Users.hiddenStatus]) {
-                            VisibilityStates.ALL -> {
-                                Bukkit.getOnlinePlayers().forEach { player.showPlayer(net.groundmc.lobby.LobbyMain.instance, it) }
-                            }
-                            VisibilityStates.NONE -> {
-                                Bukkit.getOnlinePlayers().forEach { player.hidePlayer(net.groundmc.lobby.LobbyMain.instance, it) }
-                            }
-                            VisibilityStates.FRIENDS -> {
-                                val friends = Relationships.getOnlineFriends(player)
-                                val nonFriends = Relationships.getOnlineNonFriends(player)
-                                friends.forEach {
-                                    player.showPlayer(net.groundmc.lobby.LobbyMain.instance, it)
-                                }
-                                nonFriends.forEach {
-                                    player.hidePlayer(net.groundmc.lobby.LobbyMain.instance, it)
+            onlinePlayers.forEach { player, status ->
+                when (status[Users.vanishStatus]) {
+                    true -> players.forEach {
+                        it.hidePlayer(LobbyMain.instance, player)
+                    }
+                    false -> when (status[Users.hiddenStatus]) {
+                        VisibilityStates.ALL -> {
+                            players.forEach { player.showPlayer(LobbyMain.instance, it) }
+                        }
+                        VisibilityStates.NONE -> {
+                            players.forEach { player.hidePlayer(LobbyMain.instance, it) }
+                        }
+                        VisibilityStates.FRIENDS -> {
+                            players.forEach {
+                                when (Relationships.areFriends(player, it)) {
+                                    true -> player.showPlayer(LobbyMain.instance, it)
+                                    false -> player.hidePlayer(LobbyMain.instance, it)
                                 }
                             }
                         }
                     }
-
-            onlinePlayers.filter { it.value[Users.vanishStatus] }
-                    .forEach { player, _ ->
-                        onlinePlayers.forEach {
-                            it.key.hidePlayer(net.groundmc.lobby.LobbyMain.instance, player)
-                        }
-                    }
+                }
+            }
         }
     }
 }
