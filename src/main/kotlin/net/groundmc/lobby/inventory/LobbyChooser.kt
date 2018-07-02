@@ -20,7 +20,6 @@ object LobbyChooser {
 
     private val fillContents = Array<ItemStack>(chooserSize) { Items.FILLER.item }
 
-
     fun create(player: Player) = Bukkit.createInventory(player, chooserSize, TITLE)
             .apply {
                 this.contents = fillContents
