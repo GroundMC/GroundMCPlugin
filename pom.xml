@@ -33,6 +33,16 @@
             <id>cloudnet</id>
             <url>https://cloudnetservice.eu/repositories/</url>
         </repository>
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>
+        <repository>
+            <id>onarandombox</id>
+            <url>
+                https://repo.onarandombox.com/content/repositories/multiverse-snapshots
+            </url>
+        </repository>
     </repositories>
 
     <pluginRepositories>
@@ -99,9 +109,9 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>de.tr7zw</groupId>
+            <groupId>com.github.tr7zw.Item-NBT-API</groupId>
             <artifactId>item-nbt-api</artifactId>
-            <version>1.7-SNAPSHOT</version>
+            <version>master</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
