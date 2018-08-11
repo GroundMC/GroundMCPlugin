@@ -91,9 +91,9 @@ object ServerStateListener : Listener {
      */
     @EventHandler
     fun onPlayerChangeWorld(event: PlayerChangedWorldEvent) {
-        if (event.from == (net.groundmc.lobby.database.table.Meta[Config.HUB_LOCATION] as Location).world) {
+        if (event.from == (Meta[Config.HUB_LOCATION] as Location).world) {
             event.player.inventory.contents = LobbyMain.originalInventories[event.player]
-        } else if (event.player.world == (net.groundmc.lobby.database.table.Meta[Config.HUB_LOCATION] as Location).world) {
+        } else if (event.player.world == (Meta[Config.HUB_LOCATION] as Location).world) {
             LobbyMain.originalInventories[event.player] = event.player.inventory.copy()
             addItemsToInventory(event.player)
         }
@@ -107,7 +107,7 @@ object ServerStateListener : Listener {
     @EventHandler
     fun onPlayerChangeLocale(event: PlayerLocaleChangeEvent) {
         LOGGER.entering(ServerStateListener::class, "onPlayerChangeLocale", event)
-        if (event.player.world == (net.groundmc.lobby.database.table.Meta[Config.HUB_LOCATION] as Location).world) {
+        if (event.player.world == (Meta[Config.HUB_LOCATION] as Location).world) {
             addItemsToInventory(event.player)
         }
         LOGGER.exiting(ServerStateListener::class, "onPlayerChangeLocale")
@@ -125,28 +125,32 @@ object ServerStateListener : Listener {
         event.joinMessage = null
         async {
             transaction {
-                if (Users.select { Users.id eq event.player.uniqueId }.count() == 0) {
+                val player = Users.select { Users.id eq event.player.uniqueId }
+                if (player.count() == 0) {
                     Users.insert {
                         it[id] = event.player.uniqueId
                         it[lastName] = event.player.name
                     }
                     commit()
+                } else {
+                    Bukkit.getScheduler().runTask(LobbyMain.instance) {
+                        event.player.teleport(player.firstOrNull()?.get(Users.lastLocation)
+                                ?: Meta[Config.HUB_LOCATION])
+                    }
                 }
+
             }
             Users.refresh(event.player)
+            addDailyBonus(event.player)
         }
 
         LobbyMain.originalInventories[event.player] = event.player.inventory.copy()
 
-        if (event.player.world == (net.groundmc.lobby.database.table.Meta[Config.HUB_LOCATION] as Location).world) {
+        if (event.player.world == (Meta[Config.HUB_LOCATION] as Location).world) {
             addItemsToInventory(event.player)
         }
 
         event.player.getAttribute(Attribute.GENERIC_ATTACK_SPEED).baseValue = 16.0
-
-        async {
-            addDailyBonus(event.player)
-        }
         createScoreboard(event.player)
         LOGGER.exiting(ServerStateListener::class, "onPlayerLogin")
     }
@@ -206,11 +210,20 @@ object ServerStateListener : Listener {
     fun onPlayerLogout(event: PlayerQuitEvent) {
         LOGGER.entering(ServerStateListener::class, "onPlayerLogout", event)
         event.quitMessage = null
-        if (event.player.world == (net.groundmc.lobby.database.table.Meta[Config.HUB_LOCATION] as Location).world) {
+        if (event.player.world == (Meta[Config.HUB_LOCATION] as Location).world) {
             event.player.inventory.contents = LobbyMain.originalInventories[event.player]
         }
         LobbyMain.originalInventories.remove(event.player)
         SilentChatListener.SILENCED_PLAYERS.remove(event.player)
+        async {
+            transaction {
+                Users.update({ Users.id eq event.player.uniqueId }) {
+                    it[Users.lastLocation] = event.player.location
+                }
+                commit()
+                Users.invalidate(event.player)
+            }
+        }
         LOGGER.exiting(ServerStateListener::class, "onPlayerLogout")
     }
 }

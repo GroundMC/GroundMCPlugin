@@ -2,13 +2,17 @@ package net.groundmc.lobby.database.table
 
 import com.google.common.cache.CacheBuilder
 import com.google.common.cache.CacheLoader
+import com.google.gson.GsonBuilder
 import net.groundmc.lobby.enums.VisibilityStates
 import net.groundmc.lobby.util.LOGGER
+import net.groundmc.lobby.util.LocationTypeAdapter
 import net.groundmc.lobby.util.entering
+import org.bukkit.Location
 import org.bukkit.entity.Player
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.Table
+import org.jetbrains.exposed.sql.VarCharColumnType
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.joda.time.DateTime
@@ -49,6 +53,34 @@ object Users : Table() {
      * The last date at which the player has received daily coins (does not accumulate)
      */
     val lastDailyCoinsDate = date("lastDailyCoins").default(DateTime.parse("1970-01-01"))
+
+    /**
+     * The last location of the player
+     */
+    val lastLocation = location("lastLocation")
+
+    private fun location(name: String) = registerColumn<Location>(name, LocationColumnType())
+
+    class LocationColumnType : VarCharColumnType() {
+
+        private val gson = GsonBuilder()
+                .registerTypeAdapter(Location::class.java, LocationTypeAdapter)
+                .create()
+
+        override fun nonNullValueToString(value: Any): String {
+            return when (value) {
+                is Location -> gson.toJson(value)
+                else -> super.nonNullValueToString(value)
+            }
+        }
+
+        override fun valueFromDB(value: Any): Any {
+            return when (value) {
+                is String -> gson.fromJson(value, Location::class.java)
+                else -> super.valueFromDB(value)
+            }
+        }
+    }
 
     /**
      * Cache for the players which are currently on the server.
