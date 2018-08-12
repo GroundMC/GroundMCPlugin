@@ -2,6 +2,7 @@ package net.groundmc.lobby.database.table
 
 import com.google.common.cache.CacheBuilder
 import com.google.common.cache.CacheLoader
+import com.google.common.cache.LoadingCache
 import me.BukkitPVP.PointsAPI.PointsAPI
 import net.groundmc.lobby.LobbyMain
 import net.groundmc.lobby.database.table.legacy.Meta0
@@ -44,7 +45,7 @@ object Meta : Table() {
      * The cache that is used to store configuration objects.
      * Refreshes every 10 seconds.
      */
-    private val configCache = CacheBuilder.newBuilder()
+    val configCache: LoadingCache<Config<*>, Any> = CacheBuilder.newBuilder()
             .refreshAfterWrite(10, TimeUnit.SECONDS)
             .build<Config<*>, Any>(CacheLoader.asyncReloading(DatabaseCacheLoader(), Executors.newCachedThreadPool()))
 
@@ -147,7 +148,7 @@ object Meta : Table() {
      * @return the value associated with the [key] or `null`, if not present.
      */
     @Suppress("UNCHECKED_CAST", "PlatformExtensionReceiverOfInline")
-    operator fun <T> get(key: Config<T>): T? {
+    inline operator fun <reified T> get(key: Config<T>): T? {
         return try {
             with(configCache[key]) {
                 try {
@@ -171,7 +172,7 @@ object Meta : Table() {
             }
         } catch (e: Exception) {
             LOGGER.throwing(this.javaClass.name, "get", e)
-            null as T
+            null
         }
     }
 
@@ -210,8 +211,9 @@ object Meta : Table() {
                         transaction {
                             select {
                                 Meta.key eq key.key
-                            }.first().tryGet(value) ?: throw NoSuchElementException(
-                                    "value for key \"${key.key}\" is non-existent!")
+                            }.first().tryGet(value)
+                                    ?: throw NoSuchElementException(
+                                            "value for key \"${key.key}\" is non-existent!")
                         })
                 return this.get(key.key) ?: throw NullPointerException(
                         "value for key \"${key.key}\" is null!")

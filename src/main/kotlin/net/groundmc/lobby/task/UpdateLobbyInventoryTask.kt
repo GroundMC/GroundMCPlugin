@@ -2,6 +2,7 @@ package net.groundmc.lobby.task
 
 import com.onarandombox.MultiverseCore.MultiverseCore
 import net.groundmc.lobby.LobbyMain
+import net.groundmc.lobby.database.table.Meta
 import net.groundmc.lobby.enums.Config
 import net.groundmc.lobby.enums.GMCType
 import net.groundmc.lobby.enums.NBTIdentifier
@@ -36,7 +37,7 @@ object UpdateLobbyInventoryTask : ITask {
             val nbtItem = NBTItemExt(it)
             if (NBTIdentifier.itemHasPrefix(it) && nbtItem.getInteger(NBTIdentifier.TYPE) == GMCType.TP.ordinal) {
                 val world = nbtItem.getObject(NBTIdentifier.TP_LOC, Location::class)!!.world
-                if (world != (net.groundmc.lobby.database.table.Meta[Config.HUB_LOCATION] as Location).world) {
+                if (world != Meta[Config.HUB_LOCATION]?.world) {
                     val mvWorld = worldManager.getMVWorld(world)
                     val nPlayers = mvWorld.cbWorld.players.size
                     val playerLimit = mvWorld.playerLimit

@@ -8,6 +8,7 @@ import net.groundmc.lobby.enums.Config
 import net.groundmc.lobby.enums.GMCType
 import net.groundmc.lobby.enums.NBTIdentifier
 import net.groundmc.lobby.enums.Permission
+import net.groundmc.lobby.i18n.I18NStrings
 import net.groundmc.lobby.i18n.I18n
 import net.groundmc.lobby.i18n.I18nUtils
 import net.groundmc.lobby.inventory.LobbyInventory
@@ -20,7 +21,6 @@ import net.groundmc.lobby.util.hasPermission
 import net.md_5.bungee.api.chat.ClickEvent
 import net.md_5.bungee.api.chat.TextComponent
 import org.bukkit.Bukkit
-import org.bukkit.Location
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 import org.bukkit.command.ConsoleCommandSender
@@ -110,7 +110,7 @@ object CommandLobby : ILobbyCommand {
                 }
             }
         } else if (sender is Player) {
-            sender.teleport(Meta[Config.HUB_LOCATION] as Location, PlayerTeleportEvent.TeleportCause.COMMAND)
+            sender.teleport(Meta[Config.HUB_LOCATION], PlayerTeleportEvent.TeleportCause.COMMAND)
             return true
         }
         return false
@@ -127,11 +127,11 @@ object CommandLobby : ILobbyCommand {
         if (sender.hasPermission(Permission.ADMIN) && sender is Player) {
             Meta[Config.HUB_LOCATION] = sender.location
             Bukkit.getServer().scheduler.scheduleSyncDelayedTask(LobbyMain.instance, SetRulesTask)
-            sender.sendMessage(I18n.getString("command.lobby.location_set", sender.locale))
+            sender.sendMessage(I18NStrings.COMMAND_LOBBY_LOCATION_SET.get(sender))
         } else if (sender is Player) {
-            sender.sendMessage(I18n.getString("lobby.nopermission", sender.locale))
+            sender.sendMessage(I18NStrings.NOPERMISSION.get(sender))
         } else if (sender is ConsoleCommandSender) {
-            sender.sendMessage(I18n.getString("command.playeronly", Locale.getDefault()))
+            sender.sendMessage(I18NStrings.COMMAND_PLAYERONLY.get(sender))
         }
         LOGGER.exiting(CommandLobby::class, "setLobby")
         return true
@@ -162,7 +162,7 @@ object CommandLobby : ILobbyCommand {
             sender.sendMessage("See the log file ${file[1].canonicalPath}")
             LOGGER.info("Log finished.")
         } else if (sender is Player) {
-            sender.sendMessage(I18n.getString("lobby.nopermission", sender.locale))
+            sender.sendMessage(I18NStrings.NOPERMISSION.get(sender))
         }
         return true
     }
@@ -180,7 +180,7 @@ object CommandLobby : ILobbyCommand {
             if (sender.hasPermission(Permission.ADMIN)) {
                 thread {
                     val view = sender.openInventory(LobbyInventory.TEMPLATE_INVENTORY)
-                    sender.sendMessage(I18n.getString("command.lobby.30seconds", sender.locale))
+                    sender.sendMessage(I18NStrings.COMMAND_LOBBY_30SECONDS.get(sender))
                     for (i in 0..30) {
                         if (sender.openInventory != view) {
                             break
@@ -188,17 +188,17 @@ object CommandLobby : ILobbyCommand {
                         Thread.sleep(1000)
                     }
                     saveTemplate()
-                    sender.sendMessage(I18n.getString("command.lobby.inventorydone", sender.locale))
+                    sender.sendMessage(I18NStrings.COMMAND_LOBBY_INVENTORYDONE.get(sender))
                     if (sender.openInventory == view) {
                         view.close()
                     }
                 }
                 return true
             } else {
-                sender.sendMessage(I18n.getString("nopermission", sender.locale))
+                sender.sendMessage(I18NStrings.NOPERMISSION.get(sender))
             }
         } else if (sender is ConsoleCommandSender) {
-            sender.sendMessage(I18n.getString("command.playeronly", Locale.getDefault()))
+            sender.sendMessage(I18NStrings.COMMAND_PLAYERONLY.get(sender))
         }
         return false
     }
@@ -225,7 +225,7 @@ object CommandLobby : ILobbyCommand {
                     displayName = args.sliceArray(1 until args.size).reduce { left, right -> "$left $right" }
                     sender.inventory.itemInMainHand = item
                 }
-                val string = I18n.getString("command.lobby.placeitem", sender.locale)!!
+                val string = I18NStrings.COMMAND_LOBBY_PLACEITEM.get(sender)
                 val strList = string.split("|")
                 val msg = TextComponent(strList[0])
                 val clickComponent = TextComponent(strList[1])
@@ -235,11 +235,11 @@ object CommandLobby : ILobbyCommand {
                 sender.sendMessage(msg)
                 LOGGER.finest("${sender.name} created a teleport item: $nbtItem")
                 return true
-            } else if (!sender.hasPermission("groundmc.lobby.admin")) {
-                sender.sendMessage(I18n.getString("nopermission", sender.locale))
+            } else if (!sender.hasPermission(Permission.ADMIN)) {
+                sender.sendMessage(I18NStrings.NOPERMISSION.get(sender))
             }
         } else {
-            sender.sendMessage(I18n.getString("command.playeronly", Locale.getDefault()))
+            sender.sendMessage(I18NStrings.COMMAND_PLAYERONLY.get())
         }
         return false
     }
@@ -272,14 +272,14 @@ object CommandLobby : ILobbyCommand {
             return true
         } else if (args.size >= 2) {
             if (!sender.hasPermission(Permission.ADMIN)) {
-                sender.sendMessage(I18n.getString("nopermission", I18nUtils.getLocaleFromCommandSender(sender)))
+                sender.sendMessage(I18NStrings.NOPERMISSION.get(sender))
                 return false
             }
             when (args[0]) {
                 "disable" -> {
                     val index = args[1].toIntOrNull() ?: return false
                     val event = Events.disable(index)
-                    sender.sendMessage(I18n.getString("event.unset")?.format(event[Events.title]))
+                    sender.sendMessage(I18NStrings.EVENT_UNSET.format(event[Events.title]))
                     LOGGER.fine("Disabled event $event")
                     return true
                 }
@@ -300,8 +300,8 @@ object CommandLobby : ILobbyCommand {
                     val endDate = DateTime(parser.parse(matches[1]).first().dates.first())
                     val title = matches[2]
                     if (Events.newEvent(title, sender, beginDate, endDate)) {
-                        sender.sendMessage(I18n.getString("event.create", I18nUtils.getLocaleFromCommandSender(sender))
-                                ?.format(title, ISODateTimeFormat.dateHourMinuteSecond().print(beginDate),
+                        sender.sendMessage(I18NStrings.EVENT_CREATE
+                                .format(sender, title, ISODateTimeFormat.dateHourMinuteSecond().print(beginDate),
                                         ISODateTimeFormat.dateHourMinuteSecond().print(endDate)))
                         return true
                     }
@@ -331,19 +331,18 @@ object CommandLobby : ILobbyCommand {
     private fun handleConfig(sender: CommandSender, args: Array<String>): Boolean {
         LOGGER.entering(CommandLobby::class, "handleConfig", sender, args)
         if (!sender.hasPermission(Permission.ADMIN)) {
-            sender.sendMessage(I18n.getString("nopermission", I18nUtils.getLocaleFromCommandSender(sender)))
+            sender.sendMessage(I18NStrings.NOPERMISSION.get(sender))
             return false
         }
-        if (args.size == 1) {
+        if (args.isNotEmpty()) {
             val config = Config.keys.firstOrNull { it.key == args[0] }
             if (config != null) {
-                sender.sendMessage("%s: %s".format(config, Meta[config]))
-            }
-        } else if (args.size == 2) {
-            val config = Config.keys.firstOrNull { it.key == args[0] }
-            if (config != null) {
-                Meta[config] = args[1]
-                sender.sendMessage("%s: %s".format(config, Meta[config]))
+                if (args.size == 1) {
+                    sender.sendMessage("%s: %s".format(config, Meta[config as Config<Any?>]))
+                } else {
+                    Meta[config] = args[1]
+                    sender.sendMessage("%s: %s".format(config, Meta[config as Config<Any?>]))
+                }
             }
         }
         return true

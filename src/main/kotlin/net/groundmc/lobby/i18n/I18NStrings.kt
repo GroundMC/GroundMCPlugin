@@ -1,6 +1,6 @@
 package net.groundmc.lobby.i18n
 
-import org.bukkit.entity.Player
+import org.bukkit.command.CommandSender
 import java.util.*
 
 enum class I18NStrings(val id: String) {
@@ -74,17 +74,17 @@ enum class I18NStrings(val id: String) {
     OFFLINE("offline"),
     ;
 
-    fun format(locale: Locale, vararg obj: Any?) = I18n.getString(id, locale)?.format(*obj)!!
+    fun format(locale: Locale, vararg obj: Any?) = I18n.getString(id, locale).format(*obj)
 
-    fun format(locale: String, vararg obj: Any?) = I18n.getString(id, locale)?.format(*obj)!!
+    fun format(locale: String, vararg obj: Any?) = I18n.getString(id, locale).format(*obj)
 
-    fun format(player: Player, vararg obj: Any?) = I18n.getString(id, I18nUtils.getLocaleFromCommandSender(player))?.format(*obj)!!
+    fun format(sender: CommandSender, vararg obj: Any?) = I18n.getString(id, I18nUtils.getLocaleFromCommandSender(sender)).format(*obj)
 
-    fun get(locale: Locale) = I18n.getString(id, locale)!!
+    fun get(locale: Locale) = I18n.getString(id, locale)
 
-    fun get(locale: String) = I18n.getString(id, locale)!!
+    fun get(locale: String) = I18n.getString(id, locale)
 
-    fun get() = I18n.getString(id)!!
+    fun get() = I18n.getString(id)
 
-    fun get(player: Player) = I18n.getString(id, I18nUtils.getLocaleFromCommandSender(player))!!
+    fun get(sender: CommandSender) = I18n.getString(id, I18nUtils.getLocaleFromCommandSender(sender))
 }

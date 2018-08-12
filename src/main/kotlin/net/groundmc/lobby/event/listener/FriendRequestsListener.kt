@@ -26,9 +26,9 @@ object FriendRequestsListener : Listener {
             async {
                 val inventory = FriendRequestsInventory.create(
                         event.whoClicked as Player)
-                Bukkit.getScheduler().runTask(LobbyMain.instance, {
+                Bukkit.getScheduler().runTask(LobbyMain.instance) {
                     event.whoClicked.openInventory(inventory)
-                })
+                }
             }
         }
     }
@@ -57,9 +57,9 @@ object FriendRequestsListener : Listener {
                 async {
                     val inventory = FriendRequestsInventory.create(
                             event.whoClicked as Player)
-                    Bukkit.getScheduler().runTask(LobbyMain.instance, {
+                    Bukkit.getScheduler().runTask(LobbyMain.instance) {
                         event.whoClicked.openInventory(inventory)
-                    })
+                    }
                 }
             }
         }
@@ -75,9 +75,9 @@ object FriendRequestsListener : Listener {
             async {
                 val inventory = FriendRequestsInventory.openPage(
                         event.whoClicked as Player, event.currentItem)
-                Bukkit.getScheduler().runTask(LobbyMain.instance, {
+                Bukkit.getScheduler().runTask(LobbyMain.instance) {
                     event.whoClicked.openInventory(inventory)
-                })
+                }
             }
         }
     }
@@ -93,9 +93,9 @@ object FriendRequestsListener : Listener {
                 async {
                     val inventory = FriendRequestsInventory.requestDetails(
                             event.whoClicked as Player, item)
-                    Bukkit.getScheduler().runTask(LobbyMain.instance, {
+                    Bukkit.getScheduler().runTask(LobbyMain.instance) {
                         event.whoClicked.openInventory(inventory)
-                    })
+                    }
                 }
             }
         }

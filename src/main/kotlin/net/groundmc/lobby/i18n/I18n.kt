@@ -28,8 +28,8 @@ object I18n {
      *
      * @return The localized and parsed string or null, if the key has no translation
      */
-    fun getString(key: String, locale: Locale = Locale.US): String? {
-        val s = bundleCache.get(key, locale) ?: return null
+    fun getString(key: String, locale: Locale = Locale.US): String {
+        val s = bundleCache.get(key, locale) ?: return ""
         return ChatColor.translateAlternateColorCodes(colorChar, s)
     }
 
@@ -102,7 +102,7 @@ object I18n {
             if (!backingMap.containsKey(locale)) {
                 backingMap[locale] = ResourceBundle.getBundle(name, locale)
             }
-            return backingMap.getOrPut(locale, { ResourceBundle.getBundle(name, locale) }).getString(key)
+            return backingMap.getOrPut(locale) { ResourceBundle.getBundle(name, locale) }.getString(key)
         }
     }
 }

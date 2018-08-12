@@ -92,7 +92,7 @@ object FriendRequestsInventory {
                     .setBoolean(NBTIdentifier.PREFIX, true)
                     .setDisplayName(Users[request.requester][Users.lastName])
                     .setObject(NBTIdentifier.RELATIONSHIP, request)
-                    .setLore({
+                    .setLore {
                         it += if (requester != null) {
                             I18NStrings.ONLINE.get(player)
                         } else {
@@ -100,7 +100,7 @@ object FriendRequestsInventory {
                         }
                         it += request.requestTime.toString(DateTimeFormat.mediumDate()
                                 .withLocale(I18nUtils.getLocaleFromCommandSender(player)))
-                    }).setMeta {
+                    }.setMeta {
                         val newMeta = it as SkullMeta
                         val profile = Bukkit.createProfile(request.requester, Users[request.requester][Users.lastName])
                         profile.complete(true)

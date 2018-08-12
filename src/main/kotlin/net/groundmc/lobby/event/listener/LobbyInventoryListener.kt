@@ -70,9 +70,9 @@ object LobbyInventoryListener : Listener {
     fun openLobbyInventory(event: InventoryClickEvent) {
         if (event.currentItem == Items.COMPASS_ITEM.item) {
             event.result = Event.Result.DENY
-            Bukkit.getScheduler().runTask(net.groundmc.lobby.LobbyMain.instance, {
+            Bukkit.getScheduler().runTask(net.groundmc.lobby.LobbyMain.instance) {
                 event.whoClicked.openInventory(LobbyInventory.create(event.whoClicked))
-            })
+            }
         }
     }
 
@@ -87,9 +87,9 @@ object LobbyInventoryListener : Listener {
         if (event.action != Action.PHYSICAL && NBTIdentifier.itemHasPrefix(event.item)
                 && event.item == Items.COMPASS_ITEM.item) {
             event.isCancelled = true
-            Bukkit.getScheduler().runTask(net.groundmc.lobby.LobbyMain.instance, {
+            Bukkit.getScheduler().runTask(net.groundmc.lobby.LobbyMain.instance) {
                 event.player.openInventory(LobbyInventory.create(event.player))
-            })
+            }
         }
     }
 }

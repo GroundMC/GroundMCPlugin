@@ -172,7 +172,7 @@ class NBTItemExt(item: ItemStack) : NBTItem(item), Cloneable {
      *
      * @see NBTItem.getObject
      */
-    fun <T : Any> getObject(identifier: NBTIdentifier, kClass: KClass<T>): T? =
+    inline fun <reified T : Any> getObject(identifier: NBTIdentifier, kClass: KClass<T>): T? =
             super.getObject(identifier.toString(), kClass.java)
 
     /**

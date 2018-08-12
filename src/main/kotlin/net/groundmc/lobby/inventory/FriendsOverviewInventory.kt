@@ -92,7 +92,7 @@ object FriendsOverviewInventory {
                     .setBoolean(NBTIdentifier.PREFIX, true)
                     .setObject(NBTIdentifier.RELATIONSHIP, relationship)
                     .setDisplayName(relationship.user2.name)
-                    .setLore({
+                    .setLore {
                         if (friendOnline != null) {
                             it += I18NStrings.ONLINE.get(player)
                             it += if (CloudServer.getInstance().groupData.name == CloudAPI.getInstance().getServerGroup(friendOnline.server).name) {
@@ -106,7 +106,7 @@ object FriendsOverviewInventory {
                         it += I18NStrings.RELATIONSHIP_SINCE.format(player.locale,
                                 relationship.since.toString(DateTimeFormat.mediumDate()
                                         .withLocale(I18nUtils.getLocaleFromCommandSender(player))))
-                    }).setMeta {
+                    }.setMeta {
                         val newMeta = it as SkullMeta
                         val profile = Bukkit.createProfile(relationship.user2.uniqueId, relationship.user2.name)
                         profile.complete(true)
