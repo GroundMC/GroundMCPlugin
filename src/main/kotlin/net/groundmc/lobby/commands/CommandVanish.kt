@@ -3,7 +3,7 @@ package net.groundmc.lobby.commands
 import kotlinx.coroutines.experimental.async
 import net.groundmc.lobby.database.table.Users
 import net.groundmc.lobby.enums.Permission
-import net.groundmc.lobby.i18n.I18n
+import net.groundmc.lobby.i18n.I18NStrings
 import net.groundmc.lobby.util.LOGGER
 import net.groundmc.lobby.util.entering
 import net.groundmc.lobby.util.hasPermission
@@ -27,28 +27,28 @@ object CommandVanish : ILobbyCommand {
 
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<String>?): Boolean {
         LOGGER.entering(CommandVanish::class, "onCommand", sender, command, label, args?.joinToString())
+        if (sender is ConsoleCommandSender) {
+            sender.sendMessage(I18NStrings.COMMAND_PLAYERONLY.get(sender))
+            return true
+        }
         if (sender is Player) {
-            if (sender.hasPermission(Permission.VANISH)) {
-                async {
-                    val newVanish = !Users[sender][Users.vanishStatus]
-                    transaction {
-                        Users.update({ Users.id eq sender.uniqueId }) {
-                            it[Users.vanishStatus] = newVanish
-                        }
-                        commit()
-                    }
-                    Users.refresh(sender)
-                    when (newVanish) {
-                        true -> sender.sendMessage(I18n.getString("vanish.on", sender.locale))
-                        false -> sender.sendMessage(I18n.getString("vanish.off", sender.locale))
-                    }
-                }
-                return true
-            } else {
-                sender.sendMessage(I18n.getString("nopermission", sender.locale))
+            if (!sender.hasPermission(Permission.VANISH)) {
+                sender.sendMessage(I18NStrings.NOPERMISSION.get(sender))
             }
-        } else if (sender is ConsoleCommandSender) {
-            sender.sendMessage(I18n.getString("command.playeronly", Locale.getDefault()))
+            async {
+                val newVanish = !Users[sender][Users.vanishStatus]
+                transaction {
+                    Users.update({ Users.id eq sender.uniqueId }) {
+                        it[Users.vanishStatus] = newVanish
+                    }
+                    commit()
+                }
+                Users.refresh(sender)
+                when (newVanish) {
+                    true -> sender.sendMessage(I18NStrings.VANISH_ON.get(sender))
+                    false -> sender.sendMessage(I18NStrings.VANISH_OFF.get(sender))
+                }
+            }
             return true
         }
         return false

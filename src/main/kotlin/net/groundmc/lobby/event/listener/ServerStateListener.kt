@@ -6,17 +6,15 @@ import net.groundmc.lobby.LobbyMain
 import net.groundmc.lobby.database.table.Meta
 import net.groundmc.lobby.database.table.Users
 import net.groundmc.lobby.enums.Config
-import net.groundmc.lobby.enums.NBTIdentifier
 import net.groundmc.lobby.enums.Permission
 import net.groundmc.lobby.enums.VisibilityStates
-import net.groundmc.lobby.i18n.I18n
+import net.groundmc.lobby.i18n.I18NStrings
 import net.groundmc.lobby.objects.Items
 import net.groundmc.lobby.util.*
 import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.Sound
 import org.bukkit.attribute.Attribute
-import org.bukkit.enchantments.Enchantment
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
@@ -25,7 +23,6 @@ import org.bukkit.event.player.PlayerChangedWorldEvent
 import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.event.player.PlayerLocaleChangeEvent
 import org.bukkit.event.player.PlayerQuitEvent
-import org.bukkit.inventory.meta.SkullMeta
 import org.bukkit.scoreboard.Team
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.select
@@ -56,31 +53,15 @@ object ServerStateListener : Listener {
         inventory.setItem(0, Items.COMPASS_ITEM.item)
 
         if (player.hasPermission(Permission.SILENT)) {
-            inventory.setItem(1, Items.SILENT_ITEM.apply {
-                displayName = I18n.getString(if (silent) "silentitem.on" else "silentitem.off", player.locale)
-                setBoolean(NBTIdentifier.SILENT_STATE, silent)
-                if (silent) {
-                    addEnchantment(Enchantment.LUCK)
-                }
-            }.item)
+            inventory.setItem(1, Items.getSilentItem(player, silent).item)
         }
         if (player.hasPermission(Permission.HIDE_PLAYERS)) {
-            inventory.setItem(2, Items.HIDE_PLAYERS_ITEM.apply {
-                displayName = I18n.getString(when (hideState) {
-                    VisibilityStates.ALL -> "visibility.all"
-                    VisibilityStates.NONE -> "visibility.none"
-                    VisibilityStates.FRIENDS -> "visibility.friends"
-                }, player.locale)
-            }.item)
+            inventory.setItem(2, Items.getHidePlayersItem(player, hideState).item)
         }
         if (Bukkit.getPluginManager().isPluginEnabled("CloudNetAPI")) {
             inventory.setItem(7, Items.LOBBY_CHOOSE_ITEM.item)
         }
-        inventory.setItem(8, Items.FRIENDS_ITEM.apply {
-            val newMeta = (meta as SkullMeta)
-            newMeta.owningPlayer = player
-            meta = newMeta
-        }.item)
+        inventory.setItem(8, Items.getFriendsItem(player).item)
     }
 
     /**
@@ -187,7 +168,7 @@ object ServerStateListener : Listener {
      */
     private fun addDailyBonus(player: Player) {
         if (Users[player][Users.lastDailyCoinsDate].plusDays(1).isBeforeNow) {
-            player.sendMessage(I18n.getString("event.dailyCoins", player.locale)?.format(net.groundmc.lobby.database.table.Meta[Config.COINS_DAILY]))
+            player.sendMessage(I18NStrings.EVENT_DAILYCOINS.get(player).format(Meta[Config.COINS_DAILY]))
             player.playSound(player.location, Sound.ENTITY_PLAYER_LEVELUP, 1.0f, 1.0f)
             transaction {
                 Users.update({ Users.id eq player.uniqueId }) {

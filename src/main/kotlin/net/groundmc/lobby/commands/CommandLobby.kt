@@ -9,7 +9,6 @@ import net.groundmc.lobby.enums.GMCType
 import net.groundmc.lobby.enums.NBTIdentifier
 import net.groundmc.lobby.enums.Permission
 import net.groundmc.lobby.i18n.I18NStrings
-import net.groundmc.lobby.i18n.I18n
 import net.groundmc.lobby.i18n.I18nUtils
 import net.groundmc.lobby.inventory.LobbyInventory
 import net.groundmc.lobby.objects.NBTItemExt
@@ -43,7 +42,7 @@ object CommandLobby : ILobbyCommand {
 
     override val name = "globby"
 
-    override fun getCommandHelp(locale: Locale) = I18n.getString("command.lobby.help", locale = locale)
+    override fun getCommandHelp(locale: Locale) = I18NStrings.COMMAND_LOBBY_HELP.get(locale)
 
     override fun onTabComplete(sender: CommandSender, command: Command, alias: String?, args: Array<out String>?): List<String>? {
         LOGGER.entering(CommandLobby::class, "onTabComplete", sender, command, alias, args?.joinToString())
@@ -124,14 +123,14 @@ object CommandLobby : ILobbyCommand {
      */
     private fun setLobby(sender: CommandSender): Boolean {
         LOGGER.entering(CommandLobby::class, "setLobby", sender)
-        if (sender.hasPermission(Permission.ADMIN) && sender is Player) {
-            Meta[Config.HUB_LOCATION] = sender.location
-            Bukkit.getServer().scheduler.scheduleSyncDelayedTask(LobbyMain.instance, SetRulesTask)
-            sender.sendMessage(I18NStrings.COMMAND_LOBBY_LOCATION_SET.get(sender))
-        } else if (sender is Player) {
-            sender.sendMessage(I18NStrings.NOPERMISSION.get(sender))
-        } else if (sender is ConsoleCommandSender) {
-            sender.sendMessage(I18NStrings.COMMAND_PLAYERONLY.get(sender))
+        when {
+            sender.hasPermission(Permission.ADMIN) && sender is Player -> {
+                Meta[Config.HUB_LOCATION] = sender.location
+                Bukkit.getServer().scheduler.scheduleSyncDelayedTask(LobbyMain.instance, SetRulesTask)
+                sender.sendMessage(I18NStrings.COMMAND_LOBBY_LOCATION_SET.get(sender))
+            }
+            sender is Player -> sender.sendMessage(I18NStrings.NOPERMISSION.get(sender))
+            sender is ConsoleCommandSender -> sender.sendMessage(I18NStrings.COMMAND_PLAYERONLY.get(sender))
         }
         LOGGER.exiting(CommandLobby::class, "setLobby")
         return true
@@ -147,6 +146,10 @@ object CommandLobby : ILobbyCommand {
      */
     private fun debug(sender: CommandSender): Boolean {
         LOGGER.entering(CommandLobby::class, "debug", sender)
+        if (sender is Player) {
+            sender.sendMessage(I18NStrings.NOPERMISSION.get(sender))
+            return true
+        }
         if (sender.hasPermission(Permission.ADMIN)) {
             LOGGER.info("Flushing log and forcing a rotate...")
 
@@ -161,8 +164,6 @@ object CommandLobby : ILobbyCommand {
 
             sender.sendMessage("See the log file ${file[1].canonicalPath}")
             LOGGER.info("Log finished.")
-        } else if (sender is Player) {
-            sender.sendMessage(I18NStrings.NOPERMISSION.get(sender))
         }
         return true
     }
@@ -176,6 +177,10 @@ object CommandLobby : ILobbyCommand {
      */
     private fun addItem(sender: CommandSender): Boolean {
         LOGGER.entering(CommandLobby::class, "addItem", sender)
+        if (sender is ConsoleCommandSender) {
+            sender.sendMessage(I18NStrings.COMMAND_PLAYERONLY.get(sender))
+            return true
+        }
         if (sender is Player) {
             if (sender.hasPermission(Permission.ADMIN)) {
                 thread {
@@ -197,8 +202,6 @@ object CommandLobby : ILobbyCommand {
             } else {
                 sender.sendMessage(I18NStrings.NOPERMISSION.get(sender))
             }
-        } else if (sender is ConsoleCommandSender) {
-            sender.sendMessage(I18NStrings.COMMAND_PLAYERONLY.get(sender))
         }
         return false
     }
@@ -215,14 +218,22 @@ object CommandLobby : ILobbyCommand {
      */
     private fun makeTp(args: Array<String>, sender: CommandSender): Boolean {
         LOGGER.entering(CommandLobby::class, "makeTp", args.joinToString(), sender)
+        if (sender is ConsoleCommandSender) {
+            sender.sendMessage(I18NStrings.COMMAND_PLAYERONLY.get(sender))
+            return true
+        }
         if (sender is Player) {
-            if (sender.hasPermission(Permission.ADMIN) && args.size >= 2) {
+            if (!sender.hasPermission(Permission.ADMIN)) {
+                sender.sendMessage(I18NStrings.NOPERMISSION.get(sender))
+                return true
+            }
+            if (args.size >= 2) {
                 val nbtItem = NBTItemExt(sender.inventory.itemInMainHand)
                 nbtItem.apply {
                     setBoolean(NBTIdentifier.PREFIX, true)
                     setInteger(NBTIdentifier.TYPE, GMCType.TP.ordinal)
                     setObject(NBTIdentifier.TP_LOC, sender.location)
-                    displayName = args.sliceArray(1 until args.size).reduce { left, right -> "$left $right" }
+                    displayName = args.sliceArray(1 until args.size).joinToString(" ")
                     sender.inventory.itemInMainHand = item
                 }
                 val string = I18NStrings.COMMAND_LOBBY_PLACEITEM.get(sender)
@@ -235,11 +246,7 @@ object CommandLobby : ILobbyCommand {
                 sender.sendMessage(msg)
                 LOGGER.finest("${sender.name} created a teleport item: $nbtItem")
                 return true
-            } else if (!sender.hasPermission(Permission.ADMIN)) {
-                sender.sendMessage(I18NStrings.NOPERMISSION.get(sender))
             }
-        } else {
-            sender.sendMessage(I18NStrings.COMMAND_PLAYERONLY.get())
         }
         return false
     }

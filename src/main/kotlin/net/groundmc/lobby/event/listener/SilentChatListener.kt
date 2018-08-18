@@ -5,7 +5,7 @@ import kotlinx.coroutines.experimental.async
 import net.groundmc.lobby.database.table.Users
 import net.groundmc.lobby.enums.GMCType
 import net.groundmc.lobby.enums.NBTIdentifier
-import net.groundmc.lobby.i18n.I18n
+import net.groundmc.lobby.i18n.I18NStrings
 import net.groundmc.lobby.objects.NBTItemExt
 import org.bukkit.enchantments.Enchantment
 import org.bukkit.entity.Player
@@ -77,17 +77,17 @@ object SilentChatListener : Listener {
                 // silent -> loud
                 SILENCED_PLAYERS.remove(player)
                 nbtItem.setBoolean(NBTIdentifier.SILENT_STATE, false)
-                nbtItem.displayName = I18n.getString("silentitem.off", player.locale)
+                nbtItem.displayName = I18NStrings.SILENTITEM_OFF.get(player)
                 nbtItem.removeEnchantment(Enchantment.LUCK)
-                player.sendMessage(I18n.getString("silentmsg.off", player.locale))
+                player.sendMessage(I18NStrings.SILENTITEM_OFF.get(player))
                 updateSilentStatus(player, false)
             } else {
                 // loud -> silent
                 SILENCED_PLAYERS.add(player)
                 nbtItem.setBoolean(NBTIdentifier.SILENT_STATE, true)
-                nbtItem.displayName = I18n.getString("silentitem.on", player.locale)
+                nbtItem.displayName = I18NStrings.SILENTITEM_ON.get(player)
                 nbtItem.addEnchantment(Enchantment.LUCK)
-                player.sendMessage(I18n.getString("silentmsg.on", player.locale))
+                player.sendMessage(I18NStrings.SILENTITEM_ON.get(player))
                 updateSilentStatus(player, true)
             }
             player.inventory.setItem(1, nbtItem.item)

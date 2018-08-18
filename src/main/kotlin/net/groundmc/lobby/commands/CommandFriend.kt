@@ -66,7 +66,7 @@ object CommandFriend : ILobbyCommand {
         LOGGER.entering(CommandFriend::class, "onCommand", sender, command, label, args?.joinToString())
         if (sender !is Player) {
             LOGGER.fine("Tried to run $name as a non-player")
-            sender.sendMessage(I18NStrings.COMMAND_PLAYERONLY.get())
+            sender.sendMessage(I18NStrings.COMMAND_PLAYERONLY.get(sender))
             return true
         }
         if (args != null && args.isNotEmpty()) {

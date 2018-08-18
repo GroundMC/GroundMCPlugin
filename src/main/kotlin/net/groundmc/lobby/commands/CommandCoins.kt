@@ -26,7 +26,7 @@ object CommandCoins : ILobbyCommand {
             sender.sendMessage(I18NStrings.COMMAND_COINS_CURRENCY.get(sender) + ": " + PointsAPI.getPoints(sender))
             return true
         } else if (sender is ConsoleCommandSender) {
-            sender.sendMessage(I18NStrings.COMMAND_PLAYERONLY.get())
+            sender.sendMessage(I18NStrings.COMMAND_PLAYERONLY.get(sender))
             return true
         }
         return false

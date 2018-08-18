@@ -4,7 +4,7 @@ import com.google.common.cache.CacheBuilder
 import com.google.common.cache.CacheLoader
 import de.dytanic.cloudnet.api.CloudAPI
 import kotlinx.coroutines.experimental.async
-import net.groundmc.lobby.i18n.I18n
+import net.groundmc.lobby.i18n.I18NStrings
 import net.groundmc.lobby.objects.Friend
 import net.groundmc.lobby.objects.Relationship
 import net.groundmc.lobby.util.LOGGER
@@ -96,9 +96,9 @@ object Relationships : Table() {
                 }
                 relationshipCache.refresh(relationship.user1.uniqueId)
                 relationshipCache.refresh(relationship.user2.uniqueId)
-                player.sendMessage(I18n.getString("relationship.success", player.locale))
+                player.sendMessage(I18NStrings.RELATIONSHIP_SUCCESS.get(player))
             } else {
-                player.sendMessage(I18n.getString("relationship.exists", player.locale))
+                player.sendMessage(I18NStrings.RELATIONSHIP_EXISTS.get(player))
             }
             LOGGER.exiting(Relationships::class, "addRelationship")
         }

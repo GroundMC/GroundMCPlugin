@@ -4,7 +4,7 @@ import net.groundmc.lobby.database.table.Users
 import net.groundmc.lobby.enums.GMCType
 import net.groundmc.lobby.enums.NBTIdentifier
 import net.groundmc.lobby.enums.VisibilityStates
-import net.groundmc.lobby.i18n.I18n
+import net.groundmc.lobby.i18n.I18NStrings
 import net.groundmc.lobby.objects.Items
 import net.groundmc.lobby.objects.NBTItemExt
 import org.bukkit.Bukkit
@@ -49,7 +49,7 @@ object HidePlayerInventory {
                     setInteger(NBTIdentifier.HIDE_STATE, VisibilityStates.ALL.ordinal)
                     if (hideState == VisibilityStates.ALL) addEnchantment(Enchantment.LUCK)
                     addItemFlags(ItemFlag.HIDE_ENCHANTS)
-                    displayName = I18n.getString("visibility.all", player.locale)
+                    displayName = I18NStrings.VISIBILITY_ALL.get(player)
                 }.item)
 
                 setItem(4, NBTItemExt(Dye(DyeColor.PURPLE).toItemStack(1)).apply {
@@ -58,7 +58,7 @@ object HidePlayerInventory {
                     setInteger(NBTIdentifier.HIDE_STATE, VisibilityStates.FRIENDS.ordinal)
                     if (hideState == VisibilityStates.FRIENDS) addEnchantment(Enchantment.LUCK)
                     addItemFlags(ItemFlag.HIDE_ENCHANTS)
-                    displayName = I18n.getString("visibility.friends", player.locale)
+                    displayName = I18NStrings.VISIBILITY_FRIENDS.get(player)
                 }.item)
 
                 setItem(8, NBTItemExt(Dye(DyeColor.GRAY).toItemStack(1)).apply {
@@ -67,7 +67,7 @@ object HidePlayerInventory {
                     setInteger(NBTIdentifier.HIDE_STATE, VisibilityStates.NONE.ordinal)
                     if (hideState == VisibilityStates.NONE) addEnchantment(Enchantment.LUCK)
                     addItemFlags(ItemFlag.HIDE_ENCHANTS)
-                    displayName = I18n.getString("visibility.none", player.locale)
+                    displayName = I18NStrings.VISIBILITY_NONE.get(player)
                 }.item)
             }
 }

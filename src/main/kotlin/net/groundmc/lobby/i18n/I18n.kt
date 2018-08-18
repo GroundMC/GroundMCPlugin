@@ -99,9 +99,6 @@ object I18n {
          * @return The localized string or null, if the key has no translation
          */
         fun get(key: String, locale: Locale): String? {
-            if (!backingMap.containsKey(locale)) {
-                backingMap[locale] = ResourceBundle.getBundle(name, locale)
-            }
             return backingMap.getOrPut(locale) { ResourceBundle.getBundle(name, locale) }.getString(key)
         }
     }

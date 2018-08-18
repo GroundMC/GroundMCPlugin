@@ -9,7 +9,9 @@ import org.bukkit.DyeColor
 import org.bukkit.Material
 import org.bukkit.SkullType
 import org.bukkit.enchantments.Enchantment
+import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemFlag
+import org.bukkit.inventory.meta.SkullMeta
 
 /**
  * Object holding all items with special properties that are used in
@@ -30,27 +32,45 @@ object Items {
     /**
      * The item used to silence the chat.
      */
-    val SILENT_ITEM: NBTItemExt
+    private val SILENT_ITEM: NBTItemExt
         get() = NBTItemExt(Material.TNT)
                 .setBoolean(NBTIdentifier.PREFIX, true)
                 .setInteger(NBTIdentifier.TYPE, GMCType.SILENT.ordinal)
                 .setBoolean(NBTIdentifier.SILENT_STATE, false)
                 .addItemFlags(ItemFlag.HIDE_ENCHANTS)
-                .setDisplayName(I18NStrings.SILENTITEM_OFF.get())
+
+    fun getSilentItem(player: Player, silent: Boolean) = SILENT_ITEM
+            .setBoolean(NBTIdentifier.SILENT_STATE, silent)
+            .apply {
+                displayName = when {
+                    silent -> I18NStrings.SILENTITEM_ON.get(player)
+                    else -> I18NStrings.SILENTITEM_OFF.get(player)
+                }
+                if (silent) {
+                    addEnchantment(Enchantment.LUCK)
+                }
+            }
 
 
     /**
      * The item used to open the [net.groundmc.lobby.inventory.HidePlayerInventory]
      */
-    val HIDE_PLAYERS_ITEM: NBTItemExt
+    private val HIDE_PLAYERS_ITEM: NBTItemExt
         get() = NBTItemExt(Material.BLAZE_ROD)
                 .setBoolean(NBTIdentifier.PREFIX, true)
                 .setInteger(NBTIdentifier.TYPE, GMCType.HIDE_PLAYERS.ordinal)
                 .setInteger(NBTIdentifier.HIDE_STATE, VisibilityStates.ALL.ordinal)
                 .addEnchantment(Enchantment.LUCK)
                 .addItemFlags(ItemFlag.HIDE_ENCHANTS)
-                .setDisplayName(I18NStrings.VISIBILITY_ALL.get())
 
+    fun getHidePlayersItem(player: Player, hideState: VisibilityStates) =
+            HIDE_PLAYERS_ITEM.apply {
+                displayName = when (hideState) {
+                    VisibilityStates.ALL -> I18NStrings.VISIBILITY_ALL.get(player)
+                    VisibilityStates.NONE -> I18NStrings.VISIBILITY_NONE.get(player)
+                    VisibilityStates.FRIENDS -> I18NStrings.VISIBILITY_FRIENDS.get(player)
+                }
+            }
 
     /**
      * The item used
@@ -75,11 +95,15 @@ object Items {
     /**
      * An item used to open the [net.groundmc.lobby.inventory.FriendsOverviewInventory]
      */
-    val FRIENDS_ITEM: NBTItemExt
+    private val FRIENDS_ITEM: NBTItemExt
         get() = NBTItemExt(Material.SKULL_ITEM, 1, SkullType.PLAYER.ordinal)
                 .setBoolean(NBTIdentifier.PREFIX, true)
                 .setInteger(NBTIdentifier.TYPE, GMCType.FRIENDS.ordinal)
                 .addItemFlags(ItemFlag.HIDE_ENCHANTS)
-                .setDisplayName(I18NStrings.FRIENDSITEM_NAME.get())
 
+    fun getFriendsItem(player: Player) = FRIENDS_ITEM
+            .setDisplayName(I18NStrings.FRIENDSITEM_NAME.get(player))
+            .setMeta {
+                (it as SkullMeta).owningPlayer = player
+            }
 }
