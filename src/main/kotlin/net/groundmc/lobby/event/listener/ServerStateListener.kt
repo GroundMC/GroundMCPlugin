@@ -114,12 +114,12 @@ object ServerStateListener : Listener {
                     }
                     commit()
                 } else {
+                    val location = player.firstOrNull()?.get(Users.lastLocation)
+                            ?: Meta[Config.HUB_LOCATION]
                     Bukkit.getScheduler().runTask(LobbyMain.instance) {
-                        event.player.teleport(player.firstOrNull()?.get(Users.lastLocation)
-                                ?: Meta[Config.HUB_LOCATION])
+                        event.player.teleport(location)
                     }
                 }
-
             }
             Users.refresh(event.player)
             addDailyBonus(event.player)
