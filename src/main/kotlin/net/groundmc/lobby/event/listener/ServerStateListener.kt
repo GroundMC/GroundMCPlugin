@@ -111,11 +111,16 @@ object ServerStateListener : Listener {
                     Users.insert {
                         it[id] = event.player.uniqueId
                         it[lastName] = event.player.name
+                        it[lastLocation] = event.player.location
                     }
                     commit()
                 } else {
                     val location = player.firstOrNull()?.get(Users.lastLocation)
                             ?: Meta[Config.HUB_LOCATION]
+                    Users.update({ Users.id eq event.player.uniqueId }) {
+                        it[lastName] = event.player.name
+                        it[lastLocation] = location
+                    }
                     Bukkit.getScheduler().runTask(LobbyMain.instance) {
                         event.player.teleport(location)
                     }
@@ -123,7 +128,7 @@ object ServerStateListener : Listener {
             }
             Users.refresh(event.player)
             addDailyBonus(event.player)
-        }
+        }.start()
 
         LobbyMain.originalInventories[event.player] = event.player.inventory.copy()
 
@@ -173,7 +178,7 @@ object ServerStateListener : Listener {
             transaction {
                 Users.update({ Users.id eq player.uniqueId }) {
                     it[lastName] = player.name
-                    PointsAPI.setPoints(player, PointsAPI.getPoints(player) + Meta[Config.COINS_DAILY] as Int)
+                    PointsAPI.setPoints(player, PointsAPI.getPoints(player) + Meta[Config.COINS_DAILY]!!)
                     it[lastDailyCoinsDate] = DateTime.now()
                 }
                 commit()
@@ -204,7 +209,7 @@ object ServerStateListener : Listener {
                 commit()
                 Users.invalidate(event.player)
             }
-        }
+        }.start()
         LOGGER.exiting(ServerStateListener::class, "onPlayerLogout")
     }
 }

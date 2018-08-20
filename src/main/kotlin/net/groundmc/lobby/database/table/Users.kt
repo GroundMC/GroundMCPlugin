@@ -57,7 +57,7 @@ object Users : Table() {
     /**
      * The last location of the player
      */
-    val lastLocation = location("lastLocation")
+    val lastLocation = location("lastLocation").nullable()
 
     private fun location(name: String) = registerColumn<Location>(name, LocationColumnType())
 
