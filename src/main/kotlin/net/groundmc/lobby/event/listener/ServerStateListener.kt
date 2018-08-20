@@ -113,7 +113,6 @@ object ServerStateListener : Listener {
                         it[lastName] = event.player.name
                         it[lastLocation] = event.player.location
                     }
-                    commit()
                 } else {
                     val location = player.firstOrNull()?.get(Users.lastLocation)
                             ?: Meta[Config.HUB_LOCATION]
@@ -125,6 +124,7 @@ object ServerStateListener : Listener {
                         event.player.teleport(location)
                     }
                 }
+                commit()
             }
             Users.refresh(event.player)
             addDailyBonus(event.player)
