@@ -61,7 +61,7 @@ object Users : Table() {
 
     private fun location(name: String) = registerColumn<Location>(name, LocationColumnType())
 
-    class LocationColumnType : VarCharColumnType() {
+    class LocationColumnType : VarCharColumnType(1024) {
 
         private val gson = GsonBuilder()
                 .registerTypeAdapter(Location::class.java, LocationTypeAdapter)
