@@ -161,6 +161,14 @@ object Users : Table() {
         userCache.refresh(uuid)
     }
 
+
+    /**
+     * @see com.google.common.cache.LoadingCache.invalidateAll
+     */
+    fun invalidateAll(iterable: Iterable<*>) {
+        userCache.invalidateAll(iterable)
+    }
+
     /**
      * Queries the database for a [ResultRow] by the last name of a player.
      * Additionally stores the row in the cache.
