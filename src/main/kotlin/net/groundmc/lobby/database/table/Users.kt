@@ -61,7 +61,7 @@ object Users : Table() {
 
     private fun location(name: String) = registerColumn<Location>(name, LocationColumnType())
 
-    class LocationColumnType : VarCharColumnType(1024) {
+    class LocationColumnType : VarCharColumnType(255) {
 
         private val gson = GsonBuilder()
                 .registerTypeAdapter(Location::class.java, LocationTypeAdapter)
@@ -71,6 +71,13 @@ object Users : Table() {
             return when (value) {
                 is Location -> gson.toJson(value)
                 else -> super.nonNullValueToString(value)
+            }
+        }
+
+        override fun notNullValueToDB(value: Any): Any {
+            return when (value) {
+                is Location -> gson.toJson(value)
+                else -> super.notNullValueToDB(value)
             }
         }
 
