@@ -40,7 +40,7 @@
         <repository>
             <id>onarandombox</id>
             <url>
-                https://repo.onarandombox.com/content/repositories/multiverse-snapshots
+                http://repo.onarandombox.com/content/repositories/multiverse-snapshots
             </url>
         </repository>
     </repositories>
