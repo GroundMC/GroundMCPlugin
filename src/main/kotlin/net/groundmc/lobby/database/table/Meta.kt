@@ -109,7 +109,7 @@ object Meta : Table() {
                         4 -> {
                             Users0.selectAll().forEach {
                                 PointsAPI.setPoints(Bukkit.getOfflinePlayer(it[Users0.id]),
-                                        it[Users0.coins])
+                                        it[Users0.coins].toLong())
                             }
                             when (LobbyMain.instance.config["database.driver"]) {
                                 "org.sqlite.JDBC" -> {
