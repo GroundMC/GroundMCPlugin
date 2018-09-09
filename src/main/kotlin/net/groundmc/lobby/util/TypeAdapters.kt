@@ -1,6 +1,7 @@
 package net.groundmc.lobby.util
 
 import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 import com.google.gson.TypeAdapter
 import com.google.gson.stream.JsonReader
 import com.google.gson.stream.JsonWriter
@@ -12,6 +13,8 @@ import org.joda.time.DateTime
  */
 object LocationTypeAdapter : TypeAdapter<Location>() {
 
+    private val gson = GsonBuilder().create()
+
     /**
      * Writes a [Location] object to a [JsonWriter].
      *
@@ -20,7 +23,7 @@ object LocationTypeAdapter : TypeAdapter<Location>() {
      */
     override fun write(writer: JsonWriter, location: Location?) {
         if (location != null) {
-            writer.value(Gson().toJson(location.serialize()))
+            writer.value(gson.toJson(location.serialize()))
         } else {
             writer.nullValue()
         }
