@@ -1,6 +1,6 @@
 package net.groundmc.lobby.event.listener
 
-import kotlinx.coroutines.experimental.async
+import kotlinx.coroutines.launch
 import net.groundmc.lobby.LobbyMain
 import net.groundmc.lobby.database.table.FriendRequests
 import net.groundmc.lobby.database.table.Relationships
@@ -23,7 +23,7 @@ object FriendRequestsListener : Listener {
         if (event.whoClicked is Player && NBTIdentifier.itemHasPrefix(event.currentItem)
                 && NBTItemExt(event.currentItem).getInteger(NBTIdentifier.TYPE) == GMCType.FRIEND_REQUESTS.ordinal) {
             event.result = Event.Result.DENY
-            async {
+            LobbyMain.instance.scope.launch {
                 val inventory = FriendRequestsInventory.create(
                         event.whoClicked as Player)
                 Bukkit.getScheduler().runTask(LobbyMain.instance) {
@@ -54,7 +54,7 @@ object FriendRequestsListener : Listener {
                 && event.whoClicked is Player) {
             val item = NBTItemExt(event.currentItem)
             if (item.hasKey(NBTIdentifier.PAGE)) {
-                async {
+                LobbyMain.instance.scope.launch {
                     val inventory = FriendRequestsInventory.create(
                             event.whoClicked as Player)
                     Bukkit.getScheduler().runTask(LobbyMain.instance) {
@@ -72,7 +72,7 @@ object FriendRequestsListener : Listener {
                 && NBTIdentifier.itemHasPrefix(event.currentItem)
                 && event.currentItem.type == Material.ARROW) {
             event.result = Event.Result.DENY
-            async {
+            LobbyMain.instance.scope.launch {
                 val inventory = FriendRequestsInventory.openPage(
                         event.whoClicked as Player, event.currentItem)
                 Bukkit.getScheduler().runTask(LobbyMain.instance) {
@@ -90,7 +90,7 @@ object FriendRequestsListener : Listener {
             val item = NBTItemExt(event.currentItem)
             if (item.hasKey(NBTIdentifier.RELATIONSHIP)) {
                 event.result = Event.Result.DENY
-                async {
+                LobbyMain.instance.scope.launch {
                     val inventory = FriendRequestsInventory.requestDetails(
                             event.whoClicked as Player, item)
                     Bukkit.getScheduler().runTask(LobbyMain.instance) {

@@ -1,6 +1,5 @@
 package net.groundmc.lobby.enums
 
-import com.google.common.base.MoreObjects
 import org.bukkit.Location
 
 class Config<T>(val key: String, val type: Class<T>) {
@@ -23,8 +22,8 @@ class Config<T>(val key: String, val type: Class<T>) {
         val INVENTORY_CONTENT = Config("inventory.content", List::class.javaObjectType)
     }
 
-    override fun toString() = MoreObjects.toStringHelper(this)
-            .add("key", key)
-            .add("type", type.name)
-            .toString()
+    override fun toString(): String {
+        return "Config(key='$key', type=$type)"
+    }
+
 }

@@ -114,7 +114,7 @@ fun Player.queryStatistic(statistic: Statistic) =
             Statistics.select {
                 (Statistics.statistic eq statistic.name) and
                         (Statistics.playerId eq uniqueId)
-            }.first().tryGet(Statistics.value)
+            }.first().getOrNull(Statistics.value)
         }
 
 /**
@@ -131,7 +131,7 @@ fun Player.queryStatistic(statistic: Statistic, entity: EntityType) =
                 (Statistics.statistic eq statistic.name) and
                         (Statistics.playerId eq uniqueId) and
                         (Statistics.entity eq entity.name)
-            }.first().tryGet(Statistics.value)
+            }.first().getOrNull(Statistics.value)
         }
 
 /**
@@ -148,5 +148,5 @@ fun Player.queryStatistic(statistic: Statistic, material: Material) =
                 (Statistics.statistic eq statistic.name) and
                         (Statistics.playerId eq uniqueId) and
                         (Statistics.material eq material.name)
-            }.first().tryGet(Statistics.value)
+            }.first().getOrNull(Statistics.value)
         }

@@ -1,6 +1,6 @@
 package net.groundmc.lobby.objects
 
-import de.tr7zw.itemnbtapi.NBTItem
+import de.tr7zw.nbtapi.NBTItem
 import net.groundmc.lobby.enums.GMCType
 import net.groundmc.lobby.enums.NBTIdentifier
 import org.bukkit.Material
@@ -11,7 +11,7 @@ import org.bukkit.inventory.meta.ItemMeta
 import kotlin.reflect.KClass
 
 /**
- * Extension of [de.tr7zw.itemnbtapi.NBTItem]
+ * Extension of [de.tr7zw.nbtapi.NBTItem]
  * Allows the use of [NBTIdentifier] as a key.
  */
 @Suppress("unused")

@@ -27,7 +27,7 @@ object Users0 : Table("Users") {
     /**
      * One of the [VisibilityStates] visibility settings
      */
-    val hiddenStatus = enumeration("hidden_status", VisibilityStates::class.java).default(VisibilityStates.ALL)
+    val hiddenStatus = enumeration("hidden_status", VisibilityStates::class).default(VisibilityStates.ALL)
 
     /**
      * Whether this player is vanished or not

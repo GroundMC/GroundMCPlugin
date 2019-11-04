@@ -39,7 +39,7 @@ object Users : Table() {
     /**
      * One of the [VisibilityStates] visibility settings
      */
-    val hiddenStatus = enumeration("hidden_status", VisibilityStates::class.java).default(VisibilityStates.ALL)
+    val hiddenStatus = enumeration("hidden_status", VisibilityStates::class).default(VisibilityStates.ALL)
 
     /**
      * Whether this player is vanished or not
@@ -72,13 +72,13 @@ object Users : Table() {
     class UserCacheLoader : CacheLoader<UUID, ResultRow>() {
         override fun load(uuid: UUID): ResultRow {
             return transaction {
-                return@transaction Users.select(Users.id eq uuid).first()
+                return@transaction Users.select(id eq uuid).first()
             }
         }
 
         override fun loadAll(uuids: Iterable<UUID>): Map<UUID, ResultRow> {
             return transaction {
-                return@transaction Users.select { Users.id inList uuids }
+                return@transaction Users.select { id inList uuids }
                         .associateBy { it[id] }
             }
         }

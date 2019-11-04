@@ -2,7 +2,8 @@ package net.groundmc.lobby.database.table
 
 import com.google.common.cache.CacheBuilder
 import com.google.common.cache.CacheLoader
-import kotlinx.coroutines.experimental.async
+import kotlinx.coroutines.launch
+import net.groundmc.lobby.LobbyMain
 import net.groundmc.lobby.util.LOGGER
 import net.groundmc.lobby.util.entering
 import net.groundmc.lobby.util.exiting
@@ -70,7 +71,7 @@ object Events : Table() {
                             (endTime greater DateTime.now()) and
                             (active eq true)
                 }
-                        .orderBy(endTime, true).toList()
+                        .orderBy(endTime, SortOrder.ASC).toList()
             }
         }
     }
@@ -133,7 +134,7 @@ object Events : Table() {
      */
     fun newEvent(eventTitle: String, sender: CommandSender, beginDate: DateTime, endDate: DateTime): Boolean {
         LOGGER.entering(Events::class, "newEvent", eventTitle, sender, beginDate, endDate)
-        async {
+        LobbyMain.instance.scope.launch {
             transaction {
                 insert {
                     it[title] = eventTitle

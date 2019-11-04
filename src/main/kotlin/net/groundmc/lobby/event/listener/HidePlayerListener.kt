@@ -1,6 +1,7 @@
 package net.groundmc.lobby.event.listener
 
-import kotlinx.coroutines.experimental.async
+import kotlinx.coroutines.launch
+import net.groundmc.lobby.LobbyMain
 import net.groundmc.lobby.database.table.Users
 import net.groundmc.lobby.enums.GMCType
 import net.groundmc.lobby.enums.NBTIdentifier
@@ -72,7 +73,7 @@ object HidePlayerListener : Listener {
                 if (nbtItem.getInteger(NBTIdentifier.TYPE) == GMCType.HIDE_PLAYERS.ordinal) {
                     event.result = Event.Result.DENY
                     val player = event.whoClicked as Player
-                    async {
+                    LobbyMain.instance.scope.launch {
                         transaction {
                             Users.update({ Users.id eq player.uniqueId }) {
                                 it[hiddenStatus] = VisibilityStates.values()[nbtItem.getInteger(NBTIdentifier.HIDE_STATE)!!]

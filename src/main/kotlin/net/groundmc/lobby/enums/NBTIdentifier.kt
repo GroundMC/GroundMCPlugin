@@ -1,6 +1,6 @@
 package net.groundmc.lobby.enums
 
-import de.tr7zw.itemnbtapi.NBTItem
+import de.tr7zw.nbtapi.NBTItem
 import net.groundmc.lobby.objects.NBTItemExt
 import org.bukkit.inventory.ItemStack
 

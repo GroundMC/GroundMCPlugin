@@ -1,5 +1,7 @@
 package net.groundmc.lobby.commands
 
+import kotlinx.coroutines.launch
+import net.groundmc.lobby.LobbyMain
 import net.groundmc.lobby.database.table.Relationships
 import net.groundmc.lobby.i18n.I18NStrings
 import net.groundmc.lobby.util.LOGGER
@@ -28,14 +30,12 @@ object CommandFriends : ILobbyCommand {
             return true
         }
         if (sender is Player) {
-            val friends = Relationships.getRelationships(sender.uniqueId)
-            if (friends.isEmpty()) {
-                sender.sendMessage(I18NStrings.COMMAND_FRIENDS_NO_FRIENDS.get(sender))
-                return true
-            }
-            friends.let {
-                if (it.isNotEmpty()) {
-                    sender.sendMessage(String.format("%2\$s: %1\$s", it.joinToString { relationship -> relationship.user2.name }, it.size))
+            LobbyMain.instance.scope.launch {
+                val friends = Relationships.getRelationships(sender.uniqueId)
+                if (friends.isEmpty()) {
+                    sender.sendMessage(I18NStrings.COMMAND_FRIENDS_NO_FRIENDS.get(sender))
+                } else {
+                    sender.sendMessage(String.format("%2\$s: %1\$s", friends.joinToString { relationship -> relationship.user2.name }, friends.size))
                 }
             }
             return true

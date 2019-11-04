@@ -65,7 +65,7 @@ internal object LobbyInventory {
         }
         @Suppress("unchecked_cast")
         TEMPLATE_INVENTORY.contents = (Meta[Config.INVENTORY_CONTENT] as List<ItemStack?>).toTypedArray()
-        (0 until TEMPLATE_INVENTORY.contents.size).forEach {
+        (TEMPLATE_INVENTORY.contents.indices).forEach {
             val item = TEMPLATE_INVENTORY.getItem(it)
             if (item == null) {
                 TEMPLATE_INVENTORY.setItem(it, Items.FILLER.item)

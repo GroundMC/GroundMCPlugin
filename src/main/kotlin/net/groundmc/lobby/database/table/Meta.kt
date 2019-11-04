@@ -57,7 +57,7 @@ object Meta : Table() {
         try {
             transaction {
                 var currentVersion = try {
-                    Meta0.selectAll().firstOrNull()?.tryGet(Meta0.version)
+                    Meta0.selectAll().firstOrNull()?.getOrNull(Meta0.version)
                 } catch (e: Exception) {
                     null
                 }
@@ -74,8 +74,8 @@ object Meta : Table() {
                             commit()
                         }
                         2 -> {
-                            Meta.dropStatement().forEach { exec(it) }
-                            Meta.createStatement().forEach { exec(it) }
+                            dropStatement().forEach { exec(it) }
+                            createStatement().forEach { exec(it) }
                             exec("REPLACE INTO `Meta`(`key`, `value`) VALUES (\"${Config.DATABASE_VERSION.key}\", 3)")
                             commit()
                         }
@@ -147,27 +147,22 @@ object Meta : Table() {
      *
      * @return the value associated with the [key] or `null`, if not present.
      */
-    @Suppress("UNCHECKED_CAST", "PlatformExtensionReceiverOfInline")
     inline operator fun <reified T> get(key: Config<T>): T? {
         return try {
             with(configCache[key]) {
-                try {
-                    key.type.cast(this) as T
-                } catch (e: ClassCastException) {
-                    if (this is String) {
-                        when (key.type) {
-                            Boolean::class.javaObjectType -> this.toBoolean() as T
-                            Byte::class.javaObjectType -> this.toByte() as T
-                            Short::class.javaObjectType -> this.toShort() as T
-                            Int::class.javaObjectType -> this.toInt() as T
-                            Long::class.javaObjectType -> this.toLong() as T
-                            Float::class.javaObjectType -> this.toFloat() as T
-                            Double::class.javaObjectType -> this.toDouble() as T
-                            else -> this as T
-                        }
-                    } else {
-                        this as T
+                when (this) {
+                    is T -> this
+                    is String -> when (key.type) {
+                        Boolean::class.javaObjectType -> this.toBoolean() as T
+                        Byte::class.javaObjectType -> this.toByte() as T
+                        Short::class.javaObjectType -> this.toShort() as T
+                        Int::class.javaObjectType -> this.toInt() as T
+                        Long::class.javaObjectType -> this.toLong() as T
+                        Float::class.javaObjectType -> this.toFloat() as T
+                        Double::class.javaObjectType -> this.toDouble() as T
+                        else -> this as T
                     }
+                    else -> this as T
                 }
             }
         } catch (e: Exception) {
@@ -211,7 +206,7 @@ object Meta : Table() {
                         transaction {
                             select {
                                 Meta.key eq key.key
-                            }.first().tryGet(value)
+                            }.first().getOrNull(value)
                                     ?: throw NoSuchElementException(
                                             "value for key \"${key.key}\" is non-existent!")
                         })

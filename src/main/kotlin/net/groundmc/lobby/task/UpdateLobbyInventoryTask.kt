@@ -12,6 +12,7 @@ import net.groundmc.lobby.util.LOGGER
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor
 import org.bukkit.Location
+import kotlin.math.floor
 
 /**
  * Task to update the items in the [LobbyInventory] that refer to worlds that
@@ -26,7 +27,7 @@ object UpdateLobbyInventoryTask : ITask {
     override fun run() {
         if (!Bukkit.getPluginManager().isPluginEnabled("Multiverse-Core")) {
             LOGGER.config("Multiverse-Core not found or enabled, disabling interop.")
-            LobbyMain.tasks[this]?.cancel()
+            LobbyMain.instance.tasks[this]?.cancel()
             return
         }
 
@@ -45,7 +46,7 @@ object UpdateLobbyInventoryTask : ITask {
                         return
                     }
 
-                    val color = when (Math.floor((nPlayers.toDouble() / playerLimit.toDouble()))) {
+                    val color = when (floor((nPlayers.toDouble() / playerLimit.toDouble()))) {
                         0.0 -> ChatColor.WHITE.toString()
                         0.3 -> ChatColor.GREEN.toString()
                         0.6 -> ChatColor.GOLD.toString()

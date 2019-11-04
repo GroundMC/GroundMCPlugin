@@ -1,6 +1,7 @@
 package net.groundmc.lobby.commands
 
-import kotlinx.coroutines.experimental.async
+import kotlinx.coroutines.launch
+import net.groundmc.lobby.LobbyMain
 import net.groundmc.lobby.database.table.Users
 import net.groundmc.lobby.enums.Permission
 import net.groundmc.lobby.i18n.I18NStrings
@@ -35,11 +36,11 @@ object CommandVanish : ILobbyCommand {
             if (!sender.hasPermission(Permission.VANISH)) {
                 sender.sendMessage(I18NStrings.NOPERMISSION.get(sender))
             }
-            async {
+            LobbyMain.instance.scope.launch {
                 val newVanish = !Users[sender][Users.vanishStatus]
                 transaction {
                     Users.update({ Users.id eq sender.uniqueId }) {
-                        it[Users.vanishStatus] = newVanish
+                        it[vanishStatus] = newVanish
                     }
                     commit()
                 }

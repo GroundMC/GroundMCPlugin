@@ -16,6 +16,8 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent
 import org.bukkit.event.entity.EntityDamageEvent
 import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.util.Vector
+import kotlin.math.cos
+import kotlin.math.sin
 
 /**
  * This [Listener] handles player interactions in the lobby.
@@ -40,8 +42,8 @@ object LobbyInteractionListener : Listener {
 
             vector.y = 0.0
 
-            vector.x = -Math.sin(Math.toRadians(rotX))
-            vector.z = Math.cos(Math.toRadians(rotX))
+            vector.x = -sin(Math.toRadians(rotX))
+            vector.z = cos(Math.toRadians(rotX))
 
             return vector.normalize()
         }
@@ -50,11 +52,11 @@ object LobbyInteractionListener : Listener {
 
         if (event.clickedBlock != null && event.action == Action.PHYSICAL
                 && event.clickedBlock.type.name in Meta[Config.JUMPPADS_MATERIAL] as List<*>
-                && event.player.world == (net.groundmc.lobby.database.table.Meta[Config.HUB_LOCATION] as Location).world) {
+                && event.player.world == (Meta[Config.HUB_LOCATION] as Location).world) {
             event.player.velocity = event.player.location.getDirectionXZ()
-                    .multiply(net.groundmc.lobby.database.table.Meta[Config.JUMPPADS_MULTIPLIER]
+                    .multiply(Meta[Config.JUMPPADS_MULTIPLIER]
                             ?: 1.0)
-                    .setY(net.groundmc.lobby.database.table.Meta[Config.JUMPPADS_Y]
+                    .setY(Meta[Config.JUMPPADS_Y]
                             ?: 0.0)
             event.player.playSound(event.player.location, Sound.ENTITY_ENDERDRAGON_FLAP, 10f, 1f)
             event.isCancelled = true

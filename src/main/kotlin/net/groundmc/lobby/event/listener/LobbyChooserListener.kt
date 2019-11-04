@@ -2,6 +2,7 @@ package net.groundmc.lobby.event.listener
 
 import de.dytanic.cloudnet.api.CloudAPI
 import de.dytanic.cloudnet.api.player.PlayerExecutorBridge
+import net.groundmc.lobby.LobbyMain
 import net.groundmc.lobby.enums.GMCType
 import net.groundmc.lobby.enums.NBTIdentifier
 import net.groundmc.lobby.inventory.LobbyChooser
@@ -26,9 +27,9 @@ object LobbyChooserListener : Listener {
 
         if (event.currentItem == Items.LOBBY_CHOOSE_ITEM.item) {
             event.result = Event.Result.DENY
-            Bukkit.getScheduler().runTask(net.groundmc.lobby.LobbyMain.instance, {
+            Bukkit.getScheduler().runTask(LobbyMain.instance) {
                 event.whoClicked.openInventory(LobbyChooser.create(event.whoClicked as Player))
-            })
+            }
         }
     }
 
@@ -37,9 +38,9 @@ object LobbyChooserListener : Listener {
         if (event.action != Action.PHYSICAL && NBTIdentifier.itemHasPrefix(event.item)
                 && event.item == Items.LOBBY_CHOOSE_ITEM.item) {
             event.isCancelled = true
-            Bukkit.getScheduler().runTask(net.groundmc.lobby.LobbyMain.instance, {
+            Bukkit.getScheduler().runTask(LobbyMain.instance) {
                 event.player.openInventory(LobbyChooser.create(event.player))
-            })
+            }
         }
     }
 
@@ -57,9 +58,9 @@ object LobbyChooserListener : Listener {
                 PlayerExecutorBridge.INSTANCE.sendPlayer(
                         CloudAPI.getInstance().getOnlinePlayer(player.uniqueId),
                         nbtItem.getString(NBTIdentifier.TP_LOC))
-                Bukkit.getScheduler().runTask(net.groundmc.lobby.LobbyMain.instance, {
+                Bukkit.getScheduler().runTask(LobbyMain.instance) {
                     event.view.close()
-                })
+                }
             }
         }
     }

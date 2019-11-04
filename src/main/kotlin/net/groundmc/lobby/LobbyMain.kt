@@ -1,9 +1,14 @@
 package net.groundmc.lobby
 
+
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
+import com.google.gson.TypeAdapterFactory
 import com.zaxxer.hikari.HikariDataSource
-import de.tr7zw.itemnbtapi.utils.GsonWrapper
+import de.tr7zw.nbtapi.utils.GsonWrapper
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.cancel
 import net.groundmc.lobby.commands.*
 import net.groundmc.lobby.database.table.*
 import net.groundmc.lobby.event.listener.*
@@ -37,12 +42,29 @@ import java.sql.Connection
 import java.util.logging.FileHandler
 import java.util.logging.Level
 import java.util.logging.Logger
+import kotlin.reflect.KMutableProperty0
+import kotlin.reflect.KMutableProperty1
+import kotlin.reflect.full.memberProperties
+import kotlin.reflect.full.staticProperties
+import kotlin.reflect.jvm.isAccessible
+import kotlin.reflect.jvm.javaField
 
 /**
  * The main class for this plugin.
  * Serves as the entry point and commander of all things.
  */
 class LobbyMain : JavaPlugin() {
+
+    /**
+     * A map of tasks to their IDs
+     */
+    val tasks = mutableMapOf<ITask, BukkitTask>()
+    /**
+     * A map of [Player]s to their inventory contents.
+     */
+    val originalInventories = mutableMapOf<Player, Array<ItemStack?>>()
+
+    val scope = CoroutineScope(Dispatchers.Default)
 
     /**
      * Initializes the plugin.
@@ -153,23 +175,23 @@ class LobbyMain : JavaPlugin() {
     private fun registerGsonHandlers() {
         LOGGER.entering(LobbyMain::class, "registerGsonHandlers")
         // Gets private static final Gson gson = new Gson();
-        val fGson = GsonWrapper::class.java.getDeclaredField("gson")
+        val fGson = GsonWrapper::class.staticProperties.first { it.name == "gson" && it.returnType == Gson::class } as KMutableProperty0<Gson>
         fGson.isAccessible = true
 
-        val modifiersField = Field::class.java.getDeclaredField("modifiers")
+        val modifiersField = Field::class.memberProperties.first { name == "modifiers" && it.returnType == Int::class } as KMutableProperty1<Field, Int>
         modifiersField.isAccessible = true
-        modifiersField.setInt(fGson, fGson.modifiers and Modifier.FINAL.inv())
+        modifiersField.set(fGson.javaField!!, modifiersField.get(fGson.javaField!!) and Modifier.FINAL.inv())
 
         // Gets  private final List<TypeAdapterFactory> factories;
-        val fFactories = Gson::class.java.getDeclaredField("factories")
+        val fFactories = Gson::class.memberProperties.first { it.name == "factories" }
         fFactories.isAccessible = true
-        val factories = fFactories.get(fGson.get(null)) as List<*>
+        val factories = fFactories.get(fGson.get()) as List<*>
 
         // Sets private static final Gson gson
-        fGson.set(null, GsonBuilder().apply {
+        fGson.set(GsonBuilder().apply {
             registerTypeAdapter(Location::class.java, LocationTypeAdapter)
             registerTypeAdapter(DateTime::class.java, DateTimeAdapter)
-            factories.forEach { this::registerTypeAdapterFactory }
+            factories.forEach { registerTypeAdapterFactory(it as TypeAdapterFactory) }
         }.create())
         LOGGER.exiting(LobbyMain::class, "registerGsonHandlers")
     }
@@ -216,7 +238,7 @@ class LobbyMain : JavaPlugin() {
             @Suppress("unchecked_cast")
             LobbyInventory.TEMPLATE_INVENTORY.contents = (config["inventory.content"] as List<ItemStack?>).toTypedArray()
 
-            (0 until LobbyInventory.TEMPLATE_INVENTORY.contents.size).forEach {
+            (LobbyInventory.TEMPLATE_INVENTORY.contents.indices).forEach {
                 if (LobbyInventory.TEMPLATE_INVENTORY.getItem(it) == null) {
                     LobbyInventory.TEMPLATE_INVENTORY.setItem(it, Items.FILLER.item)
                 }
@@ -270,6 +292,7 @@ class LobbyMain : JavaPlugin() {
         LOGGER.entering(LobbyMain::class, "onDisable")
         LOGGER.info("Saving configuration and disabling...")
         tasks.forEach { it.value.cancel() }
+        scope.cancel("Disabling...")
         saveConfig()
         LOGGER.exiting(LobbyMain::class, "onDisable")
     }
@@ -311,6 +334,7 @@ class LobbyMain : JavaPlugin() {
         LOGGER.exiting(LobbyMain::class, "scheduleSyncDelayedTask")
     }
 
+
     /**
      * Schedules an asynchronous, periodic task.
      *
@@ -323,30 +347,20 @@ class LobbyMain : JavaPlugin() {
         LOGGER.exiting(LobbyMain::class, "runTaskTimerAsynchronously")
     }
 
-
     companion object {
-        /**
-         * A map of [Player]s to their inventory contents.
-         */
-        val originalInventories = mutableMapOf<Player, Array<ItemStack?>>()
-
-        /**
-         * A map of tasks to their IDs
-         */
-        val tasks = mutableMapOf<ITask, BukkitTask>()
-
         private lateinit var backingInstance: LobbyMain
+
         /**
          * Common instance of this [LobbyMain] plugin.
          */
         val instance: LobbyMain
             get() = backingInstance
-
         /**
          * The latest version of the configuration.
          * Used in [upgradeConfig].
          */
         const val configVersion = 3
+
     }
 
 }

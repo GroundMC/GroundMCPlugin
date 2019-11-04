@@ -3,7 +3,8 @@ package net.groundmc.lobby.database.table
 import com.google.common.cache.CacheBuilder
 import com.google.common.cache.CacheLoader
 import de.dytanic.cloudnet.api.CloudAPI
-import kotlinx.coroutines.experimental.async
+import kotlinx.coroutines.launch
+import net.groundmc.lobby.LobbyMain
 import net.groundmc.lobby.i18n.I18NStrings
 import net.groundmc.lobby.objects.Friend
 import net.groundmc.lobby.objects.Relationship
@@ -48,8 +49,8 @@ object Relationships : Table() {
     class RelationshipCacheLoader : CacheLoader<UUID, List<Relationship>>() {
         override fun load(key: UUID): List<Relationship> {
             return transaction {
-                return@transaction select { userId1 eq key }.also {
-                    Users.getAll(it.map { it[userId2] })
+                return@transaction select { userId1 eq key }.also { query ->
+                    Users.getAll(query.map { it[userId2] })
                 }.map {
                     Relationship(it[userId1], it[userId2], it[since])
                 }
@@ -60,8 +61,8 @@ object Relationships : Table() {
             return transaction {
                 return@transaction select { userId1 inList keys }
                         .groupBy { it[userId1] }
-                        .mapValues {
-                            it.value.map {
+                        .mapValues { entry ->
+                            entry.value.map {
                                 Relationship(it[userId1], it[userId2], it[since])
                             }
                         }
@@ -79,7 +80,7 @@ object Relationships : Table() {
     fun addRelationship(player: Player, relationship: Relationship) {
         LOGGER.entering(Relationships::class, "addRelationship", player, relationship)
         LOGGER.fine("Adding new relationship: $relationship")
-        async {
+        LobbyMain.instance.scope.launch {
             if (!areFriends(relationship.user1.uniqueId, relationship.user2.uniqueId)) {
                 transaction {
                     insert {

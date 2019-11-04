@@ -64,8 +64,9 @@ object UpdateScoreboardsTask : ITask {
                 // Constraint: Entries are designed to be unique,
                 // no two entries can exist with the same name,
                 // one would overwrite the score of the other
-                val oldEntries = scoreboard.entries.map(this::getScore)
-                        .associate { score -> score.score to score }
+                val oldEntries = scoreboard.entries
+                        .map(this::getScore)
+                        .associateBy { score -> score.score }
 
                 lines.asReversed().forEachIndexed { index, line ->
                     val oldEntry = oldEntries[index]?.entry

@@ -2,7 +2,8 @@ package net.groundmc.lobby.commands
 
 import de.dytanic.cloudnet.api.CloudAPI
 import de.dytanic.cloudnet.lib.utility.document.Document
-import kotlinx.coroutines.experimental.async
+import kotlinx.coroutines.launch
+import net.groundmc.lobby.LobbyMain
 import net.groundmc.lobby.database.table.FriendRequests
 import net.groundmc.lobby.database.table.Relationships
 import net.groundmc.lobby.database.table.Users
@@ -35,7 +36,7 @@ object CommandFriend : ILobbyCommand {
             when (args.size) {
                 1 -> return mutableListOf("add", "remove", "status", "online").filter { it.startsWith(args.last()) }
                 2 -> when (args[0]) {
-                    "add" -> return Bukkit.getOnlinePlayers().map { it -> it.name }.filter { it.startsWith(args.last()) }
+                    "add" -> return Bukkit.getOnlinePlayers().map { it.name }.filter { it.startsWith(args.last()) }
                     "update" -> return friendsStartWith(sender, args)
                     "remove" -> return friendsStartWith(sender, args)
                     "status" -> return friendsStartWith(sender, args)
@@ -57,7 +58,7 @@ object CommandFriend : ILobbyCommand {
         LOGGER.entering(CommandFriend::class, "friendsStartWith", sender, args.joinToString())
         if (sender is Player) {
             val friendsList = Relationships.getRelationships(sender.uniqueId)
-            return friendsList.map { it -> it.user2.name }.filter { it.startsWith(args.last()) }
+            return friendsList.map { it.user2.name }.filter { it.startsWith(args.last()) }
         }
         return null
     }
@@ -192,11 +193,11 @@ object CommandFriend : ILobbyCommand {
             null
         }
 
-        async {
+        LobbyMain.instance.scope.launch {
             if (uuid != null) {
                 FriendRequests.removeRequest(uuid, sender.uniqueId)
                 Relationships.addRelationship(sender, Relationship(sender.uniqueId, uuid))
-                return@async
+                return@launch
             }
             val friend = CloudAPI.getInstance().getOfflinePlayer(args[1])
             when {

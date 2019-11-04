@@ -1,7 +1,8 @@
 package net.groundmc.lobby.event.listener
 
 import com.google.common.collect.Sets
-import kotlinx.coroutines.experimental.async
+import kotlinx.coroutines.launch
+import net.groundmc.lobby.LobbyMain
 import net.groundmc.lobby.database.table.Users
 import net.groundmc.lobby.enums.GMCType
 import net.groundmc.lobby.enums.NBTIdentifier
@@ -12,11 +13,10 @@ import org.bukkit.entity.Player
 import org.bukkit.event.Event
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
-import org.bukkit.event.block.Action
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.player.AsyncPlayerChatEvent
 import org.bukkit.event.player.PlayerInteractEvent
-import org.jetbrains.exposed.sql.transactions.transaction
+import org.jetbrains.exposed.sql.transactions.experimental.suspendedTransactionAsync
 import org.jetbrains.exposed.sql.update
 
 /**
@@ -54,7 +54,7 @@ object SilentChatListener : Listener {
      */
     @EventHandler
     fun silentChat(event: InventoryClickEvent) {
-        if (event.action != Action.PHYSICAL && event.currentItem != null && event.whoClicked is Player) {
+        if (event.currentItem != null && event.whoClicked is Player) {
             val nbtItem = NBTItemExt(event.currentItem)
             if (NBTIdentifier.itemHasPrefix(event.currentItem) && nbtItem.getInteger(NBTIdentifier.TYPE) == GMCType.SILENT.ordinal) {
                 event.result = Event.Result.DENY
@@ -72,7 +72,7 @@ object SilentChatListener : Listener {
      * @param player the player that toggles the setting
      */
     private fun toggleSilentChat(nbtItem: NBTItemExt, player: Player) {
-        async {
+        LobbyMain.instance.scope.launch {
             if (nbtItem.getBoolean(NBTIdentifier.SILENT_STATE)!!) {
                 // silent -> loud
                 SILENCED_PLAYERS.remove(player)
@@ -94,8 +94,8 @@ object SilentChatListener : Listener {
         }
     }
 
-    private fun updateSilentStatus(player: Player, newStatus: Boolean) {
-        transaction {
+    private suspend fun updateSilentStatus(player: Player, newStatus: Boolean) {
+        suspendedTransactionAsync {
             Users.update({ Users.id eq player.uniqueId }) {
                 it[silentStatus] = newStatus
             }

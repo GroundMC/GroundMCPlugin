@@ -2,7 +2,8 @@ package net.groundmc.lobby.database.table
 
 import com.google.common.cache.CacheBuilder
 import com.google.common.cache.CacheLoader
-import kotlinx.coroutines.experimental.async
+import kotlinx.coroutines.launch
+import net.groundmc.lobby.LobbyMain
 import net.groundmc.lobby.util.LOGGER
 import net.groundmc.lobby.util.entering
 import net.groundmc.lobby.util.exiting
@@ -15,11 +16,11 @@ import java.util.concurrent.TimeUnit
 
 object FriendRequests : Table("FriendRequests") {
 
-    val requester = uuid("requester").references(Users.id, ReferenceOption.CASCADE).primaryKey().index()
+    private val requester = uuid("requester").references(Users.id, ReferenceOption.CASCADE).primaryKey().index()
 
-    val requested = uuid("requested").references(Users.id, ReferenceOption.CASCADE).primaryKey().index()
+    private val requested = uuid("requested").references(Users.id, ReferenceOption.CASCADE).primaryKey().index()
 
-    val requestTime = datetime("requestTime").clientDefault { DateTime.now() }.index()
+    private val requestTime = datetime("requestTime").clientDefault { DateTime.now() }.index()
 
     private val requestsFrom = CacheBuilder.newBuilder()
             .expireAfterAccess(20, TimeUnit.SECONDS)
@@ -56,7 +57,7 @@ object FriendRequests : Table("FriendRequests") {
 
     fun newRequest(requestPlayer: UUID, requestedPlayer: UUID) {
         LOGGER.entering(FriendRequests::class, "newRequest", requestPlayer, requestedPlayer)
-        async {
+        LobbyMain.instance.scope.launch {
             transaction {
                 insert {
                     it[requester] = requestedPlayer
@@ -71,7 +72,7 @@ object FriendRequests : Table("FriendRequests") {
 
     fun removeRequest(requestPlayer: UUID, requestedPlayer: UUID) {
         LOGGER.entering(FriendRequests::class, "removeRequest", requestPlayer, requestedPlayer)
-        async {
+        LobbyMain.instance.scope.launch {
             transaction {
                 deleteWhere { (requester eq requestPlayer) and (requested eq requestedPlayer) }
             }

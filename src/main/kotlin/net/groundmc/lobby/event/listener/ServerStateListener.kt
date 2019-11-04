@@ -1,6 +1,6 @@
 package net.groundmc.lobby.event.listener
 
-import kotlinx.coroutines.experimental.async
+import kotlinx.coroutines.launch
 import me.BukkitPVP.PointsAPI.PointsAPI
 import net.groundmc.lobby.LobbyMain
 import net.groundmc.lobby.database.table.Meta
@@ -73,9 +73,9 @@ object ServerStateListener : Listener {
     @EventHandler
     fun onPlayerChangeWorld(event: PlayerChangedWorldEvent) {
         if (event.from == (Meta[Config.HUB_LOCATION] as Location).world) {
-            event.player.inventory.contents = LobbyMain.originalInventories[event.player]
+            event.player.inventory.contents = LobbyMain.instance.originalInventories[event.player]
         } else if (event.player.world == (Meta[Config.HUB_LOCATION] as Location).world) {
-            LobbyMain.originalInventories[event.player] = event.player.inventory.copy()
+            LobbyMain.instance.originalInventories[event.player] = event.player.inventory.copy()
             addItemsToInventory(event.player)
         }
     }
@@ -104,7 +104,7 @@ object ServerStateListener : Listener {
     fun onPlayerLogin(event: PlayerJoinEvent) {
         LOGGER.entering(ServerStateListener::class, "onPlayerLogin", event)
         event.joinMessage = null
-        async {
+        LobbyMain.instance.scope.launch {
             transaction {
                 val player = Users.select { Users.id eq event.player.uniqueId }
                 if (player.count() == 0) {
@@ -130,7 +130,7 @@ object ServerStateListener : Listener {
             addDailyBonus(event.player)
         }.start()
 
-        LobbyMain.originalInventories[event.player] = event.player.inventory.copy()
+        LobbyMain.instance.originalInventories[event.player] = event.player.inventory.copy()
 
         if (event.player.world == (Meta[Config.HUB_LOCATION] as Location).world) {
             addItemsToInventory(event.player)
@@ -197,14 +197,14 @@ object ServerStateListener : Listener {
         LOGGER.entering(ServerStateListener::class, "onPlayerLogout", event)
         event.quitMessage = null
         if (event.player.world == (Meta[Config.HUB_LOCATION] as Location).world) {
-            event.player.inventory.contents = LobbyMain.originalInventories[event.player]
+            event.player.inventory.contents = LobbyMain.instance.originalInventories[event.player]
         }
-        LobbyMain.originalInventories.remove(event.player)
+        LobbyMain.instance.originalInventories.remove(event.player)
         SilentChatListener.SILENCED_PLAYERS.remove(event.player)
-        async {
+        LobbyMain.instance.scope.launch {
             transaction {
                 Users.update({ Users.id eq event.player.uniqueId }) {
-                    it[Users.lastLocation] = event.player.location
+                    it[lastLocation] = event.player.location
                 }
                 commit()
                 Users.invalidate(event.player)
