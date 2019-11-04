@@ -1,7 +1,0 @@
-﻿Hiermit erteilt der Autor des Codes (mit dem Alias GiantTreeLP) exklusiv und ausschließlich der Person hinter dem Alias "PanikFaser" und seinem Team
-das Recht diese Software (im Bestimmten das Lobbyplugin) ausschließlich auf dem/den öffentlichen Minecraft-Server, die im Besitz des Alias "PanikFaser" steht/stehen.
-
-Hiermit erteilt der Autor NICHT das Recht diese Software, ob kostenfrei oder gegen Entgelt, weiter zu verbreiten oder zu modifizieren.
-Desweiteren behält der Autor ALLE Rechte am originalen, sowie modifizierten Code und dessen binäre, kompilierte Form.
-
-Der Autor behält sich vor, die erteilten Rechte fristlos ändern oder zurückziehen zu können.
