@@ -38,7 +38,7 @@ object CommandVanish : ILobbyCommand {
             }
             LobbyMain.instance.scope.launch {
                 val newVanish = !Users[sender][Users.vanishStatus]
-                transaction {
+                transaction(LobbyMain.instance.database) {
                     Users.update({ Users.id eq sender.uniqueId }) {
                         it[vanishStatus] = newVanish
                     }

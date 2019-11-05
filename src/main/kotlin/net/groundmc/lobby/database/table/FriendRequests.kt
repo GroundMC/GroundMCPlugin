@@ -8,6 +8,7 @@ import net.groundmc.lobby.util.LOGGER
 import net.groundmc.lobby.util.entering
 import net.groundmc.lobby.util.exiting
 import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.transactions.experimental.suspendedTransactionAsync
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.joda.time.DateTime
 import java.util.*
@@ -35,13 +36,13 @@ object FriendRequests : Table("FriendRequests") {
 
     class RequestLoader(private val column: Column<UUID>) : CacheLoader<UUID, List<ResultRow>>() {
         override fun load(key: UUID): List<ResultRow> {
-            return transaction {
+            return transaction(LobbyMain.instance.database) {
                 return@transaction select { column eq key }.toList()
             }
         }
 
         override fun loadAll(keys: Iterable<UUID>): Map<UUID, List<ResultRow>> {
-            return transaction {
+            return transaction(LobbyMain.instance.database) {
                 return@transaction select { column inList keys }.groupBy { it[column] }
             }
         }
@@ -58,7 +59,7 @@ object FriendRequests : Table("FriendRequests") {
     fun newRequest(requestPlayer: UUID, requestedPlayer: UUID) {
         LOGGER.entering(FriendRequests::class, "newRequest", requestPlayer, requestedPlayer)
         LobbyMain.instance.scope.launch {
-            transaction {
+            suspendedTransactionAsync(db = LobbyMain.instance.database) {
                 insert {
                     it[requester] = requestedPlayer
                     it[requested] = requestedPlayer
@@ -73,7 +74,7 @@ object FriendRequests : Table("FriendRequests") {
     fun removeRequest(requestPlayer: UUID, requestedPlayer: UUID) {
         LOGGER.entering(FriendRequests::class, "removeRequest", requestPlayer, requestedPlayer)
         LobbyMain.instance.scope.launch {
-            transaction {
+            suspendedTransactionAsync(db = LobbyMain.instance.database) {
                 deleteWhere { (requester eq requestPlayer) and (requested eq requestedPlayer) }
             }
             requestsFor.refresh(requestedPlayer)

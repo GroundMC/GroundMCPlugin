@@ -14,6 +14,7 @@ import net.groundmc.lobby.util.exiting
 import org.bukkit.OfflinePlayer
 import org.bukkit.entity.Player
 import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.transactions.experimental.suspendedTransactionAsync
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.util.*
 import java.util.concurrent.Executors
@@ -48,7 +49,7 @@ object Relationships : Table() {
 
     class RelationshipCacheLoader : CacheLoader<UUID, List<Relationship>>() {
         override fun load(key: UUID): List<Relationship> {
-            return transaction {
+            return transaction(LobbyMain.instance.database) {
                 return@transaction select { userId1 eq key }.also { query ->
                     Users.getAll(query.map { it[userId2] })
                 }.map {
@@ -58,7 +59,7 @@ object Relationships : Table() {
         }
 
         override fun loadAll(keys: MutableIterable<UUID>): Map<UUID, List<Relationship>> {
-            return transaction {
+            return transaction(LobbyMain.instance.database) {
                 return@transaction select { userId1 inList keys }
                         .groupBy { it[userId1] }
                         .mapValues { entry ->
@@ -82,7 +83,7 @@ object Relationships : Table() {
         LOGGER.fine("Adding new relationship: $relationship")
         LobbyMain.instance.scope.launch {
             if (!areFriends(relationship.user1.uniqueId, relationship.user2.uniqueId)) {
-                transaction {
+                suspendedTransactionAsync(db = LobbyMain.instance.database) {
                     insert {
                         it[userId1] = relationship.user1.uniqueId
                         it[userId2] = relationship.user2.uniqueId
@@ -144,14 +145,16 @@ object Relationships : Table() {
      */
     fun removeRelationship(player: UUID, friend: UUID) {
         LOGGER.entering(Relationships::class, "removeRelationship", player, friend)
-        if (areFriends(player, friend)) {
-            transaction {
-                deleteWhere { (userId1 eq player) and (userId2 eq friend) }
-                deleteWhere { (userId2 eq player) and (userId1 eq friend) }
-                commit()
+        LobbyMain.instance.scope.launch {
+            if (areFriends(player, friend)) {
+                suspendedTransactionAsync(db = LobbyMain.instance.database) {
+                    deleteWhere { (userId1 eq player) and (userId2 eq friend) }
+                    deleteWhere { (userId2 eq player) and (userId1 eq friend) }
+                    commit()
+                }
+                relationshipCache.refresh(player)
+                relationshipCache.refresh(friend)
             }
-            relationshipCache.refresh(player)
-            relationshipCache.refresh(friend)
         }
         LOGGER.exiting(Relationships::class, "removeRelationship")
     }

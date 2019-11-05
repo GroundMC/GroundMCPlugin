@@ -43,7 +43,7 @@ object ServerStateListener : Listener {
     private fun addItemsToInventory(player: Player) {
         var silent = false
         var hideState = VisibilityStates.ALL
-        transaction {
+        transaction(LobbyMain.instance.database) {
             silent = Users[player][Users.silentStatus]
             hideState = Users[player][Users.hiddenStatus]
         }
@@ -105,7 +105,7 @@ object ServerStateListener : Listener {
         LOGGER.entering(ServerStateListener::class, "onPlayerLogin", event)
         event.joinMessage = null
         LobbyMain.instance.scope.launch {
-            transaction {
+            transaction(LobbyMain.instance.database) {
                 val player = Users.select { Users.id eq event.player.uniqueId }
                 if (player.count() == 0) {
                     Users.insert {
@@ -175,7 +175,7 @@ object ServerStateListener : Listener {
         if (Users[player][Users.lastDailyCoinsDate].plusDays(1).isBeforeNow) {
             player.sendMessage(I18NStrings.EVENT_DAILYCOINS.get(player).format(Meta[Config.COINS_DAILY]))
             player.playSound(player.location, Sound.ENTITY_PLAYER_LEVELUP, 1.0f, 1.0f)
-            transaction {
+            transaction(LobbyMain.instance.database) {
                 Users.update({ Users.id eq player.uniqueId }) {
                     it[lastName] = player.name
                     PointsAPI.setPoints(player, PointsAPI.getPoints(player) + Meta[Config.COINS_DAILY]!!)
@@ -202,7 +202,7 @@ object ServerStateListener : Listener {
         LobbyMain.instance.originalInventories.remove(event.player)
         SilentChatListener.SILENCED_PLAYERS.remove(event.player)
         LobbyMain.instance.scope.launch {
-            transaction {
+            transaction(LobbyMain.instance.database) {
                 Users.update({ Users.id eq event.player.uniqueId }) {
                     it[lastLocation] = event.player.location
                 }

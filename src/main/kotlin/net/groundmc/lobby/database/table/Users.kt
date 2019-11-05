@@ -3,6 +3,7 @@ package net.groundmc.lobby.database.table
 import com.google.common.cache.CacheBuilder
 import com.google.common.cache.CacheLoader
 import net.groundmc.extensions.exposed.location
+import net.groundmc.lobby.LobbyMain
 import net.groundmc.lobby.enums.VisibilityStates
 import net.groundmc.lobby.util.LOGGER
 import net.groundmc.lobby.util.entering
@@ -71,13 +72,13 @@ object Users : Table() {
      */
     class UserCacheLoader : CacheLoader<UUID, ResultRow>() {
         override fun load(uuid: UUID): ResultRow {
-            return transaction {
+            return transaction(LobbyMain.instance.database) {
                 return@transaction Users.select(id eq uuid).first()
             }
         }
 
         override fun loadAll(uuids: Iterable<UUID>): Map<UUID, ResultRow> {
-            return transaction {
+            return transaction(LobbyMain.instance.database) {
                 return@transaction Users.select { id inList uuids }
                         .associateBy { it[id] }
             }
@@ -148,7 +149,7 @@ object Users : Table() {
         LOGGER.entering(Users::class, "byName", name)
         return userCache.asMap().entries.firstOrNull { it.value[lastName] == name }?.key
                 ?: run {
-                    val row = transaction {
+                    val row = transaction(LobbyMain.instance.database) {
                         return@transaction select { lastName eq name }.firstOrNull()
                     }
                     if (row != null) {

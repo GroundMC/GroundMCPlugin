@@ -10,6 +10,7 @@ import net.groundmc.lobby.util.exiting
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.transactions.experimental.suspendedTransactionAsync
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.joda.time.DateTime
 import java.util.concurrent.Executors
@@ -65,7 +66,7 @@ object Events : Table() {
 
     class EventCacheLoader : CacheLoader<Unit, List<ResultRow>>() {
         override fun load(key: Unit?): List<ResultRow> {
-            return transaction {
+            return transaction(LobbyMain.instance.database) {
                 return@transaction select {
                     (beginTime less DateTime.now()) and
                             (endTime greater DateTime.now()) and
@@ -108,7 +109,7 @@ object Events : Table() {
      */
     fun disable(n: Int): ResultRow {
         LOGGER.entering(Events::class, "disable", n)
-        return transaction {
+        return transaction(LobbyMain.instance.database) {
             val events = getCurrentEvents()
             LOGGER.info("Disabling ${events[n]}")
             return@transaction events[n].also {
@@ -135,7 +136,7 @@ object Events : Table() {
     fun newEvent(eventTitle: String, sender: CommandSender, beginDate: DateTime, endDate: DateTime): Boolean {
         LOGGER.entering(Events::class, "newEvent", eventTitle, sender, beginDate, endDate)
         LobbyMain.instance.scope.launch {
-            transaction {
+            suspendedTransactionAsync(db = LobbyMain.instance.database) {
                 insert {
                     it[title] = eventTitle
                     it[creator] = (sender as? Player)?.uniqueId

@@ -14,7 +14,7 @@ import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.player.PlayerInteractEvent
-import org.jetbrains.exposed.sql.transactions.transaction
+import org.jetbrains.exposed.sql.transactions.experimental.suspendedTransactionAsync
 import org.jetbrains.exposed.sql.update
 
 /**
@@ -74,7 +74,7 @@ object HidePlayerListener : Listener {
                     event.result = Event.Result.DENY
                     val player = event.whoClicked as Player
                     LobbyMain.instance.scope.launch {
-                        transaction {
+                        suspendedTransactionAsync(db = LobbyMain.instance.database) {
                             Users.update({ Users.id eq player.uniqueId }) {
                                 it[hiddenStatus] = VisibilityStates.values()[nbtItem.getInteger(NBTIdentifier.HIDE_STATE)!!]
                             }
@@ -84,7 +84,8 @@ object HidePlayerListener : Listener {
                         player.inventory.setItem(2,
                                 NBTItemExt(player.inventory.getItem(2)).apply {
                                     this.displayName = nbtItem.displayName
-                                }.item)
+                                }.item
+                        )
                     }
                     player.sendMessage(nbtItem.displayName)
                     event.view.close()

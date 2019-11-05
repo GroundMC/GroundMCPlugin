@@ -18,6 +18,7 @@ import net.groundmc.lobby.registry.LobbyCommandRegistry
 import net.groundmc.lobby.registry.LobbyCommandRegistry.registerCommand
 import net.groundmc.lobby.task.*
 import net.groundmc.lobby.util.*
+import net.groundmc.statsdb.StatsDB
 import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.configuration.MemorySection
@@ -30,7 +31,6 @@ import org.bukkit.scheduler.BukkitTask
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils.createMissingTablesAndColumns
 import org.jetbrains.exposed.sql.exposedLogger
-import org.jetbrains.exposed.sql.transactions.TransactionManager
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.joda.time.DateTime
 import org.slf4j.helpers.SubstituteLogger
@@ -38,7 +38,6 @@ import org.slf4j.impl.JDK14LoggerAdapter
 import java.io.File
 import java.lang.reflect.Field
 import java.lang.reflect.Modifier
-import java.sql.Connection
 import java.util.logging.FileHandler
 import java.util.logging.Level
 import java.util.logging.Logger
@@ -65,6 +64,9 @@ class LobbyMain : JavaPlugin() {
     val originalInventories = mutableMapOf<Player, Array<ItemStack?>>()
 
     val scope = CoroutineScope(Dispatchers.Default)
+
+    lateinit var database: Database
+    lateinit var statsDB: StatsDB
 
     /**
      * Initializes the plugin.
@@ -110,15 +112,16 @@ class LobbyMain : JavaPlugin() {
         upgradeConfig()
         loadConfig()
         logger.config("Loading database...")
-        Database.connect(HikariDataSource().apply {
+        statsDB = Bukkit.getPluginManager().getPlugin("StatsDB") as StatsDB
+        database = Database.connect(HikariDataSource().apply {
             jdbcUrl = config.getString("database.url")
                     .replace("\$dataFolder", dataFolder.absolutePath)
             username = config.getString("database.username", "")
             password = config.getString("database.password", "")
+            transactionIsolation = "TRANSACTION_READ_COMMITTED"
         })
-        TransactionManager.manager.defaultIsolationLevel = Connection.TRANSACTION_READ_COMMITTED
         try {
-            transaction {
+            transaction(database) {
                 createMissingTablesAndColumns(Meta, Users, Relationships, Events, FriendRequests)
             }
         } catch (e: Exception) {

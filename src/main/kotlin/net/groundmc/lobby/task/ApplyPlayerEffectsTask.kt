@@ -1,5 +1,6 @@
 package net.groundmc.lobby.task
 
+import net.groundmc.lobby.LobbyMain
 import net.groundmc.lobby.database.table.Meta
 import net.groundmc.lobby.database.table.Users
 import net.groundmc.lobby.enums.Config
@@ -23,7 +24,7 @@ object ApplyPlayerEffectsTask : ITask {
             it.exhaustion = 0.0f
             it.activePotionEffects.forEach { effect -> it.removePotionEffect(effect.type) }
         }
-        transaction {
+        transaction(LobbyMain.instance.database) {
             players.forEach { player ->
                 Users.update({ Users.id eq player.uniqueId }) {
                     it[lastLocation] = player.location

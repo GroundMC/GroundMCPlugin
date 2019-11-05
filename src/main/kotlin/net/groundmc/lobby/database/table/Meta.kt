@@ -55,7 +55,7 @@ object Meta : Table() {
     fun upgradeDatabase() {
         LOGGER.entering(Meta::class, "upgradeDatabase")
         try {
-            transaction {
+            transaction(LobbyMain.instance.database) {
                 var currentVersion = try {
                     Meta0.selectAll().firstOrNull()?.getOrNull(Meta0.version)
                 } catch (e: Exception) {
@@ -130,7 +130,7 @@ object Meta : Table() {
                 }
             }
         } catch (exception: NoSuchElementException) {
-            transaction {
+            transaction(LobbyMain.instance.database) {
                 set(Config.DATABASE_VERSION, CURRENT_DB_VER)
                 commit()
             }
@@ -180,7 +180,7 @@ object Meta : Table() {
      */
     operator fun <T> set(key: Config<T>, value: Any) {
         LOGGER.entering(Meta::class, "set", key, value)
-        transaction {
+        transaction(LobbyMain.instance.database) {
             deleteWhere { Meta.key eq key.key }
             insert {
                 it[Meta.key] = key.key
@@ -203,7 +203,7 @@ object Meta : Table() {
             LOGGER.entering(DatabaseCacheLoader::class, "load", key)
             with(YamlConfiguration()) {
                 loadFromString(
-                        transaction {
+                        transaction(LobbyMain.instance.database) {
                             select {
                                 Meta.key eq key.key
                             }.first().getOrNull(value)

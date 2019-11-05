@@ -76,6 +76,12 @@
             <scope>compile</scope>
         </dependency>
         <dependency>
+            <groupId>net.groundmc</groupId>
+            <artifactId>GroundMCStatsDB</artifactId>
+            <version>1.4-b${env.BUILD_NUMBER}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
             <artifactId>kotlin-stdlib</artifactId>
             <version>${kotlin.version}</version>
