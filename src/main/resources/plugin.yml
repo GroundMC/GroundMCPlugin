@@ -1,8 +1,8 @@
 name: GroundMCLobbyPlugin
 version: 1.8
-author: GiantTreeLP
+author: GiantTree
 main: net.groundmc.lobby.LobbyMain
-depend: [ItemNBTAPI, PointsAPI, StatsDB, CloudNetAPI]
+depend: [NBTAPI, PointsAPI, StatsDB, CloudNetAPI]
 softdepend: [Multiverse-Core]
 
 commands:
