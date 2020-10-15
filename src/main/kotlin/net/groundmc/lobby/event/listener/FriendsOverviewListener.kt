@@ -178,8 +178,7 @@ object FriendsOverviewListener : Listener {
                             event.view.close()
                         }
                         PlayerExecutorBridge.INSTANCE.sendPlayer(
-                                CloudServer.getInstance().getCachedPlayer(event.whoClicked.uniqueId)
-                                , cloudFriend.server)
+                                CloudServer.getInstance().getCachedPlayer(event.whoClicked.uniqueId), cloudFriend.server)
                     }
                 }
             }

@@ -21,8 +21,8 @@ object HidePlayersTask : ITask {
                 .forEach { (player, status) ->
                     if (status[Users.vanishStatus]) {
                         players.forEach {
-                    it.hidePlayer(LobbyMain.instance, player)
-                }
+                            it.hidePlayer(LobbyMain.instance, player)
+                        }
                     } else when (status[Users.hiddenStatus]) {
                         VisibilityStates.ALL -> {
                             players.forEach { player.showPlayer(LobbyMain.instance, it) }
@@ -36,10 +36,10 @@ object HidePlayersTask : ITask {
                                     player.showPlayer(LobbyMain.instance, it)
                                 } else {
                                     player.hidePlayer(LobbyMain.instance, it)
+                                }
+                            }
                         }
                     }
                 }
-            }
-        }
     }
 }
